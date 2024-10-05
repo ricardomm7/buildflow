@@ -1,0 +1,7 @@
+.border-pane {
+    -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, #167eac,#236177);
+}
+
+.load-text {
+    -fx-text-fill: white;
+}
