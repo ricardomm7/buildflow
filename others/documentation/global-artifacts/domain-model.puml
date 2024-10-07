@@ -1,0 +1,59 @@
+@startuml
+'skinparam monochrome true
+skinparam classBackgroundColor #ADD8E6
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+left to right direction
+
+title Project Domain Model
+
+class Product {
+    id
+    name
+}
+
+class Component {
+    id
+    name
+    quantity
+}
+
+class BillOfMaterials {
+    id
+}
+
+class Operation {
+    id
+    name
+}
+
+class Station {
+    id
+    type
+}
+
+class ProductionOrder {
+    id
+    date
+}
+
+class Customer {
+    id
+    name
+    NIF
+}
+
+Product "1" -- "1..*" Component: consists of >
+Product "1" -- "1" BillOfMaterials: has >
+Product "1" -- "*" Operation: requires >
+
+BillOfMaterials "1" -- "0..*" Component: defines >
+Operation "1" -- "*" Station: performed on >
+ProductionOrder "1" -- "1..*" Product: orders >
+
+Customer "1" -- "*" ProductionOrder: places >
+
+@enduml

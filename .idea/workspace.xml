@@ -1,11 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ricar/Desktop/ISEP/LAPR3&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Template Adjustments">
+      <change afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/others/documentation/cover.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/readme-project-images/cover.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/others/documentation/empty.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="UML Sequence" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;1230744&quot;
   }
 }</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Departamento-de-Engenharia-Informatica/sem3-pi-2024_25_G081.git&quot;,
+    &quot;accountId&quot;: &quot;fb0ec9b6-de84-4a3b-87ee-42c5a82bf6e1&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2n6XsBmlhG7pktWSnxmrNcmElX5" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultPlantUmlFileTemplate": "UML Sequence",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\global-artifacts" />
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\global-artifacts\analysis" />
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\readme-project-images" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="sem3-pi-2024_25_G081" />
@@ -55,13 +124,36 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+      <changelist id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="" />
       <created>1706117226640</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1706117226640</updated>
     </task>
+    <task id="LOCAL-00001" summary="Template Adjustments">
+      <option name="closed" value="true" />
+      <created>1728294935508</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1728294935508</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Template Adjustments">
+      <option name="closed" value="true" />
+      <created>1728295705415</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1728295705415</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Template Adjustments" />
+    <option name="LAST_COMMIT_MESSAGE" value="Template Adjustments" />
   </component>
 </project>
