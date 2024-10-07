@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d7da996f-060f-4e7f-975e-3d90218d4815" name="Changes" comment="Template" />
+    <list default="true" id="d7da996f-060f-4e7f-975e-3d90218d4815" name="Changes" comment="Template">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prodPlanSimulator/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/prodPlanSimulator/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prodPlanSimulator/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/prodPlanSimulator/src/main/java/org/example/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
