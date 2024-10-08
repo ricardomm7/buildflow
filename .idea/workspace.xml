@@ -4,10 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="USBD05 documentation - requirements-engineering.md">
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Project domain model updated with more relations. #32 #97 #98 #99">
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/puml/class-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/puml/sequence-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/svg/class-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/svg/sequence-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/requirements-engineering.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/puml/class-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/puml/sequence-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/svg/class-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/svg/sequence-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/requirements-engineering.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/only-controllers.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/only-domain.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/only-repo-or-databases.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/ui/only-ui.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +76,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg",
+    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
@@ -182,7 +196,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728401343214</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Project domain model updated with more relations. #32 #97 #98 #99">
+      <option name="closed" value="true" />
+      <created>1728405626163</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1728405626164</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -191,6 +213,7 @@
     <MESSAGE value="Project documentation added." />
     <MESSAGE value="Project documentation glossary.md added." />
     <MESSAGE value="USBD05 documentation - requirements-engineering.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="USBD05 documentation - requirements-engineering.md" />
+    <MESSAGE value="Project domain model updated with more relations. #32 #97 #98 #99" />
+    <option name="LAST_COMMIT_MESSAGE" value="Project domain model updated with more relations. #32 #97 #98 #99" />
   </component>
 </project>

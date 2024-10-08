@@ -1,0 +1,44 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+'left to right direction
+
+class UserInterfaceClass {
+}
+
+class ControllerClass {
+    +operation1(param1 : Type) : ReturnType
+    +operation2() : ReturnType
+}
+
+class RepositoryHandler {
+    +getRepository() : RepositoryClass
+    -repository : RepositoryClass
+            - instance : RepositoryHandler
+            - RepositoryHandler()
+}
+
+class RepositoryClass {
+    - itemList : List<ItemClass>
+    +operation1(param : Type) : ReturnType
+    +operation2() : void
+    +operation3(item): void
+}
+
+class ItemClass {
+    - attribute : Type
+    + ItemClass(param : Type)
+    +operation1(item : ItemClass) : void
+    +operation2(item : ItemClass) : void
+}
+
+UserInterfaceClass ..> ControllerClass
+RepositoryHandler --> "1" RepositoryClass : repository
+RepositoryHandler --> RepositoryHandler : instance
+RepositoryClass --> "*" ItemClass : items
+ControllerClass ..> RepositoryHandler : repositoryHandler
+ControllerClass ..> RepositoryClass : repository
+
+@enduml
