@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Project documentation glossary.md added.">
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/puml/class-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/svg/class-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/requirements-engineering.md" afterDir="false" />
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="USBD05 documentation - requirements-engineering.md">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +23,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -65,7 +62,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
+    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation/global-artifacts/svg/domain-model-Project_Domain_Model.svg",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
@@ -177,7 +174,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728399989023</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="USBD05 documentation - requirements-engineering.md">
+      <option name="closed" value="true" />
+      <created>1728401343214</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1728401343214</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -185,6 +190,7 @@
     <MESSAGE value="Project Domain Model started. #32" />
     <MESSAGE value="Project documentation added." />
     <MESSAGE value="Project documentation glossary.md added." />
-    <option name="LAST_COMMIT_MESSAGE" value="Project documentation glossary.md added." />
+    <MESSAGE value="USBD05 documentation - requirements-engineering.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="USBD05 documentation - requirements-engineering.md" />
   </component>
 </project>
