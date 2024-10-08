@@ -4,27 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Documentation of USBD08">
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI02/requirements-engineering.md" afterDir="false" />
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Project documentation glossary.md added.">
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/puml/class-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/puml/sequence-diagram.puml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/svg/class-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/design/svg/sequence-diagram.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/others/documentation/usBD05/requirements-engineering.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/design/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/design/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/design/puml/class-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/design/puml/class-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/design/puml/sequence-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/design/svg/class-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/design/svg/class-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/design/svg/sequence-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usBD08/usBD08/requirements-engineering.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usBD08/requirements-engineering.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/design/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI02/design/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/design/puml/class-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI02/design/puml/class-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/design/puml/sequence-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI02/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/design/svg/class-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI02/design/svg/class-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/design/svg/sequence-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI02/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI02/usEI02/requirements-engineering.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/requirements-engineering.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/design/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/design/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/design/puml/class-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/design/puml/class-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/design/puml/sequence-diagram.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/design/svg/class-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/design/svg/class-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/design/svg/sequence-diagram.svg" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/usEI08/requirements-engineering.md" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,35 +40,43 @@
     &quot;accountId&quot;: &quot;fb0ec9b6-de84-4a3b-87ee-42c5a82bf6e1&quot;
   }
 }</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="2n6XsBmlhG7pktWSnxmrNcmElX5" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+  <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Sequence&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation/usAA##/design/svg&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultPlantUmlFileTemplate": "UML Sequence",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Joana\OneDrive - Instituto Superior de Engenharia do Porto\Documents\ISEP\2º ano\1º Semestre\sem3-pi-2024_25_G081\others\documentation\usBD08" />
-      <recent name="C:\Users\Joana\OneDrive - Instituto Superior de Engenharia do Porto\Documents\ISEP\2º ano\1º Semestre\sem3-pi-2024_25_G081\others\documentation\usEI02" />
-      <recent name="C:\Users\Joana\OneDrive - Instituto Superior de Engenharia do Porto\Documents\ISEP\2º ano\1º Semestre\sem3-pi-2024_25_G081\others\documentation\usEI08" />
-      <recent name="C:\Users\Joana\OneDrive - Instituto Superior de Engenharia do Porto\Documents\ISEP\2º ano\1º Semestre\sem3-pi-2024_25_G081\others\documentation" />
       <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\global-artifacts" />
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\global-artifacts\analysis" />
+      <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\readme-project-images" />
     </key>
   </component>
   <component name="RunManager">
@@ -100,6 +95,7 @@
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="sem3-pi-2024_25_G081" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -121,6 +117,7 @@
     </configuration>
     <configuration default="true" type="Tox" factoryName="Tox">
       <module name="sem3-pi-2024_25_G081" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -172,13 +169,13 @@
       <option name="project" value="LOCAL" />
       <updated>1728396112133</updated>
     </task>
-    <task id="LOCAL-00005" summary="Documentation of USBD08">
+    <task id="LOCAL-00005" summary="Project documentation glossary.md added.">
       <option name="closed" value="true" />
-      <created>1728400812461</created>
+      <created>1728399989023</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1728400812461</updated>
+      <updated>1728399989023</updated>
     </task>
     <option name="localTasksCounter" value="6" />
     <servers />
@@ -187,7 +184,7 @@
     <MESSAGE value="Template Adjustments" />
     <MESSAGE value="Project Domain Model started. #32" />
     <MESSAGE value="Project documentation added." />
-    <MESSAGE value="Documentation of USBD08" />
-    <option name="LAST_COMMIT_MESSAGE" value="Documentation of USBD08" />
+    <MESSAGE value="Project documentation glossary.md added." />
+    <option name="LAST_COMMIT_MESSAGE" value="Project documentation glossary.md added." />
   </component>
 </project>
