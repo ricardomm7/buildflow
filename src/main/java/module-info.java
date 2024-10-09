@@ -3,7 +3,8 @@ module fourcorp.buildflow {
     requires javafx.fxml;
     requires java.xml;
 
-
     opens fourcorp.buildflow to javafx.fxml;
     exports fourcorp.buildflow;
+    exports fourcorp.buildflow.ui;
+    opens fourcorp.buildflow.ui to javafx.fxml;
 }

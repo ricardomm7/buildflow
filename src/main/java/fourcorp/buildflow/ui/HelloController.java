@@ -1,4 +1,4 @@
-package fourcorp.buildflow;
+package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.Reader;
 

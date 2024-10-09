@@ -5,7 +5,7 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
-'left to right direction
+left to right direction
 
 title Project Domain Model
 
@@ -97,11 +97,11 @@ class Client {
 Administrator"1..*" -- "1..*" SystemUsers: is a >
 ProductManager"1..*" -- "1..*" SystemUsers: is a >
 PlantFloorManager"1..*" -- "1..*" SystemUsers: is a >
-Administrator"1..*" -- "1..*" SystemUsers: managing >
-PlantFloorManager"1..*" -- "1..*" ProductionLine: specifying >
+Administrator"1..*" -- "1..*" SystemUsers: manages >
+PlantFloorManager"1..*" -- "1..*" ProductionLine: specifies >
 ProductionLine "1" -- "1..*" Machine: has >
-ProductManager "1..*" -- "1..*" Product: controling >
-Component "1..*" -- "1..*" RawMaterial: made of >
+ProductManager "1..*" -- "1..*" Product: controls >
+Component "1..*" -- "1..*" RawMaterial: is made of >
 Product "1..*" -- "1..*" Component : is made of >
 Component "1" -- "1..*" Operation : is related to >
 RawMaterial "1" -- "1..*" Operation : is related to >

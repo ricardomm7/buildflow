@@ -4,21 +4,24 @@
 
 ### A) Rationale
 
-| Interaction ID | Question: Which class is responsible for...   | Answer                | Justification (with patterns)                                                                                 |
-|:---------------|:----------------------------------------------|:----------------------|:--------------------------------------------------------------------------------------------------------------|
-| Step 1  		     | 	... interacting with the actor?              | CreateSkillUI         | Pure Fabrication: there is no reason to assign this responsibility to any existing class in the Domain Model. |
+| Question: Which class is responsible for... | Answer                | Justification                                                                                                                                  |
+|:--------------------------------------------|:----------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|
+| 	... interacting with the actor?            | **ProductionLine**    | This class represents the service responsible for handling orders and their priorities, which includes adding, searching, and removing orders. |
+| ... creating the order data structure?      | **Order**             | This class encapsulates the necessary information about each order, such as the ID, readiness, and delivery date.                              |
+| ... managing the priority structure?        | **Map**               | The Map data structure is used to store and group orders by their priority. Each priority is a key with a list of orders as its value.         |
+| ... storing orders by priority?             | **LinkedList<Order>** | A linked list of orders is used for efficient insertion and removal of orders based on their priority.                                         |
 
-### Systematization ##
+### Systematization
 
-According to the taken rationale, the conceptual classes promoted to software classes are: 
+According to the rationale taken, the conceptual classes promoted to software classes are:
 
-* ZZZZZZZZZZZZZZZZ
+* **Order**: Represents an order in the system. Contains attributes like `id`, `deliveryDate`, and `ready`.
+* **ProductionLine**: Manages a collection of orders grouped by priority, using a `Map<Integer, LinkedList<Order>>` to store orders by their priority level.
 
-Other software classes (i.e. Pure Fabrication) identified: 
+Other software classes (i.e. Pure Fabrication) identified:
 
-* ZZZ
-* UUU
-* WWW
+* **Map**: A pure fabrication to store orders based on their priority.
+* **LinkedList<Order>**: A pure fabrication used to store and manage multiple orders efficiently by allowing operations like adding and removing orders.
 
 ## B) Sequence Diagram (SD)
 

@@ -5,78 +5,76 @@ skinparam shadowing false
 
 autonumber
 
-actor "Actor" as Actor
-participant ":UserInterface" as UI
-participant ":Controller" as CTRL
-participant ":RepositoryHandler" as RepoHandler
-participant "repositories\n:RepositoryHandler" as RepoPlatform
-participant "repository:\nRepositoryClass" as RepositoryClass
-participant ":ItemClass" as ItemClass
+actor "Client" as Client
+participant "ProductionLine" as ProductionLine
+participant "Order" as Order
+participant "Map" as Map
+participant "List<Order>" as ListOrder
 
-activate Actor
+Client -> ProductionLine : newOrder(order, priority)
+activate ProductionLine
 
-Actor -> UI : action request
-activate UI
+ProductionLine -> Map : computeIfAbsent(priority)
+activate Map
+Map -> ListOrder : get or create LinkedList<Order>
+deactivate Map
+activate ListOrder
+ListOrder --> ProductionLine : LinkedList<Order>
+deactivate ListOrder
+ProductionLine -> ListOrder : add(order)
+deactivate ListOrder
 
-UI -> CTRL : create operation
+ProductionLine -> Client : new order added (success)
+deactivate ProductionLine
 
-UI --> Actor : asks for input
-deactivate UI
+Client -> ProductionLine : removeOrderFromPL(orderId)
+activate ProductionLine
 
-Actor -> UI : enters input
-activate UI
+ProductionLine -> ProductionLine : searchOrder(orderId)
+activate ProductionLine
 
-UI -> CTRL : operation(param)
-deactivate UI
-activate CTRL
+ProductionLine -> Map : iterate priorities
+activate Map
+Map -> ListOrder : get List<Order>
+deactivate Map
+activate ListOrder
 
-CTRL -> RepoHandler : getInstance()
-activate RepoHandler
-RepoHandler --> CTRL : repository handler
-deactivate RepoHandler
+ProductionLine -> Order : getId()
+activate Order
+Order --> ProductionLine : id matches
+deactivate Order
 
-CTRL -> RepoPlatform : getRepository()
-activate RepoPlatform
-RepoPlatform --> CTRL : repository
-deactivate RepoPlatform
+ProductionLine -> ListOrder : remove(order)
+deactivate ListOrder
+deactivate ProductionLine
 
-CTRL -> RepositoryClass : createItem(param)
-deactivate CTRL
-activate RepositoryClass
+ProductionLine -> Client : order removed (success)
+deactivate ProductionLine
 
-RepositoryClass -> ItemClass : create(param)
-deactivate RepositoryClass
+Client -> ProductionLine : markOrderAsCompleted(orderId)
+activate ProductionLine
 
-activate ItemClass
-ItemClass -> ItemClass : validateAttribute(item)
-activate ItemClass
-ItemClass -> ItemClass : validateOtherRules(item)
-activate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
+ProductionLine -> ProductionLine : searchOrder(orderId)
+activate ProductionLine
 
-ItemClass --> RepositoryClass : item
-deactivate ItemClass
-activate RepositoryClass
+ProductionLine -> Map : iterate priorities
+activate Map
+Map -> ListOrder : get List<Order>
+deactivate Map
 
-RepositoryClass -> RepositoryClass : checkForDuplicates()
-activate RepositoryClass
-RepositoryClass --> RepositoryClass
-deactivate RepositoryClass
-RepositoryClass -> RepositoryClass : addItem(item)
-deactivate RepositoryClass
+ProductionLine -> Order : getId()
+activate Order
+Order --> ProductionLine : id matches
+deactivate Order
 
-CTRL <-- RepositoryClass : item
-deactivate RepositoryClass
-activate CTRL
+ProductionLine -> Order : setReady(true)
+activate Order
+Order -> Order : setDeliveryDate(LocalDate.now())
+deactivate Order
 
-CTRL --> UI : item
-deactivate CTRL
-activate UI
+ProductionLine -> ProductionLine : removeOrderFromPL(orderId)
+deactivate ProductionLine
 
-UI --> Actor : displays success message
-deactivate UI
-deactivate Actor
+ProductionLine -> Client : order marked as completed
+deactivate ProductionLine
 @enduml
