@@ -4,10 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Project domain model updated with more relations. #32 #97 #98 #99">
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Documentation of USEI01, USEI08 started #28 #24. Code partitions created.">
+      <change afterPath="$PROJECT_DIR$/.idea/intellij-javadocs-4.0.1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/Reader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Employee.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Machine.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Operation.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Order.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Person.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Priority.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Product.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/ProductionLine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/requirements-engineering.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/requirements-engineering.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/only-controllers.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/only-domain.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +30,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="UML Sequence" />
+        <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -37,14 +51,18 @@
     &quot;accountId&quot;: &quot;fb0ec9b6-de84-4a3b-87ee-42c5a82bf6e1&quot;
   }
 }</component>
-  <component name="MarkdownSettingsMigration">
-    <option name="stateVersion" value="1" />
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="2n6XsBmlhG7pktWSnxmrNcmElX5" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+  <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -55,14 +73,15 @@
   "keyToString": {
     "DefaultPlantUmlFileTemplate": "UML Sequence",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
     "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+    "settings.editor.selected.configurable": "MavenSettings"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -91,6 +110,7 @@
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="sem3-pi-2024_25_G081" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -112,6 +132,7 @@
     </configuration>
     <configuration default="true" type="Tox" factoryName="Tox">
       <module name="sem3-pi-2024_25_G081" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -187,7 +208,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728405626164</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Documentation of USEI01, USEI08 started #28 #24. Code partitions created.">
+      <option name="closed" value="true" />
+      <created>1728413200552</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1728413200552</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -197,6 +226,7 @@
     <MESSAGE value="Project documentation glossary.md added." />
     <MESSAGE value="USBD05 documentation - requirements-engineering.md" />
     <MESSAGE value="Project domain model updated with more relations. #32 #97 #98 #99" />
-    <option name="LAST_COMMIT_MESSAGE" value="Project domain model updated with more relations. #32 #97 #98 #99" />
+    <MESSAGE value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
+    <option name="LAST_COMMIT_MESSAGE" value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
   </component>
 </project>
