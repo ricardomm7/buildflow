@@ -5,23 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Project domain model updated with more relations. #32 #97 #98 #99">
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/puml/class-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/svg/class-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI01/requirements-engineering.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/puml/class-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/puml/sequence-diagram.puml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/svg/class-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/design/svg/sequence-diagram.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/others/documentation/usEI05/requirements-engineering.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/only-controllers.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/only-domain.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/only-repo-or-databases.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/ui/only-ui.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/others/documentation/usEI08/requirements-engineering.md" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/usEI08/requirements-engineering.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,18 +37,14 @@
     &quot;accountId&quot;: &quot;fb0ec9b6-de84-4a3b-87ee-42c5a82bf6e1&quot;
   }
 }</component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
-      </MavenGeneralSettings>
-    </option>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="2n6XsBmlhG7pktWSnxmrNcmElX5" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -77,6 +59,9 @@
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
@@ -106,7 +91,6 @@
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="sem3-pi-2024_25_G081" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -128,7 +112,6 @@
     </configuration>
     <configuration default="true" type="Tox" factoryName="Tox">
       <module name="sem3-pi-2024_25_G081" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
