@@ -1,6 +1,9 @@
 package fourcorp.buildflow.repository;
 
+import fourcorp.buildflow.application.Reader;
+import fourcorp.buildflow.domain.Machine;
 import fourcorp.buildflow.domain.Order;
+import fourcorp.buildflow.domain.Product;
 
 import java.time.LocalDate;
 import java.util.HashMap;
