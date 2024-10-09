@@ -4,17 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created.">
-      <change afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Address.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" beforeDir="false" afterPath="$PROJECT_DIR$/others/documentation/global-artifacts/domain-model.puml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/Reader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/application/Reader.java" afterDir="false" />
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Domain classes updated. Domain model updated. Verifications started. #32 #98 #24 #72">
       <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Employee.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Employee.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Person.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/fourcorp/buildflow/hello-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/fourcorp/buildflow/hello-view.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728479630759</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Domain classes updated. Domain model updated. Verifications started. #32 #98 #24 #72">
+      <option name="closed" value="true" />
+      <created>1728484672112</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1728484672112</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -222,6 +222,7 @@
     <MESSAGE value="Project domain model updated with more relations. #32 #97 #98 #99" />
     <MESSAGE value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
     <MESSAGE value="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created." />
-    <option name="LAST_COMMIT_MESSAGE" value="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created." />
+    <MESSAGE value="Domain classes updated. Domain model updated. Verifications started. #32 #98 #24 #72" />
+    <option name="LAST_COMMIT_MESSAGE" value="Domain classes updated. Domain model updated. Verifications started. #32 #98 #24 #72" />
   </component>
 </project>
