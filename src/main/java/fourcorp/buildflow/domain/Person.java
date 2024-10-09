@@ -1,19 +1,17 @@
 package fourcorp.buildflow.domain;
 
-import java.time.LocalDate;
-
 public abstract class Person {
     private String id;
     private int nif;
     private String name;
-    private String address;
+    private Address address;
     private int phoneNumber;
 
-    public Person(String id, int nif, String name, String address, int phoneNumber) {
+    public Person(String id, int nif, String name, String address, String city, String zipCode, int phoneNumber) {
         this.id = id;
         this.nif = nif;
         this.name = name;
-        this.address = address;
+        this.address = new Address(address, city, zipCode);
         this.phoneNumber = phoneNumber;
     }
 
@@ -41,12 +39,12 @@ public abstract class Person {
         this.name = name;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddress(String address, String city, String zipCode) {
+        this.address = new Address(address, city, zipCode);
     }
 
     public int getPhoneNumber() {
@@ -56,7 +54,6 @@ public abstract class Person {
     public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
 
 
 }

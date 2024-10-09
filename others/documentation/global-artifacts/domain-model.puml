@@ -5,14 +5,14 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
-left to right direction
+'left to right direction
 
 title Project Domain Model
 
 class ProductionLine{
 
 }
-class Administrater{
+class Administrator{
 
 }
 class SystemUsers{
@@ -51,7 +51,7 @@ class Component {
 }
 
 class Machine {
-    machine id
+    machineId
     power
 }
 
@@ -85,6 +85,7 @@ class Factory {
 }
 
 class Order {
+    product(s)
     orderDate
     deliveryDate
 }
@@ -96,10 +97,10 @@ class Client {
     phoneNumber
 }
 
-Administrater"1..*" -- "1..*" SystemUsers: is a >
+Administrator"1..*" -- "1..*" SystemUsers: is a >
 ProductManager"1..*" -- "1..*" SystemUsers: is a >
 PlantFloorManager"1..*" -- "1..*" SystemUsers: is a >
-Administrater"1..*" -- "1..*" SystemUsers: managing >
+Administrator"1..*" -- "1..*" SystemUsers: managing >
 PlantFloorManager"1..*" -- "1..*" ProductionLine: specifying >
 ProductionLine "1" -- "1..*" Machine: has >
 ProductManager "1..*" -- "1..*" Product: controling >

@@ -9,7 +9,7 @@ public class Product {
     Map<String, Product> articles = new HashMap<>();
     private String idItem;
     private int priority;
-    private List<Operation> operation;
+    private List<String> operation;
 
     public Product(String idItem, int priority, List<String> operations) {
         this.idItem = idItem;

@@ -1,8 +1,6 @@
 package fourcorp.buildflow.domain;
 
-import java.time.LocalDate;
-
-public class Client extends Person{
+public class Client extends Person {
     private ClientType type;
 
     public Client(String id, int nif, String name, String address, int phoneNumber, ClientType type) {

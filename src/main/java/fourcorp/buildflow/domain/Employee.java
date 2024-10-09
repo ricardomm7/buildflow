@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class Employee extends Person {
     private LocalDate birthDate;
     private double salary;
+
     public Employee(String id, int nif, String name, String address, int phoneNumber, LocalDate birthDate, double salary) {
         super(id, nif, name, address, phoneNumber);
         this.birthDate = birthDate;
