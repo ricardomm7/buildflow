@@ -29,10 +29,12 @@ class Product {
 
 class Component {
     name
+    description
     stock
 }
 
 class Machine {
+    machine id
     power
 }
 
@@ -49,6 +51,7 @@ class Operation {
     name
     executionTime
     status
+    type
 }
 
 class Station {
@@ -77,9 +80,11 @@ class Client {
 }
 
 Supplier "1" -- "1..*" Component: provides >
+Supplier "1" --"1..*" RawMaterial: provides >
 Component "1..*" -- "1..*" RawMaterial: made of >
 Product "1..*" -- "1..*" Component : is made of >
 Component "1" -- "1..*" Operation : is related to >
+RawMaterial "1" -- "1..*" Operation : is related to >
 Product "1" -- "1..*" Operation : is related to >
 Order "1" -- "1..*" Operation : has >
 'assumindo que não existem encomendas iguais
