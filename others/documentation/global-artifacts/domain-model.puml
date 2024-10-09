@@ -9,8 +9,26 @@ left to right direction
 
 title Project Domain Model
 
+class ProductionLine{
 
+}
+class Administrater{
 
+}
+class SystemUsers{
+    mail
+    password
+    name
+    NIF
+    adress
+    phoneNumber
+}
+class PlantFloorManager{
+
+}
+class ProductManager{
+
+}
 class ExecutionTime{
     executionTime
 }
@@ -78,7 +96,13 @@ class Client {
     phoneNumber
 }
 
-
+Administrater"1..*" -- "1..*" SystemUsers: is a >
+ProductManager"1..*" -- "1..*" SystemUsers: is a >
+PlantFloorManager"1..*" -- "1..*" SystemUsers: is a >
+Administrater"1..*" -- "1..*" SystemUsers: managing >
+PlantFloorManager"1..*" -- "1..*" ProductionLine: specifying >
+ProductionLine "1" -- "1..*" Machine: has >
+ProductManager "1..*" -- "1..*" Product: controling >
 Component "1..*" -- "1..*" RawMaterial: made of >
 Product "1..*" -- "1..*" Component : is made of >
 Component "1" -- "1..*" Operation : is related to >
@@ -90,8 +114,7 @@ Client "1" -- "1..*" Order : places >
 ExecutionTime "1..*" -- "1..*" Machine : has >
 Operation "1..*" -- "1..*" ExecutionTime : has >
 Employee "1..*" -- "1..*" Machine : is operated by <
-Station "1" -- "1..*" Machine : has >
+Station "1" -- "1..*" ProductionLine : has >
 Factory "1" -- "1..*" Station : has >
-Factory "1" -- "1..*" Employee : has >
 
 @enduml
