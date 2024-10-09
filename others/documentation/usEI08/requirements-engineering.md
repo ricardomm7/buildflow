@@ -25,7 +25,6 @@ As a Product Owner, I want to enhance the existing simulator to process items ba
 * **AC1:** The simulator must sort items in the queue based on their priority, with high-priority items being processed first, followed by normal, and then low-priority items.
 * **AC2:** Within each priority level, items should be assigned to machines based on their entry order (first-come, first-served).
 * **AC3:**  The system should still prioritize assigning items to the fastest available machine that can perform the required operation.
-* **AC4:**
 
 ### D) Found out Dependencies
 
