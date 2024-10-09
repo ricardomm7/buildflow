@@ -12,6 +12,7 @@ public class Order {
     private LocalDate orderDate;
     private LocalDate deliveryDate;
     private List<Machine> preProcessedMachines;
+    private boolean ready;
 
     public Order(List<Product> products, int quantity, Client client, LocalDate orderDate, LocalDate deliveryDate) {
         this.id = UUID.randomUUID().toString();
@@ -72,5 +73,13 @@ public class Order {
 
     public void setPreProcessedMachines(List<Machine> preProcessedMachines) {
         this.preProcessedMachines = preProcessedMachines;
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }

@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="USEI01 #24 #63 #64 #65 #66 Data structures are being defined.">
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Gitignore updated.">
+      <change afterPath="$PROJECT_DIR$/src/test/java/fourcorp/buildflow/repository/ProductionLineTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/ProductionLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/ProductionLine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,6 +21,7 @@
         <option value="UML Sequence" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -55,21 +59,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultPlantUmlFileTemplate&quot;: &quot;UML Sequence&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultPlantUmlFileTemplate": "UML Sequence",
+    "JUnit.ProductionLineTest.cancelOrder.executor": "Run",
+    "JUnit.ProductionLineTest.executor": "Run",
+    "JUnit.ProductionLineTest.newOrder.executor": "Debug",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ricar/Desktop/ISEP/LAPR3/sem3-pi-2024_25_G081/others/documentation",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "MavenSettings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation" />
@@ -79,8 +88,46 @@
       <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\global-artifacts\analysis" />
       <recent name="C:\Users\ricar\Desktop\ISEP\LAPR3\sem3-pi-2024_25_G081\others\documentation\readme-project-images" />
     </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="fourcorp.buildflow.repository" />
+    </key>
   </component>
   <component name="RunManager">
+    <configuration name="ProductionLineTest.cancelOrder" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="BUILDFLOW" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="fourcorp.buildflow.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="fourcorp.buildflow.repository" />
+      <option name="MAIN_CLASS_NAME" value="fourcorp.buildflow.repository.ProductionLineTest" />
+      <option name="METHOD_NAME" value="cancelOrder" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProductionLineTest.newOrder" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="BUILDFLOW" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="fourcorp.buildflow.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="fourcorp.buildflow.repository" />
+      <option name="MAIN_CLASS_NAME" value="fourcorp.buildflow.repository.ProductionLineTest" />
+      <option name="METHOD_NAME" value="newOrder" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <module name="sem3-pi-2024_25_G081" />
       <method v="2">
@@ -128,6 +175,12 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.ProductionLineTest.cancelOrder" />
+        <item itemvalue="JUnit.ProductionLineTest.newOrder" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -218,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728482330243</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Gitignore updated.">
+      <option name="closed" value="true" />
+      <created>1728489231432</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1728489231432</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -231,6 +292,7 @@
     <MESSAGE value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
     <MESSAGE value="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created." />
     <MESSAGE value="USEI01 #24 #63 #64 #65 #66 Data structures are being defined." />
-    <option name="LAST_COMMIT_MESSAGE" value="USEI01 #24 #63 #64 #65 #66 Data structures are being defined." />
+    <MESSAGE value="Gitignore updated." />
+    <option name="LAST_COMMIT_MESSAGE" value="Gitignore updated." />
   </component>
 </project>
