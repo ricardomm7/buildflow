@@ -29,9 +29,7 @@ class PlantFloorManager{
 class ProductManager{
 
 }
-class ExecutionTime{
-    executionTime
-}
+
 class RawMaterial {
     name
     description
@@ -52,7 +50,7 @@ class Component {
 
 class Machine {
     machineId
-    power
+    executionTime
 }
 
 class Employee {
@@ -61,7 +59,6 @@ class Employee {
     address
     phoneNumber
     birthdate
-    salary
 }
 
 class Operation {
@@ -108,12 +105,11 @@ Component "1..*" -- "1..*" RawMaterial: made of >
 Product "1..*" -- "1..*" Component : is made of >
 Component "1" -- "1..*" Operation : is related to >
 RawMaterial "1" -- "1..*" Operation : is related to >
-Product "1" -- "1..*" Operation : is related to >
+Operation "1" -- "1..*" Product : creates >
 Order "1" -- "1..*" Operation : has >
 'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
-ExecutionTime "1..*" -- "1..*" Machine : has >
-Operation "1..*" -- "1..*" ExecutionTime : has >
+Machine "1..*" -- "1" Operation : processes >
 Employee "1..*" -- "1..*" Machine : is operated by <
 Station "1" -- "1..*" ProductionLine : has >
 Factory "1" -- "1..*" Station : has >
