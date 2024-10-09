@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
+    <list default="true" id="096487b0-cf67-446b-8282-83ece1982297" name="Changes" comment="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/domain/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/ProductionLine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/ProductionLine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fourcorp/buildflow/repository/only-repo-or-databases.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,11 +27,6 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="User &lt;1240587@isep.ipp.pt&gt;" />
-      </list>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
@@ -84,6 +86,19 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="sem3-pi-2024_25_G081" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="sem3-pi-2024_25_G081" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="sem3-pi-2024_25_G081" />
       <option name="ENV_FILES" value="" />
@@ -117,19 +132,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <method v="2" />
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="sem3-pi-2024_25_G081" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="sem3-pi-2024_25_G081" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
     </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -205,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1728413200552</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created.">
+      <option name="closed" value="true" />
+      <created>1728479630759</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1728479630759</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -216,6 +226,7 @@
     <MESSAGE value="USBD05 documentation - requirements-engineering.md" />
     <MESSAGE value="Project domain model updated with more relations. #32 #97 #98 #99" />
     <MESSAGE value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
-    <option name="LAST_COMMIT_MESSAGE" value="Documentation of USEI01, USEI08 started #28 #24. Code partitions created." />
+    <MESSAGE value="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created." />
+    <option name="LAST_COMMIT_MESSAGE" value="USEI01 #24 #63 #64 #65 #66 and USEI02 #25 #68 started. Domain Classes created." />
   </component>
 </project>
