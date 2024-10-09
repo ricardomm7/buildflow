@@ -2,12 +2,13 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Machine;
 import fourcorp.buildflow.domain.Product;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CalculateProductionTimeTest {
 

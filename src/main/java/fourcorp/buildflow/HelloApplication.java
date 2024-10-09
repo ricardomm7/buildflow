@@ -1,12 +1,11 @@
 package fourcorp.buildflow;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import fourcorp.buildflow.application.Reader;
 
-import java.io.IOException;
+import static fourcorp.buildflow.application.CalculateProductionTime.calculateTotalProductionTime;
 
+public class HelloApplication {
+/*
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -16,8 +15,17 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+     */
 
     public static void main(String[] args) {
-        launch();
+        //launch();
+        try {
+            Reader.loadOperations("textFiles/artigos.csv");
+            Reader.loadMachines("textFiles/maquinas.csv");
+        } catch (Exception e) {
+            System.out.println("Error uploading files: " + e.getMessage());
+            return;
+        }
+        calculateTotalProductionTime();
     }
 }

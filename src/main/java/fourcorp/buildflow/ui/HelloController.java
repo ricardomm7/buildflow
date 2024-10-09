@@ -1,28 +1,14 @@
 package fourcorp.buildflow.ui;
 
-import fourcorp.buildflow.application.Reader;
-
-import static fourcorp.buildflow.application.CalculateProductionTime.calculateTotalProductionTime;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 
 public class HelloController {
-   /* @FXML
+    @FXML
     private Label welcomeText;
 
     @FXML
     protected void onHelloButtonClick() {
         welcomeText.setText("Welcome to JavaFX Application!");
-    }
-    */
-
-    public static void main(String[] args) {
-        try {
-            Reader.loadOperations("textFiles/artigos.csv");
-            Reader.loadMachines("textFiles/maquinas.csv");
-        } catch (Exception e) {
-            System.out.println("Error uploading files: " + e.getMessage());
-            return;
-        }
-
-        calculateTotalProductionTime();
     }
 }
