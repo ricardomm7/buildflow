@@ -6,6 +6,9 @@ import fourcorp.buildflow.domain.Product;
 import java.util.LinkedList;
 import java.util.Map;
 
+import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
+import static fourcorp.buildflow.application.MachineFlowAnalyzer.printMachineDependencies;
+
 public class CalculateProductionTime {
 
 
@@ -13,6 +16,8 @@ public class CalculateProductionTime {
         for (Map.Entry<String, Product> entry : Reader.products.entrySet()) {
             String productId = entry.getKey();
             Product product = entry.getValue();
+
+            Machine previousMachine = null; // US007
 
             double totalTime = 0;
             boolean skipProduct = false;
@@ -23,7 +28,13 @@ public class CalculateProductionTime {
                 if (machines != null && !machines.isEmpty()) {
                     Machine fastestMachine = findFastestMachine(machines);
                     totalTime += fastestMachine.getTime();
-                    machines.remove(fastestMachine);
+
+                    if (previousMachine != null) { // US007
+                        addDependency(previousMachine.getIdMachine(), fastestMachine.getIdMachine());
+                    }
+
+                    previousMachine = fastestMachine; // US007
+                    //machines.remove(fastestMachine);
                 } else {
                     System.out.println("No machine found for the operation: " + operation + " of the article: " + productId);
                     skipProduct = true; //
@@ -35,6 +46,8 @@ public class CalculateProductionTime {
                 System.out.println("Total production time for the article " + productId + ": " + totalTime + " minutes");
             }
         }
+        printMachineDependencies(); // US007
+
     }
 
     static Machine findFastestMachine(LinkedList<Machine> machines) {
@@ -44,6 +57,7 @@ public class CalculateProductionTime {
             if (machine.getTime() < minTime) {
                 minTime = machine.getTime();
                 fastestMachine = machine;
+
             }
         }
         return fastestMachine;
