@@ -1,7 +1,7 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

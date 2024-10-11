@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Product {
+public class Product implements Identifiable<String> {
     Map<String, Product> articles = new HashMap<>();
     private String idItem;
     private int priority;
@@ -39,5 +39,10 @@ public class Product {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    @Override
+    public String getId() {
+        return idItem;
     }
 }

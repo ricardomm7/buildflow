@@ -3,6 +3,7 @@ package fourcorp.buildflow.repository;
 import fourcorp.buildflow.domain.Client;
 import fourcorp.buildflow.domain.ClientType;
 import fourcorp.buildflow.domain.Order;
+import fourcorp.buildflow.domain.PriorityOrder;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -49,14 +50,14 @@ class PriorityLineTest {
                 LocalDate.now().plusDays(15)
         );
 
-        p1.newItem(o1, Integer.valueOf(1));
-        p1.newItem(o2, Integer.valueOf(2));
-        p1.newItem(o3, Integer.valueOf(1));
-        p1.newItem(o4, Integer.valueOf(3));
+        p1.newItem(o1, PriorityOrder.HIGH);
+        p1.newItem(o2, PriorityOrder.MEDIUM);
+        p1.newItem(o3, PriorityOrder.HIGH);
+        p1.newItem(o4, PriorityOrder.LOW);
 
-        List<Order> ordersPriority1 = p1.getByPriority(Integer.valueOf(1));
-        List<Order> ordersPriority2 = p1.getByPriority(Integer.valueOf(2));
-        List<Order> ordersPriority3 = p1.getByPriority(Integer.valueOf(3));
+        List<Order> ordersPriority1 = p1.getByPriority(PriorityOrder.HIGH);
+        List<Order> ordersPriority2 = p1.getByPriority(PriorityOrder.MEDIUM);
+        List<Order> ordersPriority3 = p1.getByPriority(PriorityOrder.LOW);
 
         assertTrue(ordersPriority1.contains(o1), "Order o1 should be in priority 1");
         assertTrue(ordersPriority1.contains(o3), "Order o3 should be in priority 1");
@@ -78,13 +79,13 @@ class PriorityLineTest {
                 LocalDate.MAX
         );
         PriorityLine p2 = new PriorityLine();
-        p2.newItem(o1, Integer.valueOf(1));
+        p2.newItem(o1, PriorityOrder.HIGH);
 
-        List<Order> ordersPriority1 = p2.getByPriority(Integer.valueOf(1));
+        List<Order> ordersPriority1 = p2.getByPriority(PriorityOrder.HIGH);
 
-        p2.remove(o1, 1);
+        p2.remove(o1, PriorityOrder.HIGH);
 
-        List<Order> ordersPriority2 = p2.getByPriority(Integer.valueOf(1));
+        List<Order> ordersPriority2 = p2.getByPriority(PriorityOrder.HIGH);
 
 
         assertEquals(1, ordersPriority1.size(), "Error 1");
@@ -102,7 +103,7 @@ class PriorityLineTest {
                 LocalDate.MAX
         );
         PriorityLine p2 = new PriorityLine();
-        p2.newItem(o1, Integer.valueOf(1));
+        p2.newItem(o1, PriorityOrder.HIGH);
 
         assertTrue(p2.searchById(o1.getId()).getId().equals(o1.getId()));
     }

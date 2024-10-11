@@ -1,12 +1,13 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
 
 import java.util.*;
 
 public class Simulator {
     private Map<String, LinkedList<Product>> operationQueues;  // Map operation name to queue
+    //private PriorityLine<Product, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é o tipo de id do elemento (int, string etc...)
     private Map<String, List<Workstation>> availableMachines;      // Map operation name to machines
     private List<Product> allProducts;  // List of all products to simulate
 
@@ -52,7 +53,6 @@ public class Simulator {
                 Workstation machine = machines.get(0);  // Choose the fastest machine available
 
                 System.out.println("Assigning product " + product.getIdItem() + " to machine " + machine.getIdMachine() + " for operation " + operation);
-
             }
         }
     }
