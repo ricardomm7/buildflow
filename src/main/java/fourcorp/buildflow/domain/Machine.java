@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Machine {
+public class Machine implements Identifiable<String> {
     Map<String, List<Machine>> machinesPerOperation = new HashMap<>();
     private String idMachine;
     private String operation;
@@ -38,5 +38,10 @@ public class Machine {
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    @Override
+    public String getId() {
+        return idMachine;
     }
 }

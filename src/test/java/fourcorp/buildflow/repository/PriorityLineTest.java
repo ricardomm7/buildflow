@@ -91,4 +91,19 @@ class PriorityLineTest {
         assertEquals(0, ordersPriority2.size(), "Error 2");
         assertNotEquals(ordersPriority1.size(), ordersPriority2.size(), "The sizes of ordersPriority1 and ordersPriority2 should not be equal");
     }
+
+    @Test
+    void searchById() {
+        Order o1 = new Order(
+                new ArrayList<>(),
+                0,
+                new Client("vfer", 111111111, "Ana Ribeiro", "Rua", "Cidade", "0000-000", 555555555, ClientType.PRIVATE),
+                LocalDate.now(),
+                LocalDate.MAX
+        );
+        PriorityLine p2 = new PriorityLine();
+        p2.newItem(o1, Integer.valueOf(1));
+
+        assertTrue(p2.searchById(o1.getId()).getId().equals(o1.getId()));
+    }
 }

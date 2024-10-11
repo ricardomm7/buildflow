@@ -1,11 +1,13 @@
 package fourcorp.buildflow.repository;
 
+import fourcorp.buildflow.domain.Identifiable;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PriorityLine<T, P> {
+public class PriorityLine<T extends Identifiable<ID>, ID, P> {
     private final Map<P, LinkedList<T>> line = new HashMap<>();
 
     public void newItem(T value, P priority) {
@@ -27,6 +29,15 @@ public class PriorityLine<T, P> {
         }
     }
 
-    //ON THE MAKING
+    public T searchById(ID id) {
+        for (List<T> items : line.values()) {
+            for (T item : items) {
+                if (item.getId().equals(id)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 }
 

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public class Order {
+public class Order implements Identifiable<String> {
     private String id;
     private List<Product> products;
     private int quantity;
@@ -23,6 +23,7 @@ public class Order {
         this.deliveryDate = deliveryDate;
     }
 
+    @Override
     public String getId() {
         return id;
     }

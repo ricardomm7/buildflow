@@ -3,7 +3,7 @@ package fourcorp.buildflow.domain;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Operation {
+public class Operation implements Identifiable<String> {
     private String name;
     private String type;
     private String status;
@@ -107,5 +107,10 @@ public class Operation {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String getId() {
+        return name;
     }
 }
