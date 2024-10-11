@@ -13,6 +13,8 @@ public class CalculateProductionTime {
 
 
     public static void calculateTotalProductionTime() {
+        System.out.println("\nTotal production time for each product:");
+
         for (Map.Entry<String, Product> entry : Reader.products.entrySet()) {
             String productId = entry.getKey();
             Product product = entry.getValue();
@@ -46,6 +48,7 @@ public class CalculateProductionTime {
                 System.out.println("Total production time for the article " + productId + ": " + totalTime + " minutes");
             }
         }
+        System.out.println("\nDependencies between machines:");
         printMachineDependencies(); // US007
 
     }
