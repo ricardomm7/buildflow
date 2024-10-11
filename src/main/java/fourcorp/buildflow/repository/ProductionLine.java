@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductionLine {
-    private final Map<Integer, LinkedList<Order>> productionLine = new HashMap<>(); // Correct type
+    private final Map<Integer, LinkedList<Order>> productionLine = new HashMap<>();
 
     public void newOrder(Order order, Integer priority) {
         if (order == null) {
