@@ -1,0 +1,60 @@
+package fourcorp.buildflow.application;
+
+import fourcorp.buildflow.domain.Machine;
+import fourcorp.buildflow.domain.Product;
+
+import java.util.*;
+
+public class Simulator {
+    private Map<String, LinkedList<Product>> operationQueues;  // Map operation name to queue
+    private Map<String, List<Machine>> availableMachines;      // Map operation name to machines
+    private List<Product> allProducts;  // List of all products to simulate
+
+    public Simulator(List<Product> products, List<Machine> machines) {
+        this.allProducts = products;
+        this.operationQueues = new HashMap<>();
+        this.availableMachines = new HashMap<>();
+
+        for (Machine machine : machines) {
+            availableMachines.computeIfAbsent(machine.getOperation(), k -> new ArrayList<>()).add(machine);
+        }
+
+        for (Product product : products) {
+            String firstOperation = product.getOperations().get(0);
+            operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
+        }
+    }
+
+    // AC1
+    public void initializeOperationQueues() {
+        for (Product product : allProducts) {
+            String firstOperation = product.getOperations().get(0);
+            operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
+        }
+    }
+
+    // AC2
+    public void processOperations() {
+        for (Map.Entry<String, LinkedList<Product>> entry : operationQueues.entrySet()) {
+            String operation = entry.getKey();
+            LinkedList<Product> queue = entry.getValue();
+
+            List<Machine> machines = availableMachines.get(operation);
+            if (machines == null || machines.isEmpty()) {
+                System.out.println("No available machines for operation: " + operation);
+                continue;
+            }
+
+            machines.sort(Comparator.comparingInt(Machine::getTime));
+
+            while (!queue.isEmpty()) {
+                Product product = queue.poll();
+                Machine machine = machines.get(0);  // Choose the fastest machine available
+
+                System.out.println("Assigning product " + product.getIdItem() + " to machine " + machine.getIdMachine() + " for operation " + operation);
+
+            }
+        }
+    }
+}
+
