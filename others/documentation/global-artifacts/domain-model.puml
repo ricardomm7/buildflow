@@ -48,8 +48,8 @@ class Component {
     stock
 }
 
-class Machine {
-    machineId
+class Workstation {
+    id
     executionTime
 }
 
@@ -99,7 +99,7 @@ ProductManager"1..*" -- "1..*" SystemUsers: is a >
 PlantFloorManager"1..*" -- "1..*" SystemUsers: is a >
 Administrator"1..*" -- "1..*" SystemUsers: manages >
 PlantFloorManager"1..*" -- "1..*" ProductionLine: specifies >
-ProductionLine "1" -- "1..*" Machine: has >
+ProductionLine "1" -- "1..*" Workstation: has >
 ProductManager "1..*" -- "1..*" Product: controls >
 Component "1..*" -- "1..*" RawMaterial: is made of >
 Product "1..*" -- "1..*" Component : is made of >
@@ -109,8 +109,8 @@ Operation "1" -- "1..*" Product : creates >
 Order "1" -- "1..*" Operation : has >
 'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
-Machine "1..*" -- "1" Operation : processes >
-Employee "1..*" -- "1..*" Machine : is operated by <
+Workstation "1..*" -- "1" Operation : processes >
+Employee "1..*" -- "1..*" Workstation : is operated by <
 Station "1" -- "1..*" ProductionLine : has >
 Factory "1" -- "1..*" Station : has >
 

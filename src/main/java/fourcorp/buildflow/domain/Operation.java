@@ -10,17 +10,17 @@ public class Operation implements Identifiable<String> {
     private double executionTime;
     private Date startingDate;
     private Date endingDate;
-    private ArrayList<Machine> machines;
+    private ArrayList<Workstation> workstations;
 
 
-    public Operation(String name, String type, String status, double executionTime, Date startingDate, Date endingDate, ArrayList<Machine> machines) {
+    public Operation(String name, String type, String status, double executionTime, Date startingDate, Date endingDate, ArrayList<Workstation> workstations) {
         this.name = name;
         this.type = type;
         this.status = status;
         this.executionTime = executionTime;
         this.startingDate = startingDate;
         this.endingDate = endingDate;
-        this.machines = machines;
+        this.workstations = workstations;
     }
 
     public Operation(String name, String type, String status, double executionTime, Date startingDate, Date endingDate) {
@@ -69,12 +69,12 @@ public class Operation implements Identifiable<String> {
         this.startingDate = startingDate;
     }
 
-    public ArrayList<Machine> getMachines() {
-        return machines;
+    public ArrayList<Workstation> getMachines() {
+        return workstations;
     }
 
-    public void setMachines(ArrayList<Machine> machines) {
-        this.machines = machines;
+    public void setMachines(ArrayList<Workstation> workstations) {
+        this.workstations = workstations;
     }
 
     public String getName() {

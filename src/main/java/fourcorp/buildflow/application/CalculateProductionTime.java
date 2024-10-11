@@ -1,6 +1,6 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Machine;
+import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.domain.Product;
 
 import java.util.LinkedList;
@@ -19,23 +19,23 @@ public class CalculateProductionTime {
             String productId = entry.getKey();
             Product product = entry.getValue();
 
-            Machine previousMachine = null; // US007
+            Workstation previousWorkstation = null; // US007
 
             double totalTime = 0;
             boolean skipProduct = false;
 
             for (String operation : product.getOperations()) {
-                LinkedList<Machine> machines = Reader.machinesPerOperation.get(operation);
+                LinkedList<Workstation> workstations = Reader.machinesPerOperation.get(operation);
 
-                if (machines != null && !machines.isEmpty()) {
-                    Machine fastestMachine = findFastestMachine(machines);
-                    totalTime += fastestMachine.getTime();
+                if (workstations != null && !workstations.isEmpty()) {
+                    Workstation fastestWorkstation = findFastestMachine(workstations);
+                    totalTime += fastestWorkstation.getTime();
 
-                    if (previousMachine != null) { // US007
-                        addDependency(previousMachine.getIdMachine(), fastestMachine.getIdMachine());
+                    if (previousWorkstation != null) { // US007
+                        addDependency(previousWorkstation.getIdMachine(), fastestWorkstation.getIdMachine());
                     }
 
-                    previousMachine = fastestMachine; // US007
+                    previousWorkstation = fastestWorkstation; // US007
                     //machines.remove(fastestMachine);
                 } else {
                     System.out.println("No machine found for the operation: " + operation + " of the article: " + productId);
@@ -53,17 +53,17 @@ public class CalculateProductionTime {
 
     }
 
-    static Machine findFastestMachine(LinkedList<Machine> machines) {
-        Machine fastestMachine = null;
+    static Workstation findFastestMachine(LinkedList<Workstation> workstations) {
+        Workstation fastestWorkstation = null;
         int minTime = Integer.MAX_VALUE;
-        for (Machine machine : machines) {
-            if (machine.getTime() < minTime) {
-                minTime = machine.getTime();
-                fastestMachine = machine;
+        for (Workstation workstation : workstations) {
+            if (workstation.getTime() < minTime) {
+                minTime = workstation.getTime();
+                fastestWorkstation = workstation;
 
             }
         }
-        return fastestMachine;
+        return fastestWorkstation;
     }
 
 }

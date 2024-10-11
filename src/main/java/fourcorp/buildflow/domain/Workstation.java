@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Machine implements Identifiable<String> {
-    Map<String, List<Machine>> machinesPerOperation = new HashMap<>();
+public class Workstation implements Identifiable<String> {
+    Map<String, List<Workstation>> machinesPerOperation = new HashMap<>();
     private String idMachine;
     private String operation;
     private int time;
 
-    public Machine(String idMachine, String operation, int time) {
+    public Workstation(String idMachine, String operation, int time) {
         this.idMachine = idMachine;
         this.operation = operation;
         this.time = time;

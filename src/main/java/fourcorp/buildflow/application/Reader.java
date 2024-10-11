@@ -1,6 +1,6 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Machine;
+import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.domain.Product;
 
 import java.io.BufferedReader;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class Reader {
     public static Map<String, Product> products = new HashMap<>();
 
-    public static Map<String, LinkedList<Machine>> machinesPerOperation = new HashMap<>();
+    public static Map<String, LinkedList<Workstation>> machinesPerOperation = new HashMap<>();
 
     public static void loadOperations(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -38,7 +38,7 @@ public class Reader {
             String idMaquina = campos[0];
             String operacao = campos[1];
             int tempo = Integer.parseInt(campos[2]);
-            Machine maquina = new Machine(idMaquina, operacao, tempo);
+            Workstation maquina = new Workstation(idMaquina, operacao, tempo);
 
             machinesPerOperation.computeIfAbsent(operacao, k -> new LinkedList<>()).add(maquina);
         }

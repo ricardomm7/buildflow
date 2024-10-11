@@ -11,7 +11,7 @@ public class Order implements Identifiable<String> {
     private Client client;
     private LocalDate orderDate;
     private LocalDate deliveryDate;
-    private List<Machine> preProcessedMachines;
+    private List<Workstation> preProcessedWorkstations;
     private boolean ready;
 
     public Order(List<Product> products, int quantity, Client client, LocalDate orderDate, LocalDate deliveryDate) {
@@ -68,12 +68,12 @@ public class Order implements Identifiable<String> {
         this.deliveryDate = deliveryDate;
     }
 
-    public List<Machine> getPreProcessedMachines() {
-        return preProcessedMachines;
+    public List<Workstation> getPreProcessedMachines() {
+        return preProcessedWorkstations;
     }
 
-    public void setPreProcessedMachines(List<Machine> preProcessedMachines) {
-        this.preProcessedMachines = preProcessedMachines;
+    public void setPreProcessedMachines(List<Workstation> preProcessedWorkstations) {
+        this.preProcessedWorkstations = preProcessedWorkstations;
     }
 
     public boolean isReady() {

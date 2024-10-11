@@ -1,6 +1,7 @@
 package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.Identifiable;
+import fourcorp.buildflow.domain.PriorityOrder;
 
 import java.util.HashMap;
 import java.util.LinkedList;
