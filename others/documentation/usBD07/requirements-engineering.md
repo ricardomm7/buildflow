@@ -17,9 +17,9 @@
 
 **From the client clarifications:**
 
-> **Question:** Ah?
+> **Question:** Production orders mean the same as a set of operations.
 >
-> **Answer:** No.
+> **Answer:** Definitely no.
 
 
 ### C) Acceptance Criteria

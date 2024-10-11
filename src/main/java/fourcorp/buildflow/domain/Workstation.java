@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Workstation implements Identifiable<String> {
-    Map<String, List<Workstation>> machinesPerOperation = new HashMap<>();
     private String idMachine;
     private String operation;
     private int time;

@@ -17,6 +17,11 @@ As a Product Owner, I want to implement a simulator that processes all items acc
 >
 > **Answer:** You can asume, at least for now, that an operation applies to an item just once.
 
+> **Question:** Is it possible for a product to have multiple Bill Of Materials? For example, a product that has a variant with the size small and another with the size big will require different quantities of materials, thus having more than one Bill Of Materials for a single product.
+> 
+> **Answer:** no; different BOMs implies different articles/products.
+Although products from same family or variants may share almost similar BOMs or BOOs.
+
 
 ### C) Acceptance Criteria
 

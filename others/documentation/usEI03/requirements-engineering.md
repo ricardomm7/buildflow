@@ -16,9 +16,9 @@
 
 **From the client clarifications:**
 
-> **Question:** Ah?
+> **Question:** Should the output be the time that passes since the beggining of production until the end of the last operation of the last item, or the time that each item takes since its first operation to it's last to be processed?
 >
-> **Answer:** No.
+> **Answer:** The time diference between the start instant and the end instant of the simulation.
 
 
 ### C) Acceptance Criteria
