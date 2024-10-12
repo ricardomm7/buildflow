@@ -1,13 +1,12 @@
 package fourcorp.buildflow.repository;
 
-import fourcorp.buildflow.domain.Client;
-import fourcorp.buildflow.domain.ClientType;
-import fourcorp.buildflow.domain.Order;
-import fourcorp.buildflow.domain.PriorityOrder;
+import fourcorp.buildflow.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,5 +105,24 @@ class MapLinkedTest {
         p2.newItem(o1, PriorityOrder.HIGH);
 
         assertEquals(p2.searchById(o1.getId()).getId(), o1.getId());
+    }
+
+    @Test
+    void removeAll() {
+        MapLinked<Product, PriorityOrder, String> productPriorityLine = new MapLinked<>();
+
+        productPriorityLine.newItem(new Product("P1", PriorityOrder.HIGH, new LinkedList<>(Arrays.asList("Op1", "Op2"))), PriorityOrder.HIGH);
+        productPriorityLine.newItem(new Product("P2", PriorityOrder.HIGH, new LinkedList<>(Arrays.asList("Op1", "Op3"))), PriorityOrder.MEDIUM);
+        productPriorityLine.newItem(new Product("P3", PriorityOrder.MEDIUM, new LinkedList<>(Arrays.asList("Op4", "Op5"))), PriorityOrder.LOW);
+
+        assertFalse(productPriorityLine.getByKey(PriorityOrder.HIGH).isEmpty());
+        assertFalse(productPriorityLine.getByKey(PriorityOrder.MEDIUM).isEmpty());
+        assertFalse(productPriorityLine.getByKey(PriorityOrder.LOW).isEmpty());
+
+        productPriorityLine.removeAll();
+
+        assertTrue(productPriorityLine.getByKey(PriorityOrder.HIGH).isEmpty());
+        assertTrue(productPriorityLine.getByKey(PriorityOrder.MEDIUM).isEmpty());
+        assertTrue(productPriorityLine.getByKey(PriorityOrder.LOW).isEmpty());
     }
 }

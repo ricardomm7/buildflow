@@ -1,5 +1,6 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.MapLinked;
@@ -24,8 +25,10 @@ public class Reader {
             String[] fields = line.split(",");
             String idItem = fields[0];
             int priority = Integer.parseInt(fields[1]);
+            PriorityOrder priorityOrder = getPriorityOrderFromValue(priority);
+
             LinkedList<String> operations = new LinkedList<>(Arrays.asList(Arrays.copyOfRange(fields, 2, fields.length)));
-            products.put(idItem, new Product(idItem, priority, operations));
+            products.put(idItem, new Product(idItem, priorityOrder, operations));
         }
         br.close();
     }
@@ -44,5 +47,18 @@ public class Reader {
             machinesPerOperation.newItem(maquina, operacao);
         }
         br.close();
+    }
+
+    private static PriorityOrder getPriorityOrderFromValue(int value) {
+        switch (value) {
+            case 1:
+                return PriorityOrder.HIGH;
+            case 2:
+                return PriorityOrder.MEDIUM;
+            case 3:
+                return PriorityOrder.LOW;
+            default:
+                throw new IllegalArgumentException("Invalid priority value: " + value);
+        }
     }
 }
