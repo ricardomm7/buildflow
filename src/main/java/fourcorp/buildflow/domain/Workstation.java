@@ -3,9 +3,9 @@ package fourcorp.buildflow.domain;
 public class Workstation implements Identifiable<String> {
     private String idMachine;
     private String operation;
-    private int time;
+    private double time;
 
-    public Workstation(String idMachine, String operation, int time) {
+    public Workstation(String idMachine, String operation, double time) {
         this.idMachine = idMachine;
         this.operation = operation;
         this.time = time;
@@ -27,7 +27,7 @@ public class Workstation implements Identifiable<String> {
         this.operation = operation;
     }
 
-    public int getTime() {
+    public double getTime() {
         return time;
     }
 

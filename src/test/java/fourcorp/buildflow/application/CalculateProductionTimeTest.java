@@ -1,8 +1,10 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.Repositories;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,8 +19,8 @@ public class CalculateProductionTimeTest {
     @Test
     public void test_calculate_total_production_time_with_available_machines() {
         Reader.products.put("P1", new Product("P1", PriorityOrder.HIGH, Arrays.asList("Op1", "Op2")));
-        Reader.machinesPerOperation.newItem(new Workstation("M1", "Op1", 10), "Op1");
-        Reader.machinesPerOperation.newItem(new Workstation("M2", "Op2", 20), "Op2");
+        Repositories.getInstance().getMachinesPerOperation().create(new Workstation("M1", "Op1", 10), new Operation("OP1"));
+        Repositories.getInstance().getMachinesPerOperation().create(new Workstation("M2", "Op2", 20), new Operation("OP2"));
 
         CalculateProductionTime.calculateTotalProductionTime();
 

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Simulator {
     private Map<String, LinkedList<Product>> operationQueues;  // Map operation name to queue
-    //private PriorityLine<Product, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é o tipo de id do elemento (int, string etc...)
+    //public static MapLinked<Workstation, PriorityOrder, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é as keys (prioridades),terceiro elemento é o tipo de id do elemento (int, string etc...)
     private Map<String, List<Workstation>> availableMachines;      // Map operation name to machines
     private List<Product> allProducts;  // List of all products to simulate
 
@@ -46,7 +46,7 @@ public class Simulator {
                 continue;
             }
 
-            machines.sort(Comparator.comparingInt(Workstation::getTime));
+            machines.sort(Comparator.comparingDouble(Workstation::getTime));
 
             while (!queue.isEmpty()) {
                 Product product = queue.poll();

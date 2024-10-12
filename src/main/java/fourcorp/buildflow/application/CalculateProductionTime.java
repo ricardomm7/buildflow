@@ -2,6 +2,7 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.Repositories;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class CalculateProductionTime {
             boolean skipProduct = false;
 
             for (String operation : product.getOperations()) {
-                LinkedList<Workstation> workstations = (LinkedList<Workstation>) Reader.machinesPerOperation.getByKey(operation);
+                LinkedList<Workstation> workstations = (LinkedList<Workstation>) Repositories.getInstance().getMachinesPerOperation().getMachinesPerOperation().getByKey(operation);
 
                 if (workstations != null && !workstations.isEmpty()) {
                     Workstation fastestWorkstation = findFastestMachine(workstations);
