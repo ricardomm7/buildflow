@@ -111,9 +111,9 @@ class MapLinkedTest {
     void removeAll() {
         MapLinked<Product, PriorityOrder, String> productPriorityLine = new MapLinked<>();
 
-        productPriorityLine.newItem(new Product("P1", PriorityOrder.HIGH, new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op2")))), PriorityOrder.HIGH);
-        productPriorityLine.newItem(new Product("P2", PriorityOrder.HIGH, new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op3")))), PriorityOrder.MEDIUM);
-        productPriorityLine.newItem(new Product("P3", PriorityOrder.MEDIUM, new LinkedList<>(Arrays.asList(new Operation("Op4"), new Operation("Op5")))), PriorityOrder.LOW);
+        productPriorityLine.newItem(new Product("P1", new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op2")))), PriorityOrder.HIGH);
+        productPriorityLine.newItem(new Product("P2", new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op3")))), PriorityOrder.MEDIUM);
+        productPriorityLine.newItem(new Product("P3", new LinkedList<>(Arrays.asList(new Operation("Op4"), new Operation("Op5")))), PriorityOrder.LOW);
 
         assertFalse(productPriorityLine.getByKey(PriorityOrder.HIGH).isEmpty());
         assertFalse(productPriorityLine.getByKey(PriorityOrder.MEDIUM).isEmpty());

@@ -1,14 +1,10 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Product;
-import fourcorp.buildflow.domain.Workstation;
-
-import java.util.*;
-
 public class Simulator {
+    /*
     private Map<String, LinkedList<Product>> operationQueues;  // Map operation name to queue
-    //public static MapLinked<Workstation, PriorityOrder, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é as keys (prioridades),terceiro elemento é o tipo de id do elemento (int, string etc...)
-    private Map<String, List<Workstation>> availableMachines;      // Map operation name to machines
+    //public static MapLinked<Product, PriorityOrder, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é as keys (prioridades),terceiro elemento é o tipo de id do elemento (int, string etc...)
+    private Map<String, List<Workstation>> availableMachines;      // MISTAKEEEE: AS MACHINES JÁ TÊM A OPERAÇÃO DENTRO
     private List<Product> allProducts;  // List of all products to simulate
 
     public Simulator(List<Product> products, List<Workstation> machines) {
@@ -17,7 +13,7 @@ public class Simulator {
         this.availableMachines = new HashMap<>();
 
         for (Workstation machine : machines) {
-            availableMachines.computeIfAbsent(machine.getOperation(), k -> new ArrayList<>()).add(machine);
+            availableMachines.computeIfAbsent(machine.getOperation().getId(), k -> new ArrayList<>()).add(machine);
         }
 
         for (Product product : products) {
@@ -56,5 +52,7 @@ public class Simulator {
             }
         }
     }
+
+     */
 }
 

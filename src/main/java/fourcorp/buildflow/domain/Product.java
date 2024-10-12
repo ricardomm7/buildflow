@@ -1,20 +1,17 @@
 package fourcorp.buildflow.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Product implements Identifiable<String> {
-    Map<String, Product> articles = new HashMap<>();
     private String idItem;
-    private PriorityOrder priority;
-    private List<Operation> operation;
+    //private PriorityOrder priority;
+    private LinkedList<Operation> operation;
 
-    public Product(String idItem, PriorityOrder priority, List<Operation> operations) {
+    public Product(String idItem, List<Operation> operations) {
         this.idItem = idItem;
-        this.priority = priority;
-        this.operation = new ArrayList<>(operations);
+        //this.priority = priority;
+        this.operation = new LinkedList<>(operations);
     }
 
     public String getIdItem() {
@@ -29,10 +26,10 @@ public class Product implements Identifiable<String> {
         return operation;
     }
 
-    public void setOperations(List<Operation> operations) {
+    public void setOperations(LinkedList<Operation> operations) {
         this.operation = operations;
     }
-
+/*
     public PriorityOrder getPriority() {
         return priority;
     }
@@ -40,6 +37,8 @@ public class Product implements Identifiable<String> {
     public void setPriority(PriorityOrder priority) {
         this.priority = priority;
     }
+
+ */
 
     @Override
     public String getId() {

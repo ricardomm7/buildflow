@@ -2,10 +2,12 @@ package fourcorp.buildflow.repository;
 
 public class Repositories {
     private static Repositories instance;
-    private final MachinesPerOperation machinesPerOperation;
+    private final ProductPriorityLine productPriorityLine;
+    private final WorkstationsPerOperation workstationsPerOperation;
 
     public Repositories() {
-        machinesPerOperation = new MachinesPerOperation();
+        productPriorityLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
     }
 
     public static Repositories getInstance() {
@@ -21,8 +23,11 @@ public class Repositories {
         instance = newInstance;
     }
 
-    public MachinesPerOperation getMachinesPerOperation() {
-        return machinesPerOperation;
+    public ProductPriorityLine getProductPriorityRepository() {
+        return productPriorityLine;
     }
 
+    public WorkstationsPerOperation getWorkstationsPerOperation() {
+        return workstationsPerOperation;
+    }
 }

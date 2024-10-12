@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WorkstationFlowAnalyzerTest {
 
@@ -105,8 +104,8 @@ public class WorkstationFlowAnalyzerTest {
 
         MachineFlowAnalyzer.printMachineDependencies();
 
-        String expectedOutput =  "Machine2 : [(Machine3,1)]"+ System.lineSeparator() +
-                                "Machine1 : [(Machine2,1),(Machine3,1)]" + System.lineSeparator();
+        String expectedOutput = "Machine2 : [(Machine3,1)]" + System.lineSeparator() +
+                "Machine1 : [(Machine2,1),(Machine3,1)]" + System.lineSeparator();
         assertEquals(expectedOutput, outContent.toString());
     }
 

@@ -4,17 +4,21 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
-import fourcorp.buildflow.repository.MachinesPerOperation;
+import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
+import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
 
 public class Reader {
-    public static List<Product> products = new ArrayList<>();
-    public static List<Workstation> machines = new ArrayList<>();
+    public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
+    public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
+
+    //public static List<Product> products = new ArrayList<>();
+    //public static List<Workstation> machines = new ArrayList<>();
 
     //private static MachinesPerOperation machinesPerOperation = Repositories.getInstance().getMachinesPerOperation();
 
@@ -29,7 +33,7 @@ public class Reader {
             for (int i = 2; i < fields.length; i++) {
                 operations.add(new Operation(fields[i]));
             }
-            products.add(new Product(idItem, priorityOrder, operations));
+            p.create(new Product(idItem, operations), priorityOrder);
         }
         br.close();
     }
@@ -40,10 +44,10 @@ public class Reader {
         String linha;
         while ((linha = br.readLine()) != null) {
             String[] campos = linha.split(",");
-            Workstation maquina = new Workstation(campos[0], campos[1], Double.parseDouble(campos[2]));
+            Workstation maquina = new Workstation(campos[0], Double.parseDouble(campos[2]));
             Operation operation = new Operation(campos[1]);
             //machinesPerOperation.create(maquina, operation);
-            machines.add(maquina);
+            w.create(maquina, operation);
         }
         br.close();
     }
