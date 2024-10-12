@@ -45,10 +45,15 @@ M044,Assembly,14
 M045,Assembly,17
 M046,Polishing,20
 M047,Inspection,15
-M048,Polishing,12
+M048,Assembly,12
 M049,Assembly,19
 M050,Painting,22
 M051,Inspection,16
 M052,Inspection,11
 M053,Labeling,13
 M054,Inspection,18
+M055,Assembly,23
+M056,Assembly,26
+M057,Assembly,29
+M058,Assembly,30
+M059,Inspection,31

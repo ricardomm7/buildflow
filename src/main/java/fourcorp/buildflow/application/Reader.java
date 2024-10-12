@@ -10,15 +10,13 @@ import fourcorp.buildflow.repository.Repositories;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class Reader {
-    public static Map<String, Product> products = new HashMap<>();
+    public static List<Product> products = new ArrayList<>();
+    public static List<Workstation> machines = new ArrayList<>();
 
-    private static MachinesPerOperation machinesPerOperation = Repositories.getInstance().getMachinesPerOperation();
+    //private static MachinesPerOperation machinesPerOperation = Repositories.getInstance().getMachinesPerOperation();
 
     public static void loadOperations(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -27,8 +25,11 @@ public class Reader {
             String[] fields = line.split(",");
             String idItem = fields[0];
             PriorityOrder priorityOrder = getPriorityOrderFromValue(Integer.parseInt(fields[1]));
-            LinkedList<String> operations = new LinkedList<>(Arrays.asList(Arrays.copyOfRange(fields, 2, fields.length)));
-            products.put(idItem, new Product(idItem, priorityOrder, operations));
+            LinkedList<Operation> operations = new LinkedList<>();
+            for (int i = 2; i < fields.length; i++) {
+                operations.add(new Operation(fields[i]));
+            }
+            products.add(new Product(idItem, priorityOrder, operations));
         }
         br.close();
     }
@@ -41,7 +42,8 @@ public class Reader {
             String[] campos = linha.split(",");
             Workstation maquina = new Workstation(campos[0], campos[1], Double.parseDouble(campos[2]));
             Operation operation = new Operation(campos[1]);
-            machinesPerOperation.create(maquina, operation);
+            //machinesPerOperation.create(maquina, operation);
+            machines.add(maquina);
         }
         br.close();
     }

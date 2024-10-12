@@ -1,14 +1,17 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
 import static fourcorp.buildflow.application.MachineFlowAnalyzer.printMachineDependencies;
+import static fourcorp.buildflow.application.Reader.machines;
 
 public class CalculateProductionTime {
 
@@ -16,20 +19,19 @@ public class CalculateProductionTime {
     public static void calculateTotalProductionTime() {
         System.out.println("\nTotal production time for each product:");
 
-        for (Map.Entry<String, Product> entry : Reader.products.entrySet()) {
-            String productId = entry.getKey();
-            Product product = entry.getValue();
+        for (Product entry : Reader.products) {
+            String productId = entry.getId();
 
             Workstation previousWorkstation = null; // US007
 
             double totalTime = 0;
             boolean skipProduct = false;
 
-            for (String operation : product.getOperations()) {
-                LinkedList<Workstation> workstations = (LinkedList<Workstation>) Repositories.getInstance().getMachinesPerOperation().getMachinesPerOperation().getByKey(operation);
+            for (Operation operation : entry.getOperations()) {
+                List<Workstation> workstations = machines;//Repositories.getInstance().getMachinesPerOperation().getMachinesPerOperation().getByKey(operation);
 
                 if (workstations != null && !workstations.isEmpty()) {
-                    Workstation fastestWorkstation = findFastestMachine(workstations);
+                    Workstation fastestWorkstation = findFastestMachine(new LinkedList<>(workstations));
                     totalTime += fastestWorkstation.getTime();
 
                     if (previousWorkstation != null) { // US007
@@ -37,9 +39,9 @@ public class CalculateProductionTime {
                     }
 
                     previousWorkstation = fastestWorkstation; // US007
-                    //machines.remove(fastestMachine);
+                    machines.remove(fastestWorkstation);
                 } else {
-                    System.out.println("No machine found for the operation: " + operation + " of the article: " + productId);
+                    System.out.println("No machine found for the operation: " + operation.getId() + " of the article: " + productId);
                     skipProduct = true; //
                     break; // Caso seja para contar tempo de produção de produtos mesmo sem máquinas, remover o break e o boolean skipProduct
                 }
@@ -56,7 +58,7 @@ public class CalculateProductionTime {
 
     static Workstation findFastestMachine(LinkedList<Workstation> workstations) {
         Workstation fastestWorkstation = null;
-        int minTime = Integer.MAX_VALUE;
+        double minTime = Integer.MAX_VALUE;
         for (Workstation workstation : workstations) {
             if (workstation.getTime() < minTime) {
                 minTime = workstation.getTime();

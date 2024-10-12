@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class MachineFlowAnalyzer {
 
-    static Map<String, Map<String, Integer>> machineDependencies = new HashMap<>();
+    public static Map<String, Map<String, Integer>> machineDependencies = new HashMap<>();
 
     public static void addDependency(String machine1, String machine2) {
         if (!machineDependencies.containsKey(machine1)) {

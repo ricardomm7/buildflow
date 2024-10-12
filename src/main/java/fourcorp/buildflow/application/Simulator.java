@@ -21,7 +21,7 @@ public class Simulator {
         }
 
         for (Product product : products) {
-            String firstOperation = product.getOperations().get(0);
+            String firstOperation = String.valueOf(product.getOperations().get(0));
             operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
         }
     }
@@ -29,7 +29,7 @@ public class Simulator {
     // AC1
     public void initializeOperationQueues() {
         for (Product product : allProducts) {
-            String firstOperation = product.getOperations().get(0);
+            String firstOperation = String.valueOf(product.getOperations().get(0));
             operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
         }
     }

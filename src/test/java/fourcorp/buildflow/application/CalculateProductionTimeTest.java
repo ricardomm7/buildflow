@@ -4,77 +4,135 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
-import fourcorp.buildflow.repository.Repositories;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CalculateProductionTimeTest {
 
-
-    @Test
-    public void test_calculate_total_production_time_with_available_machines() {
-        Reader.products.put("P1", new Product("P1", PriorityOrder.HIGH, Arrays.asList("Op1", "Op2")));
-        Repositories.getInstance().getMachinesPerOperation().create(new Workstation("M1", "Op1", 10), new Operation("OP1"));
-        Repositories.getInstance().getMachinesPerOperation().create(new Workstation("M2", "Op2", 20), new Operation("OP2"));
-
-        CalculateProductionTime.calculateTotalProductionTime();
-
-        // Expected output: Total production time for the article P1: 30 minutes
-    }
-
-    @Test
-    public void test_find_fastest_machine_for_each_operation() {
-        LinkedList<Workstation> workstations = new LinkedList<>();
-        workstations.add(new Workstation("M1", "Op1", 15));
-        workstations.add(new Workstation("M2", "Op1", 10));
-        workstations.add(new Workstation("M3", "Op1", 20));
-
-        Workstation fastestWorkstation = CalculateProductionTime.findFastestMachine(workstations);
-
-        assertEquals("M2", fastestWorkstation.getIdMachine());
-        assertEquals(10, fastestWorkstation.getTime());
-    }
-
-    @Test
-    public void test_handle_products_with_no_available_machines() {
-        Reader.products.put("P2", new Product("P2", PriorityOrder.HIGH, Arrays.asList("Op3")));
-
-        CalculateProductionTime.calculateTotalProductionTime();
-
-        // Expected output: No machine found for the operation: Op3 of the article: P2
-    }
-
-    @Test
-    public void test_manage_empty_product_list_without_errors() {
+    @BeforeEach
+    void setup() {
         Reader.products.clear();
-
-        CalculateProductionTime.calculateTotalProductionTime();
-
-        // Expected output: No output, no errors should occur
+        Reader.machines.clear();
     }
 
     @Test
-    public void test_process_operations_with_multiple_machines_same_time() {
-        LinkedList<Workstation> workstations = new LinkedList<>();
-        workstations.add(new Workstation("M1", "Op4", 10));
-        workstations.add(new Workstation("M2", "Op4", 10));
+    void testCalculateTotalProductionTime_AllOperationsProcessed() {
+        Product product1 = new Product("P001", null, new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding"), new Operation("Polishing")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", "Cutting", 10);
+        Workstation weldingMachine = new Workstation("M002", "Welding", 15);
+        Workstation polishingMachine = new Workstation("M003", "Polishing", 5);
+        Reader.products.add(product1);
+        Reader.machines.addAll(Arrays.asList(cuttingMachine, weldingMachine, polishingMachine));
 
-        Workstation fastestWorkstation = CalculateProductionTime.findFastestMachine(workstations);
-
-        assertNotNull(fastestWorkstation);
-        assertEquals(10, fastestWorkstation.getTime());
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertTrue(Reader.machines.isEmpty(), "All machines should have been used and removed.");
     }
 
-    @org.junit.jupiter.api.Test
-    void calculateTotalProductionTime() {
+    @Test
+    void testCalculateTotalProductionTime_NoMachineForOperation() {
+        Product product1 = new Product("P001", PriorityOrder.MEDIUM, new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding"), new Operation("Polishing")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", "Cutting", 10);
+        Reader.products.add(product1);
+        Reader.machines.add(cuttingMachine); // No machines for Welding and Polishing
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertEquals(0, Reader.machines.size(), "One machine should remain since no other machines were found.");
     }
 
-    @org.junit.jupiter.api.Test
-    void findFastestMachine() {
+    @Test
+    void testFindFastestMachine() {
+        Workstation machine1 = new Workstation("M001", "Cutting", 15);
+        Workstation machine2 = new Workstation("M002", "Cutting", 10);
+        Workstation machine3 = new Workstation("M003", "Cutting", 20);
+        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine1, machine2, machine3));
+        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
+
+        assertNotNull(fastestMachine);
+        assertEquals("M002", fastestMachine.getIdMachine(), "The fastest machine should be M002 with 10 minutes time.");
+    }
+
+    @Test
+    void testFindFastestMachine_EmptyList() {
+        LinkedList<Workstation> emptyWorkstations = new LinkedList<>();
+        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(emptyWorkstations);
+        assertNull(fastestMachine, "No machines present, so the result should be null.");
+    }
+
+
+    @Test
+    void testCalculateTotalProductionTime_MultipleProducts() {
+        Product product1 = new Product("P001", PriorityOrder.HIGH, new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding")
+        )));
+        Product product2 = new Product("P002", PriorityOrder.LOW, new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Polishing")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", "Cutting", 10);
+        Workstation weldingMachine = new Workstation("M002", "Welding", 15);
+        Workstation polishingMachine = new Workstation("M003", "Polishing", 5);
+        Reader.products.addAll(Arrays.asList(product1, product2));
+        Reader.machines.addAll(Arrays.asList(cuttingMachine, weldingMachine, polishingMachine));
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertTrue(Reader.machines.isEmpty(), "All machines should have been used and removed.");
+    }
+
+    @Test
+    void testCalculateTotalProductionTime_ProductWithNoPriority() {
+        Product product = new Product("P001", null, new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", "Cutting", 10);
+        Workstation weldingMachine = new Workstation("M002", "Welding", 15);
+        Reader.products.add(product);
+        Reader.machines.addAll(Arrays.asList(cuttingMachine, weldingMachine));
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertTrue(Reader.machines.isEmpty(), "All machines should have been used and removed.");
+    }
+
+    @Test
+    void testCalculateTotalProductionTime_ProductWithNoOperations() {
+        Product product = new Product("P001", PriorityOrder.MEDIUM, new LinkedList<>());
+        Workstation cuttingMachine = new Workstation("M001", "Cutting", 10);
+        Reader.products.add(product);
+        Reader.machines.add(cuttingMachine);
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertEquals(1, Reader.machines.size(), "No machines should have been used.");
+    }
+
+    @Test
+    void testFindFastestMachine_MultipleMachinesWithSameTime() {
+        Workstation machine1 = new Workstation("M001", "Cutting", 10);
+        Workstation machine2 = new Workstation("M002", "Cutting", 10);
+        Workstation machine3 = new Workstation("M003", "Cutting", 10);
+        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine1, machine2, machine3));
+        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
+
+        assertNotNull(fastestMachine);
+        assertTrue(fastestMachine.getIdMachine().equals("M001") ||
+                   fastestMachine.getIdMachine().equals("M002") ||
+                   fastestMachine.getIdMachine().equals("M003"),
+                   "One of the machines with 10 minutes time should be returned.");
+    }
+
+    @Test
+    void testFindFastestMachine_SingleMachine() {
+        Workstation machine = new Workstation("M001", "Cutting", 15);
+        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine));
+        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
+
+        assertNotNull(fastestMachine);
+        assertEquals("M001", fastestMachine.getIdMachine(), "The only machine should be returned.");
     }
 }

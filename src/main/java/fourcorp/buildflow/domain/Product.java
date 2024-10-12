@@ -9,9 +9,9 @@ public class Product implements Identifiable<String> {
     Map<String, Product> articles = new HashMap<>();
     private String idItem;
     private PriorityOrder priority;
-    private List<String> operation;
+    private List<Operation> operation;
 
-    public Product(String idItem, PriorityOrder priority, List<String> operations) {
+    public Product(String idItem, PriorityOrder priority, List<Operation> operations) {
         this.idItem = idItem;
         this.priority = priority;
         this.operation = new ArrayList<>(operations);
@@ -25,11 +25,11 @@ public class Product implements Identifiable<String> {
         this.idItem = idItem;
     }
 
-    public List<String> getOperations() {
+    public List<Operation> getOperations() {
         return operation;
     }
 
-    public void setOperations(List<String> operations) {
+    public void setOperations(List<Operation> operations) {
         this.operation = operations;
     }
 
