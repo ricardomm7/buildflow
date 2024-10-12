@@ -1,30 +1,29 @@
 package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.Identifiable;
-import fourcorp.buildflow.domain.PriorityOrder;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PriorityLine<T extends Identifiable<ID>, ID> {
-    private final Map<PriorityOrder, LinkedList<T>> line = new HashMap<>();
+public class MapLinked<T extends Identifiable<ID>, Q, ID> {
+    private final Map<Q, LinkedList<T>> line = new HashMap<>();
 
-    public void newItem(T value, PriorityOrder priority) {
+    public void newItem(T value, Q key) {
         if (value == null) {
             throw new IllegalArgumentException("Value cannot be null");
         }
-        List<T> valueList = line.computeIfAbsent(priority, k -> new LinkedList<>());
+        List<T> valueList = line.computeIfAbsent(key, k -> new LinkedList<>());
         valueList.add(value);
     }
 
-    public List<T> getByPriority(PriorityOrder priority) {
-        return new LinkedList<>(line.getOrDefault(priority, new LinkedList<>()));
+    public List<T> getByKey(Q key) {
+        return new LinkedList<>(line.getOrDefault(key, new LinkedList<>()));
     }
 
-    public void remove(T value, PriorityOrder priority) {
-        LinkedList<T> orderList = line.get(priority);
+    public void remove(T value, Q key) {
+        LinkedList<T> orderList = line.get(key);
         if (orderList != null) {
             orderList.remove(value);
         }
@@ -39,6 +38,10 @@ public class PriorityLine<T extends Identifiable<ID>, ID> {
             }
         }
         return null;
+    }
+
+    public void removeAll() {
+        line.clear();
     }
 }
 

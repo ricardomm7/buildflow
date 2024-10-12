@@ -12,11 +12,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PriorityLineTest {
+class MapLinkedTest {
 
     @Test
     void newItem() {
-        PriorityLine p1 = new PriorityLine();
+        MapLinked<Order, PriorityOrder, String> p1 = new MapLinked();
 
         Order o1 = new Order(
                 new ArrayList<>(),
@@ -55,9 +55,9 @@ class PriorityLineTest {
         p1.newItem(o3, PriorityOrder.HIGH);
         p1.newItem(o4, PriorityOrder.LOW);
 
-        List<Order> ordersPriority1 = p1.getByPriority(PriorityOrder.HIGH);
-        List<Order> ordersPriority2 = p1.getByPriority(PriorityOrder.MEDIUM);
-        List<Order> ordersPriority3 = p1.getByPriority(PriorityOrder.LOW);
+        List<Order> ordersPriority1 = p1.getByKey(PriorityOrder.HIGH);
+        List<Order> ordersPriority2 = p1.getByKey(PriorityOrder.MEDIUM);
+        List<Order> ordersPriority3 = p1.getByKey(PriorityOrder.LOW);
 
         assertTrue(ordersPriority1.contains(o1), "Order o1 should be in priority 1");
         assertTrue(ordersPriority1.contains(o3), "Order o3 should be in priority 1");
@@ -78,14 +78,14 @@ class PriorityLineTest {
                 LocalDate.now(),
                 LocalDate.MAX
         );
-        PriorityLine p2 = new PriorityLine();
+        MapLinked<Order, PriorityOrder, String> p2 = new MapLinked();
         p2.newItem(o1, PriorityOrder.HIGH);
 
-        List<Order> ordersPriority1 = p2.getByPriority(PriorityOrder.HIGH);
+        List<Order> ordersPriority1 = p2.getByKey(PriorityOrder.HIGH);
 
         p2.remove(o1, PriorityOrder.HIGH);
 
-        List<Order> ordersPriority2 = p2.getByPriority(PriorityOrder.HIGH);
+        List<Order> ordersPriority2 = p2.getByKey(PriorityOrder.HIGH);
 
 
         assertEquals(1, ordersPriority1.size(), "Error 1");
@@ -102,9 +102,9 @@ class PriorityLineTest {
                 LocalDate.now(),
                 LocalDate.MAX
         );
-        PriorityLine p2 = new PriorityLine();
+        MapLinked<Order, PriorityOrder, String> p2 = new MapLinked();
         p2.newItem(o1, PriorityOrder.HIGH);
 
-        assertTrue(p2.searchById(o1.getId()).getId().equals(o1.getId()));
+        assertEquals(p2.searchById(o1.getId()).getId(), o1.getId());
     }
 }

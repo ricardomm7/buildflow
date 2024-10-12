@@ -25,7 +25,7 @@ public class CalculateProductionTime {
             boolean skipProduct = false;
 
             for (String operation : product.getOperations()) {
-                LinkedList<Workstation> workstations = Reader.machinesPerOperation.get(operation);
+                LinkedList<Workstation> workstations = (LinkedList<Workstation>) Reader.machinesPerOperation.getByKey(operation);
 
                 if (workstations != null && !workstations.isEmpty()) {
                     Workstation fastestWorkstation = findFastestMachine(workstations);

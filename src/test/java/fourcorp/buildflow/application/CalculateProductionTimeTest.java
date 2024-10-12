@@ -16,8 +16,8 @@ public class CalculateProductionTimeTest {
     @Test
     public void test_calculate_total_production_time_with_available_machines() {
         Reader.products.put("P1", new Product("P1", 1, Arrays.asList("Op1", "Op2")));
-        Reader.machinesPerOperation.put("Op1", new LinkedList<>(Arrays.asList(new Workstation("M1", "Op1", 10))));
-        Reader.machinesPerOperation.put("Op2", new LinkedList<>(Arrays.asList(new Workstation("M2", "Op2", 20))));
+        Reader.machinesPerOperation.newItem(new Workstation("M1", "Op1", 10), "Op1");
+        Reader.machinesPerOperation.newItem(new Workstation("M2", "Op2", 20), "Op2");
 
         CalculateProductionTime.calculateTotalProductionTime();
 

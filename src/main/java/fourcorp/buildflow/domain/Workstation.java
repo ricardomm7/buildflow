@@ -1,9 +1,5 @@
 package fourcorp.buildflow.domain;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class Workstation implements Identifiable<String> {
     private String idMachine;
     private String operation;
