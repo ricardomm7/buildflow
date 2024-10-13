@@ -2,6 +2,7 @@ package fourcorp.buildflow.domain;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Product implements Identifiable<String> {
     private String idItem;
@@ -68,5 +69,18 @@ public class Product implements Identifiable<String> {
     @Override
     public String getId() {
         return idItem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return idItem.equalsIgnoreCase(product.idItem);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(idItem);
     }
 }

@@ -8,6 +8,10 @@ import java.util.List;
 public class ProductPriorityLine {
     private static MapLinked<Product, PriorityOrder, String> productPriorityLine;
 
+    public ProductPriorityLine() {
+        productPriorityLine = new MapLinked<>();
+    }
+
     public void create(Product product, PriorityOrder priority) {
         productPriorityLine.newItem(product, priority);
     }

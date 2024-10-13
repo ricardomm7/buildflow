@@ -7,16 +7,25 @@ import fourcorp.buildflow.repository.MapLinked;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Simulator {
     private MapLinked<Operation, Product, String> operationQueues;
     private List<Product> products;
-    private WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
+    private WorkstationsPerOperation w;
 
     public Simulator() {
         this.operationQueues = new MapLinked<>();
         products = new ArrayList<>();
+        w = Repositories.getInstance().getWorkstationsPerOperation();
+    }
+
+    public Simulator(WorkstationsPerOperation e) {
+        this.operationQueues = new MapLinked<>();
+        products = new ArrayList<>();
+        w = e;
     }
 
     // AC1: Create preliminary queues for each operation
@@ -53,15 +62,17 @@ public class Simulator {
             while (!operationQueue.isEmpty()) {
                 Operation currentOperation = operationQueue.poll(); // Remove a primeira operação da fila
 
+                System.out.println("Current operation: " + currentOperation.getId());
                 // Encontra a melhor máquina disponível para a operação atual
-                Workstation bestMachine = findBestMachineForOperation(currentOperation.getId());
+                Workstation bestMachine = findBestMachineForOperation(currentOperation);
 
                 if (bestMachine != null && bestMachine.isAvailable()) {
-                    // Processa a operação com a máquina
+                    System.out.println("The best machine: " + bestMachine.getId());
                     bestMachine.processProduct(product);
                 } else {
                     // Se não houver máquina disponível, a operação é pendente
                     pendingOperations.add(currentOperation);
+                    System.out.println("No best machine found.");
                 }
             }
 
@@ -70,20 +81,17 @@ public class Simulator {
         }
     }
 
-    private Workstation findBestMachineForOperation(String operationName) {
-        List<Workstation> workstations = w.getProductsByPriority(new Operation(operationName));
-
-        // Usar uma priority queue para encontrar a máquina mais rápida disponível
-        PriorityQueue<Workstation> availableMachines = new PriorityQueue<>(
-                Comparator.comparingDouble(Workstation::getTime)
-        );
+    public Workstation findBestMachineForOperation(Operation operation) {
+        List<Workstation> workstations = w.getWorkstationsByOperation(operation);
+        Workstation bestMachine = null;
 
         for (Workstation machine : workstations) {
             if (machine.isAvailable()) {
-                availableMachines.add(machine);
+                if (bestMachine == null || machine.getTime() < bestMachine.getTime()) {
+                    bestMachine = machine;
+                }
             }
         }
-
-        return availableMachines.isEmpty() ? null : availableMachines.poll();
+        return bestMachine;
     }
 }

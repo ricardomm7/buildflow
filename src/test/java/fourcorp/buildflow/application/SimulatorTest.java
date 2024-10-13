@@ -2,14 +2,19 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.WorkstationsPerOperation;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SimulatorTest {
 
@@ -67,10 +72,59 @@ class SimulatorTest {
 
     @Test
     void processItems() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(new Operation("Cutting"), new Operation("Welding"))));
+        Product product2 = new Product("P002", new LinkedList<>(Arrays.asList(new Operation("Assembling"), new Operation("Painting"))));
+
+        List<Product> products = Arrays.asList(product1, product2);
+
+        WorkstationsPerOperation w = new WorkstationsPerOperation();
+
+        Simulator simulator = new Simulator(w);
+        simulator.createOperationQueues(products);
+
+        Workstation ws1 = new Workstation("WS1", 10);
+        Workstation ws2 = new Workstation("WS2", 8);
+        Workstation ws3 = new Workstation("WS1", 10);
+        Workstation ws4 = new Workstation("WS2", 8);
+
+        w.create(ws1, new Operation("Cutting"));
+        w.create(ws2, new Operation("Assembling"));
+        w.create(ws3, new Operation("Welding"));
+        w.create(ws4, new Operation("Painting"));
+
+        simulator.processItems();
+
+        String output = outContent.toString();
+
+        assertTrue(output.contains("Current operation: Cutting"), "The cutting operation should have been processed.");
+        assertTrue(output.contains("The best machine: WS1"), "The WS1 machine should have been used for the cutting operation.");
+
+        System.setOut(System.out);
     }
 
     @Test
     void findBestMachineForOperation() {
+        // Mock de workstations e operações
+        Workstation ws1 = new Workstation("WS1", 10);
+        Workstation ws2 = new Workstation("WS2", 5);
+        Workstation ws3 = new Workstation("WS3", 15);
+        ws3.setAvailable(false);
 
+        Operation operation = new Operation("Welding");
+
+        // Configurar o repositório de workstations
+        WorkstationsPerOperation w = new WorkstationsPerOperation();
+        w.create(ws1, operation);
+        w.create(ws2, operation);
+        w.create(ws3, operation);
+
+        Simulator simulator = new Simulator(w);
+
+        Workstation bestMachine = simulator.findBestMachineForOperation(operation);
+
+        assertEquals("WS2", bestMachine.getId(), "The fastest machine available should be WS2.");
     }
 }

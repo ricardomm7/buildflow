@@ -20,12 +20,13 @@ class SystemUsers{
     password
     name
     NIF
+    adress
     phoneNumber
 }
 class PlantFloorManager{
 
 }
-class ProductionManager{
+class ProductManager{
 
 }
 
@@ -55,6 +56,7 @@ class Machine {
 class Employee {
     name
     NIF
+    address
     phoneNumber
     birthdate
 }
@@ -73,59 +75,62 @@ class Workstation {
     type
 }
 
-'class Factory {
-   ' name
-   ' specialty
-'}
+class Factory {
+    name
+    specialty
+    address
+}
 
 class Order {
-    product(s)
     orderDate
     deliveryDate
+    adress
 }
 
 class Client {
     name
+    type
     NIF
+    address
     phoneNumber
 }
 
-class Address {
-    street
-    city
-    zipcode
-}
-
-class ProductFamily {
+class Variant{
+    color
+    size
 
 }
 
-Administrator"1" -- "1" SystemUsers: is a >
-ProductionManager"1" -- "1" SystemUsers: is a >
-PlantFloorManager"1" -- "1" SystemUsers: is a >
+class BOM{
+    quantity
+
+}
+
+Administrator"1..*" -- "1..*" SystemUsers: is a >
+ProductManager"1..*" -- "1..*" SystemUsers: is a >
+PlantFloorManager"1..*" -- "1..*" SystemUsers: is a >
 Administrator"1..*" -- "1..*" SystemUsers: manages >
 PlantFloorManager"1..*" -- "1..*" ProductionLine: specifies >
-Workstation "1" -- "0..*" Machine: has >
-ProductionManager "1..*" -- "1..*" Product: manages >
+ProductionLine "1" -- "1..*" Machine: has >
+ProductManager "1..*" -- "1..*" Product: controls >
 Component "1..*" -- "1..*" RawMaterial: is made of >
-Product "1" -- "1..*" Component : is made of >
-'Component "1" -- "1..*" Operation : is related to >
-'RawMaterial "1" -- "1..*" Operation : is related to >
-Operation "1..*" -- "1..*" Component : creates >
-Order "1" -- "1..*" Operation : has >
+Product "1..*" -- "1..*" Component : is made of >
+
+' assumindo que temos de colocar a Bill Of Materials
+BOM "1" -- "1..*" RawMaterial : has <
+BOM "1" -- "1..*" Product : has <
+BOM "1" -- "1..*" Component : has <
+Operation "1" -- "1..*" Product : creates >
+Operation "1" -- "1" BOM : has >
+Order "1" -- "1..*" Operation : forwards >
+
 'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
 Machine "1..*" -- "1" Operation : processes >
-Employee "0..*" -- "0..*" Machine : operates >
-Workstation "1" -- "1..*" ProductionLine : part of >
-'Factory "1" -- "1..*" Workstation : has >
+Employee "0..*" -- "1..*" Machine : is operated by <
+Workstation "1" -- "1..*" ProductionLine : has >
+Factory "1" -- "1..*" Workstation : has >
+Product "1..*"-- "1..*" Variant : has >
+Order "1" -- "1..*" Product : has >
 
-Client "1..*" -- "1" Address : has >
-'Factory "1" -- "1" Address : has >
-Order "0..*" -- "1" Address : to be delivered >
-Employee "1..*" -- "1" Address : has >
-SystemUsers "1..*" -- "1" Address : has >
-
-Product "1..*" -- "1" ProductFamily : is part of >
-ProductionLine "1" -- "1..*" Operation : consists of >
 @enduml

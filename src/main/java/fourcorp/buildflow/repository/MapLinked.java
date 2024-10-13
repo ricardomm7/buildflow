@@ -49,9 +49,18 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
         if (value == null) {
             throw new IllegalArgumentException("Value cannot be null");
         }
-        List<T> valueList = line.computeIfAbsent(key, k -> new LinkedList<>());
+        for (Q existingKey : line.keySet()) {
+            if (existingKey.equals(key)) {
+                List<T> valueList = line.get(existingKey);
+                valueList.add(value);
+                return;
+            }
+        }
+        LinkedList<T> valueList = new LinkedList<>();
         valueList.add(value);
+        line.put(key, valueList);
     }
+
 
     /**
      * Retrieves all items associated with the given key {@code Q}. If no items are associated with
@@ -102,5 +111,14 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
      */
     public void removeAll() {
         line.clear();
+    }
+
+    /**
+     * Returns a list of all the keys present in the map.
+     *
+     * @return A list of keys of type {@code Q} present in the map.
+     */
+    public List<Q> getKeys() {
+        return new LinkedList<>(line.keySet());
     }
 }
