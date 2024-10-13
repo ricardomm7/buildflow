@@ -1,58 +1,90 @@
-package fourcorp.buildflow.application;
+/*package fourcorp.buildflow.application;
+
+import fourcorp.buildflow.domain.Operation;
+import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.Repositories;
+
+import java.util.*;
+
 
 public class Simulator {
-    /*
-    private Map<String, LinkedList<Product>> operationQueues;  // Map operation name to queue
-    //public static MapLinked<Product, PriorityOrder, String> operationQueues; // 1º elemento é o que vai estar na linked list, segundo elemento é as keys (prioridades),terceiro elemento é o tipo de id do elemento (int, string etc...)
-    private Map<String, List<Workstation>> availableMachines;      // MISTAKEEEE: AS MACHINES JÁ TÊM A OPERAÇÃO DENTRO
-    private List<Product> allProducts;  // List of all products to simulate
+    private Map<String, Queue<Product>> operationQueues;
+    private Repositories repositories;
 
-    public Simulator(List<Product> products, List<Workstation> machines) {
-        this.allProducts = products;
+
+    public Simulator() {
         this.operationQueues = new HashMap<>();
-        this.availableMachines = new HashMap<>();
+        this.repositories = Repositories.getInstance();
+    }
 
-        for (Workstation machine : machines) {
-            availableMachines.computeIfAbsent(machine.getOperation().getId(), k -> new ArrayList<>()).add(machine);
-        }
+    // AC1: Create preliminary queues for each operation
 
+    public void createOperationQueues(List<Product> products) {
         for (Product product : products) {
-            String firstOperation = String.valueOf(product.getOperations().get(0));
-            operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
-        }
-    }
-
-    // AC1
-    public void initializeOperationQueues() {
-        for (Product product : allProducts) {
-            String firstOperation = String.valueOf(product.getOperations().get(0));
-            operationQueues.computeIfAbsent(firstOperation, k -> new LinkedList<>()).add(product);
-        }
-    }
-
-    // AC2
-    public void processOperations() {
-        for (Map.Entry<String, LinkedList<Product>> entry : operationQueues.entrySet()) {
-            String operation = entry.getKey();
-            LinkedList<Product> queue = entry.getValue();
-
-            List<Workstation> machines = availableMachines.get(operation);
-            if (machines == null || machines.isEmpty()) {
-                System.out.println("No available machines for operation: " + operation);
-                continue;
-            }
-
-            machines.sort(Comparator.comparingDouble(Workstation::getTime));
-
-            while (!queue.isEmpty()) {
-                Product product = queue.poll();
-                Workstation machine = machines.get(0);  // Choose the fastest machine available
-
-                System.out.println("Assigning product " + product.getIdItem() + " to machine " + machine.getIdMachine() + " for operation " + operation);
+            String nextOperation = product.getNextOperation();
+            if (nextOperation != null) {
+                operationQueues
+                        .computeIfAbsent(nextOperation, k -> new LinkedList<>())
+                        .add(product);
             }
         }
     }
 
-     */
-}
+    // AC2: Assign items to machines based on availability and processing time
 
+    public void processItems() {
+        for (Map.Entry<String, Queue<Product>> entry : operationQueues.entrySet()) {
+            String operationName = entry.getKey();
+            Queue<Product> productQueue = entry.getValue();
+
+            // List to keep track of products that couldn't be processed in this cycle
+            List<Product> pendingProducts = new ArrayList<>();
+
+            while (!productQueue.isEmpty()) {
+                Product product = productQueue.poll();
+
+                // Find the fastest available machine for the current operation
+                Workstation bestMachine = findBestMachineForOperation(operationName);
+
+                if (bestMachine != null && bestMachine.isAvailable()) {
+                    // Process the product with the machine
+                    bestMachine.processProduct(product);
+                    // Move to the next operation for the product
+                    product.moveToNextOperation();
+                    // Add the product to the queue for the next operation if there is one
+                    String nextOperation = product.getNextOperation();
+                    if (nextOperation != null) {
+                        operationQueues
+                                .computeIfAbsent(nextOperation, k -> new LinkedList<>())
+                                .add(product);
+                    }
+                } else {
+                    // No machine available, add the product to the pending list
+                    pendingProducts.add(product);
+                }
+            }
+            // Re-queue the pending products at the end
+            productQueue.addAll(pendingProducts);
+        }
+    }
+
+
+
+    private Workstation findBestMachineForOperation(String operationName) {
+        List<Workstation> workstations = repositories.getWorkstationsPerOperation()
+                .getProductsByPriority(new Operation(operationName));
+
+        // Use a priority queue to find the fastest available machine
+        PriorityQueue<Workstation> availableMachines = new PriorityQueue<>(
+                Comparator.comparingDouble(Workstation::getTime)
+        );
+
+        for (Workstation machine : workstations) {
+            if (machine.isAvailable()) {
+                availableMachines.add(machine);
+            }
+        }
+        return availableMachines.isEmpty() ? null : availableMachines.poll();
+    }
+} */
