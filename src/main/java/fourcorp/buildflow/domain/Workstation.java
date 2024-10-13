@@ -10,7 +10,7 @@ public class Workstation implements Identifiable<String> {
         this.idMachine = idMachine;
         //this.operation = new Operation(operation);
         this.time = time;
-       // this.isAvailable = true;
+        // this.isAvailable = true;
     }
 
     public String getIdMachine() {
@@ -49,12 +49,11 @@ public class Workstation implements Identifiable<String> {
     public void setTime(double time) {
         this.time = time;
     }
-    /*public void processProduct(Product product) {
-        // Simulate processing time
+
+    public void processProduct(Product product) {
         this.setAvailable(false);
-        // Simulate the machine finishing the task and becoming available again
         this.setAvailable(true);
-    }*/
+    }
 
     @Override
     public String getId() {
