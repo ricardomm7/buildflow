@@ -82,16 +82,28 @@ class Factory {
 }
 
 class Order {
-    product(s)
     orderDate
     deliveryDate
+    adress
 }
 
 class Client {
     name
+    type
     NIF
     address
     phoneNumber
+}
+
+class Variant{
+    color
+    size
+
+}
+
+class BOM{
+    quantity
+
 }
 
 Administrator"1..*" -- "1..*" SystemUsers: is a >
@@ -103,15 +115,22 @@ ProductionLine "1" -- "1..*" Machine: has >
 ProductManager "1..*" -- "1..*" Product: controls >
 Component "1..*" -- "1..*" RawMaterial: is made of >
 Product "1..*" -- "1..*" Component : is made of >
-Component "1" -- "1..*" Operation : is related to >
-RawMaterial "1" -- "1..*" Operation : is related to >
+
+' assumindo que temos de colocar a Bill Of Materials
+BOM "1" -- "1..*" RawMaterial : has <
+BOM "1" -- "1..*" Product : has <
+BOM "1" -- "1..*" Component : has <
 Operation "1" -- "1..*" Product : creates >
-Order "1" -- "1..*" Operation : has >
+Operation "1" -- "1" BOM : has >
+Order "1" -- "1..*" Operation : forwards >
+
 'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
 Machine "1..*" -- "1" Operation : processes >
-Employee "1..*" -- "1..*" Machine : is operated by <
+Employee "0..*" -- "1..*" Machine : is operated by <
 Workstation "1" -- "1..*" ProductionLine : has >
 Factory "1" -- "1..*" Workstation : has >
+Product "1..*"-- "1..*" Variant : has >
+Order "1" -- "1..*" Product : has >
 
 @enduml
