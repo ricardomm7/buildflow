@@ -34,7 +34,7 @@ public class CalculateProductionTime {
                     List<Workstation> workstations = Repositories.getInstance().getWorkstationsPerOperation().getWorkstationsPerOperation().getByKey(operation);
 
                     if (workstations != null && !workstations.isEmpty()) {
-                        Workstation fastestWorkstation = findFastestMachine(new LinkedList<>(workstations));
+                        Workstation fastestWorkstation = w.findBestMachineForOperation(operation);
                         totalTime += fastestWorkstation.getTime();
 
                         if (previousWorkstation != null) { // US007
@@ -59,20 +59,6 @@ public class CalculateProductionTime {
         printMachineDependencies(); // US007
 
     }
-
-    static Workstation findFastestMachine(LinkedList<Workstation> workstations) {
-        Workstation fastestWorkstation = null;
-        double minTime = Integer.MAX_VALUE;
-        for (Workstation workstation : workstations) {
-            if (workstation.getTime() < minTime) {
-                minTime = workstation.getTime();
-                fastestWorkstation = workstation;
-
-            }
-        }
-        return fastestWorkstation;
-    }
-
 }
 
 
