@@ -20,8 +20,8 @@ public class HelloApplication extends Application {
     public static void main(String[] args) {
         //launch();
         try {
-            Reader.loadOperations("textFiles/artigos.csv");
-            Reader.loadMachines("textFiles/maquinas.csv");
+            Reader.loadOperations("textFiles/articles.csv");
+            Reader.loadMachines("textFiles/workstations.csv");
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;

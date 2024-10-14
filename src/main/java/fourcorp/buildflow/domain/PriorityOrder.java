@@ -2,7 +2,7 @@ package fourcorp.buildflow.domain;
 
 public enum PriorityOrder {
     HIGH(1, "High"),
-    MEDIUM(2, "Medium"),
+    NORMAL(2, "Normal"),
     LOW(3, "Low");
 
     private final int priorityValue;

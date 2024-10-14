@@ -50,12 +50,12 @@ class MapLinkedTest {
         );
 
         p1.newItem(o1, PriorityOrder.HIGH);
-        p1.newItem(o2, PriorityOrder.MEDIUM);
+        p1.newItem(o2, PriorityOrder.NORMAL);
         p1.newItem(o3, PriorityOrder.HIGH);
         p1.newItem(o4, PriorityOrder.LOW);
 
         List<Order> ordersPriority1 = p1.getByKey(PriorityOrder.HIGH);
-        List<Order> ordersPriority2 = p1.getByKey(PriorityOrder.MEDIUM);
+        List<Order> ordersPriority2 = p1.getByKey(PriorityOrder.NORMAL);
         List<Order> ordersPriority3 = p1.getByKey(PriorityOrder.LOW);
 
         assertTrue(ordersPriority1.contains(o1), "Order o1 should be in priority 1");
@@ -112,17 +112,17 @@ class MapLinkedTest {
         MapLinked<Product, PriorityOrder, String> productPriorityLine = new MapLinked<>();
 
         productPriorityLine.newItem(new Product("P1", new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op2")))), PriorityOrder.HIGH);
-        productPriorityLine.newItem(new Product("P2", new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op3")))), PriorityOrder.MEDIUM);
+        productPriorityLine.newItem(new Product("P2", new LinkedList<>(Arrays.asList(new Operation("Op1"), new Operation("Op3")))), PriorityOrder.NORMAL);
         productPriorityLine.newItem(new Product("P3", new LinkedList<>(Arrays.asList(new Operation("Op4"), new Operation("Op5")))), PriorityOrder.LOW);
 
         assertFalse(productPriorityLine.getByKey(PriorityOrder.HIGH).isEmpty());
-        assertFalse(productPriorityLine.getByKey(PriorityOrder.MEDIUM).isEmpty());
+        assertFalse(productPriorityLine.getByKey(PriorityOrder.NORMAL).isEmpty());
         assertFalse(productPriorityLine.getByKey(PriorityOrder.LOW).isEmpty());
 
         productPriorityLine.removeAll();
 
         assertTrue(productPriorityLine.getByKey(PriorityOrder.HIGH).isEmpty());
-        assertTrue(productPriorityLine.getByKey(PriorityOrder.MEDIUM).isEmpty());
+        assertTrue(productPriorityLine.getByKey(PriorityOrder.NORMAL).isEmpty());
         assertTrue(productPriorityLine.getByKey(PriorityOrder.LOW).isEmpty());
     }
 }

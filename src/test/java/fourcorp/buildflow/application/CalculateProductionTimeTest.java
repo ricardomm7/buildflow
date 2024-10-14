@@ -44,7 +44,7 @@ public class CalculateProductionTimeTest {
                 new Operation("Cutting"), new Operation("Welding"), new Operation("Polishing")
         )));
         Workstation cuttingMachine = new Workstation("M001", 10);
-        p.create(product1, PriorityOrder.MEDIUM);
+        p.create(product1, PriorityOrder.NORMAL);
         w.create(cuttingMachine, new Operation("Cutting")); // No machines for Welding and Polishing
 
         CalculateProductionTime.calculateTotalProductionTime();
@@ -114,7 +114,7 @@ public class CalculateProductionTimeTest {
     void testCalculateTotalProductionTime_ProductWithNoOperations() {
         Product product = new Product("P001", new LinkedList<>());
         Workstation cuttingMachine = new Workstation("M001", 10);
-        p.create(product, PriorityOrder.MEDIUM);
+        p.create(product, PriorityOrder.NORMAL);
         w.create(cuttingMachine, new Operation("Cutting"));
 
         CalculateProductionTime.calculateTotalProductionTime();

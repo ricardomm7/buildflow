@@ -24,9 +24,10 @@ public abstract class Reader {
 
     public static void loadOperations(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
+        br.readLine();
         String line;
         while ((line = br.readLine()) != null) {
-            String[] fields = line.split(",");
+            String[] fields = line.split(";");
             String idItem = fields[0];
             PriorityOrder priorityOrder = getPriorityOrderFromValue(fields[1]);
             LinkedList<Operation> operations = new LinkedList<>();
@@ -41,9 +42,10 @@ public abstract class Reader {
 
     public static void loadMachines(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
+        br.readLine();
         String linha;
         while ((linha = br.readLine()) != null) {
-            String[] campos = linha.split(",");
+            String[] campos = linha.split(";");
             Workstation maquina = new Workstation(campos[0], Double.parseDouble(campos[2]));
             Operation operation = new Operation(campos[1]);
             //machinesPerOperation.create(maquina, operation);
@@ -56,8 +58,8 @@ public abstract class Reader {
         switch (value.toUpperCase()) {
             case "HIGH":
                 return PriorityOrder.HIGH;
-            case "MEDIUM":
-                return PriorityOrder.MEDIUM;
+            case "NORMAL":
+                return PriorityOrder.NORMAL;
             case "LOW":
                 return PriorityOrder.LOW;
             default:
