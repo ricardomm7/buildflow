@@ -61,16 +61,20 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
         line.put(key, valueList);
     }
 
-
     /**
      * Retrieves all items associated with the given key {@code Q}. If no items are associated with
      * the key, an empty list is returned.
      *
      * @param key The key for which to retrieve the associated items.
-     * @return A {@code List} of items of type {@code T} associated with the specified key.
+     * @return A {@code LinkedList} of items of type {@code T} associated with the specified key.
      */
-    public List<T> getByKey(Q key) {
-        return new LinkedList<>(line.getOrDefault(key, new LinkedList<>()));
+    public LinkedList<T> getByKey(Q key) {
+        for (Q existingKey : line.keySet()) {
+            if (existingKey.equals(key)) {
+                return new LinkedList<>(line.get(existingKey));
+            }
+        }
+        return new LinkedList<>();
     }
 
     /**

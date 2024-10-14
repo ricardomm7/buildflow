@@ -39,6 +39,8 @@ class Product {
     name
     stock
     manufacturingDate
+    size
+    colour
 }
 
 class Component {

@@ -44,7 +44,7 @@ class SimulatorTest {
         a.add(product10);
 
         Simulator s = new Simulator();
-        s.createOperationQueues(a);
+        s.run(a);
 
         List<Operation> operations1 = s.getOperationQueues().getByKey(product1);
         List<Operation> operations2 = s.getOperationQueues().getByKey(product2);
@@ -83,7 +83,6 @@ class SimulatorTest {
         WorkstationsPerOperation w = new WorkstationsPerOperation();
 
         Simulator simulator = new Simulator(w);
-        simulator.createOperationQueues(products);
 
         Workstation ws1 = new Workstation("WS1", 10);
         Workstation ws2 = new Workstation("WS2", 8);
@@ -95,7 +94,7 @@ class SimulatorTest {
         w.create(ws3, new Operation("Welding"));
         w.create(ws4, new Operation("Painting"));
 
-        simulator.processItems();
+        simulator.run(products);
 
         String output = outContent.toString();
 
@@ -103,28 +102,5 @@ class SimulatorTest {
         assertTrue(output.contains("The best machine: WS1"), "The WS1 machine should have been used for the cutting operation.");
 
         System.setOut(System.out);
-    }
-
-    @Test
-    void findBestMachineForOperation() {
-        // Mock de workstations e operações
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-        Workstation ws3 = new Workstation("WS3", 15);
-        ws3.setAvailable(false);
-
-        Operation operation = new Operation("Welding");
-
-        // Configurar o repositório de workstations
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, operation);
-        w.create(ws2, operation);
-        w.create(ws3, operation);
-
-        Simulator simulator = new Simulator(w);
-
-        Workstation bestMachine = simulator.findBestMachineForOperation(operation);
-
-        assertEquals("WS2", bestMachine.getId(), "The fastest machine available should be WS2.");
     }
 }

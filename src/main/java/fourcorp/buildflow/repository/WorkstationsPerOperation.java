@@ -21,7 +21,7 @@ public class WorkstationsPerOperation {
         return workstationsPerOperation;
     }
 
-    public List<Workstation> getWorkstationsByOperation(Operation operation) {
+    private List<Workstation> getWorkstationsByOperation(Operation operation) {
         List<Workstation> availableWorkstations = new ArrayList<>();
         for (Operation keyOperation : workstationsPerOperation.getKeys()) {
             if (keyOperation.getId().equals(operation.getId())) {
@@ -37,6 +37,18 @@ public class WorkstationsPerOperation {
         return availableWorkstations;
     }
 
+    public Workstation findBestMachineForOperation(Operation operation) {
+        List<Workstation> workstations = getWorkstationsByOperation(operation);
+        Workstation bestMachine = null;
+        for (Workstation machine : workstations) {
+            if (machine.isAvailable()) {
+                if (bestMachine == null || machine.getTime() < bestMachine.getTime()) {
+                    bestMachine = machine;
+                }
+            }
+        }
+        return bestMachine;
+    }
 
     public void removeWorkstation(Workstation b, Operation o) {
         workstationsPerOperation.remove(b, o);

@@ -13,7 +13,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public class Reader {
+public abstract class Reader {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
     public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
 
@@ -28,7 +28,7 @@ public class Reader {
         while ((line = br.readLine()) != null) {
             String[] fields = line.split(",");
             String idItem = fields[0];
-            PriorityOrder priorityOrder = getPriorityOrderFromValue(Integer.parseInt(fields[1]));
+            PriorityOrder priorityOrder = getPriorityOrderFromValue(fields[1]);
             LinkedList<Operation> operations = new LinkedList<>();
             for (int i = 2; i < fields.length; i++) {
                 operations.add(new Operation(fields[i]));
@@ -52,13 +52,13 @@ public class Reader {
         br.close();
     }
 
-    private static PriorityOrder getPriorityOrderFromValue(int value) {
-        switch (value) {
-            case 1:
+    private static PriorityOrder getPriorityOrderFromValue(String value) {
+        switch (value.toUpperCase()) {
+            case "HIGH":
                 return PriorityOrder.HIGH;
-            case 2:
+            case "MEDIUM":
                 return PriorityOrder.MEDIUM;
-            case 3:
+            case "LOW":
                 return PriorityOrder.LOW;
             default:
                 throw new IllegalArgumentException("Invalid priority value: " + value);
