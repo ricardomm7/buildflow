@@ -118,7 +118,7 @@ Order "1" -- "1..*" Operation : has >
 'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
 Machine "1..*" -- "1" Operation : processes >
-Employee "0..*" -- "0..*" Machine : operates >
+Employee "0..*" -- "0..*" Workstation : operates >
 Workstation "1" -- "1..*" ProductionLine : part of >
 'Factory "1" -- "1..*" Workstation : has >
 
