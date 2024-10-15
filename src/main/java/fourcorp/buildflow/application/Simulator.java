@@ -1,9 +1,11 @@
 package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Operation;
+import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.MapLinked;
+import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
@@ -15,25 +17,41 @@ public class Simulator {
     private MapLinked<Operation, Product, String> operationQueues;
     private List<Product> products;
     private final WorkstationsPerOperation w;
+    private final ProductPriorityLine p;
 
     public Simulator() {
         this.operationQueues = new MapLinked<>();
         products = new ArrayList<>();
         w = Repositories.getInstance().getWorkstationsPerOperation();
+        p= Repositories.getInstance().getProductPriorityRepository();
     }
 
-    public Simulator(WorkstationsPerOperation e) {
+    public Simulator(WorkstationsPerOperation e, ProductPriorityLine a) {
         this.operationQueues = new MapLinked<>();
         products = new ArrayList<>();
         w = e;
+        p = a;
     }
 
-    public void run(List<Product> products) {
+    public void runWithoutPriority(List<Product> products) {
         createOperationQueues(products);
         processItems();
     }
 
+    public void runWithPriority(){
+        System.out.println("\n\nNow it's processing the high priority products.");
+        createOperationQueues(p.getProductsByPriority(PriorityOrder.HIGH));
+        processItems();
+        System.out.println("\n\n Now it's processing the normal priority products.");
+        createOperationQueues(p.getProductsByPriority(PriorityOrder.NORMAL));
+        processItems();
+        System.out.println("\n\nNow it's processing the low priority products.");
+        createOperationQueues(p.getProductsByPriority(PriorityOrder.LOW));
+        processItems();
+    }
+
     private void createOperationQueues(List<Product> products) {
+        operationQueues.removeAll();
         for (Product product : products) {
             this.products.add(product);
             for (Operation o : product.getOperations()) {
