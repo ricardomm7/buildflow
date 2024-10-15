@@ -23,7 +23,7 @@ public class Simulator {
         this.operationQueues = new MapLinked<>();
         products = new ArrayList<>();
         w = Repositories.getInstance().getWorkstationsPerOperation();
-        p= Repositories.getInstance().getProductPriorityRepository();
+        p = Repositories.getInstance().getProductPriorityRepository();
     }
 
     public Simulator(WorkstationsPerOperation e, ProductPriorityLine a) {
@@ -33,16 +33,16 @@ public class Simulator {
         p = a;
     }
 
-    public void runWithoutPriority(List<Product> products) {
-        createOperationQueues(products);
+    public void runWithoutPriority() {
+        createOperationQueues(p.getAllProducts());
         processItems();
     }
 
-    public void runWithPriority(){
+    public void runWithPriority() {
         System.out.println("\n\nNow it's processing the high priority products.");
         createOperationQueues(p.getProductsByPriority(PriorityOrder.HIGH));
         processItems();
-        System.out.println("\n\n Now it's processing the normal priority products.");
+        System.out.println("\n\nNow it's processing the normal priority products.");
         createOperationQueues(p.getProductsByPriority(PriorityOrder.NORMAL));
         processItems();
         System.out.println("\n\nNow it's processing the low priority products.");

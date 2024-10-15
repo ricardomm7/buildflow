@@ -11,7 +11,6 @@ import fourcorp.buildflow.repository.WorkstationsPerOperation;
 import java.util.List;
 
 import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
-import static fourcorp.buildflow.application.MachineFlowAnalyzer.printMachineDependencies;
 
 public class CalculateProductionTime {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();

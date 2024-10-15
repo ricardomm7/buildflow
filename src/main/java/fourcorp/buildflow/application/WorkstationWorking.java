@@ -13,8 +13,8 @@ public class WorkstationWorking {
     private Duration averageWaitingTime;
     private HashMap<String, Runing> processinMap = new HashMap<>();
 
-    public void startWorkstation (String idWorkstation ) {
-        Runing runing = processinMap.get(idWorkstation ); // Procura a workstation no mapa
+    public void startWorkstation(String idWorkstation) {
+        Runing runing = processinMap.get(idWorkstation); // Procura a workstation no mapa
         if (runing != null && runing.getStop() != null) { // Se a worksation foi parada antes
             // Calcula o tempo de espera entre stop e o novo start
             Duration waitingTime = Duration.between(runing.getStop(), LocalDateTime.now());
@@ -26,33 +26,34 @@ public class WorkstationWorking {
             }
             runing.setStart(); // Define o tempo de início
             runing.setRuningState(true); // Define que está runing
-            processinMap.put(idWorkstation , runing); // Atualiza o estado no mapa
-            System.out.println("Workstation  " + idWorkstation  + " started at " + runing.getStart());
+            processinMap.put(idWorkstation, runing); // Atualiza o estado no mapa
+            System.out.println("Workstation  " + idWorkstation + " started at " + runing.getStart());
         } else {
-            System.out.println("Workstation  " + idWorkstation  + " is already running.");
+            System.out.println("Workstation  " + idWorkstation + " is already running.");
         }
     }
 
-    public void stopWorkstation (String idWorkstation ) {
-        Runing runing = processinMap.get(idWorkstation ); // Recupera o objeto Runing associado à workstation
+    public void stopWorkstation(String idWorkstation) {
+        Runing runing = processinMap.get(idWorkstation); // Recupera o objeto Runing associado à workstation
         if (runing != null && runing.isRuningState()) {
             runing.setStop(); // Define o tempo de parada
             runing.setRuningState(false); // Define que parou
-            processinMap.put(idWorkstation , runing); // Atualiza o estado no mapa
-            System.out.println("Workstation  " + idWorkstation  + " stopped at " + runing.getStop());
+            processinMap.put(idWorkstation, runing); // Atualiza o estado no mapa
+            System.out.println("Workstation  " + idWorkstation + " stopped at " + runing.getStop());
 
             // Atualiza o tempo de processamento
             processCounter++;
             processingTime = processingTime.plus(Duration.between(runing.getStart(), runing.getStop()));
         } else {
-            System.out.println("Workstation  " + idWorkstation  + " is already stopped or doesn't exist.");
+            System.out.println("Workstation  " + idWorkstation + " is already stopped or doesn't exist.");
         }
     }
 
     public Duration getTotalWaitingTime() {
         return totalWaitingTime;
     }
-    public Duration getTotalProcessingTime(){
+
+    public Duration getTotalProcessingTime() {
         return processingTime;
     }
 

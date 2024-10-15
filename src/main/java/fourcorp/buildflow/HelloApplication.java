@@ -1,9 +1,7 @@
 package fourcorp.buildflow;
 
 import fourcorp.buildflow.application.Reader;
-
-import static fourcorp.buildflow.application.CalculateProductionTime.calculateTotalProductionTime;
-import static fourcorp.buildflow.application.MachineFlowAnalyzer.printMachineDependencies;
+import fourcorp.buildflow.ui.Menu;
 
 public class HelloApplication {
 /*
@@ -27,11 +25,14 @@ public class HelloApplication extends Application {
             System.out.println("Error uploading files: " + e.getMessage());
             return;
         }
+        Menu menu = new Menu();
+        menu.displayMenu();
+        /*
         System.out.println("\nTotal production time for each product:\n");
         calculateTotalProductionTime();// US003
 
         System.out.println("\nDependencies between machines:\n");
         printMachineDependencies(); // US007
-
+         */
     }
 }

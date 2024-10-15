@@ -5,13 +5,11 @@ import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
-import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,20 +32,22 @@ class SimulatorTest {
         Product product9 = new Product("P009", new LinkedList<>(Arrays.asList(new Operation("Stamping"), new Operation("Welding"), new Operation("Inspecting"))));
         Product product10 = new Product("P010", new LinkedList<>(Arrays.asList(new Operation("Molding"), new Operation("Drilling"), new Operation("Packaging"))));
 
-        List<Product> a = new ArrayList<>();
-        a.add(product1);
-        a.add(product2);
-        a.add(product3);
-        a.add(product4);
-        a.add(product5);
-        a.add(product6);
-        a.add(product7);
-        a.add(product8);
-        a.add(product9);
-        a.add(product10);
+        WorkstationsPerOperation w = new WorkstationsPerOperation();
+        ProductPriorityLine o = new ProductPriorityLine();
 
-        Simulator s = new Simulator();
-        s.runWithoutPriority(a);
+        o.create(product1, PriorityOrder.LOW);
+        o.create(product2, PriorityOrder.LOW);
+        o.create(product3, PriorityOrder.LOW);
+        o.create(product4, PriorityOrder.LOW);
+        o.create(product5, PriorityOrder.LOW);
+        o.create(product6, PriorityOrder.LOW);
+        o.create(product7, PriorityOrder.LOW);
+        o.create(product8, PriorityOrder.LOW);
+        o.create(product9, PriorityOrder.LOW);
+        o.create(product10, PriorityOrder.LOW);
+
+        Simulator s = new Simulator(w, o);
+        s.runWithoutPriority();
 
         List<Operation> operations1 = s.getOperationQueues().getByKey(product1);
         List<Operation> operations2 = s.getOperationQueues().getByKey(product2);
@@ -81,11 +81,13 @@ class SimulatorTest {
         Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(new Operation("Cutting"), new Operation("Welding"))));
         Product product2 = new Product("P002", new LinkedList<>(Arrays.asList(new Operation("Assembling"), new Operation("Painting"))));
 
-        List<Product> products = Arrays.asList(product1, product2);
-
         WorkstationsPerOperation w = new WorkstationsPerOperation();
+        ProductPriorityLine p = new ProductPriorityLine();
 
-        Simulator simulator = new Simulator(w, Repositories.getInstance().getProductPriorityRepository());
+        p.create(product1, PriorityOrder.LOW);
+        p.create(product2, PriorityOrder.HIGH);
+
+        Simulator simulator = new Simulator(w, p);
 
         Workstation ws1 = new Workstation("WS1", 10);
         Workstation ws2 = new Workstation("WS2", 8);
@@ -97,7 +99,7 @@ class SimulatorTest {
         w.create(ws3, new Operation("Welding"));
         w.create(ws4, new Operation("Painting"));
 
-        simulator.runWithoutPriority(products);
+        simulator.runWithoutPriority();
 
         String output = outContent.toString();
 
@@ -106,6 +108,7 @@ class SimulatorTest {
 
         System.setOut(System.out);
     }
+
     @Test
     void processItemsWithPriority() {
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -176,7 +179,6 @@ class SimulatorTest {
         assertTrue(output.contains("Processing product " + product2.getId() + " in machine " + ws2.getId() + " - Estimated time: " + ws2.getTime() + " min"), "The assembling operation should have been processed.");
         assertTrue(output.contains("Processing product " + product2.getId() + " in machine " + ws4.getId() + " - Estimated time: " + ws4.getTime() + " min"), "The painting operation should have been processed.");
         assertTrue(output.contains("Processing product " + product8.getId() + " in machine " + ws2.getId() + " - Estimated time: " + ws2.getTime() + " min"), "The assembling operation should have been processed.");
-
 
 
         System.setOut(System.out);

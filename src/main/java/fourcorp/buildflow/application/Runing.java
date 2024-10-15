@@ -2,16 +2,16 @@ package fourcorp.buildflow.application;
 
 import java.time.LocalDateTime;
 
-public class Runing extends WorkstationWorking{
+public class Runing extends WorkstationWorking {
     private LocalDateTime start;
     private LocalDateTime stop;
     private boolean runingState;
 
 
-    public Runing(){
+    public Runing() {
         this.start = null;
-        this.stop=null;
-        this.runingState= false;
+        this.stop = null;
+        this.runingState = false;
     }
 
     public LocalDateTime getStart() {

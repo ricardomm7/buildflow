@@ -3,6 +3,7 @@ package fourcorp.buildflow.repository;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductPriorityLine {
@@ -18,6 +19,15 @@ public class ProductPriorityLine {
 
     public MapLinked<Product, PriorityOrder, String> getProductPriorityLine() {
         return productPriorityLine;
+    }
+
+    public List<Product> getAllProducts() {
+        List<Product> allProducts = new ArrayList<>();
+        for (PriorityOrder priority : productPriorityLine.getKeys()) {
+            List<Product> products = productPriorityLine.getByKey(priority);
+            allProducts.addAll(products);
+        }
+        return allProducts;
     }
 
     public List<Product> getProductsByPriority(PriorityOrder a) {
