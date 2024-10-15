@@ -6,75 +6,60 @@ skinparam shadowing false
 autonumber
 
 actor "Client" as Client
-participant "ProductionLine" as ProductionLine
-participant "Order" as Order
-participant "Map" as Map
-participant "List<Order>" as ListOrder
+participant "MapLinked<T, Q, ID>" as MapLinked
+participant "LinkedList<T>" as ListItems
+participant "T (Item)" as Item
 
-Client -> ProductionLine : newOrder(order, priority)
-activate ProductionLine
+Client -> MapLinked : newItem(item, key)
+activate MapLinked
 
-ProductionLine -> Map : computeIfAbsent(priority)
-activate Map
-Map -> ListOrder : get or create LinkedList<Order>
-deactivate Map
-activate ListOrder
-ListOrder --> ProductionLine : LinkedList<Order>
-deactivate ListOrder
-ProductionLine -> ListOrder : add(order)
-deactivate ListOrder
+MapLinked -> MapLinked : computeIfAbsent(key)
+MapLinked -> ListItems : get or create LinkedList<T>
+activate ListItems
+ListItems --> MapLinked : LinkedList<T>
+deactivate ListItems
 
-ProductionLine -> Client : new order added (success)
-deactivate ProductionLine
+MapLinked -> ListItems : add(item)
+activate ListItems
+ListItems -> MapLinked : (success)
+deactivate ListItems
+MapLinked -> Client : item added (success)
+deactivate MapLinked
 
-Client -> ProductionLine : removeOrderFromPL(orderId)
-activate ProductionLine
+Client -> MapLinked : remove(item, key)
+activate MapLinked
 
-ProductionLine -> ProductionLine : searchOrder(orderId)
-activate ProductionLine
+MapLinked -> ListItems : get(key)
+activate ListItems
+ListItems -> Item : getId()
+activate Item
 
-ProductionLine -> Map : iterate priorities
-activate Map
-Map -> ListOrder : get List<Order>
-deactivate Map
-activate ListOrder
+Item --> ListItems : id matches
+deactivate Item
+ListItems -> MapLinked : remove(item)
+deactivate ListItems
+MapLinked -> Client : item removed (success)
+deactivate MapLinked
 
-ProductionLine -> Order : getId()
-activate Order
-Order --> ProductionLine : id matches
-deactivate Order
+Client -> MapLinked : markItemAsCompleted(itemId)
+activate MapLinked
 
-ProductionLine -> ListOrder : remove(order)
-deactivate ListOrder
-deactivate ProductionLine
+MapLinked -> MapLinked : searchById(itemId)
+activate MapLinked
+MapLinked -> ListItems : iterate through all lists
+deactivate MapLinked
+activate ListItems
+ListItems -> Item : getId()
+activate Item
 
-ProductionLine -> Client : order removed (success)
-deactivate ProductionLine
+Item --> ListItems : id matches
+Item -> Item : setReady(true)
+Item -> Item : setCompletionDate(LocalDate.now())
+Item -> ListItems : (success)
+deactivate Item
+ListItems -> MapLinked : (success)
+deactivate ListItems
 
-Client -> ProductionLine : markOrderAsCompleted(orderId)
-activate ProductionLine
-
-ProductionLine -> ProductionLine : searchOrder(orderId)
-activate ProductionLine
-
-ProductionLine -> Map : iterate priorities
-activate Map
-Map -> ListOrder : get List<Order>
-deactivate Map
-
-ProductionLine -> Order : getId()
-activate Order
-Order --> ProductionLine : id matches
-deactivate Order
-
-ProductionLine -> Order : setReady(true)
-activate Order
-Order -> Order : setDeliveryDate(LocalDate.now())
-deactivate Order
-
-ProductionLine -> ProductionLine : removeOrderFromPL(orderId)
-deactivate ProductionLine
-
-ProductionLine -> Client : order marked as completed
-deactivate ProductionLine
+MapLinked -> Client : item marked as completed
+deactivate MapLinked
 @enduml

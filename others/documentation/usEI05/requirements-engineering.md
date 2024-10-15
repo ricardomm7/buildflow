@@ -27,7 +27,7 @@ of the percentage of execution time relative to the total time.
 
 ### D) Found out Dependencies
 
-* [USEI04](../usEI04), 
+* [USEI04](../usEI04)
 
 ### E) Input and Output Data
 

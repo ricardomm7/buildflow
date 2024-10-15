@@ -1,25 +1,21 @@
 @startuml
 skinparam packageStyle rectangle
 skinparam shadowing false
-skinparam linetype polyline
 
-class ProductionLine {
-    - Map<Integer, LinkedList<Order>> productionLine
-    + newOrder(Order order, Integer priority) : void
-    + removeOrderFromPL(String orderId) : void
-    + searchOrder(String id) : Order
-    + getOrdersByPriority(Integer priority) : LinkedList<Order>
-    + markOrderAsCompleted(String orderId) : void
+class MapLinked {
+    - Map<Q, LinkedList<T>> line
+    + newItem(T value, Q key) : void
+    + getByKey(Q key) : LinkedList<T>
+    + remove(T value, Q key) : void
+    + searchById(ID id) : T
+    + removeAll() : void
+    + getKeys() : List<Q>
+    + isEmpty() : boolean
 }
 
-class Order {
-    - String id
-    - boolean ready
-    - LocalDate deliveryDate
-    + getId() : String
-    + setReady(boolean ready) : void
-    + setDeliveryDate(LocalDate date) : void
+interface Identifiable<ID> {
+    + getId() : ID
 }
 
-ProductionLine --> "*" Order : contains
+MapLinked ..> Identifiable : uses
 @enduml
