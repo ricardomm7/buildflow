@@ -2,7 +2,7 @@ package fourcorp.buildflow.application;
 
 import java.time.LocalDateTime;
 
-public class Runing extends MachineWorking{
+public class Runing extends WorkstationWorking{
     private LocalDateTime start;
     private LocalDateTime stop;
     private boolean runingState;
