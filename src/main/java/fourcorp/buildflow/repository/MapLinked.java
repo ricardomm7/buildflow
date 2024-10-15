@@ -126,6 +126,15 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
         return new LinkedList<>(line.keySet());
     }
 
+    /**
+     * Checks if the map is empty.
+     *
+     * <p>This method determines whether the underlying map contains any entries.
+     * If there are no key-value pairs present in the map, it returns {@code true};
+     * otherwise, it returns {@code false}.
+     *
+     * @return {@code true} if the map contains no entries, {@code false} otherwise.
+     */
     public boolean isEmpty() {
         return line.isEmpty();
     }
