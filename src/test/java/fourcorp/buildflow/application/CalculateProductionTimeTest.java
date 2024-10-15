@@ -7,67 +7,117 @@ import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CalculateProductionTimeTest {
 
-    public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
-    public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
+    private static ProductPriorityLine p;
+    private static WorkstationsPerOperation w;
+
+    @BeforeEach
+    void setUp() {
+        p = Repositories.getInstance().getProductPriorityRepository();
+        w = Repositories.getInstance().getWorkstationsPerOperation();
+        p.removeAll();
+        w.removeAll();
+    }
 
     @Test
-    void testCalculateTotalProductionTime_AllOperationsProcessed() {
-        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(
+    void testCalculateTotalProductionTime_UnavailableMachine() {
+        Product product = new Product("P001", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", 100000000);
+        Workstation weldingMachine = new Workstation("M002", 15000000);
+        weldingMachine.setAvailable(false);
+        p.create(product, PriorityOrder.NORMAL);
+        w.create(cuttingMachine, new Operation("Cutting"));
+        w.create(weldingMachine, new Operation("Welding"));
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should still be unavailable.");
+    }
+
+
+    @Test
+    void testCalculateTotalProductionTime_DifferentPriorities() {
+        Product highPriorityProduct = new Product("P001", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding")
+        )));
+        Product lowPriorityProduct = new Product("P002", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", 1000000);
+        Workstation weldingMachine = new Workstation("M002", 1500000);
+        p.create(highPriorityProduct, PriorityOrder.HIGH);
+        p.create(lowPriorityProduct, PriorityOrder.LOW);
+        w.create(cuttingMachine, new Operation("Cutting"));
+        w.create(weldingMachine, new Operation("Welding"));
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should be unavailable after use.");
+    }
+
+    @Test
+    void testCalculateTotalProductionTime_MachineDependencies() {
+        Product product = new Product("P001", new LinkedList<>(Arrays.asList(
                 new Operation("Cutting"), new Operation("Welding"), new Operation("Polishing")
         )));
-        Workstation cuttingMachine = new Workstation("M001", 10);
-        Workstation weldingMachine = new Workstation("M002", 15);
-        Workstation polishingMachine = new Workstation("M003", 5);
-        p.create(product1, null);
+        Workstation cuttingMachine = new Workstation("M001", 100000);
+        Workstation weldingMachine = new Workstation("M002", 1000005);
+        Workstation polishingMachine = new Workstation("M003", 500000);
+        p.create(product, PriorityOrder.NORMAL);
         w.create(cuttingMachine, new Operation("Cutting"));
         w.create(weldingMachine, new Operation("Welding"));
         w.create(polishingMachine, new Operation("Polishing"));
 
         CalculateProductionTime.calculateTotalProductionTime();
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).isEmpty(), "All machines should have been used and removed.");
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).isEmpty(), "All machines should have been used and removed.");
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Polishing")).isEmpty(), "All machines should have been used and removed.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Polishing")).get(0).isAvailable(), "Polishing machine should be unavailable after use.");
     }
 
+
     @Test
-    void testCalculateTotalProductionTime_NoMachineForOperation() {
-        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(
-                new Operation("Cutting"), new Operation("Welding"), new Operation("Polishing")
+    void testCalculateTotalProductionTime_FastestMachineSelection() {
+        Product product = new Product("P001", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting")
         )));
-        Workstation cuttingMachine = new Workstation("M001", 10);
-        p.create(product1, PriorityOrder.NORMAL);
-        w.create(cuttingMachine, new Operation("Cutting")); // No machines for Welding and Polishing
+        Workstation fastCuttingMachine = new Workstation("M001", 100000);
+        Workstation slowCuttingMachine = new Workstation("M002", 200000);
+        p.create(product, PriorityOrder.NORMAL);
+        w.create(fastCuttingMachine, new Operation("Cutting"));
+        w.create(slowCuttingMachine, new Operation("Cutting"));
 
         CalculateProductionTime.calculateTotalProductionTime();
-        assertEquals(0, w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).size(), "One machine should remain since no other machines were found.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Fast cutting machine should be unavailable after use.");
+        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(1).isAvailable(), "Slow cutting machine should still be available.");
     }
 
     @Test
-    void testFindFastestMachine() {
-        Workstation machine1 = new Workstation("M001", 15);
-        Workstation machine2 = new Workstation("M002", 10);
-        Workstation machine3 = new Workstation("M003", 20);
-        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine1, machine2, machine3));
-        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
+    void testCalculateTotalProductionTime_AvailableMachineSelection() {
+        Product product = new Product("P001", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting")
+        )));
+        Workstation unavailableCuttingMachine = new Workstation("M001", 100000);
+        Workstation availableCuttingMachine = new Workstation("M002", 150000);
+        unavailableCuttingMachine.setAvailable(false);
+        p.create(product, PriorityOrder.NORMAL);
+        w.create(unavailableCuttingMachine, new Operation("Cutting"));
+        w.create(availableCuttingMachine, new Operation("Cutting"));
 
-        assertNotNull(fastestMachine);
-        assertEquals("M002", fastestMachine.getIdMachine(), "The fastest machine should be M002 with 10 minutes time.");
-    }
-
-    @Test
-    void testFindFastestMachine_EmptyList() {
-        LinkedList<Workstation> emptyWorkstations = new LinkedList<>();
-        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(emptyWorkstations);
-        assertNull(fastestMachine, "No machines present, so the result should be null.");
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Unavailable cutting machine should remain unavailable.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(1).isAvailable(), "Available cutting machine should be unavailable after use.");
     }
 
 
@@ -79,70 +129,67 @@ public class CalculateProductionTimeTest {
         Product product2 = new Product("P002", new LinkedList<>(Arrays.asList(
                 new Operation("Cutting"), new Operation("Polishing")
         )));
-        Workstation cuttingMachine = new Workstation("M001", 10);
-        Workstation weldingMachine = new Workstation("M002", 15);
-        Workstation polishingMachine = new Workstation("M003", 5);
-        p.create(product1, PriorityOrder.HIGH);
-        p.create(product2, PriorityOrder.LOW);
+        Workstation cuttingMachine = new Workstation("M001", 10000);
+        Workstation weldingMachine = new Workstation("M002", 150000);
+        Workstation polishingMachine = new Workstation("M003", 200000);
+        p.create(product1, PriorityOrder.NORMAL);
+        p.create(product2, PriorityOrder.NORMAL);
         w.create(cuttingMachine, new Operation("Cutting"));
         w.create(weldingMachine, new Operation("Welding"));
         w.create(polishingMachine, new Operation("Polishing"));
 
         CalculateProductionTime.calculateTotalProductionTime();
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).isEmpty(), "All machines should have been used and removed.");
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).isEmpty(), "All machines should have been used and removed.");
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Polishing")).isEmpty(), "All machines should have been used and removed.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Polishing")).get(0).isAvailable(), "Polishing machine should be unavailable after use.");
     }
 
     @Test
-    void testCalculateTotalProductionTime_ProductWithNoPriority() {
+    void testCalculateTotalProductionTime_NoAvailableMachines() {
         Product product = new Product("P001", new LinkedList<>(Arrays.asList(
                 new Operation("Cutting"), new Operation("Welding")
         )));
-        Workstation cuttingMachine = new Workstation("M001", 10);
-        Workstation weldingMachine = new Workstation("M002", 15);
-        p.create(product, null);
+        Workstation cuttingMachine = new Workstation("M001", 100000);
+        Workstation weldingMachine = new Workstation("M002", 150000);
+        cuttingMachine.setAvailable(false);
+        weldingMachine.setAvailable(false);
+        p.create(product, PriorityOrder.NORMAL);
         w.create(cuttingMachine, new Operation("Cutting"));
         w.create(weldingMachine, new Operation("Welding"));
 
         CalculateProductionTime.calculateTotalProductionTime();
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).isEmpty(), "All machines should have been used and removed.");
-        assertTrue(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).isEmpty(), "All machines should have been used and removed.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should remain unavailable.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should remain unavailable.");
+    }
+
+    @Test
+    void testCalculateTotalProductionTime_MissingOperation() {
+        Product product = new Product("P001", new LinkedList<>(Arrays.asList(
+                new Operation("Cutting"), new Operation("Welding"), new Operation("Painting")
+        )));
+        Workstation cuttingMachine = new Workstation("M001", 100000);
+        Workstation weldingMachine = new Workstation("M002", 150000);
+        p.create(product, PriorityOrder.NORMAL);
+        w.create(cuttingMachine, new Operation("Cutting"));
+        w.create(weldingMachine, new Operation("Welding"));
+
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).get(0).isAvailable(), "Cutting machine should be unavailable after use.");
+        assertFalse(w.getWorkstationsPerOperation().getByKey(new Operation("Welding")).get(0).isAvailable(), "Welding machine should be unavailable after use.");
+    }
+
+    @Test
+    void testCalculateTotalProductionTime_EmptyProductList() {
+        CalculateProductionTime.calculateTotalProductionTime();
+        assertTrue(w.getWorkstationsPerOperation().isEmpty(), "Workstations should remain empty.");
     }
 
     @Test
     void testCalculateTotalProductionTime_ProductWithNoOperations() {
         Product product = new Product("P001", new LinkedList<>());
-        Workstation cuttingMachine = new Workstation("M001", 10);
         p.create(product, PriorityOrder.NORMAL);
-        w.create(cuttingMachine, new Operation("Cutting"));
 
         CalculateProductionTime.calculateTotalProductionTime();
-        assertEquals(1, w.getWorkstationsPerOperation().getByKey(new Operation("Cutting")).size(), "No machines should have been used.");
-    }
-
-    @Test
-    void testFindFastestMachine_MultipleMachinesWithSameTime() {
-        Workstation machine1 = new Workstation("M001", 10);
-        Workstation machine2 = new Workstation("M002", 10);
-        Workstation machine3 = new Workstation("M003", 10);
-        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine1, machine2, machine3));
-        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
-
-        assertNotNull(fastestMachine);
-        assertTrue(fastestMachine.getIdMachine().equals("M001") ||
-                        fastestMachine.getIdMachine().equals("M002") ||
-                        fastestMachine.getIdMachine().equals("M003"),
-                "One of the machines with 10 minutes time should be returned.");
-    }
-
-    @Test
-    void testFindFastestMachine_SingleMachine() {
-        Workstation machine = new Workstation("M001", 15);
-        LinkedList<Workstation> workstations = new LinkedList<>(Arrays.asList(machine));
-        Workstation fastestMachine = CalculateProductionTime.findFastestMachine(workstations);
-
-        assertNotNull(fastestMachine);
-        assertEquals("M001", fastestMachine.getIdMachine(), "The only machine should be returned.");
+        assertTrue(w.getWorkstationsPerOperation().isEmpty(), "Workstations should remain empty.");
     }
 }

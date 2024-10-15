@@ -23,4 +23,8 @@ public class ProductPriorityLine {
     public List<Product> getProductsByPriority(PriorityOrder a) {
         return productPriorityLine.getByKey(a);
     }
+
+    public void removeAll() {
+        productPriorityLine.removeAll();
+    }
 }
