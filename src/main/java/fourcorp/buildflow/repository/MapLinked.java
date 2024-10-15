@@ -125,4 +125,8 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
     public List<Q> getKeys() {
         return new LinkedList<>(line.keySet());
     }
+
+    public boolean isEmpty() {
+        return line.isEmpty();
+    }
 }

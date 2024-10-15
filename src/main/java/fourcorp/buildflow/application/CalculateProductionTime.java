@@ -8,7 +8,6 @@ import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
@@ -19,46 +18,52 @@ public class CalculateProductionTime {
     public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
 
     public static void calculateTotalProductionTime() {
-        System.out.println("\nTotal production time for each product:");
         for (PriorityOrder x : PriorityOrder.values()) {
             for (Product entry : p.getProductsByPriority(x)) {
                 String productId = entry.getId();
 
                 Workstation previousWorkstation = null; // US007
-
                 double totalTime = 0;
                 boolean skipProduct = false;
 
                 for (Operation operation : entry.getOperations()) {
-                    //List<Workstation> workstations = machines;
-                    List<Workstation> workstations = Repositories.getInstance().getWorkstationsPerOperation().getWorkstationsPerOperation().getByKey(operation);
+                    // Recupera as estações de trabalho para a operação
+                    List<Workstation> workstations = Repositories.getInstance()
+                            .getWorkstationsPerOperation()
+                            .getWorkstationsPerOperation()
+                            .getByKey(operation);
 
                     if (workstations != null && !workstations.isEmpty()) {
+                        // Encontra a máquina mais rápida disponível
                         Workstation fastestWorkstation = w.findBestMachineForOperation(operation);
-                        totalTime += fastestWorkstation.getTime();
 
-                        if (previousWorkstation != null) { // US007
-                            addDependency(previousWorkstation.getIdMachine(), fastestWorkstation.getIdMachine());
+                        if (fastestWorkstation != null && fastestWorkstation.isAvailable()) {
+                            // Processa o produto na máquina em uma thread separada
+                            fastestWorkstation.processProduct(entry);
+
+                            totalTime += fastestWorkstation.getTime();
+
+                            if (previousWorkstation != null) { // US007 - Adicionar dependências entre máquinas
+                                addDependency(previousWorkstation.getIdMachine(), fastestWorkstation.getIdMachine());
+                            }
+
+                            previousWorkstation = fastestWorkstation; // Atualiza a máquina anterior
+                        } else {
+                            System.out.println("No machine available for the operation: " + operation.getId() + " of the product: " + productId);
+                            skipProduct = true; // Se não houver máquina disponível, pula o produto
+                            break;
                         }
-
-                        previousWorkstation = fastestWorkstation; // US007
-                        w.removeWorkstation(fastestWorkstation, operation);
                     } else {
-                        System.out.println("No machine found for the operation: " + operation.getId() + " of the article: " + productId);
-                        skipProduct = true; //
-                        break; // Caso seja para contar tempo de produção de produtos mesmo sem máquinas, remover o break e o boolean skipProduct
+                        System.out.println("No machine found for the operation: " + operation.getId() + " of the product: " + productId);
+                        skipProduct = true;
+                        break;
                     }
                 }
 
                 if (!skipProduct) {
-                    System.out.println("Total production time for the article " + productId + ": " + totalTime + " minutes");
+                    System.out.println("Total production time for the product " + productId + ": " + totalTime + " minutes\n");
                 }
             }
         }
-        System.out.println("\nDependencies between machines:");
-        printMachineDependencies(); // US007
-
     }
 }
-
-

@@ -53,4 +53,8 @@ public class WorkstationsPerOperation {
     public void removeWorkstation(Workstation b, Operation o) {
         workstationsPerOperation.remove(b, o);
     }
+
+    public void removeAll() {
+        workstationsPerOperation.removeAll();
+    }
 }
