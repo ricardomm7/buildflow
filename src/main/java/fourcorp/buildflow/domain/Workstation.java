@@ -1,14 +1,53 @@
 package fourcorp.buildflow.domain;
 
+import java.util.HashMap;
+
 public class Workstation implements Identifiable<String> {
     private String idMachine;
     private double time;  // Tempo de execução da operação
     private boolean isAvailable;
+    private long startWaiting;
+    private long stopWaiting;
+    private int waitingCounter;
+    private int oprCounter;
 
     public Workstation(String idMachine, double time) {
         this.idMachine = idMachine;
         this.time = time;
         this.isAvailable = true;
+        this.startWaiting = startWaiting;
+        this.stopWaiting = stopWaiting;
+        this.waitingCounter = waitingCounter;
+        this.oprCounter = oprCounter;
+    }
+    public void setOprounter() {
+        this.oprCounter = oprCounter + 1;
+    }
+
+    public int getOprCounter() {
+        return oprCounter;
+    }
+    public void setWaitingCounter() {
+        this.waitingCounter = waitingCounter + 1;
+    }
+
+    public int getWaitingCounter() {
+        return waitingCounter;
+    }
+
+    public long getStartWaiting(){
+        return startWaiting;
+    }
+
+    public void setStartWaiting() {
+        this.startWaiting = System.currentTimeMillis();
+    }
+    public long getStopWaiting(){
+        return stopWaiting;
+    }
+
+    public void setStopWaiting() {
+        this.stopWaiting = System.currentTimeMillis();
     }
 
     public String getIdMachine() {
@@ -58,6 +97,45 @@ public class Workstation implements Identifiable<String> {
             Thread.currentThread().interrupt();
             //System.out.println("Execução interrompida para a máquina " + idMachine);
         }
+    }
+    HashMap<String, Long> timeMap = new HashMap<>();
+    HashMap<String, Long> waitingMap = new HashMap<>();
+
+    // conta e guarda o temp de uma operação
+    public void setTimePerOperation (String idWorkstation, long time){
+        long tmp = timeMap.get(idWorkstation);
+        tmp = time + tmp;
+        timeMap.put(idWorkstation,tmp);
+    }
+    //inica o tempo de começo de espera
+    public void startWaiting(String idWorkstation, Workstation workstation) {
+        workstation.setStartWaiting();
+    }
+    //da stop a espera e guarda o tempo de espera
+    public void stopWaiting (String idWorkstation, Workstation workstation){
+        workstation.setStopWaiting();
+        workstation.setWaitingCounter();
+        long waiting = workstation.getStartWaiting() - workstation.getStopWaiting();
+        waitingMap.put(idWorkstation,waiting);
+
+    }
+    public long getTotalTimePerOperation(String idWorkstation){
+        long time =timeMap.get(idWorkstation);
+        return time;
+    }
+    public long getTotalWaitingTimePerOperation(String idWorkstation){
+        long time =waitingMap.get(idWorkstation);
+        return time;
+    }
+    public long getAverageTotalTimePerOperation(String idWorkstation,Workstation workstation){
+        long time =timeMap.get(idWorkstation);
+        time = time/workstation.getOprCounter();
+        return time;
+    }
+    public long getAverageTotalWaitingTimePerOperation(String idWorkstation,Workstation workstation){
+        long time =timeMap.get(idWorkstation);
+        time = time/workstation.getWaitingCounter();
+        return time;
     }
 
     @Override
