@@ -1,5 +1,6 @@
-package fourcorp.buildflow.ui;
+package s;
 
+import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
@@ -9,9 +10,11 @@ import java.util.Scanner;
 
 public class Menu {
     private final Scanner scanner;
+    private final Simulator s; // Instanciar o simulador apenas uma vez
 
     public Menu() {
         scanner = new Scanner(System.in);
+        s = new Simulator(); // Criar o simulador no início e manter a instância
     }
 
     public void displayMenu() {
@@ -20,7 +23,9 @@ public class Menu {
             System.out.println("1. Simulate production without priority order.");
             System.out.println("2. Simulate production with priority order.");
             System.out.println("3. See the uploaded products by priority.");
-            System.out.println("4. Exit");
+            System.out.println("4. See Production time.");
+            System.out.println("5. See machines dependencies.");
+            System.out.println("9. Exit");
             System.out.print("Choose an option: ");
 
             int choice = getUserChoice();
@@ -33,7 +38,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 1 && choice <= 4) {
+                if (choice >= 1 && choice <= 9) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -45,7 +50,6 @@ public class Menu {
     }
 
     private void handleChoice(int choice) {
-        Simulator s = new Simulator();
         switch (choice) {
             case 1:
                 s.runWithoutPriority();
@@ -62,6 +66,24 @@ public class Menu {
                 }
                 break;
             case 4:
+                System.out.println("Calculating Production time");
+                if (s.getProducts().isEmpty()) {
+                    System.out.println("No production time data available. Please run the simulation first (Option 1 or 2).");
+                } else {
+                    s.printProductionTimePerProduct();
+                    s.printTotalProductionTime();
+                }
+                break;
+
+            case 5:
+                System.out.println("Show the machines dependencies");
+                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
+                    System.out.println("No dependencies found. Please run the simulation first (Option 1 or 2).");
+                } else {
+                    s.printMachineDependencies();
+                }
+                break;
+            case 9:
                 System.out.println("Exiting...");
                 scanner.close();
                 System.exit(0);

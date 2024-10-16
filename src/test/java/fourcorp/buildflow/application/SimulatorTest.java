@@ -183,4 +183,78 @@ class SimulatorTest {
 
         System.setOut(System.out);
     }
+
+    @Test
+    void calculateTotalProductionTimeTest() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(new Operation("Cutting"), new Operation("Welding"))));
+        Product product2 = new Product("P002", new LinkedList<>(Arrays.asList(new Operation("Assembling"), new Operation("Painting"))));
+
+        Workstation ws1 = new Workstation("WS1", 10);
+        Workstation ws2 = new Workstation("WS2", 8);
+        Workstation ws3 = new Workstation("WS3", 12);
+        Workstation ws4 = new Workstation("WS4", 15);
+
+        WorkstationsPerOperation workstations = new WorkstationsPerOperation();
+        workstations.create(ws1, new Operation("Cutting"));
+        workstations.create(ws2, new Operation("Welding"));
+        workstations.create(ws3, new Operation("Assembling"));
+        workstations.create(ws4, new Operation("Painting"));
+
+        ProductPriorityLine productLine = new ProductPriorityLine();
+        productLine.create(product1, PriorityOrder.LOW);
+        productLine.create(product2, PriorityOrder.HIGH);
+
+        Simulator simulator = new Simulator(workstations, productLine);
+        simulator.runWithoutPriority();
+
+        double totalProductionTime = simulator.getTotalProductionTime();
+        List<Double> productionTimePerProduct = simulator.getProductionTimePerProduct();
+
+        assertEquals(45.0, totalProductionTime, 0.01, "The total production time should be 45 minutes (18 + 27).");
+        assertEquals(2, productionTimePerProduct.size(), "There should be production times for 2 products.");
+        assertTrue(productionTimePerProduct.contains(18.0), "The production time for product P001 should be 18 minutes (10 + 8).");
+        assertTrue(productionTimePerProduct.contains(27.0), "The production time for product P002 should be 27 minutes (12 + 15).");
+
+    }
+
+    @Test
+    void CalculateProductionsTimeTest() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(new Operation("Cutting"), new Operation("Welding"))));
+        Product product2 = new Product("P002", new LinkedList<>(Arrays.asList(new Operation("Assembling"), new Operation("Painting"))));
+
+        Workstation ws1 = new Workstation("WS1", 10);
+        Workstation ws2 = new Workstation("WS2", 8);
+        Workstation ws3 = new Workstation("WS3", 12);
+        Workstation ws4 = new Workstation("WS4", 15);
+
+        WorkstationsPerOperation workstations = new WorkstationsPerOperation();
+        workstations.create(ws1, new Operation("Cutting"));
+        workstations.create(ws2, new Operation("Welding"));
+        workstations.create(ws3, new Operation("Assembling"));
+        workstations.create(ws4, new Operation("Painting"));
+
+        ProductPriorityLine productLine = new ProductPriorityLine();
+        productLine.create(product1, PriorityOrder.LOW);
+        productLine.create(product2, PriorityOrder.HIGH);
+
+        Simulator simulator = new Simulator(workstations, productLine);
+        simulator.runWithoutPriority();
+
+
+        double totalProductionTime = simulator.getTotalProductionTime();
+        List<Double> productionTimePerProduct = simulator.getProductionTimePerProduct();
+
+        assertEquals(45.0, totalProductionTime, 0.01, "The total production time should be 45 minutes (18 + 27).");
+        assertEquals(2, productionTimePerProduct.size(), "There should be production times for 2 products.");
+        assertTrue(productionTimePerProduct.contains(18.0), "The production time for product P001 should be 18 minutes (10 + 8).");
+        assertTrue(productionTimePerProduct.contains(27.0), "The production time for product P002 should be 27 minutes (12 + 15).");
+    }
+
+
 }

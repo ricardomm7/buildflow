@@ -10,7 +10,6 @@ import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
 import java.util.List;
 
-import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
 
 public class CalculateProductionTime {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
@@ -21,7 +20,6 @@ public class CalculateProductionTime {
             for (Product entry : p.getProductsByPriority(x)) {
                 String productId = entry.getId();
 
-                Workstation previousWorkstation = null; // US007
                 double totalTime = 0;
                 boolean skipProduct = false;
 
@@ -42,11 +40,6 @@ public class CalculateProductionTime {
 
                             totalTime += fastestWorkstation.getTime();
 
-                            if (previousWorkstation != null) { // US007 - Adicionar dependências entre máquinas
-                                addDependency(previousWorkstation.getIdMachine(), fastestWorkstation.getIdMachine());
-                            }
-
-                            previousWorkstation = fastestWorkstation; // Atualiza a máquina anterior
                         } else {
                             System.out.println("No machine available for the operation: " + operation.getId() + " of the product: " + productId);
                             skipProduct = true; // Se não houver máquina disponível, pula o produto
@@ -65,4 +58,5 @@ public class CalculateProductionTime {
             }
         }
     }
+
 }

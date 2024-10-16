@@ -37,13 +37,13 @@ public class Workstation implements Identifiable<String> {
 
     public void processProduct(Product product) {
         this.setAvailable(false);
-        System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
+        //System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
 
         // Simular o processamento em uma nova thread
         new Thread(() -> {
             simulateExecutionTime();  // Simular o tempo de execução
             this.setAvailable(true);  // Máquina fica disponível novamente após o tempo
-            System.out.println("Machine " + idMachine + " is now available again.");
+            //System.out.println("Machine " + idMachine + " is now available again.");
         }).start();
     }
 
@@ -61,7 +61,7 @@ public class Workstation implements Identifiable<String> {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            System.out.println("Execução interrompida para a máquina " + idMachine);
+            //System.out.println("Execução interrompida para a máquina " + idMachine);
         }
     }
 

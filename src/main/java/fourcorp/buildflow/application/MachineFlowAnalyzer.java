@@ -11,14 +11,15 @@ public class MachineFlowAnalyzer {
     public static Map<String, Map<String, Integer>> machineDependencies = new HashMap<>();
 
     public static void addDependency(String machine1, String machine2) {
-        if (!machineDependencies.containsKey(machine1)) {
-            machineDependencies.put(machine1, new HashMap<>());
+        if (machine1.equals(machine2)) {
+            return;  // Evita dependências circulares (máquina dependendo de si mesma)
         }
+
+        machineDependencies.computeIfAbsent(machine1, k -> new HashMap<>());
 
         Map<String, Integer> dependencies = machineDependencies.get(machine1);
         int count = dependencies.getOrDefault(machine2, 0);
-        dependencies.put(machine2, count + 1);
-
+        dependencies.put(machine2, count + 1);  // Incrementa a contagem de dependências
     }
 
 

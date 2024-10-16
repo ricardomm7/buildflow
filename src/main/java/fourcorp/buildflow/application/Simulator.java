@@ -9,28 +9,33 @@ import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
+import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
 
 public class Simulator {
-    private MapLinked<Operation, Product, String> operationQueues;
-    private List<Product> products;
+    private final MapLinked<Operation, Product, String> operationQueues;
+    private final List<Product> products;
     private final WorkstationsPerOperation w;
     private final ProductPriorityLine p;
+    private final Map<String, List<String>> productMachineFlows = new HashMap<>();
+    private double totalProductionTime;
+    private final Map<String, Double> productTimes = new HashMap<>();
 
     public Simulator() {
         this.operationQueues = new MapLinked<>();
-        products = new ArrayList<>();
-        w = Repositories.getInstance().getWorkstationsPerOperation();
-        p = Repositories.getInstance().getProductPriorityRepository();
+        this.products = new ArrayList<>();
+        this.w = Repositories.getInstance().getWorkstationsPerOperation();
+        this.p = Repositories.getInstance().getProductPriorityRepository();
+        this.totalProductionTime = 0.0;
     }
 
     public Simulator(WorkstationsPerOperation e, ProductPriorityLine a) {
         this.operationQueues = new MapLinked<>();
-        products = new ArrayList<>();
-        w = e;
-        p = a;
+        this.products = new ArrayList<>();
+        this.w = e;
+        this.p = a;
+        this.totalProductionTime = 0.0;
     }
 
     public void runWithoutPriority() {
@@ -52,6 +57,7 @@ public class Simulator {
 
     private void createOperationQueues(List<Product> products) {
         operationQueues.removeAll();
+        this.products.clear();
         for (Product product : products) {
             this.products.add(product);
             for (Operation o : product.getOperations()) {
@@ -66,20 +72,57 @@ public class Simulator {
         for (Product product : products) {
             LinkedList<Operation> operationQueue = operationQueues.getByKey(product);
             List<Operation> pendingOperations = new ArrayList<>();
+            Workstation previousWorkstation = null;
+
+            double productTotalTime = 0.0;
+
             while (!operationQueue.isEmpty()) {
                 Operation currentOperation = operationQueue.poll();
                 System.out.println("Current operation: " + currentOperation.getId());
+
                 Workstation bestMachine = w.findBestMachineForOperation(currentOperation);
                 if (bestMachine != null && bestMachine.isAvailable()) {
                     System.out.println("The best machine: " + bestMachine.getId());
+
+                    double operationTime = bestMachine.getTime();
+                    productTotalTime += operationTime; // Somar o tempo de operação ao tempo total do produto
+                    totalProductionTime += operationTime; // Somar ao tempo de produção global
+
                     bestMachine.processProduct(product);
+
+                    List<String> machineFlow = productMachineFlows.computeIfAbsent(product.getId(), _ -> new ArrayList<>());
+                    machineFlow.add(bestMachine.getIdMachine());
+
+                    if (previousWorkstation != null) {
+                        addDependency(previousWorkstation.getIdMachine(), bestMachine.getIdMachine());
+                    }
+
+                    previousWorkstation = bestMachine;
                 } else {
                     pendingOperations.add(currentOperation);
                     System.out.println("No best machine found.");
                 }
             }
             operationQueue.addAll(pendingOperations);
+
+            productTimes.put(product.getId(), productTotalTime);
         }
+    }
+
+    public void printTotalProductionTime() {
+        System.out.println("\nTotal Production Time: " + getTotalProductionTime() + " minutes");
+    }
+
+    public void printProductionTimePerProduct() {
+        System.out.println("\nProduction Time per Product:");
+        for (Map.Entry<String, Double> entry : productTimes.entrySet()) {
+            System.out.println("Product ID: " + entry.getKey() + ", Production Time: " + entry.getValue() + " minutes");
+        }
+    }
+
+    public void printMachineDependencies() {
+        System.out.println("\nDependencies between machines:");
+        MachineFlowAnalyzer.printMachineDependencies();
     }
 
     public MapLinked<Operation, Product, String> getOperationQueues() {
@@ -88,5 +131,17 @@ public class Simulator {
 
     public List<Product> getProducts() {
         return products;
+    }
+
+    public List<Double> getProductionTimePerProduct() {
+        List<Double> productionTimes = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : productTimes.entrySet()) {
+            productionTimes.add(entry.getValue());
+        }
+        return productionTimes;
+    }
+
+    public double getTotalProductionTime() {
+        return totalProductionTime;
     }
 }
