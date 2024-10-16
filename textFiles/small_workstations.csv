@@ -1,0 +1,5 @@
+workstation;name_oper;time
+WS1;CUT;10
+WS2;POLISH;5
+WS3;VARNISH;8
+WS4;PACK;7

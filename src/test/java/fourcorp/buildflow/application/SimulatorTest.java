@@ -5,19 +5,28 @@ import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
+import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.nio.file.Paths;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SimulatorTest {
+
+    @BeforeEach
+    void resetData() {
+        // Limpar os repositórios antes de cada teste
+        Repositories.getInstance().getProductPriorityRepository().removeAll();
+        Repositories.getInstance().getWorkstationsPerOperation().removeAll();
+        MachineFlowAnalyzer.clearDependencies();
+    }
 
     @Test
     void createOperationQueues() {
@@ -255,6 +264,164 @@ class SimulatorTest {
         assertTrue(productionTimePerProduct.contains(18.0), "The production time for product P001 should be 18 minutes (10 + 8).");
         assertTrue(productionTimePerProduct.contains(27.0), "The production time for product P002 should be 27 minutes (12 + 15).");
     }
+
+    // Caminhos para os arquivos CSV
+    private final String smallOperationsFile = Paths.get("textFiles/small_articles.csv").toString();
+    private final String smallWorkstationsFile = Paths.get("textFiles/small_workstations.csv").toString();
+    private final String mediumOperationsFile = Paths.get("textFiles/medium_articles.csv").toString();
+    private final String mediumWorkstationsFile = Paths.get("textFiles/medium_workstations.csv").toString();
+    private final String largeOperationsFile = Paths.get("textFiles/articles.csv").toString();
+    private final String largeWorkstationsFile = Paths.get("textFiles/workstations.csv").toString();
+
+    @Test
+    void testSmallDataSetExecutionTimes() throws IOException {
+        // Carregar e rodar a simulação para o pequeno conjunto de dados
+        runSimulationAndValidateTimes(smallOperationsFile, smallWorkstationsFile, "small dataset",
+                new double[]{22, 25},  // Tempos esperados para P001 e P002
+                47                     // Tempo total esperado
+        );
+    }
+
+    @Test
+    void testMediumDataSetExecutionTimes() throws IOException {
+        // Carregar e rodar a simulação para o conjunto médio de dados
+        runSimulationAndValidateTimes(mediumOperationsFile, mediumWorkstationsFile, "medium dataset",
+                new double[]{54, 49, 27, 36, 48, 42, 45, 43, 36, 39},  // Tempos esperados para os produtos
+                419                     // Tempo total esperado
+        );
+    }
+
+
+    @Test
+    void testLargeDataSet() throws IOException {
+        runSimulationWithCSV(largeOperationsFile, largeWorkstationsFile, "large dataset");
+    }
+
+
+    private void runSimulationWithCSV(String operationsFilePath, String workstationsFilePath, String dataSetLabel) throws IOException {
+        // Captura a saída do System.out para verificar a saída do simulador
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        // Carregar os dados dos arquivos CSV
+        Reader.loadOperations(operationsFilePath);
+        Reader.loadMachines(workstationsFilePath);
+
+        // Inicializa o simulador
+        Simulator simulator = new Simulator();
+        simulator.runWithPriority();
+
+        // Recuperar a saída gerada
+        String output = outContent.toString().trim();
+
+        // Verificações simples para garantir que a simulação foi executada corretamente
+        assertTrue(output.contains("Processing product"), "Deve haver uma saída de processamento de produtos para o " + dataSetLabel);
+        assertTrue(output.contains("The best machine:"), "Deve haver uma máquina escolhida para o " + dataSetLabel);
+
+        // Verificar o tempo total de produção e o número de produtos
+        double totalProductionTime = simulator.getTotalProductionTime();
+        assertTrue(totalProductionTime > 0, "O tempo total de produção deve ser maior que 0 para o " + dataSetLabel);
+
+        // Verificar as dependências entre as máquinas (US007)
+        assertFalse(MachineFlowAnalyzer.machineDependencies.isEmpty(), "As dependências entre as máquinas devem existir para o " + dataSetLabel);
+
+        // Limpar o System.out após a execução do teste
+        System.setOut(System.out);
+    }
+
+
+    private void runSimulationAndValidateTimes(String operationsFilePath, String workstationsFilePath, String dataSetLabel, double[] expectedProductTimes, double expectedTotalTime) throws IOException {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        // Carregar os arquivos CSV
+        Reader.loadOperations(operationsFilePath);
+        Reader.loadMachines(workstationsFilePath);
+
+        // Inicializa o simulador e roda com prioridade
+        Simulator simulator = new Simulator();
+        simulator.runWithPriority();
+
+        // Recuperar a saída gerada (para fins de verificação opcional)
+        String output = outContent.toString().trim();
+
+        // Verificar se os produtos foram processados
+        assertTrue(output.contains("Processing product"), "Deve haver uma saída de processamento de produtos para o " + dataSetLabel);
+
+        // Verificar tempos de produção por produto (US003)
+        List<Double> actualProductTimes = simulator.getProductionTimePerProduct();
+
+        // Ordenar os tempos reais e os esperados para garantir que estamos comparando na ordem correta
+        actualProductTimes.sort(Double::compareTo);
+        Arrays.sort(expectedProductTimes);
+
+        // Comparar os tempos de produção esperados com os reais
+        assertEquals(expectedProductTimes.length, actualProductTimes.size(), "O número de produtos deve corresponder para o " + dataSetLabel);
+
+        for (int i = 0; i < expectedProductTimes.length; i++) {
+            assertEquals(expectedProductTimes[i], actualProductTimes.get(i), 0.01, "O tempo de produção do produto " + (i + 1) + " deve ser correto no " + dataSetLabel);
+        }
+
+        // Verificar tempo total de produção (US003)
+        double actualTotalTime = simulator.getTotalProductionTime();
+        assertEquals(expectedTotalTime, actualTotalTime, 0.01, "O tempo total de produção deve ser correto para o " + dataSetLabel);
+
+        System.setOut(System.out);
+    }
+
+    @Test
+    void testSmallDataSetDependencies() throws IOException {
+        // Dependências esperadas para o conjunto de dados pequeno (small dataset)
+        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
+
+        expectedDependencies.put("WS1", Map.of("WS2", 1, "WS3", 1));
+        expectedDependencies.put("WS2", Map.of("WS4", 1));
+        expectedDependencies.put("WS3", Map.of("WS4", 1));
+
+        // Rodar a simulação e validar as dependências
+        runSimulationAndValidateDependencies(smallOperationsFile, smallWorkstationsFile, "small dataset", expectedDependencies);
+    }
+
+    @Test
+void testMediumDataSetDependencies() throws IOException {
+    // Dependências esperadas para o conjunto de dados médio (medium dataset)
+    Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
+    expectedDependencies.put("WS1", Map.of("WS2", 3, "WS3", 2, "WS6", 2, "WS5", 1));
+    expectedDependencies.put("WS2", Map.of("WS4", 2, "WS3", 1, "WS7", 1, "WS5", 1));
+    expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 2));
+    expectedDependencies.put("WS4", Map.of("WS5", 3, "WS7", 1));
+    expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 2));
+    expectedDependencies.put("WS7", Map.of("WS5", 3));
+    // Rodar a simulação e validar as dependências
+    runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
+}
+
+private void runSimulationAndValidateDependencies(String operationsFilePath, String workstationsFilePath, String dataSetLabel, Map<String, Map<String, Integer>> expectedDependencies) throws IOException {
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(outContent));
+    // Carregar os arquivos CSV
+    Reader.loadOperations(operationsFilePath);
+    Reader.loadMachines(workstationsFilePath);
+    // Inicializa o simulador e roda com prioridade
+    Simulator simulator = new Simulator();
+    simulator.runWithPriority();
+    // Verificar dependências geradas (US007)
+    Map<String, Map<String, Integer>> actualDependencies = MachineFlowAnalyzer.machineDependencies;
+    // Comparar as dependências geradas com as dependências esperadas
+    assertEquals(expectedDependencies.size(), actualDependencies.size(), "O número de máquinas com dependências deve corresponder no " + dataSetLabel);
+    for (String machine : expectedDependencies.keySet()) {
+        assertTrue(actualDependencies.containsKey(machine), "A máquina " + machine + " deve estar presente nas dependências do " + dataSetLabel);
+        Map<String, Integer> expectedFlows = expectedDependencies.get(machine);
+        Map<String, Integer> actualFlows = actualDependencies.get(machine);
+        assertEquals(expectedFlows.size(), actualFlows.size(), "O número de dependências para a máquina " + machine + " deve corresponder no " + dataSetLabel);
+        for (String dependentMachine : expectedFlows.keySet()) {
+            assertTrue(actualFlows.containsKey(dependentMachine), "A máquina " + machine + " deve ter uma dependência com " + dependentMachine);
+            assertEquals(expectedFlows.get(dependentMachine), actualFlows.get(dependentMachine), "O número de vezes que " + machine + " usou " + dependentMachine + " deve ser correto.");
+        }
+    }
+    System.setOut(System.out);
+}
+
 
 
 }
