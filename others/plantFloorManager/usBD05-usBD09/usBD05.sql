@@ -1,4 +1,4 @@
---USBD05-------------------------------------------------------------------
+--USBD05
 SELECT
     p.Product_ID,
     p.Name AS Product_Name,
@@ -21,11 +21,3 @@ WHERE
     o.DeliveryDate >= SYSDATE
 ORDER BY
     o.DeliveryDate;
---------------------------------------------------------------------------------
---USBD06
-
---USBD07
-
---USBD08
-
---USBD09
