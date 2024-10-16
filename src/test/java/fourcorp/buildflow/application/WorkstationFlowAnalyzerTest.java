@@ -16,10 +16,7 @@ public class WorkstationFlowAnalyzerTest {
 
     @BeforeEach
     public void setUp() {
-        // Limpar as dependências de máquinas antes de cada teste
         MachineFlowAnalyzer.machineDependencies.clear();
-
-        // Redirecionar a saída do System.out para capturar nos testes
         System.setOut(new PrintStream(outContent));
     }
 
@@ -36,7 +33,6 @@ public class WorkstationFlowAnalyzerTest {
         MachineFlowAnalyzer.addDependency("MachineA", "MachineB");
         MachineFlowAnalyzer.printMachineDependencies();
 
-        // Verifica a saída esperada de MachineA com MachineB e MachineC
         String expectedOutput = "MachineA : [(MachineB,2),(MachineC,1)]" + System.lineSeparator();
         assertEquals(expectedOutput, outContent.toString());
     }
