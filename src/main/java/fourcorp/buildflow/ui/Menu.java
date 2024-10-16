@@ -10,11 +10,11 @@ import java.util.Scanner;
 
 public class Menu {
     private final Scanner scanner;
-    private final Simulator s; // Instanciar o simulador apenas uma vez
+    private final Simulator s;
 
     public Menu() {
         scanner = new Scanner(System.in);
-        s = new Simulator(); // Criar o simulador no início e manter a instância
+        s = new Simulator();
     }
 
     public void displayMenu() {

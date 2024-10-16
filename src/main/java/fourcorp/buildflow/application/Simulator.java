@@ -85,8 +85,8 @@ public class Simulator {
                     System.out.println("The best machine: " + bestMachine.getId());
 
                     double operationTime = bestMachine.getTime();
-                    productTotalTime += operationTime; // Somar o tempo de operação ao tempo total do produto
-                    totalProductionTime += operationTime; // Somar ao tempo de produção global
+                    productTotalTime += operationTime;
+                    totalProductionTime += operationTime;
 
                     bestMachine.processProduct(product);
 

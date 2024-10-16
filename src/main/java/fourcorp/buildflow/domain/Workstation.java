@@ -47,11 +47,6 @@ public class Workstation implements Identifiable<String> {
         }).start();
     }
 
-    /**
-     * Simula o tempo de execução da operação usando sleep.
-     * Este método é usado para imitar o tempo de processamento real de um produto na estação de trabalho.
-     * A simulação usa um tempo escalado onde 1 segundo de sleep representa 1 minuto de tempo de processamento real.
-     */
     private void simulateExecutionTime() {
         try {
             // Calcula o tempo de sleep: 1 segundo = 1 minuto na simulação
