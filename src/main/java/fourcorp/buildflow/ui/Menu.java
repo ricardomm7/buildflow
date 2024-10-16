@@ -1,4 +1,4 @@
-package s;
+package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;

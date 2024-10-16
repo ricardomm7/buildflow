@@ -14,8 +14,8 @@ import java.util.*;
 import static fourcorp.buildflow.application.MachineFlowAnalyzer.addDependency;
 
 public class Simulator {
-    private final MapLinked<Operation, Product, String> operationQueues;
-    private final List<Product> products;
+    private MapLinked<Operation, Product, String> operationQueues;
+    private List<Product> products;
     private final WorkstationsPerOperation w;
     private final ProductPriorityLine p;
     private final Map<String, List<String>> productMachineFlows = new HashMap<>();

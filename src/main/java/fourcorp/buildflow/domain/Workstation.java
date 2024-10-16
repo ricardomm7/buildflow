@@ -37,7 +37,7 @@ public class Workstation implements Identifiable<String> {
 
     public void processProduct(Product product) {
         this.setAvailable(false);
-        //System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
+        System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
 
         // Simular o processamento em uma nova thread
         new Thread(() -> {

@@ -1,7 +1,7 @@
 package fourcorp.buildflow;
 
 import fourcorp.buildflow.application.Reader;
-import s.Menu;
+import fourcorp.buildflow.ui.Menu;
 
 public class HelloApplication {
 /*
