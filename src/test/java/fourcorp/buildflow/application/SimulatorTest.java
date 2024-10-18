@@ -383,45 +383,44 @@ class SimulatorTest {
     }
 
     @Test
-void testMediumDataSetDependencies() throws IOException {
-    // Dependências esperadas para o conjunto de dados médio (medium dataset)
-    Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
-    expectedDependencies.put("WS1", Map.of("WS2", 3, "WS3", 2, "WS6", 2, "WS5", 1));
-    expectedDependencies.put("WS2", Map.of("WS4", 2, "WS3", 1, "WS7", 1, "WS5", 1));
-    expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 2));
-    expectedDependencies.put("WS4", Map.of("WS5", 3, "WS7", 1));
-    expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 2));
-    expectedDependencies.put("WS7", Map.of("WS5", 3));
-    // Rodar a simulação e validar as dependências
-    runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
-}
-
-private void runSimulationAndValidateDependencies(String operationsFilePath, String workstationsFilePath, String dataSetLabel, Map<String, Map<String, Integer>> expectedDependencies) throws IOException {
-    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(outContent));
-    // Carregar os arquivos CSV
-    Reader.loadOperations(operationsFilePath);
-    Reader.loadMachines(workstationsFilePath);
-    // Inicializa o simulador e roda com prioridade
-    Simulator simulator = new Simulator();
-    simulator.runWithPriority();
-    // Verificar dependências geradas (US007)
-    Map<String, Map<String, Integer>> actualDependencies = MachineFlowAnalyzer.machineDependencies;
-    // Comparar as dependências geradas com as dependências esperadas
-    assertEquals(expectedDependencies.size(), actualDependencies.size(), "O número de máquinas com dependências deve corresponder no " + dataSetLabel);
-    for (String machine : expectedDependencies.keySet()) {
-        assertTrue(actualDependencies.containsKey(machine), "A máquina " + machine + " deve estar presente nas dependências do " + dataSetLabel);
-        Map<String, Integer> expectedFlows = expectedDependencies.get(machine);
-        Map<String, Integer> actualFlows = actualDependencies.get(machine);
-        assertEquals(expectedFlows.size(), actualFlows.size(), "O número de dependências para a máquina " + machine + " deve corresponder no " + dataSetLabel);
-        for (String dependentMachine : expectedFlows.keySet()) {
-            assertTrue(actualFlows.containsKey(dependentMachine), "A máquina " + machine + " deve ter uma dependência com " + dependentMachine);
-            assertEquals(expectedFlows.get(dependentMachine), actualFlows.get(dependentMachine), "O número de vezes que " + machine + " usou " + dependentMachine + " deve ser correto.");
-        }
+    void testMediumDataSetDependencies() throws IOException {
+        // Dependências esperadas para o conjunto de dados médio (medium dataset)
+        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
+        expectedDependencies.put("WS1", Map.of("WS2", 3, "WS3", 2, "WS6", 2, "WS5", 1));
+        expectedDependencies.put("WS2", Map.of("WS4", 2, "WS3", 1, "WS7", 1, "WS5", 1));
+        expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 2));
+        expectedDependencies.put("WS4", Map.of("WS5", 3, "WS7", 1));
+        expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 2));
+        expectedDependencies.put("WS7", Map.of("WS5", 3));
+        // Rodar a simulação e validar as dependências
+        runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
     }
-    System.setOut(System.out);
-}
 
+    private void runSimulationAndValidateDependencies(String operationsFilePath, String workstationsFilePath, String dataSetLabel, Map<String, Map<String, Integer>> expectedDependencies) throws IOException {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        // Carregar os arquivos CSV
+        Reader.loadOperations(operationsFilePath);
+        Reader.loadMachines(workstationsFilePath);
+        // Inicializa o simulador e roda com prioridade
+        Simulator simulator = new Simulator();
+        simulator.runWithPriority();
+        // Verificar dependências geradas (US007)
+        Map<String, Map<String, Integer>> actualDependencies = MachineFlowAnalyzer.machineDependencies;
+        // Comparar as dependências geradas com as dependências esperadas
+        assertEquals(expectedDependencies.size(), actualDependencies.size(), "O número de máquinas com dependências deve corresponder no " + dataSetLabel);
+        for (String machine : expectedDependencies.keySet()) {
+            assertTrue(actualDependencies.containsKey(machine), "A máquina " + machine + " deve estar presente nas dependências do " + dataSetLabel);
+            Map<String, Integer> expectedFlows = expectedDependencies.get(machine);
+            Map<String, Integer> actualFlows = actualDependencies.get(machine);
+            assertEquals(expectedFlows.size(), actualFlows.size(), "O número de dependências para a máquina " + machine + " deve corresponder no " + dataSetLabel);
+            for (String dependentMachine : expectedFlows.keySet()) {
+                assertTrue(actualFlows.containsKey(dependentMachine), "A máquina " + machine + " deve ter uma dependência com " + dependentMachine);
+                assertEquals(expectedFlows.get(dependentMachine), actualFlows.get(dependentMachine), "O número de vezes que " + machine + " usou " + dependentMachine + " deve ser correto.");
+            }
+        }
+        System.setOut(System.out);
+    }
 
 
 }

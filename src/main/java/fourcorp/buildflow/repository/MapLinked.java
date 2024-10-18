@@ -138,4 +138,17 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
     public boolean isEmpty() {
         return line.isEmpty();
     }
+
+    /**
+     * Retrieves all values (items of type {@code T}) stored across all the linked lists in the map.
+     *
+     * @return A {@code LinkedList} containing all values of type {@code T} from all the lists in the map.
+     */
+    public LinkedList<T> getAllValues() {
+        LinkedList<T> allValues = new LinkedList<>();
+        for (LinkedList<T> items : line.values()) {
+            allValues.addAll(items);
+        }
+        return allValues;
+    }
 }

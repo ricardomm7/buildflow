@@ -25,6 +25,7 @@ public class Menu {
             System.out.println("3. See the uploaded products by priority.");
             System.out.println("4. See Production time.");
             System.out.println("5. See machines dependencies.");
+            System.out.println("6. Workstation Analysis.");
             System.out.println("9. Exit");
             System.out.print("Choose an option: ");
 
@@ -66,7 +67,6 @@ public class Menu {
                 }
                 break;
             case 4:
-                System.out.println("Calculating Production time");
                 if (s.getProducts().isEmpty()) {
                     System.out.println("No production time data available. Please run the simulation first (Option 1 or 2).");
                 } else {
@@ -76,11 +76,17 @@ public class Menu {
                 break;
 
             case 5:
-                System.out.println("Show the machines dependencies");
                 if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
                     System.out.println("No dependencies found. Please run the simulation first (Option 1 or 2).");
                 } else {
                     s.printMachineDependencies();
+                }
+                break;
+            case 6:
+                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
+                    System.out.println("Please run the simulation first (Option 1 or 2).");
+                } else {
+                    s.printAnalysis();
                 }
                 break;
             case 9:

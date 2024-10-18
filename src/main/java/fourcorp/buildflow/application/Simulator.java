@@ -91,10 +91,10 @@ public class Simulator {
                     bestMachine.processProduct(product);
 
                     List<String> machineFlow = productMachineFlows.computeIfAbsent(product.getId(), _ -> new ArrayList<>());
-                    machineFlow.add(bestMachine.getIdMachine());
+                    machineFlow.add(bestMachine.getId());
 
                     if (previousWorkstation != null) {
-                        addDependency(previousWorkstation.getIdMachine(), bestMachine.getIdMachine());
+                        addDependency(previousWorkstation.getId(), bestMachine.getId());
                     }
 
                     previousWorkstation = bestMachine;
@@ -143,5 +143,11 @@ public class Simulator {
 
     public double getTotalProductionTime() {
         return totalProductionTime;
+    }
+
+    public void printAnalysis() {
+        for (Workstation e : w.getWorkstationsAscendingByPercentage()) {
+            System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getExecutiontimeTotal() + "min" + " | Operation and execution relationship: " + (e.getOperationTimeTotal() / e.getExecutiontimeTotal()) * 100 + "%");
+        }
     }
 }
