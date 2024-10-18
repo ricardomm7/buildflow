@@ -17,11 +17,6 @@ public abstract class Reader {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
     public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
 
-    //public static List<Product> products = new ArrayList<>();
-    //public static List<Workstation> machines = new ArrayList<>();
-
-    //private static MachinesPerOperation machinesPerOperation = Repositories.getInstance().getMachinesPerOperation();
-
     public static void loadOperations(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -39,7 +34,6 @@ public abstract class Reader {
         br.close();
     }
 
-
     public static void loadMachines(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -48,7 +42,6 @@ public abstract class Reader {
             String[] campos = linha.split(";");
             Workstation maquina = new Workstation(campos[0], Double.parseDouble(campos[2]));
             Operation operation = new Operation(campos[1]);
-            //machinesPerOperation.create(maquina, operation);
             w.create(maquina, operation);
         }
         br.close();

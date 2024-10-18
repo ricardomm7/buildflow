@@ -1,7 +1,7 @@
 module fourcorp.buildflow {
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.xml;
+    requires org.apache.poi.ooxml;
 
     opens fourcorp.buildflow to javafx.fxml;
     exports fourcorp.buildflow;
