@@ -386,11 +386,11 @@ class SimulatorTest {
     void testMediumDataSetDependencies() throws IOException {
         // Dependências esperadas para o conjunto de dados médio (medium dataset)
         Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
-        expectedDependencies.put("WS1", Map.of("WS2", 3, "WS3", 2, "WS6", 2, "WS5", 1));
-        expectedDependencies.put("WS2", Map.of("WS4", 2, "WS3", 1, "WS7", 1, "WS5", 1));
-        expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 2));
-        expectedDependencies.put("WS4", Map.of("WS5", 3, "WS7", 1));
-        expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 2));
+        expectedDependencies.put("WS1", Map.of("WS2", 2, "WS3", 2, "WS6", 2));
+        expectedDependencies.put("WS2", Map.of("WS4", 3, "WS3", 1, "WS7", 1, "WS5", 1));
+        expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 3));
+        expectedDependencies.put("WS4", Map.of("WS5", 2, "WS7", 2, "WS3", 1));
+        expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 1, "WS2", 2));
         expectedDependencies.put("WS7", Map.of("WS5", 3));
         // Rodar a simulação e validar as dependências
         runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
