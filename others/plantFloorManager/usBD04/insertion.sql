@@ -1,63 +1,59 @@
--- Inserir dados na tabela Type_Product
-INSERT INTO Type_Product (Designation) VALUES ('Electronics');
-INSERT INTO Type_Product (Designation) VALUES ('Furniture');
-INSERT INTO Type_Product (Designation) VALUES ('Automobile');
-
 -- Inserir dados na tabela Product_Family
-INSERT INTO Product_Family (Family_ID) VALUES ('Family_E1');
-INSERT INTO Product_Family (Family_ID) VALUES ('Family_F1');
-INSERT INTO Product_Family (Family_ID) VALUES ('Family_A1');
+INSERT INTO Product_Family (Family_ID, Name) VALUES ('F001', 'Electronics');
+INSERT INTO Product_Family (Family_ID, Name) VALUES ('F002', 'Furniture');
 
--- Inserir dados na tabela Product
-INSERT INTO Product (Product_ID, Name, Type_ProductDesignation, Product_FamilyFamily_ID) VALUES ('P001', 'Smartphone', 'Electronics', 'Family_E1');
-INSERT INTO Product (Product_ID, Name, Type_ProductDesignation, Product_FamilyFamily_ID) VALUES ('P002', 'Laptop', 'Electronics', 'Family_E1');
-INSERT INTO Product (Product_ID, Name, Type_ProductDesignation, Product_FamilyFamily_ID) VALUES ('P003', 'Chair', 'Furniture', 'Family_F1');
-INSERT INTO Product (Product_ID, Name, Type_ProductDesignation, Product_FamilyFamily_ID) VALUES ('P004', 'Car', 'Automobile', 'Family_A1');
-
--- Inserir dados na tabela BOM
-INSERT INTO BOM (ProductProduct_ID, ProductType_ProductDesignation, ProductProduct_FamilyFamily_ID) VALUES ('P001', 'Electronics', 'Family_E1');
-INSERT INTO BOM (ProductProduct_ID, ProductType_ProductDesignation, ProductProduct_FamilyFamily_ID) VALUES ('P002', 'Electronics', 'Family_E1');
-INSERT INTO BOM (ProductProduct_ID, ProductType_ProductDesignation, ProductProduct_FamilyFamily_ID) VALUES ('P003', 'Furniture', 'Family_F1');
-
--- Inserir dados na tabela Component
-INSERT INTO Component (Component_ID, Name, Quantity, BOMProductProduct_ID) VALUES ('C001', 'Screen', 2, 'P001');
-INSERT INTO Component (Component_ID, Name, Quantity, BOMProductProduct_ID) VALUES ('C002', 'Battery', 1, 'P001');
-INSERT INTO Component (Component_ID, Name, Quantity, BOMProductProduct_ID) VALUES ('C003', 'Keyboard', 1, 'P002');
-INSERT INTO Component (Component_ID, Name, Quantity, BOMProductProduct_ID) VALUES ('C004', 'Leg', 4, 'P003');
-
--- Inserir dados na tabela Raw_Materials
-INSERT INTO Raw_Materials (Name, Quantity, BOMProductProduct_ID) VALUES ('Plastic', 10, 'P001');
-INSERT INTO Raw_Materials (Name, Quantity, BOMProductProduct_ID) VALUES ('Metal', 5, 'P003');
+-- Inserir dados na tabela Product (referenciando Product_Family já existente)
+INSERT INTO Product (Product_ID, Name, Description, Product_FamilyFamily_ID)
+VALUES ('P001', 'Laptop', 'High performance laptop', 'F001');
+INSERT INTO Product (Product_ID, Name, Description, Product_FamilyFamily_ID)
+VALUES ('P002', 'Chair', 'Ergonomic office chair', 'F002');
 
 -- Inserir dados na tabela Costumer
-INSERT INTO Costumer (Name, Address, Contact) VALUES ('John Doe', '123 Main St', 912345678);
-INSERT INTO Costumer (Name, Address, Contact) VALUES ('Jane Smith', '456 Oak St', 923456789);
+INSERT INTO Costumer (VAT, Name, Address, "Zip-Code", City, Country)
+VALUES ('123456789', 'John Doe', '123 Street Name', '12345', 'CityA', 'CountryA');
+INSERT INTO Costumer (VAT, Name, Address, "Zip-Code", City, Country)
+VALUES ('987654321', 'Jane Smith', '456 Another St', '67890', 'CityB', 'CountryB');
 
--- Inserir dados na tabela "Order"
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerNIF) VALUES ('O001', TO_DATE('2024-10-01', 'YYYY-MM-DD'), TO_DATE('2024-10-15', 'YYYY-MM-DD'), 1);
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerNIF) VALUES ('O002', TO_DATE('2024-10-02', 'YYYY-MM-DD'), TO_DATE('2024-10-18', 'YYYY-MM-DD'), 2);
+-- Inserir dados na tabela "Order" (referenciando Costumer já existente)
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD001', TO_DATE('2024-10-10', 'YYYY-MM-DD'), TO_DATE('2024-11-01', 'YYYY-MM-DD'), '123456789');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD002', TO_DATE('2024-09-15', 'YYYY-MM-DD'), TO_DATE('2024-10-25', 'YYYY-MM-DD'), '987654321');
 
--- Inserir dados na tabela Production_Order
-INSERT INTO Production_Order (quantity, ProductProduct_ID, ProductType_ProductDesignation, ProductProduct_FamilyFamily_ID, OrderOrder_ID) VALUES (100, 'P001', 'Electronics', 'Family_E1', 'O001');
-INSERT INTO Production_Order (quantity, ProductProduct_ID, ProductType_ProductDesignation, ProductProduct_FamilyFamily_ID, OrderOrder_ID) VALUES (50, 'P003', 'Furniture', 'Family_F1', 'O002');
+-- Inserir múltiplos dados na tabela Production_Order de uma só vez
+INSERT ALL
+  INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('P001', 'ORD001', 2)  -- 2 laptops para a ordem ORD001
+  INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('P002', 'ORD002', 1)  -- 1 cadeira para a ordem ORD002
+SELECT 1 FROM DUAL;
 
--- Inserir dados na tabela BOO
-INSERT INTO BOO (Production_OrderProductProduct_ID, Production_OrderProductType_ProductDesignation, Production_OrderProductProduct_FamilyFamily_ID, Production_OrderOrderOrder_ID) VALUES ('P001', 'Electronics', 'Family_E1', 'O001');
-INSERT INTO BOO (Production_OrderProductProduct_ID, Production_OrderProductType_ProductDesignation, Production_OrderProductProduct_FamilyFamily_ID, Production_OrderOrderOrder_ID) VALUES ('P003', 'Furniture', 'Family_F1', 'O002');
+-- Inserir dados na tabela BOO (referenciando Product_Family já existente)
+INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F001', 1);
+INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F002', 1);
 
--- Inserir dados na tabela Type_Operation
-INSERT INTO Type_Operation (Designation) VALUES ('Assembly');
-INSERT INTO Type_Operation (Designation) VALUES ('Testing');
-INSERT INTO Type_Operation (Designation) VALUES ('Packaging');
+-- Inserir dados na tabela Part
+INSERT INTO Part (Part_ID, Descriprion) VALUES ('PA001', 'Motherboard');
+INSERT INTO Part (Part_ID, Descriprion) VALUES ('PA002', 'Screws');
 
--- Inserir dados na tabela Operation
-INSERT INTO Operation (BOOProduction_OrderProductProduct_ID, Type_OperationDesignation) VALUES ('P001', 'Assembly');
-INSERT INTO Operation (BOOProduction_OrderProductProduct_ID, Type_OperationDesignation) VALUES ('P003', 'Testing');
+-- Inserir dados na tabela Product_Part (referenciando Product e Part já existentes)
+INSERT ALL
+    INTO Product_Part (ProductProduct_ID, PartPart_ID, Quantity) VALUES ('P001', 'PA001', 1) -- Laptop inclui 1 motherboard
+	INTO Product_Part (ProductProduct_ID, PartPart_ID, Quantity) VALUES ('P002', 'PA002', 4) -- Chair inclui 4 screws
+SELECT 1 FROM DUAL;
 
--- Inserir dados na tabela Type_Workstation
-INSERT INTO Type_Workstation (Designation) VALUES ('Station_A');
-INSERT INTO Type_Workstation (Designation) VALUES ('Station_B');
+-- Inserir dados na tabela Operation (referenciando BOO já existente)
+INSERT INTO Operation (Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence)
+VALUES ('Assembly', 'F001', 1);
+INSERT INTO Operation (Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence)
+VALUES ('Packaging', 'F002', 1);
 
--- Inserir dados na tabela Workstation
-INSERT INTO Workstation (Workstation_ID, ExecutionTime, OperationType_OperationDesignation, Type_WorkstationDesignation) VALUES ('W001', 60, 'Assembly', 'Station_A');
-INSERT INTO Workstation (Workstation_ID, ExecutionTime, OperationType_OperationDesignation, Type_WorkstationDesignation) VALUES ('W002', 120, 'Testing', 'Station_B');
+-- Inserir dados na tabela Type_Workstation (referenciando Operation já existente)
+INSERT ALL
+    INTO Type_Workstation (WorkstationType_ID, Designation, OperationOperation_ID) VALUES ('WS001', 'Assembly Station', 1)  -- Referencia a Operation ID 1 (Assembly)
+	INTO Type_Workstation (WorkstationType_ID, Designation, OperationOperation_ID) VALUES ('WS002', 'Packaging Station', 2)  -- Referencia a Operation ID 2 (Packaging)
+SELECT 1 FROM DUAL;
+
+-- Inserir dados na tabela Workstation (referenciando Type_Workstation já existente)
+INSERT INTO Workstation (Name, Description, Type_WorkstationWorkstationType_ID)
+VALUES ('Assembly Workstation 1', 'Used for assembling laptops', 'WS001');
+INSERT INTO Workstation (Name, Description, Type_WorkstationWorkstationType_ID)
+VALUES ('Packaging Workstation 1', 'Used for packaging furniture', 'WS002');

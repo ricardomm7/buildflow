@@ -1,23 +1,21 @@
 --USBD05
+
 SELECT
     p.Product_ID,
     p.Name AS Product_Name,
     o.Order_ID,
-    o.OrderDate AS Order_Date,
-    o.DeliveryDate AS Delivery_Date,
     c.Name AS Customer_Name,
-    c.Address AS Customer_Address
+    po.quantity AS Quantity,
+    o.DeliveryDate
 FROM
-    Production_Order po
+    Product p
 JOIN
-    Product p ON po.ProductProduct_ID = p.Product_ID
-               AND po.ProductType_ProductDesignation = p.Type_ProductDesignation
-               AND po.ProductProduct_FamilyFamily_ID = p.Product_FamilyFamily_ID
+    Production_Order po ON p.Product_ID = po.ProductProduct_ID
 JOIN
     "Order" o ON po.OrderOrder_ID = o.Order_ID
 JOIN
-    Costumer c ON o.CostumerNIF = c.NIF
+    Costumer c ON o.CostumerVAT = c.VAT
 WHERE
-    o.DeliveryDate >= SYSDATE
+    o.DeliveryDate BETWEEN TO_DATE('2024-10-26', 'YYYY-MM-DD') AND TO_DATE('2025-01-10', 'YYYY-MM-DD')
 ORDER BY
     o.DeliveryDate;
