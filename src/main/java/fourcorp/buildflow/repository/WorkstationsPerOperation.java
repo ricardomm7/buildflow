@@ -46,6 +46,14 @@ public class WorkstationsPerOperation {
         return bestMachine;
     }
 
+    public void increaseWaitingTimes(double time) {
+        for (Workstation machine : workstationsPerOperation.getAllValues()) {
+            if (machine.isAvailable()) {
+                machine.increaseWaiting(time);
+            }
+        }
+    }
+
     public List<Workstation> getWorkstationsAscendingByPercentage() {
         List<Workstation> workstations = new ArrayList<>(workstationsPerOperation.getAllValues());
         workstations.sort((Workstation w1, Workstation w2) -> {

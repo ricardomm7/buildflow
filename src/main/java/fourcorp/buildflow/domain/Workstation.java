@@ -1,12 +1,9 @@
 package fourcorp.buildflow.domain;
 
 public class Workstation implements Identifiable<String> {
-    private String idMachine;
+    private final String idMachine;
     private double time;
     private boolean isAvailable;
-    private long startWaiting;
-    private long stopWaiting;
-    private int waitingCounter;
     private int oprCounter;
     private long totalWaiting;
     private long totalOper;
@@ -15,9 +12,6 @@ public class Workstation implements Identifiable<String> {
         this.idMachine = idMachine;
         this.time = time;
         this.isAvailable = true;
-        this.startWaiting = 0;
-        this.stopWaiting = 0;
-        this.waitingCounter = 0;
         this.oprCounter = 0;
         this.totalWaiting = 0;
         this.totalOper = 0;
@@ -29,18 +23,6 @@ public class Workstation implements Identifiable<String> {
 
     public void setOprounter() {
         this.oprCounter = oprCounter + 1;
-    }
-
-    public void setWaitingCounter() {
-        this.waitingCounter = waitingCounter + 1;
-    }
-
-    public void setStartWaiting() {
-        this.startWaiting = System.currentTimeMillis();
-    }
-
-    public void setStopWaiting() {
-        this.stopWaiting = System.currentTimeMillis();
     }
 
     public double getTime() {
@@ -60,18 +42,10 @@ public class Workstation implements Identifiable<String> {
     }
 
     public void processProduct(Product product) {
-        this.setAvailable(false);
         setOprounter();
-        if (startWaiting != 0) {
-            setStopWaiting();
-            stopWaiting();
-        }
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
-
         new Thread(() -> {
             simulateExecutionTime();
-            this.setAvailable(true);
-            setStartWaiting();
             totalOper = totalOper + (long) time;
             // Máquina fica disponível novamente após o tempo
             //System.out.println("Machine " + idMachine + " is now available again.");
@@ -91,11 +65,8 @@ public class Workstation implements Identifiable<String> {
         }
     }
 
-    //da stop a espera e guarda o tempo de espera
-    public void stopWaiting() {
-        setWaitingCounter();
-        long waiting = stopWaiting - startWaiting;
-        totalWaiting = totalWaiting + waiting;
+    public void increaseWaiting(double time) {
+        totalWaiting += (long) time;
     }
 
     public double getTotalOperationTime() {

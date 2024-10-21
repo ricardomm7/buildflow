@@ -88,7 +88,10 @@ public class Simulator {
                     productTotalTime += operationTime;
                     totalProductionTime += operationTime;
 
+                    bestMachine.setAvailable(false);
+                    w.increaseWaitingTimes(bestMachine.getTime());
                     bestMachine.processProduct(product);
+                    bestMachine.setAvailable(true);
 
                     List<String> machineFlow = productMachineFlows.computeIfAbsent(product.getId(), _ -> new ArrayList<>());
                     machineFlow.add(bestMachine.getId());
@@ -147,8 +150,8 @@ public class Simulator {
 
     public void printAnalysis() {
         for (Workstation e : w.getWorkstationsAscendingByPercentage()) {
-            if (e.getTotalExecutionTime() == 0) {
-                System.out.println("Workstation ID: " + e.getId() + " | It didn't work in the last simulation.");
+            if (e.getTotalOperationTime() == 0) {
+                System.out.println("Workstation ID: " + e.getId() + " | It didn't operate in the last simulation.");
             } else {
                 System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getTotalExecutionTime() + "min" + " | Operation and execution relationship: " + String.format("%.4f", (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100) + "%");
             }

@@ -7,7 +7,6 @@ import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,53 +74,27 @@ class WorkstationsPerOperationTest {
 
     @Test
     void getWorkstationsAscendingByPercentage() {
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-        Workstation ws3 = new Workstation("WS3", 15);
+        Workstation ws543 = new Workstation("WS65", 10);
+        Workstation ws547 = new Workstation("WS66", 5);
 
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, new Operation("Cutting"));
-        w.create(ws2, new Operation("Painting"));
-        w.create(ws3, new Operation("Assembling"));
+        WorkstationsPerOperation u = new WorkstationsPerOperation();
+        u.create(ws543, new Operation("Cutting"));
+        u.create(ws547, new Operation("Assembling"));
 
-        Product product1 = new Product("P001", new LinkedList<>(Arrays.asList(new Operation("Cutting"), new Operation("Painting"), new Operation("Assembling"))));
+        Product p4698 = new Product("P006", new LinkedList<>(List.of(new Operation("Cutting"), new Operation("Assembling"))));
+        Product p4390 = new Product("P012", new LinkedList<>(List.of(new Operation("Cutting"))));
 
-        ProductPriorityLine o = new ProductPriorityLine();
-        o.create(product1, PriorityOrder.LOW);
+        ProductPriorityLine uisfd = new ProductPriorityLine();
+        uisfd.create(p4698, PriorityOrder.LOW);
+        uisfd.create(p4390, PriorityOrder.LOW);
 
-        Simulator s = new Simulator(w, o);
-        s.runWithoutPriority();
-        List<Workstation> a = w.getWorkstationsAscendingByPercentage();
+        Simulator xo = new Simulator(u, uisfd);
+        xo.runWithoutPriority();
+        List<Workstation> urghoer = u.getWorkstationsAscendingByPercentage();
 
-        assertEquals(3, a.size(), "Should return 3 machines.");
-        assertEquals(100, (ws1.getTotalOperationTime() / ws1.getTotalExecutionTime()) * 100, 0.0001, "WS1 should have 100%.");
-        assertEquals(100, (ws2.getTotalOperationTime() / ws2.getTotalExecutionTime()) * 100, 0.0001, "WS2 should have.");
-        assertEquals(100, (ws3.getTotalOperationTime() / ws3.getTotalExecutionTime()) * 100, 0.0001, "WS3 should have.");
-    }
-
-    @Test
-    void getWorkstationsAscendingByPercentage2() {
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, new Operation("Cutting"));
-        w.create(ws2, new Operation("Assembling"));
-
-        Product product1 = new Product("P001", new LinkedList<>(List.of(new Operation("Cutting"), new Operation("Assembling"))));
-        Product product2 = new Product("P002", new LinkedList<>(List.of(new Operation("Cutting"))));
-
-        ProductPriorityLine o = new ProductPriorityLine();
-        o.create(product1, PriorityOrder.LOW);
-        o.create(product2, PriorityOrder.LOW);
-
-        Simulator s = new Simulator(w, o);
-        s.runWithoutPriority();
-        List<Workstation> a = w.getWorkstationsAscendingByPercentage();
-
-        s.printAnalysis();
-
-        assertEquals(2, a.size(), "Should return 1 machines.");
-        assertEquals(80, (ws1.getTotalOperationTime() / ws1.getTotalExecutionTime()) * 100, 0.0001, "WS1 should have 100%.");
+        double asd3 = (ws543.getTotalOperationTime() / ws543.getTotalExecutionTime()) * 100;
+        System.out.println(asd3);
+        assertEquals(2, urghoer.size(), "Should return 2 machines.");
+        assertEquals(80.0, (ws543.getTotalOperationTime() / ws543.getTotalExecutionTime()) * 100, "WS65 should have 80%.");
     }
 }
