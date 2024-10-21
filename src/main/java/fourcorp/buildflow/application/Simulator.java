@@ -147,7 +147,11 @@ public class Simulator {
 
     public void printAnalysis() {
         for (Workstation e : w.getWorkstationsAscendingByPercentage()) {
-            System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getTotalExecution() + "min" + " | Operation and execution relationship: " + (e.getTotalTimePerOperation() / e.getTotalExecution()) * 100 + "%");
+            if (e.getTotalExecutionTime() == 0) {
+                System.out.println("Workstation ID: " + e.getId() + " | It didn't work in the last simulation.");
+            } else {
+                System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getTotalExecutionTime() + "min" + " | Operation and execution relationship: " + String.format("%.4f", (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100) + "%");
+            }
         }
     }
 }

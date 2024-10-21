@@ -3,7 +3,6 @@ package fourcorp.buildflow.domain;
 public class Workstation implements Identifiable<String> {
     private String idMachine;
     private double time;
-    private long waitingTime;
     private boolean isAvailable;
     private long startWaiting;
     private long stopWaiting;
@@ -20,12 +19,11 @@ public class Workstation implements Identifiable<String> {
         this.stopWaiting = 0;
         this.waitingCounter = 0;
         this.oprCounter = 0;
-        this.waitingTime = 0;
         this.totalWaiting = 0;
         this.totalOper = 0;
     }
 
-    public long getTotalExecution() {
+    public long getTotalExecutionTime() {
         return (totalWaiting + totalOper);
     }
 
@@ -33,40 +31,16 @@ public class Workstation implements Identifiable<String> {
         this.oprCounter = oprCounter + 1;
     }
 
-    public int getOprCounter() {
-        return oprCounter;
-    }
-
     public void setWaitingCounter() {
         this.waitingCounter = waitingCounter + 1;
-    }
-
-    public int getWaitingCounter() {
-        return waitingCounter;
-    }
-
-    public long getStartWaiting() {
-        return startWaiting;
     }
 
     public void setStartWaiting() {
         this.startWaiting = System.currentTimeMillis();
     }
 
-    public long getStopWaiting() {
-        return stopWaiting;
-    }
-
     public void setStopWaiting() {
         this.stopWaiting = System.currentTimeMillis();
-    }
-
-    public String getIdMachine() {
-        return idMachine;
-    }
-
-    public void setIdMachine(String idMachine) {
-        this.idMachine = idMachine;
     }
 
     public double getTime() {
@@ -121,27 +95,11 @@ public class Workstation implements Identifiable<String> {
     public void stopWaiting() {
         setWaitingCounter();
         long waiting = stopWaiting - startWaiting;
-        waitingTime = waiting;
         totalWaiting = totalWaiting + waiting;
-
     }
 
-    public double getTotalTimePerOperation() {
+    public double getTotalOperationTime() {
         return totalOper;
-    }
-
-    public long getTotalWaitingTimePerOperation() {
-        return totalWaiting;
-    }
-
-    public double getAverageTotalTimePerOperation() {
-        long time = totalOper / oprCounter;
-        return time;
-    }
-
-    public long getAverageTotalWaitingTimePerOperation() {
-        long time = totalWaiting / waitingCounter;
-        return time;
     }
 
     @Override

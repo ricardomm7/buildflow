@@ -19,6 +19,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimulatorTest {
+    private final String smallOperationsFile = Paths.get("textFiles/small_articles.csv").toString();
+    private final String smallWorkstationsFile = Paths.get("textFiles/small_workstations.csv").toString();
+    private final String mediumOperationsFile = Paths.get("textFiles/medium_articles.csv").toString();
+    private final String mediumWorkstationsFile = Paths.get("textFiles/medium_workstations.csv").toString();
+    private final String largeOperationsFile = Paths.get("textFiles/articles.csv").toString();
+    private final String largeWorkstationsFile = Paths.get("textFiles/workstations.csv").toString();
 
     @BeforeEach
     void resetData() {
@@ -265,14 +271,6 @@ class SimulatorTest {
         assertTrue(productionTimePerProduct.contains(27.0), "The production time for product P002 should be 27 minutes (12 + 15).");
     }
 
-    // Caminhos para os arquivos CSV
-    private final String smallOperationsFile = Paths.get("textFiles/small_articles.csv").toString();
-    private final String smallWorkstationsFile = Paths.get("textFiles/small_workstations.csv").toString();
-    private final String mediumOperationsFile = Paths.get("textFiles/medium_articles.csv").toString();
-    private final String mediumWorkstationsFile = Paths.get("textFiles/medium_workstations.csv").toString();
-    private final String largeOperationsFile = Paths.get("textFiles/articles.csv").toString();
-    private final String largeWorkstationsFile = Paths.get("textFiles/workstations.csv").toString();
-
     @Test
     void testSmallDataSetExecutionTimes() throws IOException {
         // Carregar e rodar a simulação para o pequeno conjunto de dados
@@ -423,4 +421,7 @@ class SimulatorTest {
     }
 
 
+    @Test
+    void printAnalysis() {
+    }
 }
