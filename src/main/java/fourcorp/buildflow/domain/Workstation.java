@@ -34,9 +34,8 @@ public class Workstation implements Identifiable<String> {
     public int getOprCounter() {
         return oprCounter;
     }
-    public void setWaitingCounter() {
-        this.waitingCounter = waitingCounter + 1;
-    }
+
+    public void setWaitingCounter() {this.waitingCounter = waitingCounter + 1;}
 
     public int getWaitingCounter() {
         return waitingCounter;
@@ -89,9 +88,7 @@ public class Workstation implements Identifiable<String> {
         if(startWaiting != 0 ){
             setStopWaiting();
             stopWaiting();
-
         }
-
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
 
         // Simular o processamento em uma nova thread
@@ -117,12 +114,6 @@ public class Workstation implements Identifiable<String> {
             //System.out.println("Execução interrompida para a máquina " + idMachine);
         }
     }
-
-
-    // conta e guarda o temp de uma operação // ja não é preciso
-    public void setTimePerOperation (double time){
-    }
-
 
     //da stop a espera e guarda o tempo de espera
     public void stopWaiting (){
