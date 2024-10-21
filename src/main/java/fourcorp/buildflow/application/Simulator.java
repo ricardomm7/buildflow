@@ -147,7 +147,7 @@ public class Simulator {
 
     public void printAnalysis() {
         for (Workstation e : w.getWorkstationsAscendingByPercentage()) {
-            System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getExecutiontimeTotal() + "min" + " | Operation and execution relationship: " + (e.getOperationTimeTotal() / e.getExecutiontimeTotal()) * 100 + "%");
+            System.out.println("Workstation ID: " + e.getId() + " | Total time in execution: " + e.getTotalExecution() + "min" + " | Operation and execution relationship: " + (e.getTotalTimePerOperation() / e.getTotalExecution()) * 100 + "%");
         }
     }
 }

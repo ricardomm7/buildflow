@@ -53,8 +53,8 @@ public class WorkstationsPerOperation {
     public List<Workstation> getWorkstationsAscendingByPercentage() {
         List<Workstation> workstations = new ArrayList<>(workstationsPerOperation.getAllValues());
         workstations.sort((Workstation w1, Workstation w2) -> {
-            double percentage1 = (w1.getOperationTimeTotal() / w1.getExecutiontimeTotal()) * 100;
-            double percentage2 = (w2.getOperationTimeTotal() / w2.getExecutiontimeTotal()) * 100;
+            double percentage1 = (w1.getTotalTimePerOperation() / w1.getTotalExecution()) * 100;
+            double percentage2 = (w2.getTotalTimePerOperation() / w2.getTotalExecution()) * 100;
             return Double.compare(percentage1, percentage2);
         });
         return workstations;

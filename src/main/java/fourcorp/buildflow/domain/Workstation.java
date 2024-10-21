@@ -1,7 +1,5 @@
 package fourcorp.buildflow.domain;
 
-import java.util.HashMap;
-
 public class Workstation implements Identifiable<String> {
     private String idMachine;
     private double time;
@@ -13,7 +11,6 @@ public class Workstation implements Identifiable<String> {
     private int oprCounter;
     private long totalWaiting;
     private long totalOper;
-
 
     public Workstation(String idMachine, double time) {
         this.idMachine = idMachine;
@@ -27,6 +24,11 @@ public class Workstation implements Identifiable<String> {
         this.totalWaiting = 0;
         this.totalOper = 0;
     }
+
+    public long getTotalExecution() {
+        return (totalWaiting + totalOper);
+    }
+
     public void setOprounter() {
         this.oprCounter = oprCounter + 1;
     }
@@ -35,13 +37,15 @@ public class Workstation implements Identifiable<String> {
         return oprCounter;
     }
 
-    public void setWaitingCounter() {this.waitingCounter = waitingCounter + 1;}
+    public void setWaitingCounter() {
+        this.waitingCounter = waitingCounter + 1;
+    }
 
     public int getWaitingCounter() {
         return waitingCounter;
     }
 
-    public long getStartWaiting(){
+    public long getStartWaiting() {
         return startWaiting;
     }
 
@@ -49,8 +53,8 @@ public class Workstation implements Identifiable<String> {
         this.startWaiting = System.currentTimeMillis();
     }
 
-    public long getStopWaiting(){
-        return stopWaiting ;
+    public long getStopWaiting() {
+        return stopWaiting;
     }
 
     public void setStopWaiting() {
@@ -82,21 +86,19 @@ public class Workstation implements Identifiable<String> {
     }
 
     public void processProduct(Product product) {
-
         this.setAvailable(false);
         setOprounter();
-        if(startWaiting != 0 ){
+        if (startWaiting != 0) {
             setStopWaiting();
             stopWaiting();
         }
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " min");
 
-        // Simular o processamento em uma nova thread
         new Thread(() -> {
-            simulateExecutionTime();  // Simular o tempo de execução
+            simulateExecutionTime();
             this.setAvailable(true);
             setStartWaiting();
-            totalOper = totalOper + (long)time;
+            totalOper = totalOper + (long) time;
             // Máquina fica disponível novamente após o tempo
             //System.out.println("Machine " + idMachine + " is now available again.");
         }).start();
@@ -116,24 +118,28 @@ public class Workstation implements Identifiable<String> {
     }
 
     //da stop a espera e guarda o tempo de espera
-    public void stopWaiting (){
+    public void stopWaiting() {
         setWaitingCounter();
-        long waiting =   stopWaiting- startWaiting;
+        long waiting = stopWaiting - startWaiting;
         waitingTime = waiting;
         totalWaiting = totalWaiting + waiting;
 
     }
-    public double getTotalTimePerOperation(){
+
+    public double getTotalTimePerOperation() {
         return totalOper;
     }
-    public long getTotalWaitingTimePerOperation(){
+
+    public long getTotalWaitingTimePerOperation() {
         return totalWaiting;
     }
-    public double getAverageTotalTimePerOperation(){
+
+    public double getAverageTotalTimePerOperation() {
         long time = totalOper / oprCounter;
         return time;
     }
-    public long getAverageTotalWaitingTimePerOperation(){
+
+    public long getAverageTotalWaitingTimePerOperation() {
         long time = totalWaiting / waitingCounter;
         return time;
     }
