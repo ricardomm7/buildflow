@@ -18,7 +18,10 @@ of the percentage of execution time relative to the total time.
 
 **From the client clarifications:**
 
-> None for now.
+> **Question:** Can be more explicit when you refer "sorted in ascending order of the percentage of execution time relative to the total time.", the total time is refered previously as "total execution time" ?
+> 
+> **Answer:** The goal is to show significance of each machine labour time compared to total labour of the process!
+Since all machines would be shown in the list, ordering it by the percentage (significance) looks reasonable.
 
 
 ### C) Acceptance Criteria

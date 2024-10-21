@@ -5,78 +5,34 @@ skinparam shadowing false
 
 autonumber
 
-actor "Actor" as Actor
-participant ":UserInterface" as UI
-participant ":Controller" as CTRL
-participant ":RepositoryHandler" as RepoHandler
-participant "repositories\n:RepositoryHandler" as RepoPlatform
-participant "repository:\nRepositoryClass" as RepositoryClass
-participant ":ItemClass" as ItemClass
+actor "Client" as User
+participant ":Simulator" as Simulator
+participant "WorkstationsPerOperation" as WorkstationsPerOp
+participant "List<Workstation>" as WorkstationList
+participant "Workstation" as Workstation
 
-activate Actor
+User -> Simulator : Request workstation analysis
+activate Simulator
 
-Actor -> UI : action request
-activate UI
+Simulator -> WorkstationsPerOp : getWorkstationsAscendingByPercentage()
+activate WorkstationsPerOp
 
-UI -> CTRL : create operation
+WorkstationsPerOp -> WorkstationList : Return sorted list of workstations
+deactivate WorkstationsPerOp
+activate WorkstationList
 
-UI --> Actor : asks for input
-deactivate UI
+Simulator <- WorkstationList : List of workstations in ascending order
+deactivate WorkstationList
 
-Actor -> UI : enters input
-activate UI
+loop for each workstation
+    Simulator -> Workstation : getId(), getExecutiontimeTotal(), getOperationTimeTotal()
+    activate Workstation
+    Simulator <- Workstation : ID, Execution Time, Operation Time
+    deactivate Workstation
 
-UI -> CTRL : operation(param)
-deactivate UI
-activate CTRL
+    Simulator -> User : Display workstation details (ID, Execution Time, Percentage)
+deactivate Simulator
+end
 
-CTRL -> RepoHandler : getInstance()
-activate RepoHandler
-RepoHandler --> CTRL : repository handler
-deactivate RepoHandler
 
-CTRL -> RepoPlatform : getRepository()
-activate RepoPlatform
-RepoPlatform --> CTRL : repository
-deactivate RepoPlatform
-
-CTRL -> RepositoryClass : createItem(param)
-deactivate CTRL
-activate RepositoryClass
-
-RepositoryClass -> ItemClass : create(param)
-deactivate RepositoryClass
-
-activate ItemClass
-ItemClass -> ItemClass : validateAttribute(item)
-activate ItemClass
-ItemClass -> ItemClass : validateOtherRules(item)
-activate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
-
-ItemClass --> RepositoryClass : item
-deactivate ItemClass
-activate RepositoryClass
-
-RepositoryClass -> RepositoryClass : checkForDuplicates()
-activate RepositoryClass
-RepositoryClass --> RepositoryClass
-deactivate RepositoryClass
-RepositoryClass -> RepositoryClass : addItem(item)
-deactivate RepositoryClass
-
-CTRL <-- RepositoryClass : item
-deactivate RepositoryClass
-activate CTRL
-
-CTRL --> UI : item
-deactivate CTRL
-activate UI
-
-UI --> Actor : displays success message
-deactivate UI
-deactivate Actor
 @enduml

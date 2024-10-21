@@ -3,42 +3,76 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype polyline
 
-'left to right direction
-
-class UserInterfaceClass {
+class Simulator {
+    - operationQueues : MapLinked<Operation, Product, String>
+    - products : List<Product>
+    - w : WorkstationsPerOperation
+    - p : ProductPriorityLine
+    - productMachineFlows : Map<String, List<String>>
+    - totalProductionTime : double
+    - productTimes : Map<String, Double>
+    + runWithoutPriority() : void
+    + runWithPriority() : void
+    + createOperationQueues(products : List<Product>) : void
+    + processItems() : void
+    + printTotalProductionTime() : void
+    + printProductionTimePerProduct() : void
+    + printMachineDependencies() : void
+    + printAnalysis() : void
+    + getOperationQueues() : MapLinked<Operation, Product, String>
+    + getProducts() : List<Product>
+    + getProductionTimePerProduct() : List<Double>
+    + getTotalProductionTime() : double
 }
 
-class ControllerClass {
-    +operation1(param1 : Type) : ReturnType
-    +operation2() : ReturnType
+class MapLinked<K, V, S> {
+    + newItem(key : K, value : V) : void
+    + removeAll() : void
+    + getByKey(key : K) : LinkedList<V>
 }
 
-class RepositoryHandler {
-    +getRepository() : RepositoryClass
-    -repository : RepositoryClass
-            - instance : RepositoryHandler
-            - RepositoryHandler()
+class WorkstationsPerOperation {
+    + findBestMachineForOperation(operation : Operation) : Workstation
+    + getWorkstationsAscendingByPercentage() : List<Workstation>
 }
 
-class RepositoryClass {
-    - itemList : List<ItemClass>
-    +operation1(param : Type) : ReturnType
-    +operation2() : void
-    +operation3(item): void
+class ProductPriorityLine {
+    + getAllProducts() : List<Product>
+    + getProductsByPriority(priority : PriorityOrder) : List<Product>
 }
 
-class ItemClass {
-    - attribute : Type
-    + ItemClass(param : Type)
-    +operation1(item : ItemClass) : void
-    +operation2(item : ItemClass) : void
+class MachineFlowAnalyzer {
+    + static addDependency(machineA : String, machineB : String) : void
+    + static printMachineDependencies() : void
 }
 
-UserInterfaceClass ..> ControllerClass
-RepositoryHandler --> "1" RepositoryClass : repository
-RepositoryHandler --> RepositoryHandler : instance
-RepositoryClass --> "*" ItemClass : items
-ControllerClass ..> RepositoryHandler : repositoryHandler
-ControllerClass ..> RepositoryClass : repository
+class Product {
+    + getId() : String
+    + getOperations() : List<Operation>
+}
+
+class Operation {
+    + getId() : String
+}
+
+class Workstation {
+    + getId() : String
+    + getExecutiontimeTotal() : double
+    + getOperationTimeTotal() : double
+    + isAvailable() : boolean
+    + processProduct(product : Product) : void
+    + getTime() : double
+}
+
+Simulator --> MapLinked
+Simulator --> WorkstationsPerOperation
+Simulator --> ProductPriorityLine
+Simulator ..> MachineFlowAnalyzer
+Simulator --> Product
+Simulator --> Operation
+Simulator --> Workstation
+ProductPriorityLine --> Product
+WorkstationsPerOperation --> Workstation
+Operation --> Workstation
 
 @enduml
