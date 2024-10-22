@@ -19,10 +19,32 @@ As a Product Owner, I want to implement a simulator that processes all items acc
 
 > **Question:** Is it possible for a product to have multiple Bill Of Materials? For example, a product that has a variant with the size small and another with the size big will require different quantities of materials, thus having more than one Bill Of Materials for a single product.
 > 
-> **Answer:** no; different BOMs implies different articles/products.
-Although products from same family or variants may share almost similar BOMs or BOOs.
+> **Answer:** no; different BOMs implies different articles/products. Although products from same family or variants may share almost similar BOMs or BOOs.
 
+> **Question:** Tendo em conta as US's USEI02 e USEI08, será necessário termos dois processos de simulação diferentes? Um por ordem de entrada e outro por prioridade do article (e desempatando por ordem de entrada)?
+>
+> **Answer:** O simulador é o mesmo, a única coisa que muda é o critério para a selecção do próximo artigo a ser processado.
 
+> **Question:** Devemos dar ao Product Owner a possibilidade de escolher por qual simulador quer optar, correto? Já para a demonstração da funcionalidade, será apenas necessário mostrar os resultados da simulação? ou há outros aspetos que o cliente deseja que seja incluído no output do interface?
+>
+> **Answer:** O simulador é o mesmo, a única coisa que muda é o critério para a selecção do próximo artigo a ser processado. 
+Assim de repente, suspeito que aprenderam em Engenharia de Software padrões para lidar com estas situações.
+
+> **Question:** There are repeated lines in the articles.csv, should we consider each one has a production order?
+>
+> **Answer:** Each line corresponds to one article to be produced.
+
+> **Question:**
+>
+> **Answer:**
+
+> **Question:**
+>
+> **Answer:**
+
+> **Question:**
+>
+> **Answer:**
 ### C) Acceptance Criteria
 
 * **AC1:** The simulator should create a preliminary queue for each operation,

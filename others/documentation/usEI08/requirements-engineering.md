@@ -15,9 +15,15 @@ As a Product Owner, I want to enhance the existing simulator to process items ba
 
 **From the client clarifications:**
 
-> **Question:** Ah?
+> **Question:** Tendo em conta as US's USEI02 e USEI08, será necessário termos dois processos de simulação diferentes? Um por ordem de entrada e outro por prioridade do article (e desempatando por ordem de entrada)?
 >
-> **Answer:** No.
+> **Answer:** O simulador é o mesmo, a única coisa que muda é o critério para a selecção do próximo artigo a ser processado.
+
+> **Question:** Devemos dar ao Product Owner a possibilidade de escolher por qual simulador quer optar, correto? Já para a demonstração da funcionalidade, será apenas necessário mostrar os resultados da simulação? ou há outros aspetos que o cliente deseja que seja incluído no output do interface?
+>
+> **Answer:** O simulador é o mesmo, a única coisa que muda é o critério para a selecção do próximo artigo a ser processado.
+Assim de repente, suspeito que aprenderam em Engenharia de Software padrões para lidar com estas situações.
+
 
 
 ### C) Acceptance Criteria
