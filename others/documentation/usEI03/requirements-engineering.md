@@ -24,6 +24,10 @@
 > 
 > **Answer:** the total operation time of all items but the time between the start of the first machine and the end of the last one would be nice to have.
 
+> **Question:** Calculate the total production time for the items, the objetive is to calculate individually the production time for each item in the csv file, or the total operation time of all items, or the time between the start of the first machine and the end of the last one?
+> 
+> **Answer:** the total operation time of all items but the time between the start of the first machine and the end of the last one would be nice to have.
+
 
 ### C) Acceptance Criteria
 

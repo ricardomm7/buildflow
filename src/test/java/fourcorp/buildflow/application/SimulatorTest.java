@@ -289,6 +289,32 @@ class SimulatorTest {
         );
     }
 
+    @Test
+    void testSmallDataSetDependencies() throws IOException {
+        // Dependências esperadas para o conjunto de dados pequeno (small dataset)
+        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
+
+        expectedDependencies.put("WS1", Map.of("WS2", 1, "WS3", 1));
+        expectedDependencies.put("WS2", Map.of("WS4", 1));
+        expectedDependencies.put("WS3", Map.of("WS4", 1));
+
+        // Rodar a simulação e validar as dependências
+        runSimulationAndValidateDependencies(smallOperationsFile, smallWorkstationsFile, "small dataset", expectedDependencies);
+    }
+
+    @Test
+    void testMediumDataSetDependencies() throws IOException {
+        // Dependências esperadas para o conjunto de dados médio (medium dataset)
+        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
+        expectedDependencies.put("WS1", Map.of("WS2", 2, "WS3", 2, "WS6", 2));
+        expectedDependencies.put("WS2", Map.of("WS4", 3, "WS3", 1, "WS7", 1, "WS5", 1));
+        expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 3));
+        expectedDependencies.put("WS4", Map.of("WS5", 2, "WS7", 2, "WS3", 1));
+        expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 1, "WS2", 2));
+        expectedDependencies.put("WS7", Map.of("WS5", 3));
+        // Rodar a simulação e validar as dependências
+        runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
+    }
 
     @Test
     void testLargeDataSet() throws IOException {
@@ -365,33 +391,6 @@ class SimulatorTest {
         assertEquals(expectedTotalTime, actualTotalTime, 0.01, "O tempo total de produção deve ser correto para o " + dataSetLabel);
 
         System.setOut(System.out);
-    }
-
-    @Test
-    void testSmallDataSetDependencies() throws IOException {
-        // Dependências esperadas para o conjunto de dados pequeno (small dataset)
-        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
-
-        expectedDependencies.put("WS1", Map.of("WS2", 1, "WS3", 1));
-        expectedDependencies.put("WS2", Map.of("WS4", 1));
-        expectedDependencies.put("WS3", Map.of("WS4", 1));
-
-        // Rodar a simulação e validar as dependências
-        runSimulationAndValidateDependencies(smallOperationsFile, smallWorkstationsFile, "small dataset", expectedDependencies);
-    }
-
-    @Test
-    void testMediumDataSetDependencies() throws IOException {
-        // Dependências esperadas para o conjunto de dados médio (medium dataset)
-        Map<String, Map<String, Integer>> expectedDependencies = new HashMap<>();
-        expectedDependencies.put("WS1", Map.of("WS2", 2, "WS3", 2, "WS6", 2));
-        expectedDependencies.put("WS2", Map.of("WS4", 3, "WS3", 1, "WS7", 1, "WS5", 1));
-        expectedDependencies.put("WS3", Map.of("WS4", 1, "WS5", 3));
-        expectedDependencies.put("WS4", Map.of("WS5", 2, "WS7", 2, "WS3", 1));
-        expectedDependencies.put("WS6", Map.of("WS4", 1, "WS7", 1, "WS2", 2));
-        expectedDependencies.put("WS7", Map.of("WS5", 3));
-        // Rodar a simulação e validar as dependências
-        runSimulationAndValidateDependencies(mediumOperationsFile, mediumWorkstationsFile, "medium dataset", expectedDependencies);
     }
 
     private void runSimulationAndValidateDependencies(String operationsFilePath, String workstationsFilePath, String dataSetLabel, Map<String, Map<String, Integer>> expectedDependencies) throws IOException {

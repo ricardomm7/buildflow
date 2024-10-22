@@ -31,12 +31,5 @@ public class HelloApplication extends Application {
         }
         Menu menu = new Menu();
         menu.displayMenu();
-        /*
-        System.out.println("\nTotal production time for each product:\n");
-        calculateTotalProductionTime();// US003
-
-        System.out.println("\nDependencies between machines:\n");
-        printMachineDependencies(); // US007
-         */
     }
 }
