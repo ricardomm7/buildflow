@@ -27,6 +27,11 @@ public class ReaderToSQL {
             readCostumer(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
             readOrder(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertProductionOrder(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertBOO(workbook, sqlFileWriter);
+            sqlFileWriter.close();
         } catch (IOException e) {
             System.out.println("Error reading Excel file: " + e.getMessage());
         }
@@ -149,6 +154,60 @@ public class ReaderToSQL {
                 sqlFileWriter.write(sqlInsert);
             } catch (IOException e) {
                 System.out.println("Error writing to SQL file [Costumer]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertProductionOrder(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Orders");
+        if (sheet == null) {
+            System.out.println("Sheet 'Order' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String product = getCellValue(row.getCell(2));
+            String ord = getCellValue(row.getCell(0));
+            int qntty = Integer.parseInt(getCellValue(row.getCell(3)));
+
+
+            String sqlInsert = String.format("INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
+                    product, ord, qntty);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [ProductionOrder]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertBOO(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Orders");
+        if (sheet == null) {
+            System.out.println("Sheet 'Order' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String product = getCellValue(row.getCell(2));
+            String ord = getCellValue(row.getCell(0));
+            int qntty = Integer.parseInt(getCellValue(row.getCell(3)));
+
+
+            String sqlInsert = String.format("INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
+                    product, ord, qntty);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [ProductionOrder]: " + e.getMessage());
             }
         }
     }

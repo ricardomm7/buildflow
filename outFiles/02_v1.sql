@@ -26,3 +26,13 @@ INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('4'
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('5', TO_DATE('2024-09-18', 'YYYY-MM-DD'), TO_DATE('2024-09-25', 'YYYY-MM-DD'), 'PT501242417');
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('6', TO_DATE('2024-09-18', 'YYYY-MM-DD'), TO_DATE('2024-09-26', 'YYYY-MM-DD'), 'CZ6451237810');
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('7', TO_DATE('2024-09-21', 'YYYY-MM-DD'), TO_DATE('2024-09-26', 'YYYY-MM-DD'), 'PT501245987');
+
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '1', 5);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '1', 15);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '2', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '3', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '3', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '4', 4);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '5', 12);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '6', 8);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '7', 7);

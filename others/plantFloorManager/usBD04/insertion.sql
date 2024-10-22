@@ -26,8 +26,8 @@ INSERT ALL
 SELECT 1 FROM DUAL;
 
 -- Inserir dados na tabela BOO
-INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F001', 1);
-INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F002', 1);
+INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F001', 0);
+INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('F002', 0);
 
 -- Inserir dados na tabela Part
 INSERT INTO Part (Part_ID, Description) VALUES ('PA001', 'Motherboard');
@@ -49,7 +49,7 @@ SELECT 1 FROM DUAL;
 INSERT INTO Operation (Operation_ID, Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence, Type_WorkstationWorkstationType_ID)
 VALUES (1, 'Assembly', 'F001', 1, 'WS001');
 INSERT INTO Operation (Operation_ID, Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence, Type_WorkstationWorkstationType_ID)
-VALUES (2, 'Packaging', 'F002', 1, 'WS002');
+VALUES (2, 'Packaging', 'F002', 2, 'WS002');
 
 -- Agora, inserir dados na tabela Workstation
 INSERT INTO Workstation (Workstation_ID, Name, Description, Type_WorkstationWorkstationType_ID)
