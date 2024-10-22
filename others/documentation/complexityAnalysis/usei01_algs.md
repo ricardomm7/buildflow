@@ -1,21 +1,22 @@
 # USEI01 - Class MapLinked (generic)
 
-## New item 
+## New item
+
 ```java
 public void newItem(T value, Q key) {
     if (value == null) {
         throw new IllegalArgumentException("Value cannot be null");
     }
-    for (Q existingKey : line.keySet()) {
+    for (Q existingKey : line.keySet()) { //O(k)
         if (existingKey.equals(key)) {
             List<T> valueList = line.get(existingKey);
-            valueList.add(value);
+            valueList.add(value); //O(1)
             return;
         }
     }
     LinkedList<T> valueList = new LinkedList<>();
-    valueList.add(value);
-    line.put(key, valueList);
+    valueList.add(value); //O(1)
+    line.put(key, valueList); //O(1)
 }
 ```
 
@@ -23,13 +24,13 @@ public void newItem(T value, Q key) {
 
 > Result of the complexity analysis: **O(k)** (where k is the number of keys)
 
-
 ## Get By Key
+
 ```java
 public LinkedList<T> getByKey(Q key) {
-    for (Q existingKey : line.keySet()) {
+    for (Q existingKey : line.keySet()) { //O(k)
         if (existingKey.equals(key)) {
-            return new LinkedList<>(line.get(existingKey));
+            return new LinkedList<>(line.get(existingKey)); //O(1)
         }
     }
     return new LinkedList<>();
@@ -40,14 +41,14 @@ public LinkedList<T> getByKey(Q key) {
 
 > Result of the complexity analysis: **O(k)** (where k is the number of keys)
 
-
 ## Search By ID
+
 ```java
 public T searchById(ID id) {
-    for (List<T> items : line.values()) {
-        for (T item : items) {
+    for (List<T> items : line.values()) { //O(k)
+        for (T item : items) { //O(kn)
             if (item.getId().equals(id)) {
-                return item;
+                return item; //O(1)
             }
         }
     }
@@ -59,14 +60,13 @@ public T searchById(ID id) {
 
 > Result of the complexity analysis: **O(kn)** (where k is the number of keys and n the number of values)
 
-
-
 ## Get All Values
+
 ```java
 public LinkedList<T> getAllValues() {
     LinkedList<T> allValues = new LinkedList<>();
-    for (LinkedList<T> items : line.values()) {
-        allValues.addAll(items);
+    for (LinkedList<T> items : line.values()) { //O(k)
+        allValues.addAll(items); //O(k)
     }
     return allValues;
 }

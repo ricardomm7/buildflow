@@ -6,85 +6,193 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Iterator;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public abstract class ReaderToSQL {
+public class ReaderToSQL {
+    private static String excelFile;
+    private static String outputFile;
 
     public static void readExcelAndGenerateSQL(String excelFilePath, String outputSQLFilePath) {
-        try (FileInputStream excelFile = new FileInputStream(excelFilePath);
-             Workbook workbook = new XSSFWorkbook(excelFile);
-             FileWriter sqlFileWriter = new FileWriter(outputSQLFilePath)) {
+        excelFile = excelFilePath;
+        outputFile = outputSQLFilePath;
 
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                Sheet sheet = workbook.getSheetAt(i);
-                String tableName = sheet.getSheetName();
+        try (FileInputStream excelFile = new FileInputStream(excelFilePath); FileWriter sqlFileWriter = new FileWriter(outputSQLFilePath)) {
+            Workbook workbook = new XSSFWorkbook(excelFile);
 
-                Iterator<Row> rowIterator = sheet.iterator();
-                Row headerRow = rowIterator.hasNext() ? rowIterator.next() : null;
-
-                if (headerRow != null) {
-                    StringBuilder insertCommand = new StringBuilder();
-
-                    insertCommand.append("INSERT INTO ").append(tableName).append(" (");
-                    Iterator<Cell> cellIterator = headerRow.cellIterator();
-
-                    while (cellIterator.hasNext()) {
-                        Cell headerCell = cellIterator.next();
-                        insertCommand.append(headerCell.getStringCellValue());
-                        if (cellIterator.hasNext()) {
-                            insertCommand.append(", ");
-                        }
-                    }
-                    insertCommand.append(") VALUES\n");
-
-                    while (rowIterator.hasNext()) {
-                        Row currentRow = rowIterator.next();
-                        insertCommand.append("(");
-
-                        cellIterator = currentRow.cellIterator();
-                        while (cellIterator.hasNext()) {
-                            Cell currentCell = cellIterator.next();
-                            insertCommand.append(getCellValueAsString(currentCell));
-                            if (cellIterator.hasNext()) {
-                                insertCommand.append(", ");
-                            }
-                        }
-                        insertCommand.append(")");
-                        if (rowIterator.hasNext()) {
-                            insertCommand.append(",\n");
-                        } else {
-                            insertCommand.append(";\n");
-                        }
-                    }
-
-                    sqlFileWriter.write(insertCommand.toString());
-                    sqlFileWriter.write("\n");
-                }
-            }
-            System.out.println("Arquivo SQL gerado com sucesso!");
-
+            readProductFamily(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            readProduct(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            readCostumer(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            readOrder(workbook, sqlFileWriter);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error reading Excel file: " + e.getMessage());
         }
     }
 
-    private static String getCellValueAsString(Cell cell) {
+    private static void readProductFamily(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("ProductFamily");
+        if (sheet == null) {
+            System.out.println("Sheet 'ProductFamily' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            String name = getCellValue(row.getCell(1));
+
+            String sqlInsert = String.format("INSERT INTO Product_Family (Family_ID, Name) VALUES ('%s', '%s');\n",
+                    id, name.replace("'", "''"));
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Product Family]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void readProduct(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Products");
+        if (sheet == null) {
+            System.out.println("Sheet 'Products' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            String name = getCellValue(row.getCell(1));
+            String desc = getCellValue(row.getCell(2));
+            String fam = "'" + getCellValue(row.getCell(3)) + "'";
+            if (getCellValue(row.getCell(3)).isEmpty()) {
+                fam = "NULL";
+            }
+
+            String sqlInsert = String.format("INSERT INTO Product (Product_ID, Name, Description, Product_FamilyFamily_ID) VALUES ('%s', '%s', '%s', %s);\n",
+                    id, name, desc, fam);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Products]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void readCostumer(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Clients");
+        if (sheet == null) {
+            System.out.println("Sheet 'Clients' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String name = getCellValue(row.getCell(1));
+            String vatin = getCellValue(row.getCell(2));
+            String address = getCellValue(row.getCell(3));
+            String zip = getCellValue(row.getCell(4));
+            String town = getCellValue(row.getCell(5));
+            String country = getCellValue(row.getCell(6));
+            String mail = "'" + getCellValue(row.getCell(7)) + "'";
+            if (getCellValue(row.getCell(7)).isEmpty()) {
+                mail = "NULL";
+            }
+            String phone = "'" + getCellValue(row.getCell(8)) + "'";
+            if (getCellValue(row.getCell(8)).isEmpty()) {
+                phone = "NULL";
+            }
+
+
+            String sqlInsert = String.format("INSERT INTO Costumer (VAT, Name, Address, \"Zip-Code\", City, Country, Email, Phone) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', %s, %s);\n",
+                    vatin, name, address, zip, town, country, mail, phone);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Costumer]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void readOrder(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Orders");
+        if (sheet == null) {
+            System.out.println("Sheet 'Order' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            String CId = getCellValue(row.getCell(1));
+            String vat = searchVAT(CId, workbook);
+            String orderDate = getCellValue(row.getCell(4));
+            String deliveryDate = getCellValue(row.getCell(5));
+
+            String sqlInsert = String.format("INSERT INTO \"Order\" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('%s', %s, %s, '%s');\n",
+                    id, orderDate, deliveryDate, vat);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Costumer]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static String getCellValue(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
         switch (cell.getCellType()) {
             case STRING:
-                return "'" + cell.getStringCellValue() + "'";
+                return cell.getStringCellValue();
             case NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    return "'" + cell.getDateCellValue().toString() + "'";
+                    Date date = cell.getDateCellValue();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    return "TO_DATE('" + sdf.format(date) + "'" + ", 'YYYY-MM-DD')";
                 } else {
-                    return String.valueOf(cell.getNumericCellValue());
+                    return String.valueOf((int) cell.getNumericCellValue());
                 }
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
                 return cell.getCellFormula();
             default:
-                return "NULL";
+                return "";
         }
     }
-}
 
+    private static String searchVAT(String clientID, Workbook workbook) {
+        Sheet sheet = workbook.getSheet("Clients");
+        if (sheet == null) {
+            System.out.println("Sheet 'Clients' does not exist in the Excel file.");
+            return null;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            if (id.equals(clientID)) {
+                return getCellValue(row.getCell(2));
+            }
+        }
+        return null;
+    }
+}
