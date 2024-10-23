@@ -8,6 +8,7 @@ public class Workstation implements Identifiable<String> {
     private long totalWaiting;
     private long totalOper;
 
+
     public Workstation(String idMachine, double time) {
         this.idMachine = idMachine;
         this.time = time;

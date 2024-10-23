@@ -4,6 +4,9 @@ import java.util.Objects;
 
 public class Operation implements Identifiable<String> {
     private String name;
+    private int countExecution;
+    private int countWaiting;
+
 
     public Operation(String operation) {
         this.name = operation;
