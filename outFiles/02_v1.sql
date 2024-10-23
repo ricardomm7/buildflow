@@ -36,3 +36,13 @@ INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES
 INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '5', 12);
 INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '6', 8);
 INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '7', 7);
+
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '1', 5);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '1', 15);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '2', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '3', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '3', 10);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '4', 4);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '5', 12);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '6', 8);
+INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '7', 7);

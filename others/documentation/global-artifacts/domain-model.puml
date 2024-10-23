@@ -32,12 +32,10 @@ class ProductionManager{
 class RawMaterial {
     name
     description
-    stock
 }
 
 class Product {
     name
-    stock
     manufacturingDate
     size
     colour
@@ -46,7 +44,6 @@ class Product {
 class Component {
     name
     description
-    stock
 }
 
 class Machine {
@@ -63,7 +60,6 @@ class Employee {
 
 class Operation {
     name
-    executionTime
     status
     type
 }
@@ -90,6 +86,7 @@ class Client {
     name
     NIF
     phoneNumber
+    mail
 }
 
 class Address {
