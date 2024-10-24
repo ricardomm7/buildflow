@@ -1,7 +1,6 @@
 package fourcorp.buildflow.domain;
 
 import fourcorp.buildflow.repository.Clock;
-import java.util.List;
 
 public class Workstation implements Identifiable<String> {
     private final String idMachine;
@@ -24,25 +23,25 @@ public class Workstation implements Identifiable<String> {
         this.contWaiting = 0;
     }
 
-    public void startClock( int i){
-        if(oprCounter == 0){
+    public void startClock(int i) {
+        if (oprCounter == 0) {
             this.isAvailable = false;
-            this.isAvailable = clock.countDownClock( this.time);
+            this.isAvailable = clock.countDownClock(this.time);
 
-            if(isAvailable) {
+            if (isAvailable) {
                 setOprounter();
                 setTotalOper();
 
                 clock.countUpClock(true);
             }
-        }else{
+        } else {
             int temp = clock.countUpClock(false);
             totalWaiting = totalWaiting + temp;
             setContWaiting();
             this.isAvailable = false;
-            this.isAvailable = clock.countDownClock( this.time);
+            this.isAvailable = clock.countDownClock(this.time);
 
-            if(isAvailable) {
+            if (isAvailable) {
                 setOprounter();
                 setTotalOper();
 

@@ -22,8 +22,8 @@ public class HelloApplication extends Application {
         //launch();
 
         try {
-            Reader.loadOperations("textFiles/medium_articles.csv");
-            Reader.loadMachines("textFiles/medium_workstations.csv");
+            Reader.loadOperations("textFiles/articles.csv");
+            Reader.loadMachines("textFiles/workstations.csv");
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;

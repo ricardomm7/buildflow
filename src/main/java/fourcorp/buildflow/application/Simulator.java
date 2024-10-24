@@ -8,8 +8,10 @@ import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Simulator {
     private ProductPriorityLine productLine;
@@ -123,45 +125,47 @@ public class Simulator {
 
     // USEI003 e USEI004
     public void printProductionStatistics() {
-        System.out.println("\n=== Production Time Statistics ===");
-
+        String lineFormat = "| %-15s | %-10s |%n";
+        String separator = "+-----------------+------------+";
         System.out.println("Production Time per Product:");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "Product ID", "Time (min)");
+        System.out.println(separator);
         for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
             Product product = entry.getKey();
             Double time = entry.getValue();
-            System.out.printf("Product %s: %.2f minutes\n", product.getIdItem(), time);
+            System.out.printf(lineFormat, product.getIdItem(), String.format("%.2f", time));
         }
-
-        System.out.printf("\nTotal Production Time for all products: %.2f minutes\n", totalProductionTime);
-
+        System.out.println(separator);
+        System.out.printf("%nTotal Production Time for all products: %.2f minutes%n", totalProductionTime);
         System.out.println("\nExecution Time by Operation:");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "Operation", "Time (min)");
+        System.out.println(separator);
         for (Map.Entry<String, Double> entry : operationTimes.entrySet()) {
             String operation = entry.getKey();
             Double time = entry.getValue();
-            System.out.printf("Operation %s: %.2f minutes\n", operation, time);
+            System.out.printf(lineFormat, operation, String.format("%.2f", time));
         }
+        System.out.println(separator);
     }
 
+
     // USEI005
-    public void printWorkstationStatistics() {
-        System.out.println("\n=== Workstation Time Statistics ===");
-
-        double totalWorkstationTime = workstationTimes.values().stream().mapToDouble(Double::doubleValue).sum();
-
-        List<AbstractMap.SimpleEntry<String, double[]>> sortedWorkstations = workstationTimes.entrySet().stream()
-                .map(entry -> new AbstractMap.SimpleEntry<>(
-                        entry.getKey(),
-                        new double[]{entry.getValue(), (entry.getValue() / totalWorkstationTime) * 100, (entry.getValue() / totalProductionTime) * 100}
-                ))
-                .sorted(Comparator.comparingDouble(entry -> entry.getValue()[2]))
-                .toList();
-
-        System.out.println("Workstation ID | Total Time (minutes) | % of Workstation Time | % of Total Production Time");
-        for (Map.Entry<String, double[]> entry : sortedWorkstations) {
-            String workstationId = entry.getKey();
-            double[] stats = entry.getValue();
-            System.out.printf("%s          | %.2f               | %.2f%%                  | %.2f%%\n",
-                    workstationId, stats[0], stats[1], stats[2]);
+    public void printAnalysis() {
+        String lineFormat = "| %-20s | %-17s | %-31s |%n";
+        String separator = "+----------------------+-------------------+---------------------------------+";
+        System.out.println(separator);
+        System.out.format(lineFormat, "Workstation ID", "Total Execution", "Operation/Execution Percentage");
+        System.out.println(separator);
+        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage()) {
+            if (e.getTotalExecutionTime() == 0) {
+                System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
+            } else {
+                double operationExecutionPercentage = (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100;
+                System.out.format(lineFormat, e.getId(), e.getTotalExecutionTime() + " min", String.format("%.4f%%", operationExecutionPercentage));
+            }
         }
+        System.out.println(separator);
     }
 }

@@ -1,7 +1,6 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.GraphViz;
-import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
@@ -93,10 +92,14 @@ public class Menu {
             }
             break;
             case 8:
-                MachineFlowAnalyzer.printMachineFlowDependencies();
-                break;
-            case 9:
-                s.printWorkstationStatistics();
+                /*
+                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
+                    System.out.println("Please run the simulation first (Option 1 to 4).");
+                } else {
+                    s.printAnalysis();
+                }
+                 */
+                s.printAnalysis();
                 break;
             case 0:
                 System.out.println("Exiting...");
@@ -109,12 +112,18 @@ public class Menu {
     }
 
     private void displayAvailableItems() {
+        String lineFormat = "| %-3s | %-10s |%n";
+        String separator = "+-----+------------+";
         System.out.println("\nAvailable items:");
-        System.out.println("1. Table");
-        System.out.println("2. Chair");
-        System.out.println("3. Bicycle");
-        System.out.println("4. Bookshelf");
-        System.out.println("5. Lamp");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "No.", "Item");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "1", "Table");
+        System.out.printf(lineFormat, "2", "Chair");
+        System.out.printf(lineFormat, "3", "Bicycle");
+        System.out.printf(lineFormat, "4", "Bookshelf");
+        System.out.printf(lineFormat, "5", "Lamp");
+        System.out.println(separator);
         System.out.print("Choose an item: ");
     }
 
