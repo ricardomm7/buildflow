@@ -12,13 +12,12 @@ public abstract class GraphViz {
     private static List<String> components = new ArrayList<>();
     private static List<Integer> quantities = new ArrayList<>();
 
+    public static void run(String filePath) throws IOException {
+        GraphViz.saveInformation(filePath);
+        GraphViz.generateProductComponentGraph();
+    }
 
-    //private static List<String> productIDs = new ArrayList<>();
-    //private static List<String> partNumbers = new ArrayList<>();
-    //private static List<String> descriptions = new ArrayList<>();
-    //private static List<Integer> quantities = new ArrayList<>();
-
-    public static void saveInformation(String filePath) throws IOException {
+    private static void saveInformation(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
         String line;
@@ -43,7 +42,7 @@ public abstract class GraphViz {
         }
     }
 
-    public static void generateGraph(String outputFilePath) throws IOException {
+    private static void generateGraph(String outputFilePath) throws IOException {
         Set<String> edges = new HashSet<>();
         Map<String, String> componentToSubAssemblyMap = new HashMap<>();
         Map<String, String> subAssemblyToItemMap = new HashMap<>();
@@ -112,14 +111,11 @@ public abstract class GraphViz {
         fileWriter.close();
     }
 
-
-
-    public static void generateProductComponentGraph(String item) {
+    private static void generateProductComponentGraph() {
         try {
-            String dotFilePath = "outFiles/" + item + "Graph.dot";
-            String outputImagePath = "outFiles/" + item + "Graph.svg";
+            String dotFilePath = "outFiles/Graph.dot";
+            String outputImagePath = "outFiles/Graph.svg";
             GraphViz.generateGraph(dotFilePath);
-            System.out.println("Graph .dot file generated successfully: " + dotFilePath);
 
             String command = "dot -Tsvg " + dotFilePath + " -o " + outputImagePath;
             Process process = Runtime.getRuntime().exec(command);
@@ -133,53 +129,5 @@ public abstract class GraphViz {
             System.out.println("Error generating graph: " + e.getMessage());
         }
     }
-
-
-
-   /*public static void generateGraph(String outputFilePath) throws IOException {
-        Set<String> edges = new HashSet<>();
-        StringBuilder dotFileContent = new StringBuilder();
-        dotFileContent.append("digraph G {\n");
-        dotFileContent.append("    node [shape=box];\n");
-
-        for (int i = 0; i < productIDs.size(); i++) {
-            String productID = productIDs.get(i);
-            String partNumber = partNumbers.get(i);
-            String description = descriptions.get(i);
-            int quantity = quantities.get(i);
-
-            String partNode = String.format("\"%s\\n%s\\n(%d)\"", partNumber, description, quantity);
-            dotFileContent.append("    ").append(partNode).append(";\n");
-
-            String edge = String.format("    \"%s\" -> %s;\n", productID, partNode);
-            edges.add(edge);
-        }
-        for (String edge : edges) {
-            dotFileContent.append(edge);
-        }
-        dotFileContent.append("}\n");
-        FileWriter fileWriter = new FileWriter(outputFilePath);
-        fileWriter.write(dotFileContent.toString());
-        fileWriter.close();
-    }
-
-    public static void generateProductComponentGraph() {
-        try {
-            String dotFilePath = "outFiles/BOMGraph.dot";
-            String outputImagePath = "outFiles/BOMGraph.png";
-            GraphViz.generateGraph(dotFilePath);
-            System.out.println("Graph .dot file generated successfully: " + dotFilePath);
-            String command = "dot -Tpng " + dotFilePath + " -o " + outputImagePath;
-            Process process = Runtime.getRuntime().exec(command);
-            int exitCode = process.waitFor();
-            if (exitCode == 0) {
-                System.out.println("Graph image generated successfully: " + outputImagePath);
-            } else {
-                System.out.println("Error: Failed to generate the graph image. Exit code: " + exitCode);
-            }
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error generating graph: " + e.getMessage());
-        }
-    }*/
 }
 

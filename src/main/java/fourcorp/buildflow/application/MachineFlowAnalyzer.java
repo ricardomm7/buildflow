@@ -50,4 +50,8 @@ public class MachineFlowAnalyzer {
     public static void clearDependencies() {
         machineDependencies.clear();
     }
+
+    public static Map<String, Map<String, Integer>> getMachineDependencies() {
+        return new HashMap<>(machineDependencies);
+    }
 }

@@ -34,7 +34,5 @@ public class HelloApplication extends Application {
         menu.displayMenu();
 
 
-
-
     }
 }
