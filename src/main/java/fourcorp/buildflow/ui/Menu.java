@@ -12,11 +12,11 @@ import java.util.Scanner;
 
 public class Menu {
     private final Scanner scanner;
-    private final Simulator s;
+    //private final Simulator s;
 
     public Menu() {
         scanner = new Scanner(System.in);
-        s = new Simulator();
+        //s = new Simulator();
     }
 
     public void displayMenu() throws IOException {
@@ -57,16 +57,16 @@ public class Menu {
     private void handleChoice(int choice) throws IOException {
         switch (choice) {
             case 1:
-                s.runWithoutPriority(false);
+                Simulator s = new Simulator();
                 break;
             case 2:
-                s.runWithoutPriority(true);
+                //s.runWithoutPriority(true);
                 break;
             case 3:
-                s.runWithPriority(false);
+               // s.runWithPriority(false);
                 break;
             case 4:
-                s.runWithPriority(true);
+               // s.runWithPriority(true);
             case 5:
                 for (PriorityOrder priority : PriorityOrder.values()) {
                     System.out.println("\n----- For " + priority.toString());
@@ -107,6 +107,7 @@ public class Menu {
                 System.out.println("Invalid option.");
         }
     }
+
     private void displayAvailableItems() {
         System.out.println("\nAvailable items:");
         System.out.println("1. Table");
@@ -116,6 +117,7 @@ public class Menu {
         System.out.println("5. Lamp");
         System.out.print("Choose an item: ");
     }
+
     private String getItemFilePath(int choice) {
         switch (choice) {
             case 1:

@@ -7,6 +7,7 @@ import java.util.Objects;
 public class Product implements Identifiable<String> {
     private String idItem;
     private LinkedList<Operation> operation;
+    private int currentOperationIndex;
 
     public Product(String idItem, List<Operation> operations) {
         this.idItem = idItem;
@@ -27,6 +28,25 @@ public class Product implements Identifiable<String> {
 
     public void setOperations(LinkedList<Operation> operations) {
         this.operation = operations;
+    }
+
+    public Operation getCurrentOperation() {
+        if (currentOperationIndex < operation.size()) {
+            return operation.get(currentOperationIndex);
+        }
+        return null;  // Retorna null se todas as operações já foram concluídas
+    }
+
+    public boolean moveToNextOperation() {
+        if (currentOperationIndex < operation.size() - 1) {
+            currentOperationIndex++;  // Avança para a próxima operação
+            return true;
+        }
+        return false;  // Retorna false se todas as operações já foram concluídas
+    }
+
+    public boolean hasMoreOperations() {
+        return currentOperationIndex < operation.size();  // Verifica se ainda há operações
     }
 
     @Override
