@@ -26,24 +26,24 @@ public class Simulator {
         return productLine.getAllProducts().isEmpty();
     }
 
-    public void runWithPriority() {
+    public void runWithPriority(boolean b) {
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH));
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL));
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW));
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
     }
 
-    public void runWithoutPriority() {
+    public void runWithoutPriority(boolean b) {
         processedProducts.clear();
         for (Product a : productLine.getAllProducts()) {
             a.setCurrentOperationIndex(0);
         }
-        runSimulation(productLine.getAllProducts());
+        runSimulation(productLine.getAllProducts(), b);
     }
 
-    private void runSimulation(List<Product> products) {
+    private void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
         try {
             do {
@@ -58,7 +58,7 @@ public class Simulator {
                     Operation currentOperation = product.getCurrentOperation();
 
                     if (currentOperation != null) {
-                        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation);
+                        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo);
 
                         for (Workstation workstation : availableWorkstations) {
                             if (workstation.isAvailable()) {

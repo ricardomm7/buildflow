@@ -57,16 +57,16 @@ public class Menu {
     private void handleChoice(int choice) throws IOException {
         switch (choice) {
             case 1:
-                s.runWithPriority();
+                s.runWithoutPriority(false);
                 break;
             case 2:
-                s.runWithoutPriority();
+                s.runWithoutPriority(true);
                 break;
             case 3:
-                // s.runWithPriority(false);
+                s.runWithPriority(false);
                 break;
             case 4:
-                // s.runWithPriority(true);
+                s.runWithPriority(true);
             case 5:
                 for (PriorityOrder priority : PriorityOrder.values()) {
                     System.out.println("\n----- For " + priority.toString());

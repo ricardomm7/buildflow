@@ -4,6 +4,7 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.Workstation;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class WorkstationsPerOperation {
@@ -17,7 +18,7 @@ public class WorkstationsPerOperation {
         workstationsPerOperation.newItem(workstation, operation);
     }
 
-    public List<Workstation> getWorkstationsByOperation(Operation operation) {
+    public List<Workstation> getWorkstationsByOperation(Operation operation, boolean b) {
         List<Workstation> availableWorkstations = new ArrayList<>();
         for (Operation keyOperation : workstationsPerOperation.getKeys()) {
             if (keyOperation.getId().equals(operation.getId())) {
@@ -30,20 +31,11 @@ public class WorkstationsPerOperation {
                 break;
             }
         }
-        return availableWorkstations;
-    }
-
-    public Workstation findBestMachineForOperation(Operation operation) {
-        List<Workstation> workstations = getWorkstationsByOperation(operation);
-        Workstation bestMachine = null;
-        for (Workstation machine : workstations) {
-            if (machine.isAvailable()) {
-                if (bestMachine == null || machine.getTime() < bestMachine.getTime()) {
-                    bestMachine = machine;
-                }
-            }
+        // Se 'b' for true, ordena as máquinas por tempo de operação
+        if (b) {
+            availableWorkstations.sort(Comparator.comparingDouble(Workstation::getTime));
         }
-        return bestMachine;
+        return availableWorkstations;
     }
 
     public void increaseWaitingTimes(double time) {
