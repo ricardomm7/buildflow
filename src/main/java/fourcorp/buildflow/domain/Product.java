@@ -49,6 +49,10 @@ public class Product implements Identifiable<String> {
         return currentOperationIndex < operation.size();  // Verifica se ainda há operações
     }
 
+    public void setCurrentOperationIndex(int currentOperationIndex) {
+        this.currentOperationIndex = currentOperationIndex;
+    }
+
     @Override
     public String getId() {
         return idItem;

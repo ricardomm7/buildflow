@@ -1,9 +1,9 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Product;
-import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
+import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
@@ -19,70 +19,72 @@ public class Simulator {
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
         this.workstationsPerOperation = Repositories.getInstance().getWorkstationsPerOperation();
-        this.processedProducts = new ArrayList<>(); // Inicializa a lista de produtos processados
-        runSimulation();
+        this.processedProducts = new ArrayList<>();
     }
 
     public boolean areAllQueuesEmpty() {
         return productLine.getAllProducts().isEmpty();
     }
 
-    public void runSimulation() {
+    public void runWithPriority() {
+        System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH));
+        System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL));
+        System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
+        runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW));
+    }
+
+    public void runWithoutPriority() {
+        processedProducts.clear();
+        for (Product a : productLine.getAllProducts()) {
+            a.setCurrentOperationIndex(0);
+        }
+        runSimulation(productLine.getAllProducts());
+    }
+
+    private void runSimulation(List<Product> products) {
         boolean itemsProcessed;
         try {
             do {
                 itemsProcessed = false;
                 List<Product> articlesToMove = new ArrayList<>();
 
-                // Itera sobre as prioridades, começando com HIGH, depois MEDIUM, e LOW
-                for (PriorityOrder priority : PriorityOrder.values()) {
-                    List<Product> productsInPriority = productLine.getProductsByPriority(priority);
+                for (Product product : products) {
+                    if (processedProducts.contains(product)) {
+                        continue;
+                    }
 
-                    for (Product product : new ArrayList<>(productsInPriority)) {
-                        // Verifica se o produto já foi processado
-                        if (processedProducts.contains(product)) {
-                            continue; // Pula se já foi processado
-                        }
+                    Operation currentOperation = product.getCurrentOperation();
 
-                        Operation currentOperation = product.getCurrentOperation(); // Pega a operação atual
+                    if (currentOperation != null) {
+                        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation);
 
-                        if (currentOperation != null) {
-                            List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation);
+                        for (Workstation workstation : availableWorkstations) {
+                            if (workstation.isAvailable()) {
+                                workstation.processProduct(product);
+                                itemsProcessed = true;
 
-                            // Tenta processar o produto nas estações de trabalho disponíveis
-                            for (Workstation workstation : availableWorkstations) {
-                                if (workstation.isAvailable()) {
-                                    workstation.processProduct(product);
-                                    itemsProcessed = true;
-
-                                    // Move para a próxima operação
-                                    if (product.moveToNextOperation()) {
-                                        articlesToMove.add(product);
-                                        System.out.println("Moving product " + product.getIdItem() + " to the next operation: " + product.getCurrentOperation().getId());
-                                    } else {
-                                        // O produto completou todas as operações, mas não será removido
-                                        processedProducts.add(product); // Adiciona o produto à lista de processados
-                                        System.out.println("Product " + product.getIdItem() + " has completed all operations.");
-                                    }
-
-                                    break; // Sai do loop de estações assim que o produto é processado
+                                if (product.moveToNextOperation()) {
+                                    articlesToMove.add(product);
+                                    System.out.println("Moving product " + product.getIdItem() + " to the next operation: " + product.getCurrentOperation().getId());
+                                } else {
+                                    processedProducts.add(product);
+                                    System.out.println("Product " + product.getIdItem() + " has completed all operations.");
                                 }
+
+                                break; // Sai do loop de estações assim que o produto é processado
                             }
                         }
                     }
                 }
 
-                // Adiciona os produtos à próxima fila de operações
                 for (Product product : articlesToMove) {
                     Operation nextOperation = product.getCurrentOperation();
                     if (nextOperation != null) {
                         System.out.println("Adding product " + product.getIdItem() + " to queue for operation: " + nextOperation.getId());
                     }
                 }
-
-                // Atualiza a condição do loop
-                // Agora precisamos garantir que não estamos processando produtos incompletos
-                // e que a simulação termina quando todos os produtos estiverem processados e as filas estiverem vazias
 
             } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());  // Corrigida a condição de parada
 
