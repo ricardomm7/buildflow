@@ -51,16 +51,22 @@ public abstract class GraphViz {
 
         StringBuilder dotFileContent = new StringBuilder();
         dotFileContent.append("digraph G {\n");
-        dotFileContent.append("    node [shape=box];\n");
+        dotFileContent.append("    fontname=\"Helvetica,Arial,sans-serif\";\n");
+        dotFileContent.append("    node [fontname=\"Helvetica,Arial,sans-serif\"];\n");
+        dotFileContent.append("    edge [fontname=\"Helvetica,Arial,sans-serif\"];\n");
+        dotFileContent.append("    node [color=lightblue2, style=filled];\n");
 
+        // Adiciona os nós de componentes e configura as relações de subassemblies
         for (int i = 0; i < items.size(); i++) {
             String item = items.get(i);
             String subAssembly = subAssemblies.get(i);
             String component = components.get(i);
             int quantity = quantities.get(i);
 
+            String componentLabel = String.format("%s (Qtd: %d)", component, quantity);
             String componentNode = "\"" + component + "\"";
-            dotFileContent.append("    ").append(componentNode).append(";\n");
+            dotFileContent.append("    ").append(componentNode)
+                    .append(" [label=\"").append(componentLabel).append("\", shape=box];\n");
 
             componentToSubAssemblyMap.put(component, subAssembly);
             subAssemblyToItemMap.put(subAssembly, item);
@@ -70,12 +76,15 @@ public abstract class GraphViz {
         for (Map.Entry<String, String> entry : componentToSubAssemblyMap.entrySet()) {
             String component = entry.getKey();
             String subAssembly = entry.getValue();
-            int quantity = componentQuantities.get(component);
 
             String componentNode = "\"" + component + "\"";
             String subAssemblyNode = "\"" + subAssembly + "\"";
 
-            String edge = String.format("    %s -> %s [label=\"%d\"];\n", subAssemblyNode, componentNode, quantity);
+            String subAssemblyLabel = String.format("%s", subAssembly);
+            dotFileContent.append("    ").append(subAssemblyNode)
+                    .append(" [label=\"").append(subAssemblyLabel).append("\", shape=box, color=lightblue3, style=filled];\n");
+
+            String edge = String.format("    %s -> %s;\n", subAssemblyNode, componentNode);
             edges.add(edge);
         }
 
@@ -85,6 +94,10 @@ public abstract class GraphViz {
 
             String subAssemblyNode = "\"" + subAssembly + "\"";
             String itemNode = "\"" + item + "\"";
+
+            String itemLabel = String.format("<b>%s</b>", item);
+            dotFileContent.append("    ").append(itemNode)
+                    .append(" [label=<").append(itemLabel).append(">, shape=box, style=filled, color=lightblue3];\n");
 
             String edge = String.format("    %s -> %s;\n", itemNode, subAssemblyNode);
             edges.add(edge);
@@ -105,10 +118,10 @@ public abstract class GraphViz {
     public static void generateProductComponentGraph() {
         try {
             String dotFilePath = "outFiles/Graph.dot";
-            String outputImagePath = "outFiles/Graph.png";
+            String outputImagePath = "outFiles/Graph.svg";
             GraphViz.generateGraph(dotFilePath);
             System.out.println("Graph .dot file generated successfully: " + dotFilePath);
-            String command = "dot -Tpng " + dotFilePath + " -o " + outputImagePath;
+            String command = "dot -Tsvg " + dotFilePath + " -o " + outputImagePath;
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();
             if (exitCode == 0) {

@@ -32,7 +32,6 @@ public class HelloApplication extends Application {
             GraphViz.saveInformation("textFiles/graph_other_option.csv");
             String dotFilePath = "outFiles/Graph.dot";
             GraphViz.generateGraph(dotFilePath);
-            System.out.println("Graph generated successfully: " + dotFilePath);
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;
