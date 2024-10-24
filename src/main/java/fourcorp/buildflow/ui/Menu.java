@@ -1,5 +1,6 @@
 package fourcorp.buildflow.ui;
 
+import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
@@ -25,7 +26,7 @@ public class Menu {
             System.out.println("3. Simulate production with priority order and with line workstation selection.");
             System.out.println("4. Simulate production with priority order and with time workstation selection.");
             System.out.println("5. See the uploaded products by priority.");
-            System.out.println("6. See Production time.");
+            System.out.println("6. Generate product-component graph.");
             System.out.println("7. See machines dependencies.");
             System.out.println("8. Workstation Analysis.");
             System.out.println("0. Exit");
@@ -72,21 +73,11 @@ public class Menu {
                         System.out.println("Product ID: " + c.getId());
                     }
                 }
-                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
-                    System.out.println("No dependencies found. Please run the simulation first (Option 1 or 2).");
-                } else {
-                    //s.printMachineDependencies();
-                }
                 break;
             case 6:
-                /* if (s.getProducts().isEmpty()) {
-                    System.out.println("No production time data available. Please run the simulation first (Option 1 or 2).");
-                } else {
-                    s.printProductionTimePerProduct();
-                    s.printTotalProductionTime();
-                }
+                 GraphViz.generateProductComponentGraph();
                 break;
-*/
+
             case 7:
                 if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
                     System.out.println("Please run the simulation first (Option 1 or 2).");
