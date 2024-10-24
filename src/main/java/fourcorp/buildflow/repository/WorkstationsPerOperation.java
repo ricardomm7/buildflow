@@ -17,7 +17,7 @@ public class WorkstationsPerOperation {
         workstationsPerOperation.newItem(workstation, operation);
     }
 
-    private List<Workstation> getWorkstationsByOperation(Operation operation) {
+    public List<Workstation> getWorkstationsByOperation(Operation operation) {
         List<Workstation> availableWorkstations = new ArrayList<>();
         for (Operation keyOperation : workstationsPerOperation.getKeys()) {
             if (keyOperation.getId().equals(operation.getId())) {

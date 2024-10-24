@@ -1,13 +1,11 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.MachineFlowAnalyzer;
-import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
@@ -22,14 +20,15 @@ public class Menu {
     public void displayMenu() {
         while (true) {
             System.out.println("\n--- BUILDFLOW MAIN MENU ---");
-            System.out.println("1. Simulate production without priority order.");
-            System.out.println("2. Simulate production with priority order.");
-            System.out.println("3. See the uploaded products by priority.");
-            System.out.println("4. See Production time.");
-            System.out.println("5. See machines dependencies.");
-            System.out.println("6. Workstation Analysis.");
-            System.out.println("7. Generate product-component graph.");
-            System.out.println("9. Exit");
+            System.out.println("1. Simulate production without priority order and with line workstation selection.");
+            System.out.println("2. Simulate production without priority order and with time workstation selection.");
+            System.out.println("3. Simulate production with priority order and with line workstation selection.");
+            System.out.println("4. Simulate production with priority order and with time workstation selection.");
+            System.out.println("5. See the uploaded products by priority.");
+            System.out.println("6. See Production time.");
+            System.out.println("7. See machines dependencies.");
+            System.out.println("8. Workstation Analysis.");
+            System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
             int choice = getUserChoice();
@@ -42,7 +41,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 1 && choice <= 9) {
+                if (choice >= 0 && choice <= 9) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -56,46 +55,50 @@ public class Menu {
     private void handleChoice(int choice) {
         switch (choice) {
             case 1:
-                s.runWithoutPriority();
+                s.runWithoutPriority(false);
                 break;
             case 2:
-                s.runWithPriority();
+                s.runWithoutPriority(true);
                 break;
             case 3:
+                s.runWithPriority(false);
+                break;
+            case 4:
+                s.runWithPriority(true);
+            case 5:
                 for (PriorityOrder priority : PriorityOrder.values()) {
                     System.out.println("\n----- For " + priority.toString());
                     for (Product c : Repositories.getInstance().getProductPriorityRepository().getProductsByPriority(priority)) {
                         System.out.println("Product ID: " + c.getId());
                     }
                 }
+                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
+                    System.out.println("No dependencies found. Please run the simulation first (Option 1 or 2).");
+                } else {
+                    //s.printMachineDependencies();
+                }
                 break;
-            case 4:
-                if (s.getProducts().isEmpty()) {
+            case 6:
+                /* if (s.getProducts().isEmpty()) {
                     System.out.println("No production time data available. Please run the simulation first (Option 1 or 2).");
                 } else {
                     s.printProductionTimePerProduct();
                     s.printTotalProductionTime();
                 }
                 break;
-
-            case 5:
-                if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
-                    System.out.println("No dependencies found. Please run the simulation first (Option 1 or 2).");
-                } else {
-                    s.printMachineDependencies();
-                }
-                break;
-            case 6:
+*/
+            case 7:
                 if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
                     System.out.println("Please run the simulation first (Option 1 or 2).");
                 } else {
-                    s.printAnalysis();
+                    //s.printMachineDependencies();
                 }
                 break;
-            case 7:
-                GraphViz.generateProductComponentGraph();
+            case 8:
+                //s.printProductionStatistics();
                 break;
-            case 9:
+
+            case 0:
                 System.out.println("Exiting...");
                 scanner.close();
                 System.exit(0);
