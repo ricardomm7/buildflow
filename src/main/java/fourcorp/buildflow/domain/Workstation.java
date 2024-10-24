@@ -1,36 +1,79 @@
 package fourcorp.buildflow.domain;
 
+import fourcorp.buildflow.application.Experiencia;
+import fourcorp.buildflow.repository.Clock;
+import java.util.List;
+
 public class Workstation implements Identifiable<String> {
     private final String idMachine;
-    private double time;
+    private int time;
     private boolean isAvailable;
     private int oprCounter;
     private long totalWaiting;
     private long totalOper;
+    int contWaiting;
+    private Clock clock = new Clock();
 
 
-    public Workstation(String idMachine, double time) {
+    public Workstation(String idMachine, int time) {
         this.idMachine = idMachine;
         this.time = time;
         this.isAvailable = true;
         this.oprCounter = 0;
         this.totalWaiting = 0;
         this.totalOper = 0;
+        this.contWaiting = 0;
     }
 
+    public void startClock( int i){
+        if(oprCounter == 0){
+            this.isAvailable = false;
+            this.isAvailable = clock.countDownClock( this.time);
+
+            if(isAvailable) {
+                setOprounter();
+                setTotalOper();
+
+                clock.countUpClock(true);
+            }
+        }else{
+            int temp = clock.countUpClock(false);
+            totalWaiting = totalWaiting + temp;
+            setContWaiting();
+            this.isAvailable = false;
+            this.isAvailable = clock.countDownClock( this.time);
+
+            if(isAvailable) {
+                setOprounter();
+                setTotalOper();
+
+
+                clock.countUpClock(true);
+            }
+        }
+
+
+    }
+    public void setTotalOper(){ totalOper = totalOper + time; }
     public long getTotalExecutionTime() {
         return (totalWaiting + totalOper);
+    }
+
+    public void setContWaiting() {
+        this.contWaiting = contWaiting + 1;
     }
 
     public void setOprounter() {
         this.oprCounter = oprCounter + 1;
     }
 
+    public int  getOprCounter(){return oprCounter;}
+
     public double getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(int time) {
         this.time = time;
     }
 
@@ -68,7 +111,7 @@ public class Workstation implements Identifiable<String> {
 
     public void increaseWaiting(double time) {
         totalWaiting += (long) time;
-    }
+    } //entendi nada
 
     public double getTotalOperationTime() {
         return totalOper;

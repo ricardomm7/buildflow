@@ -1,5 +1,6 @@
 package fourcorp.buildflow;
 
+import fourcorp.buildflow.application.Experiencia;
 import fourcorp.buildflow.application.Reader;
 import fourcorp.buildflow.ui.Menu;
 
@@ -20,14 +21,21 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) throws IOException {
         //launch();
+
         try {
-            Reader.loadOperations("textFiles/articles.csv");
-            Reader.loadMachines("textFiles/workstations.csv");
+            Reader.loadOperations("textFiles/medium_articles.csv");
+            Reader.loadMachines("textFiles/medium_workstations.csv");
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;
         }
+
+
         Menu menu = new Menu();
         menu.displayMenu();
+
+
+
+
     }
 }

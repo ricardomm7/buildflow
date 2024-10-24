@@ -4,12 +4,21 @@ import java.util.Objects;
 
 public class Operation implements Identifiable<String> {
     private String name;
+    private boolean execute;
     private int countExecution;
     private int countWaiting;
 
 
     public Operation(String operation) {
+        this.execute = false;
         this.name = operation;
+    }
+    public boolean getExecute (){
+        return execute;
+    }
+
+    public void setExecute(boolean execute) {
+        this.execute = execute;
     }
 
     @Override
