@@ -1,7 +1,8 @@
 package fourcorp.buildflow;
 
+import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.Reader;
-import fourcorp.buildflow.application.ReaderCSV;
+import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.ReaderToSQL;
 import fourcorp.buildflow.ui.Menu;
 
@@ -27,7 +28,11 @@ public class HelloApplication extends Application {
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset01_v2.xlsx", "outFiles/01_v2.sql");
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v1.xlsx", "outFiles/02_v1.sql");
             ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v2.xlsx", "outFiles/02_v2.sql");
-            ReaderCSV.saveInformation("textFiles/BOM.csv");
+            //GraphViz.saveInformation("textFiles/BOM.csv");
+            GraphViz.saveInformation("textFiles/graph_other_option.csv");
+            String dotFilePath = "outFiles/Graph.dot";
+            GraphViz.generateGraph(dotFilePath);
+            System.out.println("Graph generated successfully: " + dotFilePath);
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;

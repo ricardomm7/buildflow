@@ -1,11 +1,13 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.MachineFlowAnalyzer;
+import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.repository.Repositories;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
@@ -26,6 +28,7 @@ public class Menu {
             System.out.println("4. See Production time.");
             System.out.println("5. See machines dependencies.");
             System.out.println("6. Workstation Analysis.");
+            System.out.println("7. Generate product-component graph.");
             System.out.println("9. Exit");
             System.out.print("Choose an option: ");
 
@@ -88,6 +91,9 @@ public class Menu {
                 } else {
                     s.printAnalysis();
                 }
+                break;
+            case 7:
+                GraphViz.generateProductComponentGraph();
                 break;
             case 9:
                 System.out.println("Exiting...");
