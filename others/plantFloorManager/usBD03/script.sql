@@ -1,6 +1,6 @@
-CREATE TABLE BOO (Product_FamilyFamily_ID varchar2(60) NOT NULL, Operation_Sequence number(10) NOT NULL, PRIMARY KEY (Product_FamilyFamily_ID, Operation_Sequence));
+CREATE TABLE BOO_Operation (BOOOperation_Sequence number(10) NOT NULL, Product_FamilyFamily_ID varchar2(60) NOT NULL, OperationOperation_ID number(10) NOT NULL, PRIMARY KEY (BOOOperation_Sequence, Product_FamilyFamily_ID));
 CREATE TABLE Costumer (VAT varchar2(20) NOT NULL, Name varchar2(255) NOT NULL, Address varchar2(60) NOT NULL, "Zip-Code" varchar2(10) NOT NULL, City varchar2(60) NOT NULL, Country varchar2(60) NOT NULL, Email varchar2(255), Phone number(20), PRIMARY KEY (VAT));
-CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Designation varchar2(60) NOT NULL, BOOProduct_FamilyFamily_ID varchar2(60) NOT NULL, BOOOperation_Sequence number(10) NOT NULL, Type_WorkstationWorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Operation_ID));
+CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Designation varchar2(60) NOT NULL, Type_WorkstationWorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Operation_ID));
 CREATE TABLE "Order" (Order_ID varchar2(255) NOT NULL, OrderDate date NOT NULL, DeliveryDate date NOT NULL, CostumerVAT varchar2(20) NOT NULL, PRIMARY KEY (Order_ID));
 CREATE TABLE Part (Part_ID char(10) NOT NULL, Description varchar2(100) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Product (Product_ID char(10) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, Product_FamilyFamily_ID varchar2(60) NOT NULL, PRIMARY KEY (Product_ID));
@@ -13,9 +13,9 @@ ALTER TABLE Product ADD CONSTRAINT FKProduct42868 FOREIGN KEY (Product_FamilyFam
 ALTER TABLE Production_Order ADD CONSTRAINT FKProduction967345 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
 ALTER TABLE Production_Order ADD CONSTRAINT FKProduction620872 FOREIGN KEY (OrderOrder_ID) REFERENCES "Order" (Order_ID);
 ALTER TABLE "Order" ADD CONSTRAINT FKOrder416670 FOREIGN KEY (CostumerVAT) REFERENCES Costumer (VAT);
-ALTER TABLE BOO ADD CONSTRAINT FKBOO814106 FOREIGN KEY (Product_FamilyFamily_ID) REFERENCES Product_Family (Family_ID);
 ALTER TABLE Workstation ADD CONSTRAINT FKWorkstatio826871 FOREIGN KEY (Type_WorkstationWorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
-ALTER TABLE Operation ADD CONSTRAINT FKOperation50566 FOREIGN KEY (BOOProduct_FamilyFamily_ID, BOOOperation_Sequence) REFERENCES BOO (Product_FamilyFamily_ID, Operation_Sequence);
 ALTER TABLE Product_Part ADD CONSTRAINT FKProduct_Pa519928 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
 ALTER TABLE Product_Part ADD CONSTRAINT FKProduct_Pa271944 FOREIGN KEY (PartPart_ID) REFERENCES Part (Part_ID);
 ALTER TABLE Operation ADD CONSTRAINT FKOperation929249 FOREIGN KEY (Type_WorkstationWorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
+ALTER TABLE BOO_Operation ADD CONSTRAINT FKBOO_Operat830596 FOREIGN KEY (Product_FamilyFamily_ID) REFERENCES Product_Family (Family_ID);
+ALTER TABLE BOO_Operation ADD CONSTRAINT FKBOO_Operat25702 FOREIGN KEY (OperationOperation_ID) REFERENCES Operation (Operation_ID);

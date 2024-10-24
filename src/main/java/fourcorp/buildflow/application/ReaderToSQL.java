@@ -216,9 +216,6 @@ public class ReaderToSQL {
         }
     }
 
-    /*
-    A BOO tem de ser mudada pois não faz sentido o operation sequence.
-     */
     private static void insertBOO(Workbook workbook, FileWriter sqlFileWriter) {
         Sheet sheet = workbook.getSheet("BOO");
         if (sheet == null) {
@@ -232,10 +229,10 @@ public class ReaderToSQL {
 
             String famID = getCellValue(row.getCell(0));
             int opNumber = Integer.parseInt(getCellValue(row.getCell(2)));
+            String opID = getCellValue(row.getCell(1));
 
-
-            String sqlInsert = String.format("INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('%s', %d);\n",
-                    famID, opNumber);
+            String sqlInsert = String.format("INSERT INTO BOO_Operation (BOOOperation_Sequence, Product_FamilyFamily_ID, OperationOperation_ID) VALUES (%d, '%s', '%s');\n",
+                    opNumber, famID, opID);
 
             try {
                 sqlFileWriter.write(sqlInsert);
@@ -335,15 +332,6 @@ public class ReaderToSQL {
             String id = getCellValue(row.getCell(0));
             String design = getCellValue(row.getCell(1));
 
-            String[] booData = searchInBoo(id, workbook);
-            if (booData == null) {
-                System.out.println("Operation ID " + id + " not found in BOO.");
-                continue;
-            }
-
-            String famId = booData[0];
-            Integer opSequence = Integer.parseInt(booData[1]);
-
             List<String> wkTypeIDs = new ArrayList<>();
             for (int colIndex = 2; colIndex < row.getLastCellNum(); colIndex++) {
                 String workstationID = getCellValue(row.getCell(colIndex));
@@ -352,12 +340,11 @@ public class ReaderToSQL {
                 }
             }
 
-            // Gera e escreve o SQL para cada WorkstationType
             for (String wkID : wkTypeIDs) {
                 String sqlInsert = String.format(
-                        "INSERT INTO Operation (Operation_ID, Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence, Type_WorkstationWorkstationType_ID) " +
-                                "VALUES ('%s', '%s', '%s', %d, '%s');\n",
-                        id, design, famId, opSequence, wkID);
+                        "INSERT INTO Operation (Operation_ID, Designation, Type_WorkstationWorkstationType_ID) " +
+                                "VALUES ('%s', '%s', '%s');\n",
+                        id, design, wkID);
 
                 try {
                     sqlFileWriter.write(sqlInsert);
@@ -366,24 +353,6 @@ public class ReaderToSQL {
                 }
             }
         }
-    }
-
-    private static String[] searchInBoo(String opID, Workbook workbook) {
-        Sheet booSheet = workbook.getSheet("BOO");
-        if (booSheet == null) {
-            System.out.println("Sheet 'BOO' does not exist in the Excel file.");
-            return null;
-        }
-
-        for (int rowIndex = 1; rowIndex <= booSheet.getLastRowNum(); rowIndex++) {
-            Row row = booSheet.getRow(rowIndex);
-            if (row == null) continue;
-            String id = getCellValue(row.getCell(1));
-            if (id.equals(opID)) {
-                return new String[]{getCellValue(row.getCell(0)), getCellValue(row.getCell(2))};
-            }
-        }
-        return null;
     }
 
     private static void insertWorkstation(Workbook workbook, FileWriter sqlFileWriter) {

@@ -1,0 +1,34 @@
+digraph G {
+    fontname="Helvetica,Arial,sans-serif";
+    node [fontname="Helvetica,Arial,sans-serif"];
+    edge [fontname="Helvetica,Arial,sans-serif"];
+    node [color=lightblue2, style=filled];
+    "Cross bar" [label="Cross bar (Qtd: 1)", shape=box];
+    "Side rails" [label="Side rails (Qtd: 2)", shape=box];
+    "Cross bar" [label="Cross bar (Qtd: 1)", shape=box];
+    "Back supports" [label="Back supports (Qtd: 3)", shape=box];
+    "Foot caps" [label="Foot caps (Qtd: 4)", shape=box];
+    "Headrest" [label="Headrest (Qtd: 1)", shape=box];
+    "Seat cushion" [label="Seat cushion (Qtd: 1)", shape=box];
+    "Support brace" [label="Support brace (Qtd: 1)", shape=box];
+    "Back Assembly" [label="Back Assembly", shape=box, color=lightblue3, style=filled];
+    "Seat" [label="Seat", shape=box, color=lightblue3, style=filled];
+    "Back Assembly" [label="Back Assembly", shape=box, color=lightblue3, style=filled];
+    "Leg Assembly" [label="Leg Assembly", shape=box, color=lightblue3, style=filled];
+    "Back Assembly" [label="Back Assembly", shape=box, color=lightblue3, style=filled];
+    "Leg Assembly" [label="Leg Assembly", shape=box, color=lightblue3, style=filled];
+    "Back Assembly" [label="Back Assembly", shape=box, color=lightblue3, style=filled];
+    "Chair" [label=<<b>Chair</b>>, shape=box, style=filled, color=lightblue3];
+    "Chair" [label=<<b>Chair</b>>, shape=box, style=filled, color=lightblue3];
+    "Chair" [label=<<b>Chair</b>>, shape=box, style=filled, color=lightblue3];
+    "Seat" -> "Seat cushion";
+    "Leg Assembly" -> "Support brace";
+    "Back Assembly" -> "Side rails";
+    "Leg Assembly" -> "Foot caps";
+    "Back Assembly" -> "Headrest";
+    "Back Assembly" -> "Cross bar";
+    "Chair" -> "Back Assembly";
+    "Chair" -> "Seat";
+    "Back Assembly" -> "Back supports";
+    "Chair" -> "Leg Assembly";
+}
