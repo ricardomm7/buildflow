@@ -7,6 +7,7 @@ import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.repository.Repositories;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
@@ -18,7 +19,7 @@ public class Menu {
         s = new Simulator();
     }
 
-    public void displayMenu() {
+    public void displayMenu() throws IOException {
         while (true) {
             System.out.println("\n--- BUILDFLOW MAIN MENU ---");
             System.out.println("1. Simulate production without priority order and with line workstation selection.");
@@ -53,7 +54,7 @@ public class Menu {
         }
     }
 
-    private void handleChoice(int choice) {
+    private void handleChoice(int choice) throws IOException {
         switch (choice) {
             case 1:
                 s.runWithoutPriority(false);
@@ -75,9 +76,17 @@ public class Menu {
                 }
                 break;
             case 6:
-                 GraphViz.generateProductComponentGraph();
+                displayAvailableItems();
+                int itemChoice = getUserChoice();
+                String selectedItem = getItemFilePath(itemChoice);
+                if (selectedItem != null) {
+                    GraphViz.saveInformation(selectedItem);
+                    String itemName = selectedItem.substring(selectedItem.lastIndexOf("/") + 1, selectedItem.indexOf(".csv"));
+                    GraphViz.generateProductComponentGraph(itemName);
+                } else {
+                    System.out.println("Invalid choice. Please select a valid item.");
+                }
                 break;
-
             case 7:
                 if (MachineFlowAnalyzer.machineDependencies.isEmpty()) {
                     System.out.println("Please run the simulation first (Option 1 or 2).");
@@ -96,6 +105,31 @@ public class Menu {
                 break;
             default:
                 System.out.println("Invalid option.");
+        }
+    }
+    private void displayAvailableItems() {
+        System.out.println("\nAvailable items:");
+        System.out.println("1. Table");
+        System.out.println("2. Chair");
+        System.out.println("3. Bicycle");
+        System.out.println("4. Bookshelf");
+        System.out.println("5. Lamp");
+        System.out.print("Choose an item: ");
+    }
+    private String getItemFilePath(int choice) {
+        switch (choice) {
+            case 1:
+                return "textFiles/table.csv";
+            case 2:
+                return "textFiles/chair.csv";
+            case 3:
+                return "textFiles/bicycle.csv";
+            case 4:
+                return "textFiles/bookshelf.csv";
+            case 5:
+                return "textFiles/lamp.csv";
+            default:
+                return null;
         }
     }
 }

@@ -56,7 +56,6 @@ public abstract class GraphViz {
         dotFileContent.append("    edge [fontname=\"Helvetica,Arial,sans-serif\"];\n");
         dotFileContent.append("    node [color=lightblue2, style=filled];\n");
 
-        // Adiciona os nós de componentes e configura as relações de subassemblies
         for (int i = 0; i < items.size(); i++) {
             String item = items.get(i);
             String subAssembly = subAssemblies.get(i);
@@ -115,12 +114,13 @@ public abstract class GraphViz {
 
 
 
-    public static void generateProductComponentGraph() {
+    public static void generateProductComponentGraph(String item) {
         try {
-            String dotFilePath = "outFiles/Graph.dot";
-            String outputImagePath = "outFiles/Graph.svg";
+            String dotFilePath = "outFiles/" + item + "Graph.dot";
+            String outputImagePath = "outFiles/" + item + "Graph.svg";
             GraphViz.generateGraph(dotFilePath);
             System.out.println("Graph .dot file generated successfully: " + dotFilePath);
+
             String command = "dot -Tsvg " + dotFilePath + " -o " + outputImagePath;
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();
@@ -133,6 +133,7 @@ public abstract class GraphViz {
             System.out.println("Error generating graph: " + e.getMessage());
         }
     }
+
 
 
    /*public static void generateGraph(String outputFilePath) throws IOException {

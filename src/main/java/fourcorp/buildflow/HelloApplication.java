@@ -6,6 +6,8 @@ import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.ReaderToSQL;
 import fourcorp.buildflow.ui.Menu;
 
+import java.io.IOException;
+
 public class HelloApplication {
 /*
 public class HelloApplication extends Application {
@@ -19,7 +21,7 @@ public class HelloApplication extends Application {
     }
      */
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         //launch();
         try {
             Reader.loadOperations("textFiles/articles.csv");
@@ -28,10 +30,6 @@ public class HelloApplication extends Application {
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset01_v2.xlsx", "outFiles/01_v2.sql");
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v1.xlsx", "outFiles/02_v1.sql");
             ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v2.xlsx", "outFiles/02_v2.sql");
-            //GraphViz.saveInformation("textFiles/BOM.csv");
-            GraphViz.saveInformation("textFiles/graph_other_option.csv");
-            String dotFilePath = "outFiles/Graph.dot";
-            GraphViz.generateGraph(dotFilePath);
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;

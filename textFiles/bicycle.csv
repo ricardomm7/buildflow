@@ -1,0 +1,26 @@
+Item;Sub-Assembly;Component;Quantity
+Bicycle;Frame Assembly;Main frame;1
+Bicycle;Frame Assembly;Rear triangle;1
+Bicycle;Handlebar Assembly;Handlebar;1
+Bicycle;Handlebar Assembly;Grips;2
+Bicycle;Handlebar Assembly;Brake levers;2
+Bicycle;Wheel Assembly;Front wheel;1
+Bicycle;Wheel Assembly;Rear wheel;1
+Bicycle;Wheel Assembly;Spokes;72
+Bicycle;Wheel Assembly;Tires;2
+Bicycle;Wheel Assembly;Inner tubes;2
+Bicycle;Drivetrain Assembly;Chain;1
+Bicycle;Drivetrain Assembly;Pedals;2
+Bicycle;Drivetrain Assembly;Crankset;1
+Bicycle;Drivetrain Assembly;Front derailleur;1
+Bicycle;Drivetrain Assembly;Rear derailleur;1
+Bicycle;Drivetrain Assembly;Cassette;1
+Bicycle;Braking Assembly;Brake calipers;2
+Bicycle;Braking Assembly;Brake pads;4
+Bicycle;Seat Assembly;Saddle;1
+Bicycle;Seat Assembly;Seat post;1
+Bicycle;Frame Assembly;Kickstand;1
+Bicycle;Handlebar Assembly;Bell;1
+Bicycle;Lighting Assembly;Front light;1
+Bicycle;Lighting Assembly;Rear light;1
+Bicycle;Frame Assembly;Reflectors;4
