@@ -1,6 +1,7 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.GraphViz;
+import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
@@ -92,9 +93,11 @@ public class Menu {
             }
             break;
             case 8:
+                MachineFlowAnalyzer.printMachineFlowDependencies();
+                break;
+            case 9:
                 s.printWorkstationStatistics();
                 break;
-
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();

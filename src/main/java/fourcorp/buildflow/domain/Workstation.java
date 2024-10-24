@@ -1,6 +1,5 @@
 package fourcorp.buildflow.domain;
 
-import fourcorp.buildflow.application.Experiencia;
 import fourcorp.buildflow.repository.Clock;
 import java.util.List;
 

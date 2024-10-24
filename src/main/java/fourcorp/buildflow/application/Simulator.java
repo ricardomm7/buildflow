@@ -19,7 +19,8 @@ public class Simulator {
     private double totalProductionTime; // USEI003
     private Map<String, Double> operationTimes; // USEI004
     private Map<String, Double> workstationTimes; // USEI005
-
+    private Map<String, List<String>> productMachineFlows; // USEI007
+    private MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -29,7 +30,8 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-
+        this.productMachineFlows = new HashMap<>();  // USEI007
+        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
     }
 
     public boolean areAllQueuesEmpty() {
@@ -84,6 +86,8 @@ public class Simulator {
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
 
+                                productMachineFlows.computeIfAbsent(product.getIdItem(), k -> new ArrayList<>()).add(workstationId); // USEI007
+
                                 itemsProcessed = true;
 
                                 if (product.moveToNextOperation()) {
@@ -107,7 +111,9 @@ public class Simulator {
                     }
                 }
 
-            } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());  // Corrigida a condição de parada
+            } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());
+
+            machineFlowAnalyzer.calculateMachineDependencies(productMachineFlows); // USEI007 - Calcula dependências
 
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
@@ -148,7 +154,7 @@ public class Simulator {
                         new double[]{entry.getValue(), (entry.getValue() / totalWorkstationTime) * 100, (entry.getValue() / totalProductionTime) * 100}
                 ))
                 .sorted(Comparator.comparingDouble(entry -> entry.getValue()[2]))
-                .collect(Collectors.toList()).reversed();
+                .toList();
 
         System.out.println("Workstation ID | Total Time (minutes) | % of Workstation Time | % of Total Production Time");
         for (Map.Entry<String, double[]> entry : sortedWorkstations) {
@@ -159,4 +165,3 @@ public class Simulator {
         }
     }
 }
-

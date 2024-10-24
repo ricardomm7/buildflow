@@ -1,6 +1,5 @@
 package fourcorp.buildflow;
 
-import fourcorp.buildflow.application.Experiencia;
 import fourcorp.buildflow.application.Reader;
 import fourcorp.buildflow.ui.Menu;
 
