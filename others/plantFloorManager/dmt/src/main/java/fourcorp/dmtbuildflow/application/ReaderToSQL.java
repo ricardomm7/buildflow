@@ -7,9 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class ReaderToSQL {
     private static String excelFile;
@@ -32,15 +30,17 @@ public class ReaderToSQL {
             sqlFileWriter.write("\n");
             insertProductionOrder(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
-            insertBOO(workbook, sqlFileWriter);
-            sqlFileWriter.write("\n");
             insertPart(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
             insertProductPart(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
+            insertOperation(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
             insertTypeWorkstation(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
-            insertOperation(workbook, sqlFileWriter);
+            insertOpTypeWork(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertBOO(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
             insertWorkstation(workbook, sqlFileWriter);
             sqlFileWriter.close();
@@ -56,11 +56,19 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedFamilyIDs = new HashSet<>();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
             String id = getCellValue(row.getCell(0));
+            if (processedFamilyIDs.contains(id)) {
+                continue;
+            }
+
+            processedFamilyIDs.add(id);
+
             String name = getCellValue(row.getCell(1));
 
             String sqlInsert = String.format("INSERT INTO Product_Family (Family_ID, Name) VALUES ('%s', '%s');\n",
@@ -81,11 +89,19 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedProductIDs = new HashSet<>();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
             String id = getCellValue(row.getCell(0));
+            if (processedProductIDs.contains(id)) {
+                continue;
+            }
+
+            processedProductIDs.add(id);
+
             String name = getCellValue(row.getCell(1));
             String desc = getCellValue(row.getCell(2));
             String fam = "'" + getCellValue(row.getCell(3)) + "'";
@@ -111,25 +127,26 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedVATs = new HashSet<>();  // Para evitar duplicados
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
-            String name = getCellValue(row.getCell(1));
             String vatin = getCellValue(row.getCell(2));
+            if (processedVATs.contains(vatin)) {
+                continue;
+            }
+
+            processedVATs.add(vatin);
+
+            String name = getCellValue(row.getCell(1));
             String address = getCellValue(row.getCell(3));
             String zip = getCellValue(row.getCell(4));
             String town = getCellValue(row.getCell(5));
             String country = getCellValue(row.getCell(6));
-            String mail = "'" + getCellValue(row.getCell(7)) + "'";
-            if (getCellValue(row.getCell(7)).isEmpty()) {
-                mail = "NULL";
-            }
-            String phone = "'" + getCellValue(row.getCell(8)) + "'";
-            if (getCellValue(row.getCell(8)).isEmpty()) {
-                phone = "NULL";
-            }
-
+            String mail = getCellValue(row.getCell(7)).isEmpty() ? "NULL" : "'" + getCellValue(row.getCell(7)) + "'";
+            String phone = getCellValue(row.getCell(8)).isEmpty() ? "NULL" : "'" + getCellValue(row.getCell(8)) + "'";
 
             String sqlInsert = String.format("INSERT INTO Costumer (VAT, Name, Address, \"Zip-Code\", City, Country, Email, Phone) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', %s, %s);\n",
                     vatin, name, address, zip, town, country, mail, phone);
@@ -149,23 +166,31 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedOrderIDs = new HashSet<>();  // Para evitar duplicados
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
-            String id = getCellValue(row.getCell(0));
-            String CId = getCellValue(row.getCell(1));
-            String vat = searchVAT(CId, workbook);
+            String orderID = getCellValue(row.getCell(0));
+            if (processedOrderIDs.contains(orderID)) {
+                continue;
+            }
+
+            processedOrderIDs.add(orderID);
+
+            String customerID = getCellValue(row.getCell(1));
+            String vat = searchVAT(customerID, workbook);
             String orderDate = getCellValue(row.getCell(4));
             String deliveryDate = getCellValue(row.getCell(5));
 
             String sqlInsert = String.format("INSERT INTO \"Order\" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('%s', %s, %s, '%s');\n",
-                    id, orderDate, deliveryDate, vat);
+                    orderID, orderDate, deliveryDate, vat);
 
             try {
                 sqlFileWriter.write(sqlInsert);
             } catch (IOException e) {
-                System.out.println("Error writing to SQL file [Costumer]: " + e.getMessage());
+                System.out.println("Error writing to SQL file [Order]: " + e.getMessage());
             }
         }
     }
@@ -204,14 +229,13 @@ public class ReaderToSQL {
             String ord = getCellValue(row.getCell(0));
             int qntty = Integer.parseInt(getCellValue(row.getCell(3)));
 
-
             String sqlInsert = String.format("INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
                     product, ord, qntty);
 
             try {
                 sqlFileWriter.write(sqlInsert);
             } catch (IOException e) {
-                System.out.println("Error writing to SQL file [ProductionOrder]: " + e.getMessage());
+                System.out.println("Error writing to SQL file [Production Order]: " + e.getMessage());
             }
         }
     }
@@ -249,20 +273,27 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedPartIDs = new HashSet<>();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
             String partID = getCellValue(row.getCell(1));
-            String desc = getCellValue(row.getCell(2));
+            if (processedPartIDs.contains(partID)) {
+                continue;
+            }
 
-            String sqlInsert = String.format("INSERT INTO Part (Part_ID, Description) VALUES ('%s', '%s');\n",
-                    partID, desc);
+            processedPartIDs.add(partID);
+
+            String description = getCellValue(row.getCell(2));
+
+            String sqlInsert = String.format("INSERT INTO Part (Part_ID, Description) VALUES ('%s', '%s');\n", partID, description);
 
             try {
                 sqlFileWriter.write(sqlInsert);
             } catch (IOException e) {
-                System.out.println("Error writing to SQL file [BOM]: " + e.getMessage());
+                System.out.println("Error writing to SQL file [Part]: " + e.getMessage());
             }
         }
     }
@@ -300,11 +331,19 @@ public class ReaderToSQL {
             return;
         }
 
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+        Set<String> processedWorkstationTypeIDs = new HashSet<>();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
             String wtID = getCellValue(row.getCell(0));
+            if (processedWorkstationTypeIDs.contains(wtID)) {
+                continue;
+            }
+
+            processedWorkstationTypeIDs.add(wtID);
+
             String design = getCellValue(row.getCell(1));
 
             String sqlInsert = String.format("INSERT INTO Type_Workstation (WorkstationType_ID, Designation) VALUES ('%s', '%s');\n",
@@ -325,35 +364,81 @@ public class ReaderToSQL {
             return;
         }
 
+        Set<String> processedOperationIDs = new HashSet<>();
+
         for (int rowIndex = 1; rowIndex <= operationsSheet.getLastRowNum(); rowIndex++) {
             Row row = operationsSheet.getRow(rowIndex);
             if (row == null) continue;
 
             String id = getCellValue(row.getCell(0));
+            if (processedOperationIDs.contains(id)) {
+                continue;
+            }
+
+            processedOperationIDs.add(id);
+
             String design = getCellValue(row.getCell(1));
 
-            List<String> wkTypeIDs = new ArrayList<>();
+            String sqlInsert = String.format(
+                    "INSERT INTO Operation (Operation_ID, Designation) " +
+                            "VALUES ('%s', '%s');\n",
+                    id, design);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Operations]: " + e.getMessage());
+            }
+
+        }
+    }
+
+    private static void insertOpTypeWork(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Operations");
+        if (sheet == null) {
+            System.out.println("Sheet 'Operations' does not exist in the Excel file.");
+            return;
+        }
+
+        Set<String> uniqueEntries = new HashSet<>();
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String opId = getCellValue(row.getCell(0));
+            List<String> workstationTypes = new ArrayList<>();
+
             for (int colIndex = 2; colIndex < row.getLastCellNum(); colIndex++) {
-                String workstationID = getCellValue(row.getCell(colIndex));
-                if (!workstationID.isEmpty()) {
-                    wkTypeIDs.add(workstationID);
+                String workstationType = getCellValue(row.getCell(colIndex));
+                if (workstationType != null && !workstationType.isEmpty()) {
+                    workstationTypes.add(workstationType);
                 }
             }
 
-            for (String wkID : wkTypeIDs) {
-                String sqlInsert = String.format(
-                        "INSERT INTO Operation (Operation_ID, Designation, Type_WorkstationWorkstationType_ID) " +
-                                "VALUES ('%s', '%s', '%s');\n",
-                        id, design, wkID);
+            if (workstationTypes.isEmpty()) continue;
 
-                try {
-                    sqlFileWriter.write(sqlInsert);
-                } catch (IOException e) {
-                    System.out.println("Error writing to SQL file [WorkstationTypes]: " + e.getMessage());
+            for (String workstationType : workstationTypes) {
+                String uniqueKey = opId + "-" + workstationType;
+
+                if (!uniqueEntries.contains(uniqueKey)) {
+                    uniqueEntries.add(uniqueKey);
+
+                    String sqlInsert = String.format(
+                            "INSERT INTO Operation_Type_Workstation (OperationOperation_ID, Type_WorkstationWorkstationType_ID) VALUES ('%s', '%s');\n",
+                            opId, workstationType
+                    );
+
+                    try {
+                        sqlFileWriter.write(sqlInsert);
+                    } catch (IOException e) {
+                        System.out.println("Error writing to SQL file [Operations]: " + e.getMessage());
+                    }
                 }
             }
         }
     }
+
 
     private static void insertWorkstation(Workbook workbook, FileWriter sqlFileWriter) {
         Sheet sheet = workbook.getSheet("Workstations");
