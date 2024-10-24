@@ -46,4 +46,8 @@ public class MachineFlowAnalyzer {
             System.out.println("]");
         });
     }
+
+    public static void clearDependencies() {
+        machineDependencies.clear();
+    }
 }
