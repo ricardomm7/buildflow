@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ReaderToSQL {
     private static String excelFile;
@@ -31,6 +33,16 @@ public class ReaderToSQL {
             insertProductionOrder(workbook, sqlFileWriter);
             sqlFileWriter.write("\n");
             insertBOO(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertPart(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertProductPart(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertTypeWorkstation(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertOperation(workbook, sqlFileWriter);
+            sqlFileWriter.write("\n");
+            insertWorkstation(workbook, sqlFileWriter);
             sqlFileWriter.close();
         } catch (IOException e) {
             System.out.println("Error reading Excel file: " + e.getMessage());
@@ -158,6 +170,25 @@ public class ReaderToSQL {
         }
     }
 
+    private static String searchVAT(String clientID, Workbook workbook) {
+        Sheet sheet = workbook.getSheet("Clients");
+        if (sheet == null) {
+            System.out.println("Sheet 'Clients' does not exist in the Excel file.");
+            return null;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            if (id.equals(clientID)) {
+                return getCellValue(row.getCell(2));
+            }
+        }
+        return null;
+    }
+
     private static void insertProductionOrder(Workbook workbook, FileWriter sqlFileWriter) {
         Sheet sheet = workbook.getSheet("Orders");
         if (sheet == null) {
@@ -185,10 +216,13 @@ public class ReaderToSQL {
         }
     }
 
+    /*
+    A BOO tem de ser mudada pois não faz sentido o operation sequence.
+     */
     private static void insertBOO(Workbook workbook, FileWriter sqlFileWriter) {
-        Sheet sheet = workbook.getSheet("Orders");
+        Sheet sheet = workbook.getSheet("BOO");
         if (sheet == null) {
-            System.out.println("Sheet 'Order' does not exist in the Excel file.");
+            System.out.println("Sheet 'BOO' does not exist in the Excel file.");
             return;
         }
 
@@ -196,18 +230,185 @@ public class ReaderToSQL {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;
 
-            String product = getCellValue(row.getCell(2));
-            String ord = getCellValue(row.getCell(0));
-            int qntty = Integer.parseInt(getCellValue(row.getCell(3)));
+            String famID = getCellValue(row.getCell(0));
+            int opNumber = Integer.parseInt(getCellValue(row.getCell(2)));
 
 
-            String sqlInsert = String.format("INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
-                    product, ord, qntty);
+            String sqlInsert = String.format("INSERT INTO BOO (Product_FamilyFamily_ID, Operation_Sequence) VALUES ('%s', %d);\n",
+                    famID, opNumber);
 
             try {
                 sqlFileWriter.write(sqlInsert);
             } catch (IOException e) {
-                System.out.println("Error writing to SQL file [ProductionOrder]: " + e.getMessage());
+                System.out.println("Error writing to SQL file [BOO]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertPart(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("BOM");
+        if (sheet == null) {
+            System.out.println("Sheet 'BOM' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String partID = getCellValue(row.getCell(1));
+            String desc = getCellValue(row.getCell(2));
+
+            String sqlInsert = String.format("INSERT INTO Part (Part_ID, Description) VALUES ('%s', '%s');\n",
+                    partID, desc);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [BOM]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertProductPart(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("BOM");
+        if (sheet == null) {
+            System.out.println("Sheet 'BOM' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String prodID = getCellValue(row.getCell(0));
+            String partID = getCellValue(row.getCell(1));
+            int quant = Integer.parseInt(getCellValue(row.getCell(3)));
+
+            String sqlInsert = String.format("INSERT INTO Product_Part (ProductProduct_ID, PartPart_ID, Quantity) VALUES ('%s', '%s', %d);\n",
+                    prodID, partID, quant);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [BOM]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertTypeWorkstation(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("WorkstationTypes");
+        if (sheet == null) {
+            System.out.println("Sheet 'WorkstationTypes' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String wtID = getCellValue(row.getCell(0));
+            String design = getCellValue(row.getCell(1));
+
+            String sqlInsert = String.format("INSERT INTO Type_Workstation (WorkstationType_ID, Designation) VALUES ('%s', '%s');\n",
+                    wtID, design);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [WorkstationTypes]: " + e.getMessage());
+            }
+        }
+    }
+
+    private static void insertOperation(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet operationsSheet = workbook.getSheet("Operations");
+        if (operationsSheet == null) {
+            System.out.println("Sheet 'Operations' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= operationsSheet.getLastRowNum(); rowIndex++) {
+            Row row = operationsSheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String id = getCellValue(row.getCell(0));
+            String design = getCellValue(row.getCell(1));
+
+            String[] booData = searchInBoo(id, workbook);
+            if (booData == null) {
+                System.out.println("Operation ID " + id + " not found in BOO.");
+                continue;
+            }
+
+            String famId = booData[0];
+            Integer opSequence = Integer.parseInt(booData[1]);
+
+            List<String> wkTypeIDs = new ArrayList<>();
+            for (int colIndex = 2; colIndex < row.getLastCellNum(); colIndex++) {
+                String workstationID = getCellValue(row.getCell(colIndex));
+                if (!workstationID.isEmpty()) {
+                    wkTypeIDs.add(workstationID);
+                }
+            }
+
+            // Gera e escreve o SQL para cada WorkstationType
+            for (String wkID : wkTypeIDs) {
+                String sqlInsert = String.format(
+                        "INSERT INTO Operation (Operation_ID, Designation, BOOProduct_FamilyFamily_ID, BOOOperation_Sequence, Type_WorkstationWorkstationType_ID) " +
+                                "VALUES ('%s', '%s', '%s', %d, '%s');\n",
+                        id, design, famId, opSequence, wkID);
+
+                try {
+                    sqlFileWriter.write(sqlInsert);
+                } catch (IOException e) {
+                    System.out.println("Error writing to SQL file [WorkstationTypes]: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private static String[] searchInBoo(String opID, Workbook workbook) {
+        Sheet booSheet = workbook.getSheet("BOO");
+        if (booSheet == null) {
+            System.out.println("Sheet 'BOO' does not exist in the Excel file.");
+            return null;
+        }
+
+        for (int rowIndex = 1; rowIndex <= booSheet.getLastRowNum(); rowIndex++) {
+            Row row = booSheet.getRow(rowIndex);
+            if (row == null) continue;
+            String id = getCellValue(row.getCell(1));
+            if (id.equals(opID)) {
+                return new String[]{getCellValue(row.getCell(0)), getCellValue(row.getCell(2))};
+            }
+        }
+        return null;
+    }
+
+    private static void insertWorkstation(Workbook workbook, FileWriter sqlFileWriter) {
+        Sheet sheet = workbook.getSheet("Workstations");
+        if (sheet == null) {
+            System.out.println("Sheet 'Workstations' does not exist in the Excel file.");
+            return;
+        }
+
+        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) { // Starting from 1 to skip header
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) continue;
+
+            String wtID = getCellValue(row.getCell(0));
+            String name = getCellValue(row.getCell(2));
+            String desc = getCellValue(row.getCell(3));
+            String type = getCellValue(row.getCell(1));
+
+            String sqlInsert = String.format("INSERT INTO Workstation (Workstation_ID, Name, Description, Type_WorkstationWorkstationType_ID) VALUES ('%s', '%s', '%s', '%s');\n",
+                    wtID, name, desc, type);
+
+            try {
+                sqlFileWriter.write(sqlInsert);
+            } catch (IOException e) {
+                System.out.println("Error writing to SQL file [Workstations]: " + e.getMessage());
             }
         }
     }
@@ -234,24 +435,5 @@ public class ReaderToSQL {
             default:
                 return "";
         }
-    }
-
-    private static String searchVAT(String clientID, Workbook workbook) {
-        Sheet sheet = workbook.getSheet("Clients");
-        if (sheet == null) {
-            System.out.println("Sheet 'Clients' does not exist in the Excel file.");
-            return null;
-        }
-
-        for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-            Row row = sheet.getRow(rowIndex);
-            if (row == null) continue;
-
-            String id = getCellValue(row.getCell(0));
-            if (id.equals(clientID)) {
-                return getCellValue(row.getCell(2));
-            }
-        }
-        return null;
     }
 }

@@ -25,7 +25,8 @@ public class HelloApplication extends Application {
             Reader.loadMachines("textFiles/workstations.csv");
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset01_v1.xlsx", "outFiles/01_v1.sql");
             //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset01_v2.xlsx", "outFiles/01_v2.sql");
-            ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v1.xlsx", "outFiles/02_v1.sql");
+            //ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v1.xlsx", "outFiles/02_v1.sql");
+            ReaderToSQL.readExcelAndGenerateSQL("textFiles/Dataset02_v2.xlsx", "outFiles/02_v2.sql");
             ReaderCSV.saveInformation("textFiles/BOM.csv");
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
