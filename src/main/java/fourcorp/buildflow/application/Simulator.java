@@ -8,10 +8,7 @@ import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Simulator {
     private final ProductPriorityLine productLine;
@@ -24,6 +21,10 @@ public class Simulator {
     private final Map<String, List<String>> productMachineFlows; // USEI007
     private final MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
 
+    private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
+    private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
+
+
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
         this.workstationsPerOperation = Repositories.getInstance().getWorkstationsPerOperation();
@@ -34,6 +35,10 @@ public class Simulator {
         this.workstationTimes = new HashMap<>();  // USEI005
         this.productMachineFlows = new HashMap<>();  // USEI007
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
+
+        this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
+        this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
+
     }
 
     public boolean areAllQueuesEmpty() {
@@ -41,25 +46,31 @@ public class Simulator {
     }
 
     public void runWithPriority(boolean b) {
-        System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
-        processedProducts.clear();
-        returnToFirstOp(productLine.getAllProducts());
-        System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
-        processedProducts.clear();
-        returnToFirstOp(productLine.getAllProducts());
-        System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
-        runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
-        processedProducts.clear();
-        returnToFirstOp(productLine.getAllProducts());
+        if (!productLine.getProductsByPriority(PriorityOrder.HIGH).isEmpty()) {
+            processedProducts.clear();
+            returnToFirstOp(productLine.getAllProducts());
+            System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
+            runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
+        }
+
+        if (!productLine.getProductsByPriority(PriorityOrder.NORMAL).isEmpty()) {
+            processedProducts.clear();
+            returnToFirstOp(productLine.getAllProducts());
+            System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
+            runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
+        }
+
+        if (!productLine.getProductsByPriority(PriorityOrder.LOW).isEmpty()) {
+            processedProducts.clear();
+            returnToFirstOp(productLine.getAllProducts());
+            System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
+            runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
+        }
     }
 
     public void runWithoutPriority(boolean b) {
         processedProducts.clear();
-        for (Product a : productLine.getAllProducts()) {
-            a.setCurrentOperationIndex(0);
-        }
+        returnToFirstOp(productLine.getAllProducts());
         runSimulation(productLine.getAllProducts(), b);
     }
 
@@ -80,13 +91,19 @@ public class Simulator {
                     if (currentOperation != null) {
                         List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo);
 
+                        boolean operationStarted = false;
                         for (Workstation workstation : availableWorkstations) {
                             if (workstation.isAvailable()) {
+                                operationStarted = true;
                                 workstation.processProduct(product);
                                 double operationTime = workstation.getTime();
 
+                                // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
+                                markWorkstationAsUnavailable(workstation, operationTime);
+
                                 productTimes.merge(product, operationTime, Double::sum); //USEI03
                                 totalProductionTime += operationTime; //USEI03
+
 
                                 String operationName = currentOperation.getId(); // USEI04
                                 operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
@@ -109,8 +126,15 @@ public class Simulator {
                                 break; // Sai do ‘loop’ de estações assim que o produto é processado
                             }
                         }
+                        // Caso nenhuma estação esteja disponível, adiciona à fila de espera
+                        if (!operationStarted) {
+                            addToWaitingQueue(product, currentOperation);
+                            itemsProcessed = true;
+                        }
                     }
                 }
+                // Processa a fila de espera, se houver máquinas disponíveis para as operações pendentes
+                processWaitingQueue();
 
                 for (Product product : articlesToMove) {
                     Operation nextOperation = product.getCurrentOperation();
@@ -128,6 +152,65 @@ public class Simulator {
             e.printStackTrace();
         }
     }
+
+    // Adiciona produto à fila de espera para uma operação
+    private void addToWaitingQueue(Product product, Operation operation) {
+        waitingQueue.computeIfAbsent(operation.getId(), k -> new LinkedList<>()).add(product);
+        waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
+    }
+
+    // Processa a fila de espera quando workstations ficam disponíveis
+    private void processWaitingQueue() {
+        for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) {
+            String operationId = entry.getKey();
+            Queue<Product> queue = entry.getValue();
+
+            while (!queue.isEmpty()) {
+                Product product = queue.peek();
+                Operation currentOperation = product.getCurrentOperation();
+
+                if (currentOperation != null && currentOperation.getId().equals(operationId)) {
+                    List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, false);
+
+                    for (Workstation workstation : availableWorkstations) {
+                        if (workstation.isAvailable()) {
+                            queue.poll(); // Remove o produto da fila
+                            workstation.processProduct(product);
+                            double operationTime = workstation.getTime();
+
+                            markWorkstationAsUnavailable(workstation, operationTime);
+                            productTimes.merge(product, operationTime, Double::sum);
+                            totalProductionTime += operationTime;
+                            operationTimes.merge(operationId, operationTime, Double::sum);
+
+                            if (product.moveToNextOperation()) {
+                                System.out.println("Moving product " + product.getIdItem() + " to the next operation: " + product.getCurrentOperation().getId());
+                            } else {
+                                processedProducts.add(product);
+                                System.out.println("Product " + product.getIdItem() + " has completed all operations.");
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    // Marcar workstation como indisponível por um tempo
+    private void markWorkstationAsUnavailable(Workstation workstation, double operationTime) {
+        workstation.setAvailable(false);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                workstation.setAvailable(true);
+                //System.out.println("Workstation " + workstation.getId() + " is now available.");
+            }
+        }, (long) (operationTime * 0.1)); // Tempo em milissegundos
+    }
+
 
     private void returnToFirstOp(List<Product> f) {
         for (Product a : f) {

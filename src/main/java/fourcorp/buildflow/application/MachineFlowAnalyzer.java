@@ -32,24 +32,24 @@ public class MachineFlowAnalyzer {
 
         // Ordena as máquinas por ID e depois suas dependências
         machineDependencies.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> {
-                    String machine = entry.getKey();
-                    Map<String, Integer> dependencies = entry.getValue();
+            .sorted(Map.Entry.comparingByKey())
+            .forEach(entry -> {
+                String machine = entry.getKey();
+                Map<String, Integer> dependencies = entry.getValue();
 
-                    System.out.print(machine + " : ");
-                    List<Map.Entry<String, Integer>> sortedDependencies = dependencies.entrySet().stream()
-                            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente de dependências
-                            .toList();
+                System.out.print(machine + " : ");
+                List<Map.Entry<String, Integer>> sortedDependencies = dependencies.entrySet().stream()
+                        .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente de dependências
+                        .toList();
 
-                    System.out.print("[");
-                    StringJoiner joiner = new StringJoiner(",");
-                    for (Map.Entry<String, Integer> dep : sortedDependencies) {
-                        joiner.add("(" + dep.getKey() + "," + dep.getValue() + ")");
-                    }
-                    System.out.print(joiner.toString());
-                    System.out.println("]");
-                });
+                System.out.print("[");
+                StringJoiner joiner = new StringJoiner(",");
+                for (Map.Entry<String, Integer> dep : sortedDependencies) {
+                    joiner.add("(" + dep.getKey() + "," + dep.getValue() + ")");
+                }
+                System.out.print(joiner.toString());
+                System.out.println("]");
+            });
     }
 
     public static void clearDependencies() {
