@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 public class Simulator {
-    private ProductPriorityLine productLine;
-    private WorkstationsPerOperation workstationsPerOperation;
-    private List<Product> processedProducts;
-    private Map<Product, Double> productTimes; // USEI003
+    private final ProductPriorityLine productLine;
+    private final WorkstationsPerOperation workstationsPerOperation;
+    private final List<Product> processedProducts;
+    private final Map<Product, Double> productTimes; // USEI003
     private double totalProductionTime; // USEI003
-    private Map<String, Double> operationTimes; // USEI004
-    private Map<String, Double> workstationTimes; // USEI005
-    private Map<String, List<String>> productMachineFlows; // USEI007
-    private MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
+    private final Map<String, Double> operationTimes; // USEI004
+    private final Map<String, Double> workstationTimes; // USEI005
+    private final Map<String, List<String>> productMachineFlows; // USEI007
+    private final MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -88,7 +88,7 @@ public class Simulator {
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
 
-                                productMachineFlows.computeIfAbsent(product.getIdItem(), k -> new ArrayList<>()).add(workstationId); // USEI007
+                                productMachineFlows.computeIfAbsent(product.getIdItem(), _ -> new ArrayList<>()).add(workstationId); // USEI007
 
                                 itemsProcessed = true;
 
@@ -100,7 +100,7 @@ public class Simulator {
                                     System.out.println("Product " + product.getIdItem() + " has completed all operations.");
                                 }
 
-                                break; // Sai do loop de estações assim que o produto é processado
+                                break; // Sai do ‘loop’ de estações assim que o produto é processado
                             }
                         }
                     }
@@ -129,7 +129,7 @@ public class Simulator {
         String separator = "+-----------------+------------+";
         System.out.println("Production Time per Product:");
         System.out.println(separator);
-        System.out.printf(lineFormat, "Product ID", "Time (min)");
+        System.out.printf(lineFormat, "Product ID", "Time (sec)");
         System.out.println(separator);
         for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
             Product product = entry.getKey();
@@ -137,10 +137,10 @@ public class Simulator {
             System.out.printf(lineFormat, product.getIdItem(), String.format("%.2f", time));
         }
         System.out.println(separator);
-        System.out.printf("%nTotal Production Time for all products: %.2f minutes%n", totalProductionTime);
+        System.out.printf("%nTotal Production Time for all products: %.2f seconds%n", totalProductionTime);
         System.out.println("\nExecution Time by Operation:");
         System.out.println(separator);
-        System.out.printf(lineFormat, "Operation", "Time (min)");
+        System.out.printf(lineFormat, "Operation", "Time (sec)");
         System.out.println(separator);
         for (Map.Entry<String, Double> entry : operationTimes.entrySet()) {
             String operation = entry.getKey();
@@ -163,9 +163,21 @@ public class Simulator {
                 System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
             } else {
                 double operationExecutionPercentage = (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100;
-                System.out.format(lineFormat, e.getId(), e.getTotalExecutionTime() + " min", String.format("%.4f%%", operationExecutionPercentage));
+                System.out.format(lineFormat, e.getId(), e.getTotalExecutionTime() + " sec", String.format("%.4f%%", operationExecutionPercentage));
             }
         }
         System.out.println(separator);
+    }
+
+    public double getTotalProductionTime() {
+        return totalProductionTime;
+    }
+
+    public List<Double> getProductionTimePerProduct() {
+        List<Double> productionTimes = new ArrayList<>();
+        for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
+            productionTimes.add(entry.getValue());
+        }
+        return productionTimes;
     }
 }

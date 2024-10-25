@@ -9,7 +9,7 @@ public class MachineFlowAnalyzer {
     private static Map<String, Map<String, Integer>> machineDependencies;
 
     public MachineFlowAnalyzer() {
-        this.machineDependencies = new HashMap<>();
+        machineDependencies = new HashMap<>();
     }
 
     // Método para calcular as dependências entre máquinas
@@ -30,21 +30,26 @@ public class MachineFlowAnalyzer {
     public static void printMachineFlowDependencies() {
         System.out.println("\n=== Machine Flow Dependencies ===");
 
-        // Ordena as dependências com base no número de itens processados (em ordem decrescente)
-        machineDependencies.forEach((machine, dependencies) -> {
-            System.out.print(machine + " : ");
-            List<Map.Entry<String, Integer>> sortedDependencies = dependencies.entrySet().stream()
-                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente de dependências
-                    .toList();
+        // Ordena as máquinas por ID e depois suas dependências
+        machineDependencies.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .forEach(entry -> {
+                String machine = entry.getKey();
+                Map<String, Integer> dependencies = entry.getValue();
 
-            System.out.print("[");
-            StringJoiner joiner = new StringJoiner(",");
-            for (Map.Entry<String, Integer> entry : sortedDependencies) {
-                joiner.add("(" + entry.getKey() + "," + entry.getValue() + ")");
-            }
-            System.out.print(joiner.toString());
-            System.out.println("]");
-        });
+                System.out.print(machine + " : ");
+                List<Map.Entry<String, Integer>> sortedDependencies = dependencies.entrySet().stream()
+                        .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente de dependências
+                        .toList();
+
+                System.out.print("[");
+                StringJoiner joiner = new StringJoiner(",");
+                for (Map.Entry<String, Integer> dep : sortedDependencies) {
+                    joiner.add("(" + dep.getKey() + "," + dep.getValue() + ")");
+                }
+                System.out.print(joiner.toString());
+                System.out.println("]");
+            });
     }
 
     public static void clearDependencies() {
