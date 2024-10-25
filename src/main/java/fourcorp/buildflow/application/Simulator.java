@@ -43,10 +43,13 @@ public class Simulator {
     public void runWithPriority(boolean b) {
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
+        processedProducts.clear();
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
+        processedProducts.clear();
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
+        processedProducts.clear();
     }
 
     public void runWithoutPriority(boolean b) {

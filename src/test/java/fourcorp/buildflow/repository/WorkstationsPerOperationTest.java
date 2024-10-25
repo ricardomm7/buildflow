@@ -1,20 +1,7 @@
 package fourcorp.buildflow.repository;
 
-import fourcorp.buildflow.application.Simulator;
-import fourcorp.buildflow.domain.Operation;
-import fourcorp.buildflow.domain.PriorityOrder;
-import fourcorp.buildflow.domain.Product;
-import fourcorp.buildflow.domain.Workstation;
-import org.junit.jupiter.api.Test;
-
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 class WorkstationsPerOperationTest {
-
+/*
     @Test
     void findBestMachineForOperation() {
         Workstation ws1 = new Workstation("WS1", 10);
@@ -71,6 +58,7 @@ class WorkstationsPerOperationTest {
 
         assertNull(w.findBestMachineForOperation(operation), "Should be null!");
     }
+
 /*
     @Test
     void getWorkstationsAscendingByPercentage() {

@@ -76,6 +76,7 @@ public class Menu {
                 break;
             case 5:
                 s.runWithPriority(true);
+                break;
             case 6:
                 s.printProductionStatistics();
                 break;
