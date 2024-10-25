@@ -1,8 +1,8 @@
 package fourcorp.buildflow.domain;
 
 //import fourcorp.buildflow.application.Experiencia;
+
 import fourcorp.buildflow.repository.Clock;
-import java.util.List;
 
 public class Workstation implements Identifiable<String> {
     private final String idMachine;
@@ -32,73 +32,42 @@ public class Workstation implements Identifiable<String> {
             int elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
             totalWaiting += elapsedTime;
             setContWaiting();
-            System.out.println("Cout Waiting=" + contWaiting);
-            System.out.println("TotalWaiting ="+ totalWaiting);// Acumula o tempo de espera
             return (int) totalWaiting; // Retorna o tempo total de espera
         }
         return 0;
     }
 
-    public void startClock(int i, boolean hasMoreOperation) {
-        if (oprCounter == 0) {
-            this.isAvailable = false;
-            System.out.println("this.isAvailable = ;" + isAvailable);
-
-            clock.countDownClock(this.time, () -> {
-                this.isAvailable = true;
-                System.out.println("this.isAvailable = ;" + isAvailable);
-
-                if (isAvailable) {
-                    setOprounter();
-                    System.out.println("oprCounter"+oprCounter);
-                    setTotalOper();
-                    System.out.println("totalOper"+ totalOper);
-
-                    if (hasMoreOperation) {
-                        clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
-                    } else {
-                        clock.countUpClock(false); // Para a contagem se não houver mais operações
-                    }
-                }
-            });
-
-        } else {
+    public void startClock(boolean hasMoreOperation) {
+        if (oprCounter > 0) {
             int temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
             totalWaiting = totalWaiting + temp;
-            System.out.println("totalWaiting = "+totalWaiting);
             setContWaiting();
-            System.out.println("countWaiting ="+contWaiting);
             this.isAvailable = false;
-
-            clock.countDownClock(this.time, () -> {
-                this.isAvailable = true;
-
-                if (isAvailable) {
-                    setOprounter();
-                    System.out.println("oprCounter"+oprCounter);
-                    setTotalOper();
-                    System.out.println("totalOper"+ totalOper);
-
-                    if (hasMoreOperation) {
-                        clock.countUpClock(true);  // Inicia a contagem se houver mais operações
-                    } else {
-                        clock.countUpClock(false);  // Para a contagem se não houver mais operações
-                    }
-                }
-            });
         }
+        clock.countDownClock(this.time, () -> {
+            this.isAvailable = true;
+            setOprounter();
+            setTotalOper();
+            if (hasMoreOperation) {
+                clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
+            }
+        });
     }
 
-    public String getAverageExecutionTimePerOperation (){
-       long tempo = totalOper/oprCounter;
-       return " ---Workstation "+idMachine+"---Average Execution Time = "+tempo+"\n";
+    public String getAverageExecutionTimePerOperation() {
+        long tempo = totalOper / oprCounter;
+        return " ---Workstation " + idMachine + "---Average Execution Time = " + tempo + "\n";
     }
 
-    public String getAverageWaitingTime(){
-        long tempo = totalWaiting/contWaiting;
-        return " ---Workstation "+idMachine+"---Average Waiting Time = "+tempo+"\n";
+    public String getAverageWaitingTime() {
+        long tempo = totalWaiting / contWaiting;
+        return " ---Workstation " + idMachine + "---Average Waiting Time = " + tempo + "\n";
     }
-    public void setTotalOper(){ totalOper = totalOper + time; }
+
+    public void setTotalOper() {
+        totalOper = totalOper + (time);
+    }
+
     public long getTotalExecutionTime() {
         return (totalWaiting + totalOper);
     }
@@ -111,7 +80,9 @@ public class Workstation implements Identifiable<String> {
         this.oprCounter = oprCounter + 1;
     }
 
-    public int  getOprCounter(){return oprCounter;}
+    public int getOprCounter() {
+        return oprCounter;
+    }
 
     public double getTime() {
         return time;
@@ -132,12 +103,8 @@ public class Workstation implements Identifiable<String> {
     public void processProduct(Product product) {
         setOprounter();
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
-        new Thread(() -> {
-            simulateExecutionTime();
-            totalOper = totalOper + (long) time;
-            // Máquina fica disponível novamente após o tempo
-            //System.out.println("Machine " + idMachine + " is now available again.");
-        }).start();
+
+        startClock(product.hasMoreOperations());
     }
 
     private void simulateExecutionTime() {

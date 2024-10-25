@@ -23,7 +23,7 @@ public class Operation implements Identifiable<String> {
         this.countWaiting = 0;
         this.timeExecution = 0;
         this.timeWaiting = 0;
-        
+
     }
 
 
@@ -34,7 +34,7 @@ public class Operation implements Identifiable<String> {
             timeWaiting += elapsedTime;
             setcountWaiting();
             System.out.println("Cout Waiting=" + countWaiting);
-            System.out.println("timeWaiting ="+ timeWaiting);// Acumula o tempo de espera
+            System.out.println("timeWaiting =" + timeWaiting);// Acumula o tempo de espera
             return (int) timeWaiting; // Retorna o tempo total de espera
         }
         return 0;
@@ -51,9 +51,9 @@ public class Operation implements Identifiable<String> {
 
                 if (!isDoing) {
                     setCountExecution();
-                    System.out.println("Execution Counter ="+ countExecution);
+                    System.out.println("Execution Counter =" + countExecution);
                     setTimeExecution(time);
-                    System.out.println("Execution Time="+ timeExecution);
+                    System.out.println("Execution Time=" + timeExecution);
                     //ativação da cronometragem do waiting
 
                     if (stopCountDown) {
@@ -67,9 +67,9 @@ public class Operation implements Identifiable<String> {
         } else {
             int temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
             timeWaiting = timeWaiting + temp;
-            System.out.println("totalWaiting = "+timeWaiting);
+            System.out.println("totalWaiting = " + timeWaiting);
             setcountWaiting();
-            System.out.println("countWaiting ="+countWaiting);
+            System.out.println("countWaiting =" + countWaiting);
             this.isDoing = true;
 
             clock.countDownClock(time, () -> {
@@ -79,9 +79,9 @@ public class Operation implements Identifiable<String> {
 
                 if (!isDoing) {
                     setCountExecution();
-                    System.out.println("Execution Counter ="+ countExecution);
+                    System.out.println("Execution Counter =" + countExecution);
                     setTimeExecution(time);
-                    System.out.println("Execution Time="+ timeExecution);
+                    System.out.println("Execution Time=" + timeExecution);
                     //ativação da cronometragem do waiting
 
                     if (stopCountDown) {
@@ -94,37 +94,42 @@ public class Operation implements Identifiable<String> {
             });
         }
     }
-            public String getAverageExecutionTimePerOperation (){
-                long tempo = timeExecution/countExecution;
-                return " ---Process "+name+"---Average Execution Time = "+tempo+"\n";
-            }
 
-            public String getAverageWaitingTimePerOperation(){
-                long tempo = timeWaiting/countWaiting;
-                return " ---Process "+name+"---Average Waiting Time = "+tempo+"\n";
-            }
-            public void setTimeExecution( int time){ timeExecution = timeExecution + time; }
+    public String getAverageExecutionTimePerOperation() {
+        long tempo = timeExecution / countExecution;
+        return " ---Process " + name + "---Average Execution Time = " + tempo + "\n";
+    }
 
-            public long getExecutionWaiting() {
-                return (timeWaiting + timeExecution);
-            }
+    public String getAverageWaitingTimePerOperation() {
+        long tempo = timeWaiting / countWaiting;
+        return " ---Process " + name + "---Average Waiting Time = " + tempo + "\n";
+    }
 
-            public void setcountWaiting() {
-                this.countWaiting = countWaiting + 1;
-            }
+    public void setTimeExecution(int time) {
+        timeExecution = timeExecution + time;
+    }
 
-            public void setCountExecution() {
-                this.countExecution = countExecution + 1;
-            }
+    public long getExecutionWaiting() {
+        return (timeWaiting + timeExecution);
+    }
 
-            public int  getcountExecution(){return countExecution;}
+    public void setcountWaiting() {
+        this.countWaiting = countWaiting + 1;
+    }
+
+    public void setCountExecution() {
+        this.countExecution = countExecution + 1;
+    }
+
+    public int getcountExecution() {
+        return countExecution;
+    }
 
 
-
-            public boolean getExecute (){
+    public boolean getExecute() {
         return execute;
     }
-*/
+
     public void setExecute(boolean execute) {
         this.execute = execute;
     }

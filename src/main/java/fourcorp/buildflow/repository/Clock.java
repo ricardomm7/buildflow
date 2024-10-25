@@ -23,7 +23,7 @@ public class Clock {
                     }
                 };
 
-                timer.scheduleAtFixedRate(task, 0, 1000); // Incrementa a cada 1 segundo
+                timer.scheduleAtFixedRate(task, 0, 100); // Incrementa a cada 1 segundo
                 return -1;
             }
         } else {
@@ -54,7 +54,6 @@ public class Clock {
             @Override
             public void run() {
                 if (timeLeft > 0) {
-                    System.out.println(timeLeft); // Imprime o tempo restante
                     timeLeft--;
                 } else {
                     timer.cancel();
@@ -65,7 +64,7 @@ public class Clock {
         };
 
         // Executa a tarefa a cada 1 segundo
-        timer.scheduleAtFixedRate(task, 0, 1000); // 1000 ms = 1 minuto
+        timer.scheduleAtFixedRate(task, 0, 100); // 1000 ms = 1 minuto
     }
 }
 
