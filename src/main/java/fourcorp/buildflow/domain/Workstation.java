@@ -1,6 +1,6 @@
 package fourcorp.buildflow.domain;
 
-import fourcorp.buildflow.application.Experiencia;
+//import fourcorp.buildflow.application.Experiencia;
 import fourcorp.buildflow.repository.Clock;
 import java.util.List;
 
@@ -23,37 +23,73 @@ public class Workstation implements Identifiable<String> {
         this.totalWaiting = 0;
         this.totalOper = 0;
         this.contWaiting = 0;
+
     }
 
-    public void startClock( int i){
-        if(oprCounter == 0){
-            this.isAvailable = false;
-            this.isAvailable = clock.countDownClock( this.time);
-
-            if(isAvailable) {
-                setOprounter();
-                setTotalOper();
-
-                clock.countUpClock(true);
-            }
-        }else{
-            int temp = clock.countUpClock(false);
-            totalWaiting = totalWaiting + temp;
+    public int stopClock() {
+        // Para o relógio e retorna o tempo total de espera
+        if (clock != null) {
+            int elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
+            totalWaiting += elapsedTime;
             setContWaiting();
-            this.isAvailable = false;
-            this.isAvailable = clock.countDownClock( this.time);
-
-            if(isAvailable) {
-                setOprounter();
-                setTotalOper();
-
-
-                clock.countUpClock(true);
-            }
+            System.out.println("Cout Waiting=" + contWaiting);
+            System.out.println("TotalWaiting ="+ totalWaiting);// Acumula o tempo de espera
+            return (int) totalWaiting; // Retorna o tempo total de espera
         }
-
-
+        return 0;
     }
+
+    public void startClock(int i, boolean hasMoreOperation) {
+        if (oprCounter == 0) {
+            this.isAvailable = false;
+            System.out.println("this.isAvailable = ;" + isAvailable);
+
+            clock.countDownClock(this.time, () -> {
+                this.isAvailable = true;
+                System.out.println("this.isAvailable = ;" + isAvailable);
+
+                if (isAvailable) {
+                    setOprounter();
+                    System.out.println("oprCounter"+oprCounter);
+                    setTotalOper();
+                    System.out.println("totalOper"+ totalOper);
+
+                    if (hasMoreOperation) {
+                        clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
+                    } else {
+                        clock.countUpClock(false); // Para a contagem se não houver mais operações
+                    }
+                }
+            });
+
+        } else {
+            int temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
+            totalWaiting = totalWaiting + temp;
+            System.out.println("totalWaiting = "+totalWaiting);
+            setContWaiting();
+            System.out.println("countWaiting ="+contWaiting);
+            this.isAvailable = false;
+
+            clock.countDownClock(this.time, () -> {
+                this.isAvailable = true;
+
+                if (isAvailable) {
+                    setOprounter();
+                    System.out.println("oprCounter"+oprCounter);
+                    setTotalOper();
+                    System.out.println("totalOper"+ totalOper);
+
+                    if (hasMoreOperation) {
+                        clock.countUpClock(true);  // Inicia a contagem se houver mais operações
+                    } else {
+                        clock.countUpClock(false);  // Para a contagem se não houver mais operações
+                    }
+                }
+            });
+        }
+    }
+
+
     public void setTotalOper(){ totalOper = totalOper + time; }
     public long getTotalExecutionTime() {
         return (totalWaiting + totalOper);

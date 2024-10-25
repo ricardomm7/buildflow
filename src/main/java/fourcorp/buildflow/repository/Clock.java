@@ -9,11 +9,10 @@ public class Clock {
     private boolean running = false;
     private boolean isCounting = false;
 
-
     public int countUpClock(boolean stopFlag) {
         int elapsedTime = 0;
         if (stopFlag) {
-            if (!running) {  // Se não estiver runig, inicia
+            if (!running) {
                 timer = new Timer();
                 running = true;
 
@@ -24,7 +23,7 @@ public class Clock {
                     }
                 };
 
-                timer.scheduleAtFixedRate(task, 0, 100);  // Incrementa a cada 1 segundo
+                timer.scheduleAtFixedRate(task, 0, 1000); // Incrementa a cada 1 segundo
                 return -1;
             }
         } else {
@@ -34,7 +33,6 @@ public class Clock {
                 running = false;
                 elapsedTime = countTime;
                 countTime = 0;
-
             }
         }
         return elapsedTime;
@@ -42,34 +40,35 @@ public class Clock {
 
 
 
-        public boolean countDownClock(int countdownTime) {
-            if (isCounting) {
-                return false;  // Impede que o temporizador seja iniciado novamente enquanto funciona
-            }
-
-            timer = new Timer();
-            isCounting = true;  // Marca que o relógio começou
-
-            TimerTask task = new TimerTask() {
-                int timeLeft = countdownTime;
-
-                @Override
-                public void run() {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                    } else {
-                        timer.cancel();  // Para o temporizador
-                        isCounting = false;  // Marca que a contagem terminou
-
-                    }
-                }
-            };
-
-            // Executa a tarefa a cada 1 segundo
-            timer.scheduleAtFixedRate(task, 0, 100);
-            return true;  // Retorna true quando o temporizador é iniciado
+    public void countDownClock(int countdownTime, Runnable callback) {
+        if (isCounting) {
+            return;  // Impede que o temporizador seja iniciado novamente enquanto funciona
         }
+
+        timer = new Timer();
+        isCounting = true;  // Marca que o relógio começou
+
+        TimerTask task = new TimerTask() {
+            int timeLeft = countdownTime;
+
+            @Override
+            public void run() {
+                if (timeLeft > 0) {
+                    System.out.println(timeLeft); // Imprime o tempo restante
+                    timeLeft--;
+                } else {
+                    timer.cancel();
+                    isCounting = false;
+                    callback.run();  // Executa o callback após a contagem
+                }
+            }
+        };
+
+        // Executa a tarefa a cada 1 segundo
+        timer.scheduleAtFixedRate(task, 0, 1000); // 1000 ms = 1 minuto
+    }
 }
+
 
 
 
