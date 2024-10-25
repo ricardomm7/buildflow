@@ -1,20 +1,19 @@
---USBD07
+-- USBD07
 
--- Consulta para obter os materiais/componentes e as suas quantidades
 SELECT
-    po.OrderOrder_ID AS "Order ID",
-    po.ProductProduct_ID AS "Product ID",
-    prod.Name AS "Product Name",
-    c.Component_ID AS "Component ID",
-    c.Name AS "Component Name",
-    c.Quantity AS "Component Quantity",
-    rm.Name AS "Raw Material Name",
-    rm.Quantity AS "Raw Material Quantity"
+    po.OrderOrder_ID AS Order_ID,
+    pp.PartPart_ID AS Part_ID,
+    p.Description AS Part_Description,
+    SUM(po.quantity * pp.Quantity) AS Total_Quantity_Required
 FROM
     Production_Order po
-    JOIN BOM b ON po.ProductProduct_ID = b.ProductProduct_ID
-    JOIN Product prod ON po.ProductProduct_ID = prod.Product_ID
-    JOIN Component c ON b.ProductProduct_ID = c.BOMProductProduct_ID
-    LEFT JOIN Raw_Materials rm ON b.ProductProduct_ID = rm.BOMProductProduct_ID
+JOIN
+    Product_Part pp ON po.ProductProduct_ID = pp.ProductProduct_ID
+JOIN
+    Part p ON pp.PartPart_ID = p.Part_ID
 WHERE
-    po.OrderOrder_ID = 'O003'; -- Inserir Id da Order desejada
+    po.OrderOrder_ID = '1'  -- Substituir pelo ID da Order desejada
+GROUP BY
+    po.OrderOrder_ID, pp.PartPart_ID, p.Description
+ORDER BY
+    pp.PartPart_ID;

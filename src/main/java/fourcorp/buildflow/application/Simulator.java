@@ -9,17 +9,31 @@ import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Simulator {
     private ProductPriorityLine productLine;
     private WorkstationsPerOperation workstationsPerOperation;
-    private List<Product> processedProducts; // Lista para armazenar produtos processados
+    private List<Product> processedProducts;
+    private Map<Product, Double> productTimes; // USEI003
+    private double totalProductionTime; // USEI003
+    private Map<String, Double> operationTimes; // USEI004
+    private Map<String, Double> workstationTimes; // USEI005
+    private Map<String, List<String>> productMachineFlows; // USEI007
+    private MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
         this.workstationsPerOperation = Repositories.getInstance().getWorkstationsPerOperation();
         this.processedProducts = new ArrayList<>();
+        this.productTimes = new HashMap<>(); // USEI003
+        this.totalProductionTime = 0.0; // USEI003
+        this.operationTimes = new HashMap<>(); // USEI004
+        this.workstationTimes = new HashMap<>();  // USEI005
+        this.productMachineFlows = new HashMap<>();  // USEI007
+        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
     }
 
     public boolean areAllQueuesEmpty() {
@@ -63,6 +77,19 @@ public class Simulator {
                         for (Workstation workstation : availableWorkstations) {
                             if (workstation.isAvailable()) {
                                 workstation.processProduct(product);
+                                double operationTime = workstation.getTime();
+
+                                productTimes.merge(product, operationTime, Double::sum); //USEI03
+                                totalProductionTime += operationTime; //USEI03
+
+                                String operationName = currentOperation.getId(); // USEI04
+                                operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
+
+                                String workstationId = workstation.getId(); // USEI05
+                                workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
+
+                                productMachineFlows.computeIfAbsent(product.getIdItem(), k -> new ArrayList<>()).add(workstationId); // USEI007
+
                                 itemsProcessed = true;
 
                                 if (product.moveToNextOperation()) {
@@ -86,11 +113,59 @@ public class Simulator {
                     }
                 }
 
-            } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());  // Corrigida a condição de parada
+            } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());
+
+            machineFlowAnalyzer.calculateMachineDependencies(productMachineFlows); // USEI007 - Calcula dependências
 
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // USEI003 e USEI004
+    public void printProductionStatistics() {
+        String lineFormat = "| %-15s | %-10s |%n";
+        String separator = "+-----------------+------------+";
+        System.out.println("Production Time per Product:");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "Product ID", "Time (min)");
+        System.out.println(separator);
+        for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
+            Product product = entry.getKey();
+            Double time = entry.getValue();
+            System.out.printf(lineFormat, product.getIdItem(), String.format("%.2f", time));
+        }
+        System.out.println(separator);
+        System.out.printf("%nTotal Production Time for all products: %.2f minutes%n", totalProductionTime);
+        System.out.println("\nExecution Time by Operation:");
+        System.out.println(separator);
+        System.out.printf(lineFormat, "Operation", "Time (min)");
+        System.out.println(separator);
+        for (Map.Entry<String, Double> entry : operationTimes.entrySet()) {
+            String operation = entry.getKey();
+            Double time = entry.getValue();
+            System.out.printf(lineFormat, operation, String.format("%.2f", time));
+        }
+        System.out.println(separator);
+    }
+
+
+    // USEI005
+    public void printAnalysis() {
+        String lineFormat = "| %-20s | %-17s | %-31s |%n";
+        String separator = "+----------------------+-------------------+---------------------------------+";
+        System.out.println(separator);
+        System.out.format(lineFormat, "Workstation ID", "Total Execution", "Operation/Execution Percentage");
+        System.out.println(separator);
+        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage()) {
+            if (e.getTotalExecutionTime() == 0) {
+                System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
+            } else {
+                double operationExecutionPercentage = (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100;
+                System.out.format(lineFormat, e.getId(), e.getTotalExecutionTime() + " min", String.format("%.4f%%", operationExecutionPercentage));
+            }
+        }
+        System.out.println(separator);
     }
 }
