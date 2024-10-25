@@ -40,7 +40,7 @@ public abstract class Reader {
         String linha;
         while ((linha = br.readLine()) != null) {
             String[] campos = linha.split(";");
-            Workstation maquina = new Workstation(campos[0],Integer.parseInt(campos[2]));
+            Workstation maquina = new Workstation(campos[0], Integer.parseInt(campos[2]));
             Operation operation = new Operation(campos[1]);
             w.create(maquina, operation);
         }

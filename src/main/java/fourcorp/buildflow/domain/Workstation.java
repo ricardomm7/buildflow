@@ -1,9 +1,5 @@
 package fourcorp.buildflow.domain;
 
-//import fourcorp.buildflow.application.Experiencia;
-
-import fourcorp.buildflow.repository.Clock;
-
 public class Workstation implements Identifiable<String> {
     private final String idMachine;
     private int time;
@@ -12,8 +8,6 @@ public class Workstation implements Identifiable<String> {
     private long totalWaiting;
     private long totalOper;
     int contWaiting;
-    private Clock clock = new Clock();
-
 
     public Workstation(String idMachine, int time) {
         this.idMachine = idMachine;
@@ -24,34 +18,6 @@ public class Workstation implements Identifiable<String> {
         this.totalOper = 0;
         this.contWaiting = 0;
 
-    }
-
-    public int stopClock() {
-        // Para o relógio e retorna o tempo total de espera
-        if (clock != null) {
-            int elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
-            totalWaiting += elapsedTime;
-            setContWaiting();
-            return (int) totalWaiting; // Retorna o tempo total de espera
-        }
-        return 0;
-    }
-
-    public void startClock(boolean hasMoreOperation) {
-        if (oprCounter > 0) {
-            int temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
-            totalWaiting = totalWaiting + temp;
-            setContWaiting();
-            this.isAvailable = false;
-        }
-        clock.countDownClock(this.time, () -> {
-            this.isAvailable = true;
-            setOprounter();
-            setTotalOper();
-            if (hasMoreOperation) {
-                clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
-            }
-        });
     }
 
     public String getAverageExecutionTimePerOperation() {
@@ -65,7 +31,7 @@ public class Workstation implements Identifiable<String> {
     }
 
     public void setTotalOper() {
-        totalOper = totalOper + (time);
+        totalOper = totalOper + time;
     }
 
     public long getTotalExecutionTime() {
@@ -103,26 +69,20 @@ public class Workstation implements Identifiable<String> {
     public void processProduct(Product product) {
         setOprounter();
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
-
-        startClock(product.hasMoreOperations());
+        new Thread(() -> {
+            simulateExecutionTime();
+            totalOper = totalOper + (long) time;
+        }).start();
     }
 
     private void simulateExecutionTime() {
         try {
-            // Calcula o tempo de sleep: 1 segundo = 1 minuto na simulação
-            // O fator 0.00015 é usado para reduzir o tempo para fins de demonstração
             long sleepTime = (long) (time * 0.00015);
-
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            //System.out.println("Execução interrompida para a máquina " + idMachine);
         }
     }
-
-    public void increaseWaiting(double time) {
-        totalWaiting += (long) time;
-    } //entendi nada
 
     public double getTotalOperationTime() {
         return totalOper;

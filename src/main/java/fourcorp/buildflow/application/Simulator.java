@@ -44,12 +44,15 @@ public class Simulator {
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
         processedProducts.clear();
+        returnToFirstOp(productLine.getAllProducts());
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
         processedProducts.clear();
+        returnToFirstOp(productLine.getAllProducts());
         System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
         runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
         processedProducts.clear();
+        returnToFirstOp(productLine.getAllProducts());
     }
 
     public void runWithoutPriority(boolean b) {
@@ -123,6 +126,12 @@ public class Simulator {
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void returnToFirstOp(List<Product> f) {
+        for (Product a : f) {
+            a.setCurrentOperationIndex(0);
         }
     }
 

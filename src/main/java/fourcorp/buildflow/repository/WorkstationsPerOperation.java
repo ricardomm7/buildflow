@@ -31,19 +31,10 @@ public class WorkstationsPerOperation {
                 break;
             }
         }
-        // Se 'b' for true, ordena as máquinas por tempo de operação
         if (b) {
             availableWorkstations.sort(Comparator.comparingDouble(Workstation::getTime));
         }
         return availableWorkstations;
-    }
-
-    public void increaseWaitingTimes(double time) {
-        for (Workstation machine : workstationsPerOperation.getAllValues()) {
-            if (machine.isAvailable()) {
-                machine.increaseWaiting(time);
-            }
-        }
     }
 
     public List<Workstation> getWorkstationsAscendingByPercentage() {
