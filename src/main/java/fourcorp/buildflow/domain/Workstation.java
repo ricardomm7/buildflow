@@ -89,7 +89,15 @@ public class Workstation implements Identifiable<String> {
         }
     }
 
+    public String getAverageExecutionTimePerOperation (){
+       long tempo = totalOper/oprCounter;
+       return " ---Workstation "+idMachine+"---Average Execution Time = "+tempo+"\n";
+    }
 
+    public String getAverageWaitingTime(){
+        long tempo = totalWaiting/contWaiting;
+        return " ---Workstation "+idMachine+"---Average Waiting Time = "+tempo+"\n";
+    }
     public void setTotalOper(){ totalOper = totalOper + time; }
     public long getTotalExecutionTime() {
         return (totalWaiting + totalOper);
