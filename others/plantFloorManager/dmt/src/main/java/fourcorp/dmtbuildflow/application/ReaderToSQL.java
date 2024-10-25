@@ -229,7 +229,7 @@ public class ReaderToSQL {
             String ord = getCellValue(row.getCell(0));
             int qntty = Integer.parseInt(getCellValue(row.getCell(3)));
 
-            String sqlInsert = String.format("INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
+            String sqlInsert = String.format("INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('%s', '%s', %d);\n",
                     product, ord, qntty);
 
             try {

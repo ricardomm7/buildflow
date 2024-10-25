@@ -7,12 +7,12 @@ CREATE TABLE Part (Part_ID char(10) NOT NULL, Description varchar2(100) NOT NULL
 CREATE TABLE Product (Product_ID char(10) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, Product_FamilyFamily_ID varchar2(60) NOT NULL, PRIMARY KEY (Product_ID));
 CREATE TABLE Product_Family (Family_ID varchar2(60) NOT NULL, Name varchar2(100) NOT NULL, PRIMARY KEY (Family_ID));
 CREATE TABLE Product_Part (ProductProduct_ID char(10) NOT NULL, PartPart_ID char(10) NOT NULL, Quantity number(10) NOT NULL, PRIMARY KEY (ProductProduct_ID, PartPart_ID));
-CREATE TABLE Production_Order (ProductProduct_ID char(10) NOT NULL, OrderOrder_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (ProductProduct_ID, OrderOrder_ID));
+CREATE TABLE Production_Line (ProductProduct_ID char(10) NOT NULL, OrderOrder_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (ProductProduct_ID, OrderOrder_ID));
 CREATE TABLE Type_Workstation (WorkstationType_ID char(5) NOT NULL, Designation varchar2(60) NOT NULL, PRIMARY KEY (WorkstationType_ID));
 CREATE TABLE Workstation (Workstation_ID number(4) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, Type_WorkstationWorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Workstation_ID));
 ALTER TABLE Product ADD CONSTRAINT FKProduct42868 FOREIGN KEY (Product_FamilyFamily_ID) REFERENCES Product_Family (Family_ID);
-ALTER TABLE Production_Order ADD CONSTRAINT FKProduction967345 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
-ALTER TABLE Production_Order ADD CONSTRAINT FKProduction620872 FOREIGN KEY (OrderOrder_ID) REFERENCES "Order" (Order_ID);
+ALTER TABLE Production_Line ADD CONSTRAINT FKProduction237720 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);
+ALTER TABLE Production_Line ADD CONSTRAINT FKProduction584193 FOREIGN KEY (OrderOrder_ID) REFERENCES "Order" (Order_ID);
 ALTER TABLE "Order" ADD CONSTRAINT FKOrder416670 FOREIGN KEY (CostumerVAT) REFERENCES Costumer (VAT);
 ALTER TABLE Workstation ADD CONSTRAINT FKWorkstatio826871 FOREIGN KEY (Type_WorkstationWorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
 ALTER TABLE Product_Part ADD CONSTRAINT FKProduct_Pa519928 FOREIGN KEY (ProductProduct_ID) REFERENCES Product (Product_ID);

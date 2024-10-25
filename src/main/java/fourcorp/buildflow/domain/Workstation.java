@@ -12,7 +12,6 @@ public class Workstation implements Identifiable<String> {
     int contWaiting;
     private Clock clock = new Clock();
 
-
     public Workstation(String idMachine, int time) {
         this.idMachine = idMachine;
         this.time = time;

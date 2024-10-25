@@ -25,19 +25,19 @@ INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('5'
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('6', TO_DATE('2024-09-18', 'YYYY-MM-DD'), TO_DATE('2024-09-26', 'YYYY-MM-DD'), 'CZ6451237810');
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT) VALUES ('7', TO_DATE('2024-09-21', 'YYYY-MM-DD'), TO_DATE('2024-09-26', 'YYYY-MM-DD'), 'PT501245987');
 
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '1', 5);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '1', 15);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '2', 10);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945P17', '2', 20);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '3', 10);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '3', 10);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '4', 24);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '4', 16);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '4', 8);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '5', 12);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '6', 8);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945P17', '6', 16);
-INSERT INTO Production_Order (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '7', 8);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '1', 5);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '1', 15);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '2', 10);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945P17', '2', 20);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '3', 10);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '3', 10);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S20', '4', 24);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '4', 16);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '4', 8);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '5', 12);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S17', '6', 8);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945P17', '6', 16);
+INSERT INTO Production_Line (ProductProduct_ID, OrderOrder_ID, quantity) VALUES ('AS12945S22', '7', 8);
 
 INSERT INTO Part (Part_ID, Description) VALUES ('PN12344A21', 'Screw M6 35 mm');
 INSERT INTO Part (Part_ID, Description) VALUES ('PN52384R50', '300x300 mm 5mm stainless steel sheet');

@@ -1,7 +1,7 @@
 CREATE VIEW View_WorkstationType_For_Order AS
 SELECT DISTINCT tw.WorkstationType_ID, tw.Designation
 FROM "Order" o
-         JOIN Production_Order po ON o.Order_ID = po.OrderOrder_ID
+         JOIN Production_Line po ON o.Order_ID = po.OrderOrder_ID
          JOIN Product p ON po.ProductProduct_ID = p.Product_ID
          JOIN BOO_Operation b ON p.Product_FamilyFamily_ID = b.Product_FamilyFamily_ID
          JOIN Operation op ON b.OperationOperation_ID = op.Operation_ID

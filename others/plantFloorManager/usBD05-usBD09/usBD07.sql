@@ -6,7 +6,7 @@ SELECT
     p.Description AS Part_Description,
     SUM(po.quantity * pp.Quantity) AS Total_Quantity_Required
 FROM
-    Production_Order po
+    Production_Line po
 JOIN
     Product_Part pp ON po.ProductProduct_ID = pp.ProductProduct_ID
 JOIN

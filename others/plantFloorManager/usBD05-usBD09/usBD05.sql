@@ -10,7 +10,7 @@ SELECT
 FROM
     Product p
 JOIN
-    Production_Order po ON p.Product_ID = po.ProductProduct_ID
+    Production_Line po ON p.Product_ID = po.ProductProduct_ID
 JOIN
     "Order" o ON po.OrderOrder_ID = o.Order_ID
 JOIN
