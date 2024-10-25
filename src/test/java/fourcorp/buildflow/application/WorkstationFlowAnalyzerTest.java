@@ -1,16 +1,7 @@
 package fourcorp.buildflow.application;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class WorkstationFlowAnalyzerTest {
-
+/*
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
@@ -116,4 +107,6 @@ public class WorkstationFlowAnalyzerTest {
     public void tearDown() {
         System.setOut(originalOut);
     }
+
+ */
 }

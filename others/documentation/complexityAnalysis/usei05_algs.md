@@ -3,11 +3,11 @@
 ## Get Workstations Ascending By Percentage
 
 ```java
-public List<Workstation> getWorkstationsAscendingByPercentage() {
+public List<Workstation> getWorkstationsAscendingByPercentage(double t) {
     List<Workstation> workstations = new ArrayList<>(workstationsPerOperation.getAllValues());
     workstations.sort((Workstation w1, Workstation w2) -> { //O(log(n))
-        double percentage1 = (w1.getTotalOperationTime() / w1.getTotalExecutionTime()) * 100;
-        double percentage2 = (w2.getTotalOperationTime() / w2.getTotalExecutionTime()) * 100;
+        double percentage1 = (w1.getTotalOperationTime() / t) * 100;
+        double percentage2 = (w2.getTotalOperationTime() / t) * 100;
         return Double.compare(percentage1, percentage2); //O(n)
     });
     return workstations;

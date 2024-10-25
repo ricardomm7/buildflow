@@ -20,7 +20,6 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) throws IOException {
         //launch();
-
         try {
             Reader.loadOperations("textFiles/articles.csv");
             Reader.loadMachines("textFiles/workstations.csv");
@@ -28,11 +27,7 @@ public class HelloApplication extends Application {
             System.out.println("Error uploading files: " + e.getMessage());
             return;
         }
-
-
         Menu menu = new Menu();
         menu.displayMenu();
-
-
     }
 }

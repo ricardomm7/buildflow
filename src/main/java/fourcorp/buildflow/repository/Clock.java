@@ -1,6 +1,8 @@
 package fourcorp.buildflow.repository;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
 public class Clock {
 
     private Timer timer = new Timer();
@@ -9,8 +11,8 @@ public class Clock {
     private boolean running = false;
     private boolean isCounting = false;
 
-    public int countUpClock(boolean stopFlag) {
-        int elapsedTime = 0;
+    public double countUpClock(boolean stopFlag) {
+        double elapsedTime = 0;
         if (stopFlag) {
             if (!running) {
                 timer = new Timer();
@@ -23,7 +25,7 @@ public class Clock {
                     }
                 };
 
-                timer.scheduleAtFixedRate(task, 0, 15); // Incrementa a cada 1 segundo
+                timer.scheduleAtFixedRate(task, 0, 10); // Incrementa a cada 1 segundo
                 return -1;
             }
         } else {
@@ -37,7 +39,6 @@ public class Clock {
         }
         return elapsedTime;
     }
-
 
 
     public void countDownClock(int countdownTime, Runnable callback) {
@@ -64,7 +65,7 @@ public class Clock {
         };
 
         // Executa a tarefa a cada 1 segundo
-        timer.scheduleAtFixedRate(task, 0, 15); // 1000 ms = 1 minuto
+        timer.scheduleAtFixedRate(task, 0, 10); // 1000 ms = 1 minuto
     }
 }
 

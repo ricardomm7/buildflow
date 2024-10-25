@@ -38,7 +38,21 @@ public class Simulator {
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
+    }
 
+    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
+        this.productLine = b;
+        this.workstationsPerOperation = a;
+        this.processedProducts = new ArrayList<>();
+        this.productTimes = new HashMap<>(); // USEI003
+        this.totalProductionTime = 0.0; // USEI003
+        this.operationTimes = new HashMap<>(); // USEI004
+        this.workstationTimes = new HashMap<>();  // USEI005
+        this.productMachineFlows = new HashMap<>();  // USEI007
+        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
+
+        this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
+        this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
     }
 
     public boolean areAllQueuesEmpty() {
@@ -199,7 +213,6 @@ public class Simulator {
         }
     }
 
-    // Marcar workstation como indisponível por um tempo
     private void markWorkstationAsUnavailable(Workstation workstation, double operationTime) {
         workstation.setAvailable(false);
         new Timer().schedule(new TimerTask() {
@@ -251,14 +264,14 @@ public class Simulator {
         String lineFormat = "| %-20s | %-17s | %-31s |%n";
         String separator = "+----------------------+-------------------+---------------------------------+";
         System.out.println(separator);
-        System.out.format(lineFormat, "Workstation ID", "Total Execution", "Operation/Execution Percentage");
+        System.out.format(lineFormat, "Workstation ID", "Total Operation", "Operation/Execution Percentage");
         System.out.println(separator);
-        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage()) {
+        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage(totalProductionTime)) {
             if (e.getTotalExecutionTime() == 0) {
                 System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
             } else {
-                double operationExecutionPercentage = (e.getTotalOperationTime() / e.getTotalExecutionTime()) * 100;
-                System.out.format(lineFormat, e.getId(), e.getTotalExecutionTime() + " sec", String.format("%.4f%%", operationExecutionPercentage));
+                double operationExecutionPercentage = (e.getTotalOperationTime() / totalProductionTime) * 100;
+                System.out.format(lineFormat, e.getId(), e.getTotalOperationTime() + " sec", String.format("%.4f%%", operationExecutionPercentage));
             }
         }
         System.out.println(separator);

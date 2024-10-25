@@ -10,8 +10,8 @@ public class Operation implements Identifiable<String> {
     private int countExecution;
     private int countWaiting;
     private boolean isDoing;
-    private int timeExecution;
-    private int timeWaiting;
+    private double timeExecution;
+    private double timeWaiting;
     private Clock clock = new Clock();
 
 
@@ -30,7 +30,7 @@ public class Operation implements Identifiable<String> {
     public int operationStopClock() {
         // Para o relógio e retorna o tempo total de espera
         if (clock != null) {
-            int elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
+            double elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
             timeWaiting += elapsedTime;
             setcountWaiting();
             System.out.println("Cout Waiting=" + countWaiting);
@@ -65,7 +65,7 @@ public class Operation implements Identifiable<String> {
             });
 
         } else {
-            int temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
+            double temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
             timeWaiting = timeWaiting + temp;
             System.out.println("totalWaiting = " + timeWaiting);
             setcountWaiting();
@@ -96,12 +96,12 @@ public class Operation implements Identifiable<String> {
     }
 
     public String getAverageExecutionTimePerOperation() {
-        long tempo = timeExecution / countExecution;
+        double tempo = timeExecution / countExecution;
         return " ---Process " + name + "---Average Execution Time = " + tempo + "\n";
     }
 
     public String getAverageWaitingTimePerOperation() {
-        long tempo = timeWaiting / countWaiting;
+        double tempo = timeWaiting / countWaiting;
         return " ---Process " + name + "---Average Waiting Time = " + tempo + "\n";
     }
 
@@ -109,7 +109,7 @@ public class Operation implements Identifiable<String> {
         timeExecution = timeExecution + time;
     }
 
-    public long getExecutionWaiting() {
+    public double getExecutionWaiting() {
         return (timeWaiting + timeExecution);
     }
 

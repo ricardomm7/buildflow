@@ -1,5 +1,17 @@
 package fourcorp.buildflow.repository;
 
+import fourcorp.buildflow.application.Simulator;
+import fourcorp.buildflow.domain.Operation;
+import fourcorp.buildflow.domain.PriorityOrder;
+import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
+import org.junit.jupiter.api.Test;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class WorkstationsPerOperationTest {
 /*
     @Test
@@ -58,8 +70,8 @@ class WorkstationsPerOperationTest {
 
         assertNull(w.findBestMachineForOperation(operation), "Should be null!");
     }
+*/
 
-/*
     @Test
     void getWorkstationsAscendingByPercentage() {
         Workstation ws543 = new Workstation("WS65", 10);
@@ -77,13 +89,11 @@ class WorkstationsPerOperationTest {
         uisfd.create(p4390, PriorityOrder.LOW);
 
         Simulator xo = new Simulator(u, uisfd);
-        xo.runWithoutPriority();
-        List<Workstation> urghoer = u.getWorkstationsAscendingByPercentage();
+        xo.runWithoutPriority(true);
+        List<Workstation> urghoer = u.getWorkstationsAscendingByPercentage(25);
 
-        double asd3 = (ws543.getTotalOperationTime() / ws543.getTotalExecutionTime()) * 100;
-        System.out.println(asd3);
         assertEquals(2, urghoer.size(), "Should return 2 machines.");
-        assertEquals(80.0, (ws543.getTotalOperationTime() / ws543.getTotalExecutionTime()) * 100, "WS65 should have 80%.");
+        assertEquals(80.0, (ws543.getTotalOperationTime() / 25) * 100, "WS65 should have 80%.");
     }
- */
+
 }
