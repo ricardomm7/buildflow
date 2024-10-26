@@ -112,10 +112,6 @@ public class Menu {
             case 10:
                 s.printAverageWaitingTimes();
                 break;
-
-            case 11:
-                s.printAverageTimePerOperation();
-                break;
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();
