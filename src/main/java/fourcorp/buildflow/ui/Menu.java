@@ -1,7 +1,6 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.GraphViz;
-import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
@@ -59,7 +58,7 @@ public class Menu {
         switch (choice) {
             case 1:
                 for (PriorityOrder priority : PriorityOrder.values()) {
-                    System.out.println("\n----- For " + priority.toString());
+                    System.out.println("\n>>> FOR " + priority.toString().toUpperCase() + " PRIORITY");
                     for (Product c : Repositories.getInstance().getProductPriorityRepository().getProductsByPriority(priority)) {
                         System.out.println("Product ID: " + c.getId());
                     }
@@ -81,10 +80,16 @@ public class Menu {
                 s.printProductionStatistics();
                 break;
             case 7:
-               s.printWorkstationDependencies();
+                if (s.getTotalProductionTime() == 0) {
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                } else {
+                    s.printWorkstationDependencies();
+                }
                 break;
             case 8:
-            {
+                if (s.getTotalProductionTime() == 0) {
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                } else {
                     s.printAnalysis();
                 }
                 break;

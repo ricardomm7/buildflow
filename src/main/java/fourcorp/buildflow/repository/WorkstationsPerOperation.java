@@ -31,7 +31,6 @@ public class WorkstationsPerOperation {
                 break;
             }
         }
-        // Se 'b' for true, ordena as máquinas por tempo de operação
         if (b) {
             availableWorkstations.sort(Comparator.comparingDouble(Workstation::getTime));
         }
@@ -54,5 +53,9 @@ public class WorkstationsPerOperation {
 
     public void removeAll() {
         workstationsPerOperation.removeAll();
+    }
+
+    public List<Workstation> getAllWorkstations() {
+        return new ArrayList<>(workstationsPerOperation.getAllValues());
     }
 }

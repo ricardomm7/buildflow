@@ -5,72 +5,78 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class WorkstationsPerOperationTest {
-/*
-    @Test
-    void findBestMachineForOperation() {
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-        Workstation ws3 = new Workstation("WS3", 15);
+    private WorkstationsPerOperation workstationsPerOperation;
+    private Workstation ws1;
+    private Workstation ws2;
+    private Workstation ws3;
+    private Operation op1;
+    private Operation op2;
+
+    @BeforeEach
+    void setUp() {
+        workstationsPerOperation = new WorkstationsPerOperation();
+        ws1 = new Workstation("WS1", 8);
+        ws2 = new Workstation("WS2", 5);
+        ws3 = new Workstation("WS3", 3);
+        op1 = new Operation("Cutting");
+        op2 = new Operation("Assembling");
+
+        ws1.setAvailable(true);
         ws3.setAvailable(false);
 
-        Operation operation = new Operation("Welding");
-
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, operation);
-        w.create(ws2, operation);
-        w.create(ws3, operation);
-
-        Workstation bestMachine = w.findBestMachineForOperation(operation);
-
-        assertEquals("WS2", bestMachine.getId(), "The fastest machine available should be WS2.");
+        workstationsPerOperation.create(ws1, op1);
+        workstationsPerOperation.create(ws2, op1);
+        workstationsPerOperation.create(ws3, op2);
     }
 
     @Test
-    void findBestMachineForOperation2() {
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-        Workstation ws3 = new Workstation("WS3", 15);
-        ws2.setAvailable(false);
-
-        Operation operation = new Operation("Welding");
-
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, operation);
-        w.create(ws2, operation);
-        w.create(ws3, operation);
-
-        Workstation bestMachine = w.findBestMachineForOperation(operation);
-
-        assertEquals("WS1", bestMachine.getId(), "The fastest machine available should be WS2.");
+    void testGetWorkstationsByOperationAvailableOnly() {
+        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(op1, false);
+        assertEquals(2, availableWorkstations.size(), "Should return 2 available workstations for 'Cutting' operation.");
+        assertTrue(availableWorkstations.contains(ws1));
+        assertTrue(availableWorkstations.contains(ws2));
     }
 
     @Test
-    void findBestMachineForOperation3() {
-        Workstation ws1 = new Workstation("WS1", 10);
-        Workstation ws2 = new Workstation("WS2", 5);
-        Workstation ws3 = new Workstation("WS3", 15);
-        ws1.setAvailable(false);
-        ws2.setAvailable(false);
-        ws3.setAvailable(false);
-
-        Operation operation = new Operation("Welding");
-
-        WorkstationsPerOperation w = new WorkstationsPerOperation();
-        w.create(ws1, operation);
-        w.create(ws2, operation);
-        w.create(ws3, operation);
-
-        assertNull(w.findBestMachineForOperation(operation), "Should be null!");
+    void testGetWorkstationsByOperationSortedByTime() {
+        List<Workstation> sortedWorkstations = workstationsPerOperation.getWorkstationsByOperation(op1, true);
+        assertEquals(2, sortedWorkstations.size(), "Should return 2 available workstations sorted by time.");
+        assertEquals(ws2, sortedWorkstations.get(0), "WS2 should be first since it has less operation time.");
+        assertEquals(ws1, sortedWorkstations.get(1), "WS1 should be second with more operation time.");
     }
-*/
+
+    @Test
+    void testRemoveWorkstation() {
+        workstationsPerOperation.removeWorkstation(ws1, op1);
+        List<Workstation> workstations = workstationsPerOperation.getWorkstationsByOperation(op1, false);
+        assertEquals(1, workstations.size(), "Should return 1 workstation after removal.");
+        assertFalse(workstations.contains(ws1), "WS1 should be removed from 'Cutting' operation.");
+    }
+
+    @Test
+    void testRemoveAllWorkstations() {
+        workstationsPerOperation.removeAll();
+        List<Workstation> allWorkstations = workstationsPerOperation.getAllWorkstations();
+        assertEquals(0, allWorkstations.size(), "Should return an empty list after removing all workstations.");
+    }
+
+    @Test
+    void testGetAllWorkstations() {
+        List<Workstation> allWorkstations = workstationsPerOperation.getAllWorkstations();
+        assertEquals(3, allWorkstations.size(), "Should return all 3 workstations.");
+        assertTrue(allWorkstations.contains(ws1));
+        assertTrue(allWorkstations.contains(ws2));
+        assertTrue(allWorkstations.contains(ws3));
+    }
 
     @Test
     void getWorkstationsAscendingByPercentage() {
@@ -95,5 +101,4 @@ class WorkstationsPerOperationTest {
         assertEquals(2, urghoer.size(), "Should return 2 machines.");
         assertEquals(80.0, (ws543.getTotalOperationTime() / 25) * 100, "WS65 should have 80%.");
     }
-
 }

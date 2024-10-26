@@ -23,12 +23,11 @@ public class Workstation implements Identifiable<String> {
     }
 
     public int stopClock() {
-        // Para o relógio e retorna o tempo total de espera
         if (clock != null) {
-            double elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
+            double elapsedTime = clock.countUpClock(false);
             totalWaiting += elapsedTime;
             incrementContWaiting();
-            return (int) totalWaiting; // Retorna o tempo total de espera
+            return (int) totalWaiting;
         }
         return 0;
     }
@@ -42,7 +41,7 @@ public class Workstation implements Identifiable<String> {
         }
         clock.countDownClock(this.time, () -> {
             this.isAvailable = true;
-            setOprounter();
+            increaseOpCounter();
             if (hasMoreOperation) {
                 clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
             }
@@ -71,7 +70,7 @@ public class Workstation implements Identifiable<String> {
         this.contWaiting = contWaiting + 1;
     }
 
-    public void setOprounter() {
+    public void increaseOpCounter() {
         this.oprCounter = oprCounter + 1;
     }
 
@@ -96,27 +95,18 @@ public class Workstation implements Identifiable<String> {
     }
 
     public void processProduct(Product product) {
-        setOprounter();
+        increaseOpCounter();
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
         increaseOperationTime();
         startClock(product.hasMoreOperations());
     }
 
-    private void simulateExecutionTime() {
-        try {
-            // Calcula o tempo de sleep: 1 segundo = 1 minuto na simulação
-            // O fator 0.00015 é usado para reduzir o tempo para fins de demonstração
-            long sleepTime = (long) (time * 0.00015);
-
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            //System.out.println("Execução interrompida para a máquina " + idMachine);
-        }
-    }
-
     public double getTotalOperationTime() {
         return totalOper;
+    }
+
+    public void setTotalOperationTime(double a) {
+        this.totalOper = a;
     }
 
     @Override

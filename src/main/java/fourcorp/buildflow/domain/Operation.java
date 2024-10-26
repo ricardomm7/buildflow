@@ -25,20 +25,17 @@ public class Operation implements Identifiable<String> {
         this.timeExecution = 0;
         this.timeWaiting = 0;
         this.workstation = null;
-
-
     }
-
 
     public int operationStopClock() {
         // Para o relógio e retorna o tempo total de espera
         if (clock != null) {
-            double elapsedTime = clock.countUpClock(false); // Para a contagem ascendente
+            double elapsedTime = clock.countUpClock(false);
             timeWaiting += elapsedTime;
             setcountWaiting();
             System.out.println("Cout Waiting=" + countWaiting);
-            System.out.println("timeWaiting =" + timeWaiting);// Acumula o tempo de espera
-            return (int) timeWaiting; // Retorna o tempo total de espera
+            System.out.println("timeWaiting =" + timeWaiting);
+            return (int) timeWaiting;
         }
         return 0;
     }
@@ -60,15 +57,15 @@ public class Operation implements Identifiable<String> {
                     //ativação da cronometragem do waiting
 
                     if (stopCountDown) {
-                        clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
+                        clock.countUpClock(true);
                     } else {
-                        clock.countUpClock(false); // Para a contagem se não houver mais operações
+                        clock.countUpClock(false);
                     }
                 }
             });
 
         } else {
-            double temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
+            double temp = clock.countUpClock(false);
             timeWaiting = timeWaiting + temp;
             System.out.println("totalWaiting = " + timeWaiting);
             setcountWaiting();
@@ -88,9 +85,9 @@ public class Operation implements Identifiable<String> {
                     //ativação da cronometragem do waiting
 
                     if (stopCountDown) {
-                        clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
+                        clock.countUpClock(true);
                     } else {
-                        clock.countUpClock(false); // Para a contagem se não houver mais operações
+                        clock.countUpClock(false);
                     }
                 }
 
@@ -140,7 +137,8 @@ public class Operation implements Identifiable<String> {
     public Workstation getWorkstation() {
         return workstation;
     }
-    public  void setWorkstation(Workstation workstation) {
+
+    public void setWorkstation(Workstation workstation) {
         this.workstation = workstation;
     }
 

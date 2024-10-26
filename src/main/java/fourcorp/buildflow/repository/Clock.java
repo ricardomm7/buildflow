@@ -25,11 +25,10 @@ public class Clock {
                     }
                 };
 
-                timer.scheduleAtFixedRate(task, 0, 10); // Incrementa a cada 1 segundo
+                timer.scheduleAtFixedRate(task, 0, 10);
                 return -1;
             }
         } else {
-            // Parar o contador e retornar o tempo decorrido
             if (running) {
                 timer.cancel();
                 running = false;
@@ -43,11 +42,11 @@ public class Clock {
 
     public void countDownClock(int countdownTime, Runnable callback) {
         if (isCounting) {
-            return;  // Impede que o temporizador seja iniciado novamente enquanto funciona
+            return;
         }
 
         timer = new Timer();
-        isCounting = true;  // Marca que o relógio começou
+        isCounting = true;
 
         TimerTask task = new TimerTask() {
             int timeLeft = countdownTime;
@@ -59,13 +58,12 @@ public class Clock {
                 } else {
                     timer.cancel();
                     isCounting = false;
-                    callback.run();  // Executa o callback após a contagem
+                    callback.run();
                 }
             }
         };
 
-        // Executa a tarefa a cada 1 segundo
-        timer.scheduleAtFixedRate(task, 0, 10); // 1000 ms = 1 minuto
+        timer.scheduleAtFixedRate(task, 0, 10);
     }
 }
 

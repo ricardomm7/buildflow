@@ -34,19 +34,19 @@ public class Product implements Identifiable<String> {
         if (currentOperationIndex < operation.size()) {
             return operation.get(currentOperationIndex);
         }
-        return null;  // Retorna null se todas as operações já foram concluídas
+        return null;
     }
 
     public boolean moveToNextOperation() {
         if (currentOperationIndex < operation.size() - 1) {
-            currentOperationIndex++;  // Avança para a próxima operação
+            currentOperationIndex++;
             return true;
         }
-        return false;  // Retorna false se todas as operações já foram concluídas
+        return false;
     }
 
     public boolean hasMoreOperations() {
-        return currentOperationIndex < operation.size();  // Verifica se ainda há operações
+        return currentOperationIndex < operation.size();
     }
 
     public void setCurrentOperationIndex(int currentOperationIndex) {

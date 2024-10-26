@@ -20,10 +20,8 @@ public class Simulator {
     private final Map<String, Double> workstationTimes; // USEI005
     private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // USEI07
 
-
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
-
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -33,7 +31,6 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -48,16 +45,12 @@ public class Simulator {
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
 
-
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
     }
 
-    public boolean areAllQueuesEmpty() {
-        return productLine.getAllProducts().isEmpty();
-    }
-
     public void runWithPriority(boolean b) {
+        resetSimulation();
         if (!productLine.getProductsByPriority(PriorityOrder.HIGH).isEmpty()) {
             processedProducts.clear();
             returnToFirstOp(productLine.getAllProducts());
@@ -81,7 +74,7 @@ public class Simulator {
     }
 
     public void runWithoutPriority(boolean b) {
-        processedProducts.clear();
+        resetSimulation();
         returnToFirstOp(productLine.getAllProducts());
         runSimulation(productLine.getAllProducts(), b);
     }
@@ -168,6 +161,10 @@ public class Simulator {
     private void addToWaitingQueue(Product product, Operation operation) {
         waitingQueue.computeIfAbsent(operation.getId(), k -> new LinkedList<>()).add(product);
         waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
+    }
+
+    public boolean areAllQueuesEmpty() {
+        return productLine.getAllProducts().isEmpty();
     }
 
     // Processa a fila de espera quando workstations ficam disponíveis
@@ -317,19 +314,21 @@ public class Simulator {
         System.out.println(separator);
     }
 
+    private void resetSimulation() {
+        for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
+            a.setTotalOperationTime(0);
+        }
+        workstationDependencies.clear();
+        productTimes.clear();
+        totalProductionTime = 0.0;
+        operationTimes.clear();
+        workstationTimes.clear();
+        waitingQueue.clear();
+        waitingTimes.clear();
+        processedProducts.clear();
+    }
 
     public double getTotalProductionTime() {
         return totalProductionTime;
-    }
-
-    public List<Double> getProductionTimePerProduct() {
-        List<Double> productionTimes = new ArrayList<>();
-        for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
-            productionTimes.add(entry.getValue());
-        }
-        return productionTimes;
-    }
-
-    public void printWorkstationAnalysis() {
     }
 }
