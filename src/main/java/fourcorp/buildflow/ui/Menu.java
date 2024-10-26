@@ -77,7 +77,11 @@ public class Menu {
                 s.runWithPriority(true);
                 break;
             case 6:
-                s.printProductionStatistics();
+                if (s.getTotalProductionTime() == 0) {
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                } else {
+                    s.printProductionStatistics();
+                }
                 break;
             case 7:
                 if (s.getTotalProductionTime() == 0) {

@@ -107,7 +107,7 @@ public class Simulator {
                                 double operationTime = workstation.getTime();
 
                                 // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
-                                markWorkstationAsUnavailable(workstation, operationTime);
+                                //markWorkstationAsUnavailable(workstation, operationTime);
 
                                 productTimes.merge(product, operationTime, Double::sum); //USEI03
                                 totalProductionTime += operationTime; //USEI03
@@ -149,11 +149,10 @@ public class Simulator {
                     }
                 }
 
-            } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());
+            } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty());
 
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -163,7 +162,7 @@ public class Simulator {
         waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
     }
 
-    public boolean areAllQueuesEmpty() {
+    public boolean areProductsQueueEmpty() {
         return productLine.getAllProducts().isEmpty();
     }
 
@@ -189,7 +188,7 @@ public class Simulator {
                             currentOperation.setWorkstation(workstation); // USEI07
 
 
-                            markWorkstationAsUnavailable(workstation, operationTime);
+                            //markWorkstationAsUnavailable(workstation, operationTime);
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
                             operationTimes.merge(operationId, operationTime, Double::sum);
@@ -250,7 +249,7 @@ public class Simulator {
             System.out.printf(lineFormat, workstation, dependencies);
         }
     }
-
+/*
     private void markWorkstationAsUnavailable(Workstation workstation, double operationTime) {
         workstation.setAvailable(false);
         new Timer().schedule(new TimerTask() {
@@ -261,6 +260,8 @@ public class Simulator {
             }
         }, (long) (operationTime * 0.1)); // Tempo em milissegundos
     }
+
+ */
 
 
     private void returnToFirstOp(List<Product> f) {
@@ -304,7 +305,7 @@ public class Simulator {
         System.out.format(lineFormat, "Workstation ID", "Total Operation", "Operation/Execution Percentage");
         System.out.println(separator);
         for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage(totalProductionTime)) {
-            if (e.getTotalExecutionTime() == 0) {
+            if (e.getTotalOperationTime() == 0) {
                 System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
             } else {
                 double operationExecutionPercentage = (e.getTotalOperationTime() / totalProductionTime) * 100;
@@ -314,7 +315,7 @@ public class Simulator {
         System.out.println(separator);
     }
 
-    private void resetSimulation() {
+    public void resetSimulation() {
         for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
             a.setTotalOperationTime(0);
         }

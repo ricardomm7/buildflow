@@ -1,15 +1,13 @@
 package fourcorp.buildflow.domain;
 
-import fourcorp.buildflow.repository.Clock;
+import fourcorp.buildflow.application.Clock;
 
 public class Workstation implements Identifiable<String> {
     private final String idMachine;
     private int time;
     private boolean isAvailable;
     private int oprCounter;
-    private double totalWaiting;
     private double totalOper;
-    int contWaiting;
     private Clock clock = new Clock();
 
     public Workstation(String idMachine, int time) {
@@ -17,28 +15,11 @@ public class Workstation implements Identifiable<String> {
         this.time = time;
         this.isAvailable = true;
         this.oprCounter = 0;
-        this.totalWaiting = 0;
         this.totalOper = 0;
-        this.contWaiting = 0;
-    }
-
-    public int stopClock() {
-        if (clock != null) {
-            double elapsedTime = clock.countUpClock(false);
-            totalWaiting += elapsedTime;
-            incrementContWaiting();
-            return (int) totalWaiting;
-        }
-        return 0;
     }
 
     public void startClock(boolean hasMoreOperation) {
-        if (oprCounter > 0) {
-            double temp = clock.countUpClock(false);  // Para a contagem anterior e obtém o tempo decorrido
-            totalWaiting = totalWaiting + temp;
-            incrementContWaiting();
-            this.isAvailable = false;
-        }
+        this.isAvailable = false;
         clock.countDownClock(this.time, () -> {
             this.isAvailable = true;
             increaseOpCounter();
@@ -53,21 +34,15 @@ public class Workstation implements Identifiable<String> {
         return " ---Workstation " + idMachine + "---Average Execution Time = " + tempo + "\n";
     }
 
-    public String getAverageWaitingTime() {
-        double tempo = totalWaiting / contWaiting;
-        return " ---Workstation " + idMachine + "---Average Waiting Time = " + tempo + "\n";
+    public void processProduct(Product product) {
+        increaseOpCounter();
+        System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
+        increaseOperationTime();
+        startClock(product.hasMoreOperations());
     }
 
     public void increaseOperationTime() {
         totalOper = totalOper + time;
-    }
-
-    public double getTotalExecutionTime() {
-        return ((totalWaiting * 100) + totalOper);
-    }
-
-    public void incrementContWaiting() {
-        this.contWaiting = contWaiting + 1;
     }
 
     public void increaseOpCounter() {
@@ -92,13 +67,6 @@ public class Workstation implements Identifiable<String> {
 
     public synchronized void setAvailable(boolean available) {
         isAvailable = available;
-    }
-
-    public void processProduct(Product product) {
-        increaseOpCounter();
-        System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
-        increaseOperationTime();
-        startClock(product.hasMoreOperations());
     }
 
     public double getTotalOperationTime() {

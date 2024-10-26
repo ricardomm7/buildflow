@@ -35,26 +35,10 @@ class WorkstationTest {
     }
 
     @Test
-    void testStopClock() {
-        workstation.startClock(true);
-        int totalWait = workstation.stopClock();
-        assertTrue(totalWait >= 0, "Total waiting time should be non-negative.");
-        assertEquals(1, workstation.contWaiting, "Waiting counter should increment after stopping the clock.");
-    }
-
-    @Test
     void testAverageExecutionTimePerOperation() {
         workstation.processProduct(product);
         String avgExecTime = workstation.getAverageExecutionTimePerOperation();
         assertTrue(avgExecTime.contains("Average Execution Time = 10.0"), "Average execution time should be equal to workstation time for one operation.");
-    }
-
-    @Test
-    void testAverageWaitingTime() {
-        workstation.startClock(true);
-        workstation.stopClock();
-        String avgWaitTime = workstation.getAverageWaitingTime();
-        assertTrue(avgWaitTime.contains("Average Waiting Time = "), "Average waiting time should be calculated.");
     }
 
     @Test
@@ -80,7 +64,7 @@ class WorkstationTest {
     @Test
     void testGetTotalExecutionTime() {
         workstation.processProduct(product);
-        double totalExecutionTime = workstation.getTotalExecutionTime();
+        double totalExecutionTime = workstation.getTotalOperationTime();
         assertTrue(totalExecutionTime >= 10, "Total execution time should account for operation time and waiting time.");
     }
 
