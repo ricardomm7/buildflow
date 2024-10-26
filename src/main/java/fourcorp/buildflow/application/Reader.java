@@ -13,10 +13,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
+/**
+ * Reader is an abstract utility class responsible for loading data from external files
+ * to populate the application's repositories for product priorities and workstation operations.
+ * It provides methods for reading and parsing data from CSV files to create products and workstations.
+ */
 public abstract class Reader {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
     public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
 
+    /**
+     * Loads product data from a specified file and populates the product priority repository.
+     * Each line in the file should represent a product, including its ID, priority, and a list of operations.
+     *
+     * @param filePath the path to the file containing product data
+     * @throws IOException if an I/O error occurs while reading the file
+     */
     public static void loadOperations(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -34,6 +46,13 @@ public abstract class Reader {
         br.close();
     }
 
+    /**
+     * Loads workstation data from a specified file and populates the workstations per operation repository.
+     * Each line in the file should represent a workstation, including its ID, associated operation, and capacity.
+     *
+     * @param filePath the path to the file containing workstation data
+     * @throws IOException if an I/O error occurs while reading the file
+     */
     public static void loadMachines(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -47,6 +66,13 @@ public abstract class Reader {
         br.close();
     }
 
+    /**
+     * Maps a string value to the corresponding PriorityOrder enumeration value.
+     *
+     * @param value the string representation of the priority ("HIGH", "NORMAL", or "LOW")
+     * @return the corresponding PriorityOrder enum value
+     * @throws IllegalArgumentException if the input string does not match any valid priority
+     */
     private static PriorityOrder getPriorityOrderFromValue(String value) {
         switch (value.toUpperCase()) {
             case "HIGH":

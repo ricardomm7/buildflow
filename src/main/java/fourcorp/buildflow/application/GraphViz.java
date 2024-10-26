@@ -6,17 +6,41 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * The {@code GraphViz} class provides functionality for creating directed graphs
+ * from product component data. It reads input data from a specified file, processes
+ * it, and generates a graphical representation of the components, sub-assemblies, and items.
+ * The generated graph is saved in DOT format and converted to an SVG image using Graphviz.
+ *
+ * <p>This class is abstract and cannot be instantiated. It provides static methods
+ * for data processing and graph generation.
+ */
 public abstract class GraphViz {
     private static List<String> items = new ArrayList<>();
     private static List<String> subAssemblies = new ArrayList<>();
     private static List<String> components = new ArrayList<>();
     private static List<Integer> quantities = new ArrayList<>();
 
+    /**
+     * Runs the graph generation process, including reading input data from a file
+     * and generating the product component graph.
+     *
+     * @param filePath the path to the input data file
+     * @throws IOException if an error occurs while reading the file or writing the graph
+     */
     public static void run(String filePath) throws IOException {
         GraphViz.saveInformation(filePath);
         GraphViz.generateProductComponentGraph();
     }
 
+    /**
+     * Reads the input data from the specified file and saves the information for
+     * processing. The file should be in a CSV format, where each line represents
+     * an item, sub-assembly, component, and quantity separated by semicolons.
+     *
+     * @param filePath the path to the input data file
+     * @throws IOException if an error occurs while reading the file
+     */
     private static void saveInformation(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -35,13 +59,17 @@ public abstract class GraphViz {
             subAssemblies.add(columns[1]);
             components.add(columns[2]);
             quantities.add(Integer.parseInt(columns[3]));
-            //productIDs.add(columns[0]);
-            //partNumbers.add(columns[1]);
-            //descriptions.add(columns[2]);
-            //quantities.add(Integer.parseInt(columns[3]));
         }
     }
 
+    /**
+     * Generates the DOT representation of the graph and writes it to a specified file.
+     * The graph represents the relationships between items, sub-assemblies, and components.
+     * Then, it creates the edges and nodes for visualization in a DOT file format.
+     *
+     * @param outputFilePath the path to the output DOT file
+     * @throws IOException if an error occurs while writing the file
+     */
     private static void generateGraph(String outputFilePath) throws IOException {
         Set<String> edges = new HashSet<>();
         Map<String, String> componentToSubAssemblyMap = new HashMap<>();
@@ -111,6 +139,11 @@ public abstract class GraphViz {
         fileWriter.close();
     }
 
+    /**
+     * Generates the product component graph by creating a DOT file and then converting it
+     * to an SVG image using the Graphviz tool. The DOT file is generated first, and a command-line
+     * call is made to convert it into an SVG format.
+     */
     private static void generateProductComponentGraph() {
         try {
             String dotFilePath = "outFiles/Graph.dot";

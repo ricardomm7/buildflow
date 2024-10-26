@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+/**
+ * Simulator class manages the simulation of a production line, handling product flow through various operations
+ * and workstations while tracking statistics such as production times, waiting times, and flow dependencies.
+ */
 public class Simulator {
     private final ProductPriorityLine productLine;
     private final WorkstationsPerOperation workstationsPerOperation;
@@ -42,6 +46,12 @@ public class Simulator {
         this.countWaiting = new HashMap<>();
     }
 
+    /**
+     * Constructor with specific repositories for workstations and product priorities.
+     *
+     * @param a the WorkstationsPerOperation repository
+     * @param b the ProductPriorityLine repository
+     */
     public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
         this.productLine = b;
         this.workstationsPerOperation = a;
@@ -57,6 +67,11 @@ public class Simulator {
         this.countWaiting = new HashMap<>();
     }
 
+    /**
+     * Runs the simulation considering product priorities, processing high, normal, and low priority products in order.
+     *
+     * @param b a boolean flag for workstation availability filtering
+     */
     public void runWithPriority(boolean b) {
         resetSimulation();
         if (!productLine.getProductsByPriority(PriorityOrder.HIGH).isEmpty()) {
@@ -81,12 +96,23 @@ public class Simulator {
         }
     }
 
+    /**
+     * Runs the simulation without considering product priorities.
+     *
+     * @param b a boolean flag for workstation availability filtering
+     */
     public void runWithoutPriority(boolean b) {
         resetSimulation();
         returnToFirstOp(productLine.getAllProducts());
         runSimulation(productLine.getAllProducts(), b);
     }
 
+    /**
+     * Executes the main simulation loop for the given list of products.
+     *
+     * @param products the list of products to be processed
+     * @param boo a boolean flag for workstation availability filtering
+     */
     private void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
         try {
@@ -159,18 +185,30 @@ public class Simulator {
         }
     }
 
-    // Adiciona produto à fila de espera para uma operação
+    /**
+     * Adds a product to the waiting queue for a specified operation.
+     *
+     * @param product the product to add to the waiting queue
+     * @param operation the operation for which the product is waiting
+     */
     private void addToWaitingQueue(Product product, Operation operation) {
         operation = calculateBeginingWaiting(operation);
         waitingQueue.computeIfAbsent(operation.getId(), k -> new LinkedList<>()).add(product);
         waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
     }
 
+    /**
+     * Checks whether all products have been processed or are waiting.
+     *
+     * @return true if there are no products left in the queue, false otherwise
+     */
     public boolean areProductsQueueEmpty() {
         return productLine.getAllProducts().isEmpty();
     }
 
-    // Processa a fila de espera quando workstations ficam disponíveis
+    /**
+     * Processes the waiting queue, attempting to move products to available workstations.
+     */
     private void processWaitingQueue() {
         for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) {
             String operationId = entry.getKey();
@@ -216,6 +254,11 @@ public class Simulator {
     }
 
 
+    /**
+     * Resets each product to its initial operation.
+     *
+     * @param f the list of products to reset
+     */
     private void returnToFirstOp(List<Product> f) {
         for (Product a : f) {
             a.setCurrentOperationIndex(0);
@@ -223,6 +266,9 @@ public class Simulator {
     }
 
     // USEI003 e USEI004
+    /**
+     * Prints statistics on production time for each product and total production time.
+     */
     public void printProductionStatistics() {
         System.out.println();
         String lineFormat = "| %-15s | %-10s |%n";
@@ -258,6 +304,9 @@ public class Simulator {
     }
 
     // USEI005
+    /**
+     * Prints analysis on the total operating time and its importance in the production line.
+     */
     public void printAnalysis() {
         System.out.println();
         System.out.println("Total operating time and its respective importance in production:");
@@ -277,6 +326,9 @@ public class Simulator {
         System.out.println(separator);
     }
 
+    /**
+     * Resets the simulation by clearing all data and resetting workstations.
+     */
     public void resetSimulation() {
         for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
             a.setTotalOperationTime(0);
@@ -293,11 +345,22 @@ public class Simulator {
         operationCounts.clear();
     }
 
+    /**
+     * Calculates the beginning waiting time for an operation.
+     *
+     * @param opr the operation for which to calculate the waiting time
+     * @return the modified operation with updated waiting time
+     */
     public Operation calculateBeginingWaiting(Operation opr) {
         opr.setTime();
         return opr;
     }
 
+    /**
+     * Calculates the finishing waiting time for an operation.
+     *
+     * @param opr the operation for which to calculate the waiting time
+     */
     public void calculateFinishWaiting(Operation opr) {
         String name = opr.getId();
         double time = (double) System.currentTimeMillis();
@@ -307,6 +370,9 @@ public class Simulator {
         countWaiting.put(name, counter);
     }
 
+    /**
+     * Prints a report on average operating times, waiting times, and total waiting times for operations.
+     */
     public void printAverageTimesReport() {
         System.out.println();
         System.out.println("Table showing average operating time, waiting time and total waiting time:");
@@ -342,6 +408,11 @@ public class Simulator {
         }
     }
 
+    /**
+     * Retrieves the total production time for all products.
+     *
+     * @return the total production time
+     */
     public double getTotalProductionTime() {
         return totalProductionTime;
     }
