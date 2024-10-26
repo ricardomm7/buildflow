@@ -14,18 +14,22 @@ import java.util.Map;
  */
 public class MachineFlowAnalyzer {
 
-    private static MapLinked<Workstation, Product, String> flowDependency = null; // Armazena o fluxo de produtos entre estações
-    private static Map<String, Map<String, Integer>> workstationDependencies = Map.of(); // Dependências entre workstations
+    static MapLinked<Workstation, Product, String> flowDependency = new MapLinked<>(); // Armazena o fluxo de produtos entre estações
+    static Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // Dependências entre workstations
 
     public MachineFlowAnalyzer() {
         flowDependency = new MapLinked<>(); // Inicializa o mapa de fluxo
         workstationDependencies = new HashMap<>(); // Inicializa o mapa de dependências
     }
 
+
     /**
      * Adiciona uma nova entrada ao fluxo de dependência para o produto e a workstation.
      */
     public void addFlow(Workstation workstation, Product product) {
+        if (workstation == null || product == null) {
+            throw new IllegalArgumentException("Workstation and Product cannot be null.");
+        }
         flowDependency.newItem(workstation, product);
     }
 
@@ -88,11 +92,20 @@ public class MachineFlowAnalyzer {
                 });
     }
 
+    /**
+     * Gets workstation dependencies.
+     *
+     * @return the workstation dependencies
+     */
+    public static Map<String, Map<String, Integer>> getWorkstationDependencies() {
+        return workstationDependencies;
+    }
+
 
     /**
      * Limpa os dados armazenados para uma nova simulação.
      */
-    public void reset() {
+    public static void reset() {
         flowDependency.removeAll();
         workstationDependencies.clear();
     }
