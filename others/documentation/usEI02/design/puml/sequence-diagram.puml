@@ -5,78 +5,82 @@ skinparam shadowing false
 
 autonumber
 
-actor "Actor" as Actor
-participant ":UserInterface" as UI
-participant ":Controller" as CTRL
-participant ":RepositoryHandler" as RepoHandler
-participant "repositories\n:RepositoryHandler" as RepoPlatform
-participant "repository:\nRepositoryClass" as RepositoryClass
-participant ":ItemClass" as ItemClass
+actor "User" as User
+participant ":Simulator" as Simulator
+participant "repositories\n:Repositories" as Repositories
+participant "repository:\nProductPriorityLine" as ProductPriorityLine
+participant "repository:\nWorkstationsPerOperation" as WorkstationsPerOperation
+participant ":Product" as Product
+participant ":Operation" as Operation
+participant ":Workstation" as Workstation
+participant ":MachineFlowAnalyzer" as MachineFlowAnalyzer
 
-activate Actor
+activate User
 
-Actor -> UI : action request
-activate UI
+User -> Simulator : runWithPriority(boolean)
+activate Simulator
 
-UI -> CTRL : create operation
+Simulator -> Repositories : getProductPriorityRepository()
+activate Repositories
+Repositories --> Simulator : ProductPriorityLine
+deactivate Repositories
 
-UI --> Actor : asks for input
-deactivate UI
+Simulator -> Repositories : getWorkstationsPerOperation()
+activate Repositories
+Repositories --> Simulator : WorkstationsPerOperation
+deactivate Repositories
 
-Actor -> UI : enters input
-activate UI
+Simulator -> ProductPriorityLine : getProductsByPriority(PriorityOrder)
+activate ProductPriorityLine
+ProductPriorityLine --> Simulator : List<Product>
+deactivate ProductPriorityLine
 
-UI -> CTRL : operation(param)
-deactivate UI
-activate CTRL
+loop Process each priority level
+    Simulator -> Simulator : returnToFirstOp(List<Product>)
 
-CTRL -> RepoHandler : getInstance()
-activate RepoHandler
-RepoHandler --> CTRL : repository handler
-deactivate RepoHandler
+    loop Process each product
+        Simulator -> Product : getCurrentOperation()
+        activate Product
+        Product --> Simulator : Operation
+        deactivate Product
 
-CTRL -> RepoPlatform : getRepository()
-activate RepoPlatform
-RepoPlatform --> CTRL : repository
-deactivate RepoPlatform
+        Simulator -> WorkstationsPerOperation : getWorkstationsByOperation(Operation, boolean)
+        activate WorkstationsPerOperation
+        WorkstationsPerOperation --> Simulator : List<Workstation>
+        deactivate WorkstationsPerOperation
 
-CTRL -> RepositoryClass : createItem(param)
-deactivate CTRL
-activate RepositoryClass
+        alt Workstation available
+            Simulator -> Workstation : processProduct(Product)
+            activate Workstation
+            Workstation --> Simulator : operationTime
+            deactivate Workstation
 
-RepositoryClass -> ItemClass : create(param)
-deactivate RepositoryClass
+            Simulator -> Simulator : updateProductAndOperationTimes()
+            Simulator -> Product : moveToNextOperation()
+            activate Product
+            Product --> Simulator : boolean
+            deactivate Product
 
-activate ItemClass
-ItemClass -> ItemClass : validateAttribute(item)
-activate ItemClass
-ItemClass -> ItemClass : validateOtherRules(item)
-activate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
-ItemClass --> ItemClass
-deactivate ItemClass
+            alt All operations completed
+                Simulator -> Simulator : add to processedProducts
+            end
 
-ItemClass --> RepositoryClass : item
-deactivate ItemClass
-activate RepositoryClass
+        else No available workstation
+            Simulator -> Simulator : addToWaitingQueue(Product, Operation)
+        end
+    end
 
-RepositoryClass -> RepositoryClass : checkForDuplicates()
-activate RepositoryClass
-RepositoryClass --> RepositoryClass
-deactivate RepositoryClass
-RepositoryClass -> RepositoryClass : addItem(item)
-deactivate RepositoryClass
+    Simulator -> Simulator : processWaitingQueue()
 
-CTRL <-- RepositoryClass : item
-deactivate RepositoryClass
-activate CTRL
+end
 
-CTRL --> UI : item
-deactivate CTRL
-activate UI
+Simulator -> MachineFlowAnalyzer : calculateMachineDependencies()
+activate MachineFlowAnalyzer
+MachineFlowAnalyzer --> Simulator : dependencies calculated
+deactivate MachineFlowAnalyzer
 
-UI --> Actor : displays success message
-deactivate UI
-deactivate Actor
+Simulator --> User : Processing results
+deactivate Simulator
+deactivate User
+
 @enduml

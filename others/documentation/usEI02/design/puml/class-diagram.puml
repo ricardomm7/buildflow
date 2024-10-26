@@ -3,42 +3,80 @@ skinparam packageStyle rectangle
 skinparam shadowing false
 skinparam linetype polyline
 
-'left to right direction
+    class Simulator {
+        - productLine : ProductPriorityLine
+        - workstationsPerOperation : WorkstationsPerOperation
+        - processedProducts : List<Product>
+        - productTimes : Map<Product, Double>
+        - totalProductionTime : double
+        - operationTimes : Map<String, Double>
+        - workstationTimes : Map<String, Double>
+        - productMachineFlows : Map<String, List<String>>
+        - machineFlowAnalyzer : MachineFlowAnalyzer
+        - waitingQueue : Map<String, Queue<Product>>
+        - waitingTimes : Map<Product, Double>
 
-class UserInterfaceClass {
+        + Simulator()
+        + Simulator(WorkstationsPerOperation, ProductPriorityLine)
+        + areAllQueuesEmpty() : boolean
+        + runWithPriority(b : boolean) : void
+        + runWithoutPriority(b : boolean) : void
+        + printProductionStatistics() : void
+        + printAnalysis() : void
+        + getTotalProductionTime() : double
+        + getProductionTimePerProduct() : List<Double>
+    }
+
+
+    class ProductPriorityLine {
+    }
+
+    class WorkstationsPerOperation {
+    }
+
+
+    class Product {
+        + getIdItem() : String
+        + getCurrentOperation() : Operation
+        + moveToNextOperation() : boolean
+        + setCurrentOperationIndex(index : int) : void
+    }
+
+    class Operation {
+        + getId() : String
+    }
+
+    class Workstation {
+        + getId() : String
+        + isAvailable() : boolean
+        + processProduct(product : Product) : void
+        + setAvailable(available : boolean) : void
+        + getTime() : double
+        + getTotalExecutionTime() : double
+        + getTotalOperationTime() : double
+    }
+
+
+class MachineFlowAnalyzer {
+    + calculateMachineDependencies(flows : Map<String, List<String>>) : void
 }
 
-class ControllerClass {
-    +operation1(param1 : Type) : ReturnType
-    +operation2() : ReturnType
-}
+Simulator --> ProductPriorityLine : productLine
+Simulator --> WorkstationsPerOperation : workstationsPerOperation
+Simulator --> MachineFlowAnalyzer : machineFlowAnalyzer
+Simulator --> Product : processedProducts
+Simulator --> "0..*" Workstation : workstationsPerOperation
+Simulator --> "0..*" Operation : waitingQueue
 
-class RepositoryHandler {
-    +getRepository() : RepositoryClass
-    -repository : RepositoryClass
-            - instance : RepositoryHandler
-            - RepositoryHandler()
-}
+ProductPriorityLine <.. Simulator : productLine
+WorkstationsPerOperation <.. Simulator : workstationsPerOperation
+MachineFlowAnalyzer <.. Simulator : machineFlowAnalyzer
 
-class RepositoryClass {
-    - itemList : List<ItemClass>
-    +operation1(param : Type) : ReturnType
-    +operation2() : void
-    +operation3(item): void
-}
+Simulator ..> Product : productTimes
+Simulator ..> Operation : operationTimes
+Simulator ..> Workstation : workstationTimes
+Simulator ..> Product : waitingTimes
 
-class ItemClass {
-    - attribute : Type
-    + ItemClass(param : Type)
-    +operation1(item : ItemClass) : void
-    +operation2(item : ItemClass) : void
-}
-
-UserInterfaceClass ..> ControllerClass
-RepositoryHandler --> "1" RepositoryClass : repository
-RepositoryHandler --> RepositoryHandler : instance
-RepositoryClass --> "*" ItemClass : items
-ControllerClass ..> RepositoryHandler : repositoryHandler
-ControllerClass ..> RepositoryClass : repository
-
+Product --> Operation : currentOperation
+WorkstationsPerOperation --> Workstation : workstations
 @enduml
