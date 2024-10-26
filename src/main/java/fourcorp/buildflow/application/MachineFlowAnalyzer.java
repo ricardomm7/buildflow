@@ -1,62 +1,83 @@
 package fourcorp.buildflow.application;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.MapLinked;
 
+import java.util.*;
+
+/**
+ * Classe responsável por analisar e exibir o fluxo de dependência entre máquinas.
+ */
 public class MachineFlowAnalyzer {
-    private static Map<String, Map<String, Integer>> machineDependencies;
+
+    private static MapLinked<Workstation, Product, String> flowDependency = null; // Armazena o fluxo de produtos entre estações
+    private static Map<String, Map<String, Integer>> workstationDependencies = Map.of(); // Dependências entre workstations
 
     public MachineFlowAnalyzer() {
-        machineDependencies = new HashMap<>();
+        flowDependency = new MapLinked<>(); // Inicializa o mapa de fluxo
+        workstationDependencies = new HashMap<>(); // Inicializa o mapa de dependências
     }
 
-    // Método para calcular as dependências entre máquinas
-    public void calculateMachineDependencies(Map<String, List<String>> productMachineFlows) {
-        for (List<String> machineFlow : productMachineFlows.values()) {
-            for (int i = 0; i < machineFlow.size() - 1; i++) {
-                String currentMachine = machineFlow.get(i);
-                String nextMachine = machineFlow.get(i + 1);
+    /**
+     * Adiciona uma nova entrada ao fluxo de dependência para o produto e a workstation.
+     */
+    public void addFlow(Workstation workstation, Product product) {
+        flowDependency.newItem(workstation, product);
+    }
 
-                // Atualiza a contagem da dependência entre as duas máquinas
-                machineDependencies.computeIfAbsent(currentMachine, k -> new HashMap<>())
-                        .merge(nextMachine, 1, Integer::sum);
+    /**
+     * Constrói as dependências entre as workstations com base no fluxo dos produtos.
+     */
+    public static void buildDependencies() {
+        List<Product> products = flowDependency.getKeys(); // Obtém todos os produtos registrados no fluxo
+
+        for (Product product : products) {
+            List<Workstation> path = flowDependency.getByKey(product);
+            for (int i = 0; i < path.size() - 1; i++) {
+                String fromId = path.get(i).getId();
+                String toId = path.get(i + 1).getId();
+                updateWorkstationDependencies(fromId, toId);
             }
         }
     }
 
-    // Método para exibir as dependências entre máquinas
-    public static void printMachineFlowDependencies() {
-        System.out.println("\n=== Machine Flow Dependencies ===");
-
-        // Ordena as máquinas por ID e depois suas dependências
-        machineDependencies.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(entry -> {
-                    String machine = entry.getKey();
-                    Map<String, Integer> dependencies = entry.getValue();
-
-                    System.out.print(machine + " : ");
-                    List<Map.Entry<String, Integer>> sortedDependencies = dependencies.entrySet().stream()
-                            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente de dependências
-                            .toList();
-
-                    System.out.print("[");
-                    StringJoiner joiner = new StringJoiner(",");
-                    for (Map.Entry<String, Integer> dep : sortedDependencies) {
-                        joiner.add("(" + dep.getKey() + "," + dep.getValue() + ")");
-                    }
-                    System.out.print(joiner.toString());
-                    System.out.println("]");
-                });
+    /**
+     * Atualiza as dependências entre as workstations com uma nova transição.
+     */
+    private static void updateWorkstationDependencies(String fromWorkstationId, String toWorkstationId) {
+        workstationDependencies
+                .computeIfAbsent(fromWorkstationId, _ -> new HashMap<>())
+                .merge(toWorkstationId, 1, Integer::sum);
     }
 
-    public static void clearDependencies() {
-        machineDependencies.clear();
+    /**
+     * Imprime as dependências entre as workstations, ordenadas em ordem decrescente de frequência.
+     */
+    public static void printDependencies() {
+        buildDependencies(); // Constrói as dependências antes de imprimir
+
+        String lineFormat = "%s : %s%n";
+        System.out.println("\nWorkstation Flow Dependency:");
+
+        for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
+            String workstation = entry.getKey();
+            List<String> dependencies = new ArrayList<>();
+
+            // Ordena as dependências em ordem decrescente de frequência
+            entry.getValue().entrySet().stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                    .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
+
+            System.out.printf(lineFormat, workstation, dependencies);
+        }
     }
 
-    public static Map<String, Map<String, Integer>> getMachineDependencies() {
-        return new HashMap<>(machineDependencies);
+    /**
+     * Limpa os dados armazenados para uma nova simulação.
+     */
+    public void reset() {
+        flowDependency.removeAll();
+        workstationDependencies.clear();
     }
 }

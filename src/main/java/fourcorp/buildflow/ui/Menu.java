@@ -1,6 +1,7 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.GraphViz;
+import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
@@ -88,7 +89,7 @@ public class Menu {
                 if (s.getTotalProductionTime() == 0) {
                     System.out.println("Please run the simulation first (Option 2 to 5).");
                 } else {
-                    s.printWorkstationDependencies();
+                    MachineFlowAnalyzer.printDependencies();
                 }
                 break;
             case 8:

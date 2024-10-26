@@ -1,6 +1,7 @@
 package fourcorp.buildflow;
 
 import fourcorp.buildflow.application.Reader;
+import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.ui.Menu;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class HelloApplication extends Application {
         try {
             Reader.loadOperations("textFiles/articles.csv");
             Reader.loadMachines("textFiles/workstations.csv");
+            System.out.println(Repositories.getInstance().getProductPriorityRepository().getAllProducts().size());
         } catch (Exception e) {
             System.out.println("Error uploading files: " + e.getMessage());
             return;

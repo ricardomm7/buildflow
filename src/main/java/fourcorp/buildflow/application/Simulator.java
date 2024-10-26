@@ -4,6 +4,7 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.repository.MapLinked;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
@@ -18,7 +19,13 @@ public class Simulator {
     private double totalProductionTime; // USEI003
     private final Map<String, Double> operationTimes; // USEI004
     private final Map<String, Double> workstationTimes; // USEI005
-    private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // USEI07
+    private final MachineFlowAnalyzer machineFlowAnalyzer;
+
+
+    private final MapLinked<Workstation, Product, String> flowDependency = new MapLinked<>(); // USEI07
+    private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // Dependências entre workstations
+
+
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
     private HashMap<String, Long > operationWaitingTimes = new HashMap<>();
@@ -33,6 +40,8 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
+        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
+
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -46,6 +55,7 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
+        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -103,9 +113,6 @@ public class Simulator {
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
                                 workstation.processProduct(product);
-
-                                currentOperation.setWorkstation(workstation); // USEI07
-
                                 double operationTime = workstation.getTime();
 
                                 // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
@@ -120,6 +127,7 @@ public class Simulator {
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
 
+                                machineFlowAnalyzer.addFlow(workstation, product); // USEI007
 
                                 itemsProcessed = true;
 
@@ -189,13 +197,13 @@ public class Simulator {
                             workstation.processProduct(product);
                             double operationTime = workstation.getTime();
 
-                            currentOperation.setWorkstation(workstation); // USEI07
-
-
                             //markWorkstationAsUnavailable(workstation, operationTime);
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
                             operationTimes.merge(operationId, operationTime, Double::sum);
+
+                            machineFlowAnalyzer.addFlow(workstation, product); // USEI007
+
 
                             if (product.moveToNextOperation()) {
                                 System.out.println("Moving product " + product.getIdItem() + " to the next operation: " + product.getCurrentOperation().getId());
@@ -212,60 +220,6 @@ public class Simulator {
             }
         }
     }
-
-    private void doDependency() {
-        for (Product product : processedProducts) {
-            List<Operation> dependencies = product.getOperations();
-            for (int i = 0; i < dependencies.size() - 1; i++) {
-                Workstation first = dependencies.get(i).getWorkstation();
-                Workstation second = dependencies.get(i + 1).getWorkstation();
-
-                // Verifique se as workstations não são nulas antes de atualizar as dependências
-                if (first != null && second != null) {
-                    updateWorkstationDependencies(first, second);
-                } else {
-                    System.out.println("Workstation is null for operation " + dependencies.get(i).getId());
-                }
-            }
-        }
-    }
-
-    // Novo método para atualizar dependências
-    private void updateWorkstationDependencies(Workstation from, Workstation to) {
-        workstationDependencies
-                .computeIfAbsent(from.getId(), k -> new HashMap<>())
-                .merge(to.getId(), 1, Integer::sum);
-    }
-
-    // Método para exibir o fluxo de dependência USEI07
-    public void printWorkstationDependencies() {
-        doDependency();
-        String lineFormat = "%s : %s%n";
-
-        for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
-            String workstation = entry.getKey();
-            List<String> dependencies = new ArrayList<>();
-
-            entry.getValue().entrySet().stream()
-                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente
-                    .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
-
-            System.out.printf(lineFormat, workstation, dependencies);
-        }
-    }
-/*
-    private void markWorkstationAsUnavailable(Workstation workstation, double operationTime) {
-        workstation.setAvailable(false);
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                workstation.setAvailable(true);
-                //System.out.println("Workstation " + workstation.getId() + " is now available.");
-            }
-        }, (long) (operationTime * 0.1)); // Tempo em milissegundos
-    }
-
- */
 
 
     private void returnToFirstOp(List<Product> f) {
@@ -323,7 +277,6 @@ public class Simulator {
         for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
             a.setTotalOperationTime(0);
         }
-        workstationDependencies.clear();
         productTimes.clear();
         totalProductionTime = 0.0;
         operationTimes.clear();
@@ -331,6 +284,8 @@ public class Simulator {
         waitingQueue.clear();
         waitingTimes.clear();
         processedProducts.clear();
+        machineFlowAnalyzer.reset();
+
     }
     public Operation calculateBeginingWaiting(Operation opr){
         long time = System.currentTimeMillis();
