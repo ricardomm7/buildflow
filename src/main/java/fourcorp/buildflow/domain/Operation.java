@@ -10,7 +10,7 @@ public class Operation implements Identifiable<String> {
     private String name;
     private boolean execute;
     private Double time;
-    private int countWaiting;
+
 
     /**
      * Constructs an Operation with the specified name.
@@ -22,7 +22,6 @@ public class Operation implements Identifiable<String> {
     public Operation(String operation) {
         this.execute = false;
         this.name = operation;
-        this.countWaiting = 0;
         this.time = 0.0;
 
     }

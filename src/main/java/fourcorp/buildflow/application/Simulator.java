@@ -7,7 +7,8 @@ import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
-
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class Simulator {
@@ -24,8 +25,9 @@ public class Simulator {
 
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
-    private HashMap<String, Double> operationWaitingTimes = new HashMap<>();
-    private HashMap<String, Integer> countWaiting = new HashMap<>();
+    private HashMap<String, Double> operationWaitingTimes;
+    private HashMap<String, Integer> countWaiting;
+
 
 
     public Simulator() {
@@ -39,6 +41,8 @@ public class Simulator {
         this.operationCounts = new HashMap<>(); // USEI006
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
+        this.countWaiting = new HashMap<>();
+        this.operationWaitingTimes = new HashMap<>();
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -296,36 +300,47 @@ public class Simulator {
     public void calculateFinishWaiting(Operation opr) {
         String name = opr.getId();
         double time = (double) System.currentTimeMillis();
-        double finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, (double) 0);
-
+        double finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, 0.0);
         operationWaitingTimes.put(name, finalTime);
-        int count = countWaiting.getOrDefault(name, 0) + 1;
-        countWaiting.put(name, count);
+        int counter = countWaiting.getOrDefault(name, 0) + 1;
+        countWaiting.put(name, counter);
     }
 
-    public void printAverageWaitingTimes() {
-        System.out.println("__________Average_Waiting_Times_Report__________");
 
-        if (operationWaitingTimes.isEmpty())
+
+    public void printAverageWaitingTimes (){
+        System.out.println("______________Average_Waiting_Times_Report______________");
+
+        if(operationWaitingTimes.isEmpty())
             System.out.println("---Error---You dont have any Waiting Time saved");
         else if (countWaiting.isEmpty())
+            System.out.println("---Error---You didn't save how many times the Operation in Waiting was operated");
+        else{
+            for(String name : operationWaitingTimes.keySet()){
+                double time = (double) operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name,1);
+                time = time * 0.001;
+                BigDecimal roundedValue = new BigDecimal(time).setScale(2,RoundingMode.HALF_UP);
+                System.out.println("Operation "+name+" = "+roundedValue);
+
+            }
+        }
+
+    }
+
+    public void printAverageTimePerOperation(){
+        System.out.println("______________Average_Time_Per_Operation_Report______________");
+
+        if(operationTimes.isEmpty())
+            System.out.println("---Error---You dont have any Operation Time saved");
+        else if (operationCounts.isEmpty())
             System.out.println("---Error---You didn't save how many times the Operation was operated");
-        else {
-
-            for (Map.Entry<String, Double> tempo : operationTimes.entrySet()) {
-                for (Map.Entry<String, Integer> count : operationCounts.entrySet())
-                    if (tempo.getKey().equals(count.getKey())) {
-                        System.out.println("Operation: " + tempo.getKey() + " Average Execution Time: " + tempo.getValue() / count.getValue() + " seconds");
-                    }
+        else{
+            for(String name : operationTimes.keySet()) {
+                double time = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name,  1);
+                time = time * 0.001;
+                BigDecimal roundedValue = new BigDecimal(time).setScale(2,RoundingMode.UP);
+                System.out.println("Operation " + name + " = " + roundedValue);
             }
-            for (int i = 0; i < operationWaitingTimes.size(); i++) {
-                String name = operationWaitingTimes.toString();
-                for (int j = 0; j < countWaiting.size(); j++) {
-                    double time = (double) operationWaitingTimes.getOrDefault(name, (double) 0) / countWaiting.getOrDefault(name, (int) 1);
-                    System.out.println("Operation " + name + " = " + time);
-                }
-            }
-
 
         }
 

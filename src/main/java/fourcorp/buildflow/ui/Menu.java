@@ -32,6 +32,7 @@ public class Menu {
             System.out.println("8. Workstation analysis.");
             System.out.println("9. Generate product-component graph.");
             System.out.println("10. Report Average Waiting Times per Operation");
+            System.out.println("11. Report Average Execution Times per Operation ");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -110,11 +111,17 @@ public class Menu {
                 }
                 break;
             case 10:
-                if (s.getTotalProductionTime() == 0) {
+                if (s.getTotalProductionTime() == 0)
                     System.out.println("Please run the simulation first (Option 2 to 5).");
-                } else {
-                    s.printAverageWaitingTimes();
-                }
+                else
+                    s.printAverageWaitingTimes ();
+
+                break;
+            case 11:
+                if(s.getTotalProductionTime() == 0)
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                else
+                    s.printAverageTimePerOperation();
                 break;
             case 0:
                 System.out.println("Exiting...");
