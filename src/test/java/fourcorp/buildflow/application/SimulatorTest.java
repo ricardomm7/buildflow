@@ -24,7 +24,7 @@ class SimulatorTest {
     void setUp() {
         productLine = new ProductPriorityLine();
         workstationsPerOperation = new WorkstationsPerOperation();
-        simulator = new Simulator(workstationsPerOperation, productLine);
+        simulator = new Simulator();
 
         Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
         Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
