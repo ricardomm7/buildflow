@@ -10,6 +10,8 @@ import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
 import java.util.*;
 
+import static java.lang.System.currentTimeMillis;
+
 public class Simulator {
     private final ProductPriorityLine productLine;
     private final WorkstationsPerOperation workstationsPerOperation;
@@ -18,14 +20,12 @@ public class Simulator {
     private double totalProductionTime; // USEI003
     private final Map<String, Double> operationTimes; // USEI004
     private final Map<String, Double> workstationTimes; // USEI005
-    private final Map<String, Integer> operationCounts; // USEI006
-    private final MachineFlowAnalyzer machineFlowAnalyzer; // USEI007
-
-
+    private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // USEI07
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
-    private HashMap<String, Double> operationWaitingTimes = new HashMap<>();
-    private HashMap<String, Integer> countWaiting = new HashMap<>();
+    private HashMap<String, Double > operationWaitingTimes;
+    private HashMap<String, Integer >  countWaiting;
+    private HashMap<String,Integer> countOperation;
 
 
     public Simulator() {
@@ -36,15 +36,15 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-        this.operationCounts = new HashMap<>(); // USEI006
-        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
-
-
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
+        this.countOperation = new HashMap<>();
+        this.countWaiting = new HashMap<>();
+        this.operationWaitingTimes = new HashMap<>();
+
     }
 
-    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b, Map<String, Integer> operationCounts) {
+    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
         this.productLine = b;
         this.workstationsPerOperation = a;
         this.processedProducts = new ArrayList<>();
@@ -52,8 +52,6 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-        this.operationCounts = operationCounts; // USEI006
-        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -111,22 +109,24 @@ public class Simulator {
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
                                 workstation.processProduct(product);
+
+                                currentOperation.setWorkstation(workstation); // USEI07
+
                                 double operationTime = workstation.getTime();
 
+                                // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
+                                //markWorkstationAsUnavailable(workstation, operationTime);
 
                                 productTimes.merge(product, operationTime, Double::sum); //USEI03
                                 totalProductionTime += operationTime; //USEI03
 
                                 String operationName = currentOperation.getId(); // USEI04
-                                operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
+                                operationTimes.merge(operationName, operationTime, Double::sum);
+                                countOperation.put(operationName,countOperation.getOrDefault(operationName, 0) + 1);//USEI04
 
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
 
-                                operationCounts.merge(operationName, 1, Integer::sum); // USEI06
-
-
-                                machineFlowAnalyzer.addFlow(workstation, product); // USEI007
 
                                 itemsProcessed = true;
 
@@ -196,14 +196,14 @@ public class Simulator {
                             workstation.processProduct(product);
                             double operationTime = workstation.getTime();
 
+                            currentOperation.setWorkstation(workstation); // USEI07
+
+
+                            //markWorkstationAsUnavailable(workstation, operationTime);
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
                             operationTimes.merge(operationId, operationTime, Double::sum);
-
-                            operationCounts.merge(currentOperation.getId(), 1, Integer::sum); // USEI06
-
-                            machineFlowAnalyzer.addFlow(workstation, product); // USEI007
-
+                            countOperation.put(operationId,countOperation.getOrDefault(operationId,0)+1);
 
                             if (product.moveToNextOperation()) {
                                 System.out.println("Moving product " + product.getIdItem() + " to the next operation: " + product.getCurrentOperation().getId());
@@ -220,6 +220,60 @@ public class Simulator {
             }
         }
     }
+
+    private void doDependency() {
+        for (Product product : processedProducts) {
+            List<Operation> dependencies = product.getOperations();
+            for (int i = 0; i < dependencies.size() - 1; i++) {
+                Workstation first = dependencies.get(i).getWorkstation();
+                Workstation second = dependencies.get(i + 1).getWorkstation();
+
+                // Verifique se as workstations não são nulas antes de atualizar as dependências
+                if (first != null && second != null) {
+                    updateWorkstationDependencies(first, second);
+                } else {
+                    System.out.println("Workstation is null for operation " + dependencies.get(i).getId());
+                }
+            }
+        }
+    }
+
+    // Novo método para atualizar dependências
+    private void updateWorkstationDependencies(Workstation from, Workstation to) {
+        workstationDependencies
+                .computeIfAbsent(from.getId(), k -> new HashMap<>())
+                .merge(to.getId(), 1, Integer::sum);
+    }
+
+    // Método para exibir o fluxo de dependência USEI07
+    public void printWorkstationDependencies() {
+        doDependency();
+        String lineFormat = "%s : %s%n";
+
+        for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
+            String workstation = entry.getKey();
+            List<String> dependencies = new ArrayList<>();
+
+            entry.getValue().entrySet().stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente
+                    .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
+
+            System.out.printf(lineFormat, workstation, dependencies);
+        }
+    }
+/*
+    private void markWorkstationAsUnavailable(Workstation workstation, double operationTime) {
+        workstation.setAvailable(false);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                workstation.setAvailable(true);
+                //System.out.println("Workstation " + workstation.getId() + " is now available.");
+            }
+        }, (long) (operationTime * 0.1)); // Tempo em milissegundos
+    }
+
+ */
 
 
     private void returnToFirstOp(List<Product> f) {
@@ -277,6 +331,7 @@ public class Simulator {
         for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
             a.setTotalOperationTime(0);
         }
+        workstationDependencies.clear();
         productTimes.clear();
         totalProductionTime = 0.0;
         operationTimes.clear();
@@ -284,49 +339,55 @@ public class Simulator {
         waitingQueue.clear();
         waitingTimes.clear();
         processedProducts.clear();
-        machineFlowAnalyzer.reset();
-
     }
-
-    public Operation calculateBeginingWaiting(Operation opr) {
+    public Operation calculateBeginingWaiting(Operation opr){
+        long time = currentTimeMillis();
         opr.setTime();
         return opr;
     }
-
     public void calculateFinishWaiting(Operation opr) {
         String name = opr.getId();
-        double time = (double) System.currentTimeMillis();
+        double time =  System.currentTimeMillis();
         double finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, (double) 0);
-
         operationWaitingTimes.put(name, finalTime);
         int count = countWaiting.getOrDefault(name, 0) + 1;
         countWaiting.put(name, count);
     }
 
-    public void printAverageWaitingTimes() {
-        System.out.println("__________Average_Waiting_Times_Report__________");
+    public void printAverageWaitingTimes (){
+        System.out.println("__________________Average_Waiting_Times_Report__________________");
 
-        if (operationWaitingTimes.isEmpty())
+        if(operationWaitingTimes.isEmpty())
             System.out.println("---Error---You dont have any Waiting Time saved");
         else if (countWaiting.isEmpty())
-            System.out.println("---Error---You didn't save how many times the Operation was operated");
-        else {
-
-            for (Map.Entry<String, Double> tempo : operationTimes.entrySet()) {
-                for (Map.Entry<String, Integer> count : operationCounts.entrySet())
-                    if (tempo.getKey().equals(count.getKey())) {
-                        System.out.println("Operation: " + tempo.getKey() + " Average Execution Time: " + tempo.getValue() / count.getValue() + " seconds");
-                    }
-            }
-            for (int i = 0; i < operationWaitingTimes.size(); i++) {
-                String name = operationWaitingTimes.toString();
-                for (int j = 0; j < countWaiting.size(); j++) {
-                    double time = (double) operationWaitingTimes.getOrDefault(name, (double) 0) / countWaiting.getOrDefault(name, (int) 1);
-                    System.out.println("Operation " + name + " = " + time);
+            System.out.println("---Error---You didn't save how many times the Operation in Waiting was operated");
+        else{
+            for(int i = 0; i < operationWaitingTimes.size(); i++ ){
+                String name =operationWaitingTimes.toString();
+                for(int j = 0; j< countWaiting.size(); j++){
+                    double time = (double) operationWaitingTimes.getOrDefault(name, (double) 0) / countWaiting.getOrDefault(name,(int)1);
+                    System.out.println("Operation "+name+" = "+time);
                 }
             }
+        }
 
+    }
 
+    public void printAverageTimePerOperation(){
+        System.out.println("__________________Average_Time_Per_Operation_Report__________________");
+
+        if(operationTimes.isEmpty())
+            System.out.println("---Error---You dont have any Operation Time saved");
+        else if (countOperation.isEmpty())
+            System.out.println("---Error---You didn't save how many times the Operation was operated");
+        else{
+            for(int i = 0; i < operationTimes.size(); i++ ){
+                String name =operationTimes.toString();
+                for(int j = 0; j< countOperation.size(); j++){
+                    double time = (double) operationTimes.getOrDefault(name, (double) 0) / countOperation.getOrDefault(name,(int)1);
+                    System.out.println("Operation "+name+" = "+time);
+                }
+            }
         }
 
     }
