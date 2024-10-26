@@ -15,7 +15,7 @@ public enum PriorityOrder {
     /**
      * Constructs a PriorityOrder with the specified integer value and string representation.
      *
-     * @param priorityValue the integer value associated with the priority
+     * @param priorityValue  the integer value associated with the priority
      * @param priorityString the string representation of the priority
      */
     PriorityOrder(int priorityValue, String priorityString) {

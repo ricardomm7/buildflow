@@ -15,12 +15,12 @@ public abstract class Person {
     /**
      * Constructs a Person with the specified details.
      *
-     * @param id the unique identifier for the person
-     * @param nif the NIF (tax identification number) of the person
-     * @param name the name of the person
-     * @param address the street address of the person
-     * @param city the city where the person is located
-     * @param zipCode the zip code for the person's address
+     * @param id          the unique identifier for the person
+     * @param nif         the NIF (tax identification number) of the person
+     * @param name        the name of the person
+     * @param address     the street address of the person
+     * @param city        the city where the person is located
+     * @param zipCode     the zip code for the person's address
      * @param phoneNumber the phone number of the person
      */
     public Person(String id, int nif, String name, String address, String city, String zipCode, int phoneNumber) {
@@ -98,7 +98,7 @@ public abstract class Person {
      * Sets the address of the person using the provided address, city, and zip code.
      *
      * @param address the street address to set
-     * @param city the city to set
+     * @param city    the city to set
      * @param zipCode the zip code to set
      */
     public void setAddress(String address, String city, String zipCode) {

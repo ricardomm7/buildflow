@@ -21,21 +21,23 @@ public class Menu {
 
     public void displayMenu() throws IOException {
         while (true) {
-            System.out.println("\n--- BUILDFLOW MAIN MENU ---");
-            System.out.println("1. See the uploaded products by priority.");
-            System.out.println("2. Simulate production without priority order and with line workstation selection.");
-            System.out.println("3. Simulate production without priority order and with time workstation selection.");
-            System.out.println("4. Simulate production with priority order and with line workstation selection.");
-            System.out.println("5. Simulate production with priority order and with time workstation selection.");
-            System.out.println("6. See production times.");
-            System.out.println("7. See machines dependencies.");
-            System.out.println("8. Workstation analysis.");
-            System.out.println("9. Generate product-component graph.");
-            System.out.println("10. Report Average Waiting Times per Operation");
-            System.out.println("11. Report Average Execution Times per Operation ");
-            System.out.println("0. Exit");
-            System.out.print("Choose an option: ");
+            System.out.println("\n================================================================================");
+            System.out.println("                             BUILDFLOW MAIN MENU                              ");
+            System.out.println("================================================================================");
+            System.out.printf("%-5s%-75s%n", "[1]", "See the uploaded products by priority.");
+            System.out.printf("%-5s%-75s%n", "[2]", "Simulate production without priority, using line workstation selection.");
+            System.out.printf("%-5s%-75s%n", "[3]", "Simulate production without priority, using time workstation selection.");
+            System.out.printf("%-5s%-75s%n", "[4]", "Simulate production with priority, using line workstation selection.");
+            System.out.printf("%-5s%-75s%n", "[5]", "Simulate production with priority, using time workstation selection.");
+            System.out.printf("%-5s%-75s%n", "[6]", "View production times.");
+            System.out.printf("%-5s%-75s%n", "[7]", "View machine dependencies.");
+            System.out.printf("%-5s%-75s%n", "[8]", "Report average times per operation.");
+            System.out.printf("%-5s%-75s%n", "[9]", "Workstation analysis.");
+            System.out.printf("%-5s%-75s%n", "[10]", "Generate product-component graph.");
+            System.out.printf("%-5s%-75s%n", "[0]", "Exit");
+            System.out.println("================================================================================");
 
+            System.out.print("Choose an option: ");
             int choice = getUserChoice();
             handleChoice(choice);
         }
@@ -97,10 +99,17 @@ public class Menu {
                 if (s.getTotalProductionTime() == 0) {
                     System.out.println("Please run the simulation first (Option 2 to 5).");
                 } else {
-                    s.printAnalysis();
+                    s.printAverageTimesReport();
                 }
                 break;
             case 9:
+                if (s.getTotalProductionTime() == 0) {
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                } else {
+                    s.printAnalysis();
+                }
+                break;
+            case 10:
                 displayAvailableItems();
                 int itemChoice = getUserChoice();
                 String selectedItem = getItemFilePath(itemChoice);
@@ -109,19 +118,6 @@ public class Menu {
                 } else {
                     System.out.println("Invalid choice. Please select a valid item.");
                 }
-                break;
-            case 10:
-                if (s.getTotalProductionTime() == 0)
-                    System.out.println("Please run the simulation first (Option 2 to 5).");
-                else
-                    s.printAverageWaitingTimes ();
-
-                break;
-            case 11:
-                if(s.getTotalProductionTime() == 0)
-                    System.out.println("Please run the simulation first (Option 2 to 5).");
-                else
-                    s.printAverageTimePerOperation();
                 break;
             case 0:
                 System.out.println("Exiting...");

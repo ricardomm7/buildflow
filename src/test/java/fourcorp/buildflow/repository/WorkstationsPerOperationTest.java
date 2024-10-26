@@ -101,4 +101,28 @@ class WorkstationsPerOperationTest {
         assertEquals(2, urghoer.size(), "Should return 2 machines.");
         assertEquals(80.0, (ws543.getTotalOperationTime() / 25) * 100, "WS65 should have 80%.");
     }
+
+    @Test
+    void getWorkstationsAscendingByPercentageWithPriority() {
+        Workstation ws543 = new Workstation("WS65", 10);
+        Workstation ws547 = new Workstation("WS66", 5);
+
+        WorkstationsPerOperation u = new WorkstationsPerOperation();
+        u.create(ws543, new Operation("Cutting"));
+        u.create(ws547, new Operation("Assembling"));
+
+        Product p4698 = new Product("P006", new LinkedList<>(List.of(new Operation("Cutting"), new Operation("Assembling"))));
+        Product p4390 = new Product("P012", new LinkedList<>(List.of(new Operation("Assembling"))));
+
+        ProductPriorityLine uisfd = new ProductPriorityLine();
+        uisfd.create(p4698, PriorityOrder.HIGH);
+        uisfd.create(p4390, PriorityOrder.LOW);
+
+        Simulator xo = new Simulator(u, uisfd);
+        xo.runWithoutPriority(true);
+        List<Workstation> urghoer = u.getWorkstationsAscendingByPercentage(25);
+
+        assertEquals(2, urghoer.size(), "Should return 2 machines.");
+        assertEquals(50.0, (ws543.getTotalOperationTime() / 20) * 100, "WS65 should have 80%.");
+    }
 }

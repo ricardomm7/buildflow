@@ -10,14 +10,14 @@ public class Client extends Person {
     /**
      * Constructs a Client object with the specified details.
      *
-     * @param id the unique identifier for the client
-     * @param nif the NIF (tax identification number) of the client
-     * @param name the name of the client
-     * @param address the street address of the client
-     * @param city the city where the client is located
-     * @param zipCode the zip code for the client's address
+     * @param id          the unique identifier for the client
+     * @param nif         the NIF (tax identification number) of the client
+     * @param name        the name of the client
+     * @param address     the street address of the client
+     * @param city        the city where the client is located
+     * @param zipCode     the zip code for the client's address
      * @param phoneNumber the phone number of the client
-     * @param type the type of the client (e.g., individual, company)
+     * @param type        the type of the client (e.g., individual, company)
      */
     public Client(String id, int nif, String name, String address, String city, String zipCode, int phoneNumber, ClientType type) {
         super(id, nif, name, address, city, zipCode, phoneNumber);

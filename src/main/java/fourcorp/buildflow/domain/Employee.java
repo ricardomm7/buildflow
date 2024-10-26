@@ -13,15 +13,15 @@ public class Employee extends Person {
     /**
      * Constructs an Employee object with the specified details.
      *
-     * @param id the unique identifier for the employee
-     * @param nif the NIF (tax identification number) of the employee
-     * @param name the name of the employee
-     * @param address the street address of the employee
-     * @param city the city where the employee is located
-     * @param zipCode the zip code for the employee's address
+     * @param id          the unique identifier for the employee
+     * @param nif         the NIF (tax identification number) of the employee
+     * @param name        the name of the employee
+     * @param address     the street address of the employee
+     * @param city        the city where the employee is located
+     * @param zipCode     the zip code for the employee's address
      * @param phoneNumber the phone number of the employee
-     * @param birthDate the birth date of the employee
-     * @param salary the salary of the employee
+     * @param birthDate   the birth date of the employee
+     * @param salary      the salary of the employee
      */
     public Employee(String id, int nif, String name, String address, String city, String zipCode, int phoneNumber, LocalDate birthDate, double salary) {
         super(id, nif, name, address, city, zipCode, phoneNumber);

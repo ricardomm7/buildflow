@@ -23,10 +23,10 @@ public class Order implements Identifiable<String> {
      * Constructs an Order with the specified products, quantity, client, order date, and delivery date.
      * A unique identifier (UUID) is automatically generated for the order.
      *
-     * @param products the list of products in the order
-     * @param quantity the total quantity of products in the order
-     * @param client the client placing the order
-     * @param orderDate the date the order was placed
+     * @param products     the list of products in the order
+     * @param quantity     the total quantity of products in the order
+     * @param client       the client placing the order
+     * @param orderDate    the date the order was placed
      * @param deliveryDate the expected delivery date for the order
      */
     public Order(List<Product> products, int quantity, Client client, LocalDate orderDate, LocalDate deliveryDate) {

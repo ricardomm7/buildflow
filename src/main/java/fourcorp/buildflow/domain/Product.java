@@ -2,7 +2,6 @@ package fourcorp.buildflow.domain;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents a product in the system, with a unique identifier, a list of operations,
@@ -16,7 +15,7 @@ public class Product implements Identifiable<String> {
     /**
      * Constructs a Product with the specified identifier and list of operations.
      *
-     * @param idItem the unique identifier for the product
+     * @param idItem     the unique identifier for the product
      * @param operations the list of operations associated with the product
      */
     public Product(String idItem, List<Operation> operations) {

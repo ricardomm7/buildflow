@@ -7,6 +7,7 @@ import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -18,17 +19,13 @@ public class Simulator {
     private final Map<Product, Double> productTimes; // USEI003
     private double totalProductionTime; // USEI003
     private final Map<String, Double> operationTimes; // USEI004
-    private final Map<String, Double> workstationTimes; // USEI005
     private final Map<String, Integer> operationCounts; // USEI006
     private final MachineFlowAnalyzer machineFlowAnalyzer; // USEI007
-
 
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
     private HashMap<String, Double> operationWaitingTimes;
     private HashMap<String, Integer> countWaiting;
-
-
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -37,15 +34,12 @@ public class Simulator {
         this.productTimes = new HashMap<>(); // USEI003
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
-        this.workstationTimes = new HashMap<>();  // USEI005
         this.operationCounts = new HashMap<>(); // USEI006
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
-
-        this.countWaiting = new HashMap<>();
-        this.operationWaitingTimes = new HashMap<>();
-
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
+        this.operationWaitingTimes = new HashMap<>();
+        this.countWaiting = new HashMap<>();
     }
 
     public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
@@ -56,11 +50,11 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationCounts = new HashMap<>(); // USEI006
         this.operationTimes = new HashMap<>(); // USEI004
-        this.workstationTimes = new HashMap<>();  // USEI005
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
-
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
+        this.operationWaitingTimes = new HashMap<>();
+        this.countWaiting = new HashMap<>();
     }
 
     public void runWithPriority(boolean b) {
@@ -124,11 +118,7 @@ public class Simulator {
                                 String operationName = currentOperation.getId(); // USEI04
                                 operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
 
-                                String workstationId = workstation.getId(); // USEI05
-                                workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
-
                                 operationCounts.merge(operationName, 1, Integer::sum); // USEI06
-
 
                                 machineFlowAnalyzer.addFlow(workstation, product); // USEI007
 
@@ -234,16 +224,24 @@ public class Simulator {
 
     // USEI003 e USEI004
     public void printProductionStatistics() {
+        System.out.println();
         String lineFormat = "| %-15s | %-10s |%n";
         String separator = "+-----------------+------------+";
+
         System.out.println("Production Time per Product:");
         System.out.println(separator);
         System.out.printf(lineFormat, "Product ID", "Time (sec)");
         System.out.println(separator);
+
+        Map<String, Double> accumulatedProductTimes = new HashMap<>();
         for (Map.Entry<Product, Double> entry : productTimes.entrySet()) {
-            Product product = entry.getKey();
-            Double time = entry.getValue();
-            System.out.printf(lineFormat, product.getIdItem(), String.format("%.2f", time));
+            String productId = entry.getKey().getIdItem();
+            double time = entry.getValue();
+            accumulatedProductTimes.put(productId, accumulatedProductTimes.getOrDefault(productId, 0.0) + time);
+        }
+
+        for (Map.Entry<String, Double> entry : accumulatedProductTimes.entrySet()) {
+            System.out.printf(lineFormat, entry.getKey(), String.format("%.2f", entry.getValue()));
         }
         System.out.println(separator);
         System.out.printf("%nTotal Production Time for all products: %.2f seconds%n", totalProductionTime);
@@ -261,6 +259,8 @@ public class Simulator {
 
     // USEI005
     public void printAnalysis() {
+        System.out.println();
+        System.out.println("Total operating time and its respective importance in production:");
         String lineFormat = "| %-20s | %-17s | %-31s |%n";
         String separator = "+----------------------+-------------------+---------------------------------+";
         System.out.println(separator);
@@ -284,12 +284,13 @@ public class Simulator {
         productTimes.clear();
         totalProductionTime = 0.0;
         operationTimes.clear();
-        workstationTimes.clear();
         waitingQueue.clear();
         waitingTimes.clear();
+        operationWaitingTimes.clear();
+        countWaiting.clear();
         processedProducts.clear();
         machineFlowAnalyzer.reset();
-
+        operationCounts.clear();
     }
 
     public Operation calculateBeginingWaiting(Operation opr) {
@@ -306,46 +307,40 @@ public class Simulator {
         countWaiting.put(name, counter);
     }
 
+    public void printAverageTimesReport() {
+        System.out.println();
+        System.out.println("Table showing average operating time, waiting time and total waiting time:");
+        String lineFormat = "| %-15s | %-30s | %-30s | %-25s | %-6s |%n";
+        String separator = "+-----------------+--------------------------------+--------------------------------+---------------------------+--------+";
+        if (operationWaitingTimes.isEmpty()) {
+            System.out.println("--- Error --- No Waiting Times recorded.");
+        } else if (countWaiting.isEmpty()) {
+            System.out.println("--- Error --- Waiting Operation counts missing.");
+        } else if (operationTimes.isEmpty()) {
+            System.out.println("--- Error --- No Operation Times recorded.");
+        } else if (operationCounts.isEmpty()) {
+            System.out.println("--- Error --- Operation counts missing.");
+        } else {
+            System.out.println(separator);
+            System.out.printf(lineFormat, "Operation", "Average Operation Time (sec)", "Average Waiting Time (sec)", "Total Waiting Time (sec)", "No. Op");
+            System.out.println(separator);
+            for (String name : operationWaitingTimes.keySet()) {
+                double avgWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name, 1);
+                avgWaitingTime = avgWaitingTime * 0.001;
+                BigDecimal roundedWaitingTime = new BigDecimal(avgWaitingTime).setScale(2, RoundingMode.HALF_UP);
 
+                double totalWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0);
+                totalWaitingTime = totalWaitingTime * 0.001;
+                BigDecimal totalWaiting = new BigDecimal(totalWaitingTime).setScale(2, RoundingMode.HALF_UP);
 
-    public void printAverageWaitingTimes (){
-        System.out.println("______________Average_Waiting_Times_Report______________");
+                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1);
+                BigDecimal roundedOperationTime = new BigDecimal(avgOperationTime).setScale(2, RoundingMode.UP);
 
-        if(operationWaitingTimes.isEmpty())
-            System.out.println("---Error---You dont have any Waiting Time saved");
-        else if (countWaiting.isEmpty())
-            System.out.println("---Error---You didn't save how many times the Operation in Waiting was operated");
-        else{
-            for(String name : operationWaitingTimes.keySet()){
-                double time = (double) operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name,1);
-                time = time * 0.001;
-                BigDecimal roundedValue = new BigDecimal(time).setScale(2,RoundingMode.HALF_UP);
-                System.out.println("Operation "+name+" = "+roundedValue);
-
+                System.out.printf(lineFormat, name, roundedOperationTime, roundedWaitingTime, totalWaiting, operationCounts.getOrDefault(name, 1));
             }
+            System.out.println(separator);
         }
-
     }
-
-    public void printAverageTimePerOperation(){
-        System.out.println("______________Average_Time_Per_Operation_Report______________");
-
-        if(operationTimes.isEmpty())
-            System.out.println("---Error---You dont have any Operation Time saved");
-        else if (operationCounts.isEmpty())
-            System.out.println("---Error---You didn't save how many times the Operation was operated");
-        else{
-            for(String name : operationTimes.keySet()) {
-                double time = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name,  1);
-                time = time * 0.001;
-                BigDecimal roundedValue = new BigDecimal(time).setScale(2,RoundingMode.UP);
-                System.out.println("Operation " + name + " = " + roundedValue);
-            }
-
-        }
-
-    }
-
 
     public double getTotalProductionTime() {
         return totalProductionTime;

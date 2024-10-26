@@ -24,7 +24,7 @@ public class ProductPriorityLine {
     /**
      * Creates a new product with an associated priority order in the product priority line.
      *
-     * @param product the product to be added
+     * @param product  the product to be added
      * @param priority the priority order associated with the product
      */
     public void create(Product product, PriorityOrder priority) {

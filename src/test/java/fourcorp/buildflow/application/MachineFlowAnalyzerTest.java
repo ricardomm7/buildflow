@@ -256,7 +256,7 @@ class MachineFlowAnalyzerTest {
         assertEquals(expectedDependencies, actualDependencies, "Dependências para small_workstations.csv não correspondem ao esperado.");
     }
 
-     @Test
+    @Test
     void testMediumCsvFiles() throws IOException, IOException {
         // Carregar dados dos arquivos CSV médios
         Reader.loadOperations("textFiles/medium_articles.csv");

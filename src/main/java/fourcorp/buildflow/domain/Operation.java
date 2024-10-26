@@ -23,7 +23,6 @@ public class Operation implements Identifiable<String> {
         this.execute = false;
         this.name = operation;
         this.time = 0.0;
-
     }
 
     /**
@@ -38,7 +37,8 @@ public class Operation implements Identifiable<String> {
     /**
      * Sets the execution time to the current system time in milliseconds.
      */
-    public void setTime() { this.time = (double) System.currentTimeMillis();
+    public void setTime() {
+        this.time = (double) System.currentTimeMillis();
     }
 
     /**

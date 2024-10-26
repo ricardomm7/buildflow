@@ -19,7 +19,7 @@ public class Workstation implements Identifiable<String> {
      * Constructs a Workstation with the specified machine ID and processing time.
      *
      * @param idMachine the unique identifier for the workstation
-     * @param time the estimated time to process a product in seconds
+     * @param time      the estimated time to process a product in seconds
      */
     public Workstation(String idMachine, int time) {
         this.idMachine = idMachine;
@@ -27,24 +27,6 @@ public class Workstation implements Identifiable<String> {
         this.isAvailable = true;
         this.oprCounter = 0;
         this.totalOper = 0;
-    }
-
-
-    /**
-     * Starts the clock for the workstation and sets its availability status.
-     * Increments the operation counter and starts a countdown for the specified time.
-     *
-     * @param hasMoreOperation indicates if there are more operations to process
-     */
-    public void startClock(boolean hasMoreOperation) {
-        this.isAvailable = false;
-        clock.countDownClock(this.time, () -> {
-            this.isAvailable = true;
-            increaseOpCounter();
-            if (hasMoreOperation) {
-                clock.countUpClock(true); // Começa a contagem ascendente se ainda houver operações
-            }
-        });
     }
 
     /**
@@ -64,10 +46,21 @@ public class Workstation implements Identifiable<String> {
      * @param product the product to be processed
      */
     public void processProduct(Product product) {
-        increaseOpCounter();
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
-        increaseOperationTime();
-        startClock(product.hasMoreOperations());
+        startClock();
+    }
+
+    /**
+     * Starts the clock for the workstation and sets its availability status.
+     * Increments the operation counter and starts a countdown for the specified time.
+     */
+    public void startClock() {
+        this.isAvailable = false;
+        clock.countDownClock(this.time, () -> {
+            this.isAvailable = true;
+            increaseOpCounter();
+            increaseOperationTime();
+        });
     }
 
     /**

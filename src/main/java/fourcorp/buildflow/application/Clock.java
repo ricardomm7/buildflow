@@ -39,7 +39,6 @@ public class Clock {
         return elapsedTime;
     }
 
-    // Contagem regressiva
     public void countDownClock(int countdownTimeMillis, Runnable callback) {
         if (isCounting) {
             return;

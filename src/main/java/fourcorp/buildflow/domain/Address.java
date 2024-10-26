@@ -15,7 +15,7 @@ public class Address {
      * Constructs an Address object with the specified address, city, and zip code.
      *
      * @param address the street address
-     * @param city the city of the address
+     * @param city    the city of the address
      * @param zipCode the zip code, which must be in the format ####-###
      * @throws IllegalArgumentException if the zip code is not in the correct format
      */
