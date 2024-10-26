@@ -110,7 +110,11 @@ public class Menu {
                 }
                 break;
             case 10:
-                s.printAverageWaitingTimes();
+                if (s.getTotalProductionTime() == 0) {
+                    System.out.println("Please run the simulation first (Option 2 to 5).");
+                } else {
+                    s.printAverageWaitingTimes();
+                }
                 break;
             case 0:
                 System.out.println("Exiting...");

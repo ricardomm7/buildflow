@@ -44,15 +44,15 @@ public class Simulator {
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
     }
 
-    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b, Map<String, Integer> operationCounts) {
+    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
         this.productLine = b;
         this.workstationsPerOperation = a;
         this.processedProducts = new ArrayList<>();
         this.productTimes = new HashMap<>(); // USEI003
         this.totalProductionTime = 0.0; // USEI003
+        this.operationCounts = new HashMap<>(); // USEI006
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-        this.operationCounts = operationCounts; // USEI006
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
