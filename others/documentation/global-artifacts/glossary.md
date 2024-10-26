@@ -5,18 +5,20 @@
 | **_TEA_** (EN)                      | **_Description_** (EN)                                                                                                                                               |                                       
 |:------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Address**                         | The location details of customers and suppliers, used for delivery and identification purposes.                                                                      |
+| **Administrator**                   | A system user responsible for managing the overall operations and users within the production management software.                                                   |
 | **Assembly operations**             | Operations involved in assembling components to create a final product.                                                                                              |
 | **Automate Machines**               | Machines that operate automatically without human intervention.                                                                                                      |
 | **Bill of Materials (BOM)**         | A tree-like structure representing the final products (root), raw materials (leaf nodes), and components (intermediate nodes) required to produce the final product. |
 | **Bill of Operations (BOO)**        | A tree-like structure representing the sequence of operations needed to produce a product.                                                                           |
 | **Businesses**                      | Various types of companies that may use the software solution for production management.                                                                             |
-| **Company customers**               | Customers that are businesses or organizations.                                                                                                                      |
+| **Client**                          | An entity (individual or company) that places orders for products and interacts with the business.                                                                   |
 | **Components (intermediate nodes)** | Parts that are used in the assembly of final products, positioned between raw materials and final products in the BOM.                                               |
 | **Cork**                            | One of the sectors that the software solution can be applied to, involving the production of cork products.                                                          |
-| **Customer**                        | The entity (individual or company) that places orders for products.                                                                                                  |
+| **Customer**                        | An alternative work for "Client".                                                                                                                                    |
 | **Customer’s identification**       | Information used to identify customers, such as tax identification number (NIF).                                                                                     |
 | **Cutlery**                         | One of the sectors that the software solution can be applied to, involving the production of cutlery products.                                                       |
 | **Delivery**                        | The process of transporting finished products to the customer's address.                                                                                             |
+| **Employee**                        | Individuals who work in the production facility.                                                                                                                     |
 | **Extraction**                      | The process of obtaining raw materials from natural sources.                                                                                                         |
 | **Factory Facilities**              | The physical infrastructure of the factory, including buildings, machinery, and equipment.                                                                           |
 | **Factory plant**                   | The entire manufacturing facility where production takes place.                                                                                                      |
@@ -25,6 +27,7 @@
 | **Flow-Shops**                      | A type of manufacturing facility where products are limited to a restricted number of product families, with a specific sequence of operations.                      |
 | **Footwear**                        | One of the sectors that the software solution can be applied to, involving the production of footwear products.                                                      |
 | **Human Operators**                 | Workers who manually operate machines or perform tasks in the production process.                                                                                    |
+| **Identification (ID)**             | Unique label or code assigned to something.                                                                                                                          |
 | **Industrial**                      | Related to the manufacturing industry and production processes.                                                                                                      |
 | **Industrial management**           | The process of planning, organizing, and overseeing industrial production operations.                                                                                |
 | **Industrial units**                | Individual production facilities within a larger industrial complex.                                                                                                 |
@@ -42,23 +45,27 @@
 | **Minimum Viable Product (MVP)**    | The initial version of the software solution that includes only the essential features needed to meet the project's requirements.                                    |
 | **Number’s order**                  | The sequence or arrangement of numbers, often used for identifying orders or products.                                                                               |
 | **Operational ranges**              | The limits within which machines and processes can operate effectively.                                                                                              |
-| **Operations**                      | The various tasks and activities involved in the production process.                                                                                                 |
+| **Operation**                       | The various tasks and activities involved in the production process.                                                                                                 |
+| **Operation Type**                  | The classification or category of an operation within the production process.                                                                                        |
 | **Optimization**                    | The process of making the production process as efficient and effective as possible.                                                                                 |
-| **Orders**                          | Requests from customers for specific products, including details such as quantity and delivery date.                                                                 |
+| **Order**                           | Requests from customers for specific products, including details such as quantity and delivery date.                                                                 |
 | **Packaging**                       | The process of wrapping or enclosing products for protection and presentation.                                                                                       |
+| **Part**                            | An individual component used in the production of products, identified by a unique Part ID and description.                                                          |
 | **Plant Floor Manager**             | Responsible for specifying the factory production lines and their respective machines.                                                                               |
 | **Planning**                        | The process of organizing and scheduling production activities to meet customer orders and optimize resources.                                                       |
 | **Process**                         | A series of actions or steps taken to achieve a particular end in production.                                                                                        |
 | **Processing**                      | The series of operations performed on raw materials to convert them into finished products.                                                                          |
+| **Product**                         | An item produced for sale characterized by attributes such as name, manufacturing date, size, and colour.                                                            |
 | **Product Control**                 | The activities involved in ensuring that products meet quality standards and specifications.                                                                         |
 | **Product Engineering**             | The activities related to the conception, design, and planning of products and their components.                                                                     |
-| **Product families**                | Groups of products that share similar characteristics or production processes.                                                                                       |
+| **Product Family**                  | Groups of products that share similar characteristics or production processes.                                                                                       |
+| **Product Part**                    | A relationship table that connects products to their constituent parts, detailing the quantity of each part required for the product.                                |
 | **Production Capacity**             | The maximum amount of products that can be produced within a given time frame.                                                                                       |
 | **Production Control**              | The process of monitoring and managing the production process to ensure it runs smoothly and efficiently.                                                            |
 | **Production Manager**              | Responsible for maintaining information related to products and raw materials, and for controlling and managing production orders.                                   |
 | **Production Process**              | The entire sequence of operations and activities involved in producing a product.                                                                                    |
-| **Production lines**                | The specific sequences of operations and stations used to produce products.                                                                                          |
-| **Production planning**             | The process of creating a production plan based on customer orders and operational constraints.                                                                      |
+| **Production Line**                 | The specific sequences of operations and stations used to produce products.                                                                                          |
+| **Production Planning**             | The process of creating a production plan based on customer orders and operational constraints.                                                                      |
 | **Productions Plan**                | A detailed schedule of production activities, including the sequence of operations and the allocation of resources.                                                  |
 | **Product Owner**                   | The Product Owner is responsible for maximizing the value of the product resulting from the work of the development team.                                            |
 | **Project**                         | A temporary endeavor undertaken to create a unique product or service, often involving complex structures and long lead times.                                       |
@@ -72,3 +79,4 @@
 | **Tree-like structure**             | A hierarchical representation of products, components, and raw materials, often used in BOM and BOO.                                                                 |
 | **Warehouse**                       | A storage facility for raw materials, components, and finished products.                                                                                             |
 | **Workstations**                    | Specific areas or stations on the plant floor where particular operations are performed.                                                                             |
+| **Workstation Type**                | A specific location on the plant floor where certain operations are performed, identified by a unique Workstation ID, name, description, and type.                   |
