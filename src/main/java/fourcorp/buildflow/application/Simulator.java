@@ -18,8 +18,8 @@ public class Simulator {
     private double totalProductionTime; // USEI003
     private final Map<String, Double> operationTimes; // USEI004
     private final Map<String, Double> workstationTimes; // USEI005
-    private final Map<String, List<String>> productMachineFlows; // USEI007
-    private final MachineFlowAnalyzer machineFlowAnalyzer; // Instância do MachineFlowAnalyzer
+    private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // USEI07
+
 
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
@@ -33,8 +33,7 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-        this.productMachineFlows = new HashMap<>();  // USEI007
-        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
+
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -48,8 +47,7 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
-        this.productMachineFlows = new HashMap<>();  // USEI007
-        this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
+
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
@@ -110,6 +108,9 @@ public class Simulator {
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
                                 workstation.processProduct(product);
+
+                                currentOperation.setWorkstation(workstation); // USEI07
+
                                 double operationTime = workstation.getTime();
 
                                 // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
@@ -118,14 +119,12 @@ public class Simulator {
                                 productTimes.merge(product, operationTime, Double::sum); //USEI03
                                 totalProductionTime += operationTime; //USEI03
 
-
                                 String operationName = currentOperation.getId(); // USEI04
                                 operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
 
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
 
-                                productMachineFlows.computeIfAbsent(product.getIdItem(), _ -> new ArrayList<>()).add(workstationId); // USEI007
 
                                 itemsProcessed = true;
 
@@ -159,8 +158,6 @@ public class Simulator {
 
             } while (itemsProcessed || !areAllQueuesEmpty() && processedProducts.isEmpty());
 
-            machineFlowAnalyzer.calculateMachineDependencies(productMachineFlows); // USEI007 - Calcula dependências
-
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
             e.printStackTrace();
@@ -192,6 +189,9 @@ public class Simulator {
                             workstation.processProduct(product);
                             double operationTime = workstation.getTime();
 
+                            currentOperation.setWorkstation(workstation); // USEI07
+
+
                             markWorkstationAsUnavailable(workstation, operationTime);
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
@@ -210,6 +210,47 @@ public class Simulator {
                     break;
                 }
             }
+        }
+    }
+
+    private void doDependency() {
+        for (Product product : processedProducts) {
+            List<Operation> dependencies = product.getOperations();
+            for (int i = 0; i < dependencies.size() - 1; i++) {
+                Workstation first = dependencies.get(i).getWorkstation();
+                Workstation second = dependencies.get(i + 1).getWorkstation();
+
+                // Verifique se as workstations não são nulas antes de atualizar as dependências
+                if (first != null && second != null) {
+                    updateWorkstationDependencies(first, second);
+                } else {
+                    System.out.println("Workstation is null for operation " + dependencies.get(i).getId());
+                }
+            }
+        }
+    }
+
+    // Novo método para atualizar dependências
+    private void updateWorkstationDependencies(Workstation from, Workstation to) {
+        workstationDependencies
+                .computeIfAbsent(from.getId(), k -> new HashMap<>())
+                .merge(to.getId(), 1, Integer::sum);
+    }
+
+    // Método para exibir o fluxo de dependência USEI07
+    public void printWorkstationDependencies() {
+        doDependency();
+        String lineFormat = "%s : %s%n";
+
+        for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
+            String workstation = entry.getKey();
+            List<String> dependencies = new ArrayList<>();
+
+            entry.getValue().entrySet().stream()
+                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) // Ordena em ordem decrescente
+                    .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
+
+            System.out.printf(lineFormat, workstation, dependencies);
         }
     }
 
@@ -258,7 +299,6 @@ public class Simulator {
         System.out.println(separator);
     }
 
-
     // USEI005
     public void printAnalysis() {
         String lineFormat = "| %-20s | %-17s | %-31s |%n";
@@ -277,6 +317,7 @@ public class Simulator {
         System.out.println(separator);
     }
 
+
     public double getTotalProductionTime() {
         return totalProductionTime;
     }
@@ -287,5 +328,8 @@ public class Simulator {
             productionTimes.add(entry.getValue());
         }
         return productionTimes;
+    }
+
+    public void printWorkstationAnalysis() {
     }
 }

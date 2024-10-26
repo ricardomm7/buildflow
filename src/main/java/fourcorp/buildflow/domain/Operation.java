@@ -13,6 +13,7 @@ public class Operation implements Identifiable<String> {
     private double timeExecution;
     private double timeWaiting;
     private Clock clock = new Clock();
+    private Workstation workstation;
 
 
     public Operation(String operation) {
@@ -23,6 +24,8 @@ public class Operation implements Identifiable<String> {
         this.countWaiting = 0;
         this.timeExecution = 0;
         this.timeWaiting = 0;
+        this.workstation = null;
+
 
     }
 
@@ -132,6 +135,13 @@ public class Operation implements Identifiable<String> {
 
     public void setExecute(boolean execute) {
         this.execute = execute;
+    }
+
+    public Workstation getWorkstation() {
+        return workstation;
+    }
+    public  void setWorkstation(Workstation workstation) {
+        this.workstation = workstation;
     }
 
     @Override

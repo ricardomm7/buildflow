@@ -81,16 +81,10 @@ public class Menu {
                 s.printProductionStatistics();
                 break;
             case 7:
-                if (MachineFlowAnalyzer.getMachineDependencies().isEmpty()) {
-                    System.out.println("Please run the simulation first (Option 1 to 4).");
-                } else {
-                    MachineFlowAnalyzer.printMachineFlowDependencies();
-                }
+               s.printWorkstationDependencies();
                 break;
             case 8:
-                if (MachineFlowAnalyzer.getMachineDependencies().isEmpty()) {
-                    System.out.println("Please run the simulation first (Option 1 to 4).");
-                } else {
+            {
                     s.printAnalysis();
                 }
                 break;
