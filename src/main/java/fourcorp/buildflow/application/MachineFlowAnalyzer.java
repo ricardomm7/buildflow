@@ -4,7 +4,10 @@ import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.MapLinked;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Classe responsável por analisar e exibir o fluxo de dependência entre máquinas.
@@ -52,7 +55,7 @@ public class MachineFlowAnalyzer {
     }
 
     /**
-     * Imprime as dependências entre as workstations, ordenadas em ordem decrescente de frequência.
+     * Imprime as dependências entre as workstations, ordenadas em ordem decrescente de frequência de transições.
      */
     public static void printDependencies() {
         buildDependencies(); // Constrói as dependências antes de imprimir
@@ -60,18 +63,31 @@ public class MachineFlowAnalyzer {
         String lineFormat = "%s : %s%n";
         System.out.println("\nWorkstation Flow Dependency:");
 
+        // Mapa auxiliar para armazenar a contagem total de transições para cada workstation
+        Map<String, Integer> totalTransitions = new HashMap<>();
+
+        // Calcula o número total de transições de cada workstation
         for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
-            String workstation = entry.getKey();
-            List<String> dependencies = new ArrayList<>();
-
-            // Ordena as dependências em ordem decrescente de frequência
-            entry.getValue().entrySet().stream()
-                    .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                    .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
-
-            System.out.printf(lineFormat, workstation, dependencies);
+            int sum = entry.getValue().values().stream().mapToInt(Integer::intValue).sum();
+            totalTransitions.put(entry.getKey(), sum);
         }
+
+        // Ordena as workstations em ordem decrescente de total de transições
+        totalTransitions.entrySet().stream()
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .forEach(entry -> {
+                    String workstation = entry.getKey();
+                    List<String> dependencies = new ArrayList<>();
+
+                    // Ordena as dependências em ordem decrescente de frequência
+                    workstationDependencies.get(workstation).entrySet().stream()
+                            .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                            .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
+
+                    System.out.printf(lineFormat, workstation, dependencies);
+                });
     }
+
 
     /**
      * Limpa os dados armazenados para uma nova simulação.

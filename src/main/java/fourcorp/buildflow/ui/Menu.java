@@ -45,7 +45,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 9) {
+                if (choice >= 0 && choice <= 15) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");

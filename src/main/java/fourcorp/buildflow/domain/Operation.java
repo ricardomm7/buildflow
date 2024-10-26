@@ -5,23 +5,23 @@ import java.util.Objects;
 public class Operation implements Identifiable<String> {
     private String name;
     private boolean execute;
-    private long time;
+    private Double time;
     private int countWaiting;
-
-
 
     public Operation(String operation) {
         this.execute = false;
         this.name = operation;
         this.countWaiting = 0;
-        this.time = 0;
+        this.time = 0.0;
 
     }
 
+    public double getTime() {
+        return time;
+    }
 
-    public long getTime(){return time;}
-
-    public void setTime() { this.time = (long) System.currentTimeMillis();}
+    public void setTime() { this.time = (double) System.currentTimeMillis();
+    }
 
 
     public boolean getExecute() {

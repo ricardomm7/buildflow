@@ -4,7 +4,6 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
-import fourcorp.buildflow.repository.MapLinked;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
@@ -19,17 +18,14 @@ public class Simulator {
     private double totalProductionTime; // USEI003
     private final Map<String, Double> operationTimes; // USEI004
     private final Map<String, Double> workstationTimes; // USEI005
-    private final MachineFlowAnalyzer machineFlowAnalyzer;
-
-
-    private final MapLinked<Workstation, Product, String> flowDependency = new MapLinked<>(); // USEI07
-    private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // Dependências entre workstations
+    private final Map<String, Integer> operationCounts; // USEI006
+    private final MachineFlowAnalyzer machineFlowAnalyzer; // USEI007
 
 
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
-    private HashMap<String, Long > operationWaitingTimes = new HashMap<>();
-    private HashMap<String, Integer >  countWaiting = new HashMap<>();
+    private HashMap<String, Double> operationWaitingTimes = new HashMap<>();
+    private HashMap<String, Integer> countWaiting = new HashMap<>();
 
 
     public Simulator() {
@@ -40,6 +36,7 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
+        this.operationCounts = new HashMap<>(); // USEI006
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
 
@@ -47,7 +44,7 @@ public class Simulator {
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
     }
 
-    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b) {
+    public Simulator(WorkstationsPerOperation a, ProductPriorityLine b, Map<String, Integer> operationCounts) {
         this.productLine = b;
         this.workstationsPerOperation = a;
         this.processedProducts = new ArrayList<>();
@@ -55,6 +52,7 @@ public class Simulator {
         this.totalProductionTime = 0.0; // USEI003
         this.operationTimes = new HashMap<>(); // USEI004
         this.workstationTimes = new HashMap<>();  // USEI005
+        this.operationCounts = operationCounts; // USEI006
         this.machineFlowAnalyzer = new MachineFlowAnalyzer(); // USEI007
 
         this.waitingQueue = new HashMap<>(); // Para organizar produtos por operação na espera
@@ -115,8 +113,6 @@ public class Simulator {
                                 workstation.processProduct(product);
                                 double operationTime = workstation.getTime();
 
-                                // Marcar a workstation como não disponível e agendar para voltar a ficar disponível
-                                //markWorkstationAsUnavailable(workstation, operationTime);
 
                                 productTimes.merge(product, operationTime, Double::sum); //USEI03
                                 totalProductionTime += operationTime; //USEI03
@@ -126,6 +122,9 @@ public class Simulator {
 
                                 String workstationId = workstation.getId(); // USEI05
                                 workstationTimes.merge(workstationId, operationTime, Double::sum); // USEI05
+
+                                operationCounts.merge(operationName, 1, Integer::sum); // USEI06
+
 
                                 machineFlowAnalyzer.addFlow(workstation, product); // USEI007
 
@@ -197,10 +196,11 @@ public class Simulator {
                             workstation.processProduct(product);
                             double operationTime = workstation.getTime();
 
-                            //markWorkstationAsUnavailable(workstation, operationTime);
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
                             operationTimes.merge(operationId, operationTime, Double::sum);
+
+                            operationCounts.merge(currentOperation.getId(), 1, Integer::sum); // USEI06
 
                             machineFlowAnalyzer.addFlow(workstation, product); // USEI007
 
@@ -287,35 +287,46 @@ public class Simulator {
         machineFlowAnalyzer.reset();
 
     }
-    public Operation calculateBeginingWaiting(Operation opr){
-        long time = System.currentTimeMillis();
+
+    public Operation calculateBeginingWaiting(Operation opr) {
         opr.setTime();
         return opr;
     }
+
     public void calculateFinishWaiting(Operation opr) {
         String name = opr.getId();
-        long time = (long) System.currentTimeMillis();
-        long finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, (long) 0);
-        operationWaitingTimes.putIfAbsent(name, finalTime);
+        double time = (double) System.currentTimeMillis();
+        double finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, (double) 0);
+
+        operationWaitingTimes.put(name, finalTime);
         int count = countWaiting.getOrDefault(name, 0) + 1;
-        countWaiting.putIfAbsent(name, count);
+        countWaiting.put(name, count);
     }
 
-    public void printAverageWaitingTimes (){
+    public void printAverageWaitingTimes() {
         System.out.println("__________Average_Waiting_Times_Report__________");
 
-        if(operationWaitingTimes.isEmpty())
+        if (operationWaitingTimes.isEmpty())
             System.out.println("---Error---You dont have any Waiting Time saved");
         else if (countWaiting.isEmpty())
             System.out.println("---Error---You didn't save how many times the Operation was operated");
-        else{
-            for(int i = 0; i < operationWaitingTimes.size(); i++ ){
-                String name =operationWaitingTimes.toString();
-                for(int j = 0; j< countWaiting.size(); j++){
-                    double time = (double) operationWaitingTimes.getOrDefault(name, (long) 0) / countWaiting.getOrDefault(name,(int)1);
-                    System.out.println("Operation "+name+" = "+time);
+        else {
+
+            for (Map.Entry<String, Double> tempo : operationTimes.entrySet()) {
+                for (Map.Entry<String, Integer> count : operationCounts.entrySet())
+                    if (tempo.getKey().equals(count.getKey())) {
+                        System.out.println("Operation: " + tempo.getKey() + " Average Execution Time: " + tempo.getValue() / count.getValue() + " seconds");
+                    }
+            }
+            for (int i = 0; i < operationWaitingTimes.size(); i++) {
+                String name = operationWaitingTimes.toString();
+                for (int j = 0; j < countWaiting.size(); j++) {
+                    double time = (double) operationWaitingTimes.getOrDefault(name, (double) 0) / countWaiting.getOrDefault(name, (int) 1);
+                    System.out.println("Operation " + name + " = " + time);
                 }
             }
+
+
         }
 
     }
