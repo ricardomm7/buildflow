@@ -19,9 +19,11 @@ public class Simulator {
     private final Map<String, Double> operationTimes; // USEI004
     private final Map<String, Double> workstationTimes; // USEI005
     private final Map<String, Map<String, Integer>> workstationDependencies = new HashMap<>(); // USEI07
-
     private final Map<String, Queue<Product>> waitingQueue; // Fila de espera para operações
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
+    private HashMap<String, Long > operationWaitingTimes = new HashMap<>();
+    private HashMap<String, Integer >  countWaiting = new HashMap<>();
+
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -158,6 +160,7 @@ public class Simulator {
 
     // Adiciona produto à fila de espera para uma operação
     private void addToWaitingQueue(Product product, Operation operation) {
+        operation = calculateBeginingWaiting(operation);
         waitingQueue.computeIfAbsent(operation.getId(), k -> new LinkedList<>()).add(product);
         waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
     }
@@ -181,6 +184,7 @@ public class Simulator {
 
                     for (Workstation workstation : availableWorkstations) {
                         if (workstation.isAvailable()) {
+                            calculateFinishWaiting(currentOperation);
                             queue.poll(); // Remove o produto da fila
                             workstation.processProduct(product);
                             double operationTime = workstation.getTime();
@@ -328,6 +332,39 @@ public class Simulator {
         waitingTimes.clear();
         processedProducts.clear();
     }
+    public Operation calculateBeginingWaiting(Operation opr){
+        long time = System.currentTimeMillis();
+        opr.setTime();
+        return opr;
+    }
+    public void calculateFinishWaiting(Operation opr) {
+        String name = opr.getId();
+        long time = (long) System.currentTimeMillis();
+        long finalTime = (time - opr.getTime()) + operationWaitingTimes.getOrDefault(name, (long) 0);
+        operationWaitingTimes.putIfAbsent(name, finalTime);
+        int count = countWaiting.getOrDefault(name, 0) + 1;
+        countWaiting.putIfAbsent(name, count);
+    }
+
+    public void printAverageWaitingTimes (){
+        System.out.println("__________Average_Waiting_Times_Report__________");
+
+        if(operationWaitingTimes.isEmpty())
+            System.out.println("---Error---You dont have any Waiting Time saved");
+        else if (countWaiting.isEmpty())
+            System.out.println("---Error---You didn't save how many times the Operation was operated");
+        else{
+            for(int i = 0; i < operationWaitingTimes.size(); i++ ){
+                String name =operationWaitingTimes.toString();
+                for(int j = 0; j< countWaiting.size(); j++){
+                    double time = (double) operationWaitingTimes.getOrDefault(name, (long) 0) / countWaiting.getOrDefault(name,(int)1);
+                    System.out.println("Operation "+name+" = "+time);
+                }
+            }
+        }
+
+    }
+
 
     public double getTotalProductionTime() {
         return totalProductionTime;

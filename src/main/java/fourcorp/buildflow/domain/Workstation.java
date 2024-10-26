@@ -18,6 +18,7 @@ public class Workstation implements Identifiable<String> {
         this.totalOper = 0;
     }
 
+
     public void startClock(boolean hasMoreOperation) {
         this.isAvailable = false;
         clock.countDownClock(this.time, () -> {

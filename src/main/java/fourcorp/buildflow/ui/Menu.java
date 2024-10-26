@@ -30,6 +30,7 @@ public class Menu {
             System.out.println("7. See machines dependencies.");
             System.out.println("8. Workstation analysis.");
             System.out.println("9. Generate product-component graph.");
+            System.out.println("10. Report Average Waiting Times per Operation");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -106,6 +107,9 @@ public class Menu {
                 } else {
                     System.out.println("Invalid choice. Please select a valid item.");
                 }
+                break;
+            case 10:
+                s.printAverageWaitingTimes();
                 break;
             case 0:
                 System.out.println("Exiting...");
