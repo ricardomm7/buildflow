@@ -20,7 +20,7 @@ public class Clock {
      * already in progress, the method returns without starting a new one.
      *
      * @param countdownTimeMillis the duration of the countdown in milliseconds
-     * @param callback the callback to execute when the countdown reaches zero
+     * @param callback            the callback to execute when the countdown reaches zero
      */
     public void countDownClock(int countdownTimeMillis, Runnable callback) {
         if (isCounting) {

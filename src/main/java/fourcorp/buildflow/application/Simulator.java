@@ -111,7 +111,7 @@ public class Simulator {
      * Executes the main simulation loop for the given list of products.
      *
      * @param products the list of products to be processed
-     * @param boo a boolean flag for workstation availability filtering
+     * @param boo      a boolean flag for workstation availability filtering
      */
     private void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
@@ -188,7 +188,7 @@ public class Simulator {
     /**
      * Adds a product to the waiting queue for a specified operation.
      *
-     * @param product the product to add to the waiting queue
+     * @param product   the product to add to the waiting queue
      * @param operation the operation for which the product is waiting
      */
     private void addToWaitingQueue(Product product, Operation operation) {
@@ -253,7 +253,6 @@ public class Simulator {
         }
     }
 
-
     /**
      * Resets each product to its initial operation.
      *
@@ -266,6 +265,7 @@ public class Simulator {
     }
 
     // USEI003 e USEI004
+
     /**
      * Prints statistics on production time for each product and total production time.
      */
@@ -304,6 +304,7 @@ public class Simulator {
     }
 
     // USEI005
+
     /**
      * Prints analysis on the total operating time and its importance in the production line.
      */
