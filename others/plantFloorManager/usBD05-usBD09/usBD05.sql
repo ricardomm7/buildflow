@@ -16,6 +16,6 @@ JOIN
 JOIN
     Costumer c ON o.CostumerVAT = c.VAT
 WHERE
-    o.DeliveryDate BETWEEN TO_DATE('2024-10-26', 'YYYY-MM-DD') AND TO_DATE('2025-01-10', 'YYYY-MM-DD')
+    o.DeliveryDate BETWEEN TO_DATE('2024-10-26', 'YYYY-MM-DD') AND TO_DATE('2025-01-10', 'YYYY-MM-DD') --Substituir pelas datas desejadas
 ORDER BY
     o.DeliveryDate;

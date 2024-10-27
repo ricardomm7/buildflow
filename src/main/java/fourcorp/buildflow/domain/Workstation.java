@@ -47,6 +47,8 @@ public class Workstation implements Identifiable<String> {
      */
     public void processProduct(Product product) {
         System.out.println("Processing product " + product.getId() + " in machine " + idMachine + " - Estimated time: " + time + " sec");
+        increaseOpCounter();
+        increaseOperationTime();
         startClock();
     }
 
@@ -58,8 +60,6 @@ public class Workstation implements Identifiable<String> {
         this.isAvailable = false;
         clock.countDownClock(this.time, () -> {
             this.isAvailable = true;
-            increaseOpCounter();
-            increaseOperationTime();
         });
     }
 
