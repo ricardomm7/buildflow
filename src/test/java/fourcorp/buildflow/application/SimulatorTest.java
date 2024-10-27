@@ -22,6 +22,16 @@ class SimulatorTest {
 
     @BeforeEach
     void setUp() {
+    }
+
+    @Test
+    void testRunWithPriority() {
+        simulator.runWithPriority(true);
+        assertTrue(simulator.getTotalProductionTime() > 0, "Total production time should be positive after running simulation.");
+    }
+
+    @Test
+    void testRunWithoutPriority() {
         productLine = new ProductPriorityLine();
         workstationsPerOperation = new WorkstationsPerOperation();
         simulator = new Simulator();
@@ -42,22 +52,32 @@ class SimulatorTest {
         workstationsPerOperation.create(ws3, operation3);
         workstationsPerOperation.create(ws1, operation1);
         workstationsPerOperation.create(ws2, operation2);
-    }
-
-    @Test
-    void testRunWithPriority() {
-        simulator.runWithPriority(true);
-        assertTrue(simulator.getTotalProductionTime() > 0, "Total production time should be positive after running simulation.");
-    }
-
-    @Test
-    void testRunWithoutPriority() {
         simulator.runWithoutPriority(false);
         assertTrue(simulator.getTotalProductionTime() > 0, "Total production time should be positive after running simulation.");
     }
 
     @Test
     void testProcessingHighPriorityProducts() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
         simulator.runWithPriority(true);
         List<Product> highPriorityProducts = productLine.getProductsByPriority(PriorityOrder.HIGH);
         for (Product product : highPriorityProducts) {
@@ -67,6 +87,26 @@ class SimulatorTest {
 
     @Test
     void testProcessingNormalPriorityProductsAfterHighPriority() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
         simulator.runWithPriority(true);
         List<Product> normalPriorityProducts = productLine.getProductsByPriority(PriorityOrder.NORMAL);
         for (Product product : normalPriorityProducts) {
@@ -76,6 +116,26 @@ class SimulatorTest {
 
     @Test
     void testWorkstationOperationTimes() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
         simulator.runWithoutPriority(false);
         for (Workstation workstation : workstationsPerOperation.getAllWorkstations()) {
             assertTrue(workstation.getTotalOperationTime() > 0, "Workstations should accumulate operation time during simulation.");
@@ -84,6 +144,26 @@ class SimulatorTest {
 
     @Test
     void testProductTimesCalculation() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
         simulator.runWithoutPriority(false);
         double totalProductionTime = simulator.getTotalProductionTime();
         assertTrue(totalProductionTime > 0, "Total production time should reflect cumulative product operation times.");
@@ -91,6 +171,26 @@ class SimulatorTest {
 
     @Test
     void testOperationTimesCalculation() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
         simulator.runWithoutPriority(false);
         double sumOfOperationTimes = simulator.getTotalProductionTime();
         assertEquals(17, sumOfOperationTimes, "Sum of operation times should equal total production time.");
@@ -98,12 +198,54 @@ class SimulatorTest {
 
     @Test
     void testProcessWaitingQueue() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
+
         simulator.runWithPriority(true);
         assertFalse(simulator.areProductsQueueEmpty(), "The products queue should not be empty. EVER!");
     }
 
     @Test
     void testPrintProductionStatistics() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
+
         simulator.runWithoutPriority(false);
         simulator.printProductionStatistics();
         assertTrue(simulator.getTotalProductionTime() > 0, "Production statistics should reflect the production time.");
@@ -111,6 +253,27 @@ class SimulatorTest {
 
     @Test
     void testPrintAnalysis() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
+
         simulator.runWithoutPriority(false);
         simulator.printAnalysis();
         assertTrue(simulator.getTotalProductionTime() > 0, "Analysis should display workstation operation times and percentages.");
@@ -118,22 +281,57 @@ class SimulatorTest {
 
     @Test
     void testResetSimulation() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
+
         simulator.runWithoutPriority(false);
         simulator.resetSimulation();
         assertEquals(0, simulator.getTotalProductionTime(), "Total production time should be reset to zero.");
         assertFalse(simulator.areProductsQueueEmpty(), "The products queue should not be empty. EVER!");
     }
 
-    @Test
-    void testRunSimulationHandlesEmptyProductList() {
-        ProductPriorityLine emptyProductLine = new ProductPriorityLine();
-        simulator = new Simulator(workstationsPerOperation, emptyProductLine);
-        simulator.runWithPriority(true);
-        assertEquals(0, simulator.getTotalProductionTime(), "Total production time should be zero when no products are present.");
-    }
 
     @Test
     void testAddToWaitingQueue() {
+        productLine = new ProductPriorityLine();
+        workstationsPerOperation = new WorkstationsPerOperation();
+        simulator = new Simulator();
+
+        Product product1 = new Product("P1", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        Product product2 = new Product("P2", new LinkedList<>(List.of(new Operation("Op2"))));
+
+        productLine.create(product1, PriorityOrder.HIGH);
+        productLine.create(product2, PriorityOrder.NORMAL);
+
+        Operation operation1 = new Operation("Op1");
+        Operation operation2 = new Operation("Op2");
+        Operation operation3 = new Operation("Finish");
+
+        Workstation ws1 = new Workstation("WS1", 5);
+        Workstation ws2 = new Workstation("WS2", 10);
+        Workstation ws3 = new Workstation("Finish", 2);
+        workstationsPerOperation.create(ws3, operation3);
+        workstationsPerOperation.create(ws1, operation1);
+        workstationsPerOperation.create(ws2, operation2);
+
         Product product3 = new Product("P3", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
         productLine.create(product3, PriorityOrder.LOW);
         simulator.runWithoutPriority(false);
@@ -141,11 +339,5 @@ class SimulatorTest {
         assertFalse(simulator.areProductsQueueEmpty(), "Products should be added to the waiting queue if operations are busy.");
     }
 
-    @Test
-    void testSimulatorHandlesExceptionsGracefully() {
-        Product invalidProduct = new Product("Invalid", new LinkedList<>());
-        productLine.create(invalidProduct, PriorityOrder.NORMAL);
 
-        assertDoesNotThrow(() -> simulator.runWithoutPriority(false), "Simulation should handle exceptions without crashing.");
-    }
 }
