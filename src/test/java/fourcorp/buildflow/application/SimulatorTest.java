@@ -123,4 +123,29 @@ class SimulatorTest {
         assertEquals(0, simulator.getTotalProductionTime(), "Total production time should be reset to zero.");
         assertFalse(simulator.areProductsQueueEmpty(), "The products queue should not be empty. EVER!");
     }
+
+    @Test
+    void testRunSimulationHandlesEmptyProductList() {
+        ProductPriorityLine emptyProductLine = new ProductPriorityLine();
+        simulator = new Simulator(workstationsPerOperation, emptyProductLine);
+        simulator.runWithPriority(true);
+        assertEquals(0, simulator.getTotalProductionTime(), "Total production time should be zero when no products are present.");
+    }
+
+    @Test
+    void testAddToWaitingQueue() {
+        Product product3 = new Product("P3", new LinkedList<>(List.of(new Operation("Op1"), new Operation("Finish"))));
+        productLine.create(product3, PriorityOrder.LOW);
+        simulator.runWithoutPriority(false);
+
+        assertFalse(simulator.areProductsQueueEmpty(), "Products should be added to the waiting queue if operations are busy.");
+    }
+
+    @Test
+    void testSimulatorHandlesExceptionsGracefully() {
+        Product invalidProduct = new Product("Invalid", new LinkedList<>());
+        productLine.create(invalidProduct, PriorityOrder.NORMAL);
+
+        assertDoesNotThrow(() -> simulator.runWithoutPriority(false), "Simulation should handle exceptions without crashing.");
+    }
 }
