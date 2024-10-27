@@ -342,7 +342,7 @@ public class Simulator {
         operationWaitingTimes.clear();
         countWaiting.clear();
         processedProducts.clear();
-        machineFlowAnalyzer.reset();
+        MachineFlowAnalyzer.reset();
         operationCounts.clear();
     }
 
@@ -354,6 +354,7 @@ public class Simulator {
      */
     public Operation calculateBeginingWaiting(Operation opr) {
         opr.setTime();
+
         return opr;
     }
 
@@ -416,5 +417,98 @@ public class Simulator {
      */
     public double getTotalProductionTime() {
         return totalProductionTime;
+    }
+
+    /**
+      * Gets the total execution time for a specific operation.
+      * Implementation for USEI04.
+      *
+      * @param op the operation identifier
+      * @return the total execution time for the operation
+      */
+    public double getOperationExecutionTime(String op) {
+        return operationTimes.getOrDefault(op, 0.0);
+    }
+
+    /**
+      * Gets a map of workstation IDs to their total operation times.
+      * Implementation for USEI05.
+      *
+      * @return a map containing workstation IDs and their corresponding total operation times
+      */
+    public Map<String, Double> getWorkstationOperationTimes() {
+        Map<String, Double> workstationTimes = new HashMap<>();
+        for (Workstation workstation : workstationsPerOperation.getAllWorkstations()) {
+            workstationTimes.put(workstation.getId(), workstation.getTotalOperationTime());
+        }
+        return workstationTimes;
+    }
+
+    /**
+      * Gets the workstations per operation mapping.
+      * Implementation for USEI05.
+      *
+      * @return the WorkstationsPerOperation object containing the mapping of operations to workstations
+      */
+    public WorkstationsPerOperation getWorkstationsPerOperation() {
+        return workstationsPerOperation;
+    }
+
+    /**
+      * Calculates the average waiting time for a specific operation.
+      * Implementation for USEI06.
+      *
+      * @param op the operation identifier
+      * @return the average waiting time for the operation
+      */
+    public double getAverageWaitingTime(String op) {
+        return operationWaitingTimes.getOrDefault(op, 0.0) / countWaiting.getOrDefault(op, 1);
+    }
+
+    /**
+      * Calculates the average execution time for a specific operation.
+      * Implementation for USEI06.
+      *
+      * @param op the operation identifier
+      * @return the average execution time for the operation
+      */
+    public double getAverageExecutionTime(String op) {
+        return operationTimes.getOrDefault(op, 0.0) / operationCounts.getOrDefault(op, 1);
+    }
+
+    /**
+      * Gets the map containing operation waiting times.
+      *
+      * @return a map containing operation identifiers and their corresponding waiting times
+      */
+    public Map<String, Double> getOperationWaitingTimes() {
+        return operationWaitingTimes;
+    }
+
+    /**
+      * Gets the map containing waiting counts per operation.
+      *
+      * @return a map containing operation identifiers and their corresponding waiting counts
+      */
+    public Map<String, Integer> getCountWaiting() {
+        return countWaiting;
+    }
+
+    /**
+      * Gets the map containing operation execution times.
+      *
+      * @return a map containing operation identifiers and their corresponding execution times
+      */
+    public Map<String, Double> getOperationTimes() {
+        return operationTimes;
+    }
+
+    /**
+      * Gets the map containing operation execution counts.
+      *
+      * @return a map containing operation identifiers and their corresponding execution counts
+      */
+    public Map<String, Integer> getOperationCounts() {
+        return operationCounts;
     }
 }
