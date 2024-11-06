@@ -16,4 +16,10 @@ int main() {
         printf("%d ", array[i]);
     }
     printf("\n\n");
+    
+    printf("Inicial Array contents: \n");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", buffer[i]);
+    }
+    printf("\n\n");
 }
