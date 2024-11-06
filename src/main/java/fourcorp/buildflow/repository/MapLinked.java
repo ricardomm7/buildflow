@@ -40,6 +40,7 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
     /**
      * Adds a new item of type {@code T} to the map under the specified key {@code Q}.
      * If the key does not exist, a new entry is created.
+     * <p>The complexity is O(n).</p>
      *
      * @param value The item to be added. Must not be {@code null}.
      * @param key   The key under which the item should be stored. If the key does not exist, a new entry is created.
@@ -49,29 +50,30 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
         if (value == null) {
             throw new IllegalArgumentException("Value cannot be null");
         }
-        for (Q existingKey : line.keySet()) {
+        for (Q existingKey : line.keySet()) { // O(n)
             if (existingKey.equals(key)) {
                 List<T> valueList = line.get(existingKey);
-                valueList.add(value);
+                valueList.add(value); // O(n) * O(1) = O(n)
                 return;
             }
         }
         LinkedList<T> valueList = new LinkedList<>();
-        valueList.add(value);
-        line.put(key, valueList);
+        valueList.add(value); // O(1)
+        line.put(key, valueList); // O(1)
     }
 
     /**
      * Retrieves all items associated with the given key {@code Q}. If no items are associated with
      * the key, an empty list is returned.
+     * <p>The complexity is O(n).</p>
      *
      * @param key The key for which to retrieve the associated items.
      * @return A {@code LinkedList} of items of type {@code T} associated with the specified key.
      */
     public LinkedList<T> getByKey(Q key) {
-        for (Q existingKey : line.keySet()) {
+        for (Q existingKey : line.keySet()) { // O(n)
             if (existingKey.equals(key)) {
-                return new LinkedList<>(line.get(existingKey));
+                return new LinkedList<>(line.get(existingKey)); // O(n) * O(1) = O(n)
             }
         }
         return new LinkedList<>();
@@ -141,13 +143,14 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
 
     /**
      * Retrieves all values (items of type {@code T}) stored across all the linked lists in the map.
+     * <p>The complexity is O(n).</p>
      *
      * @return A {@code LinkedList} containing all values of type {@code T} from all the lists in the map.
      */
     public LinkedList<T> getAllValues() {
         LinkedList<T> allValues = new LinkedList<>();
-        for (LinkedList<T> items : line.values()) {
-            allValues.addAll(items);
+        for (LinkedList<T> items : line.values()) { // O(n)
+            allValues.addAll(items); // O(n) * O(1) = O(n)
         }
         return allValues;
     }

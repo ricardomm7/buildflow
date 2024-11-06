@@ -109,6 +109,7 @@ public class Simulator {
 
     /**
      * Executes the main simulation loop for the given list of products.
+     * <p>The complexity is O(n^3).</p>
      *
      * @param products the list of products to be processed
      * @param boo      a boolean flag for workstation availability filtering
@@ -120,33 +121,29 @@ public class Simulator {
                 itemsProcessed = false;
                 List<Product> articlesToMove = new ArrayList<>();
 
-                for (Product product : products) {
+                for (Product product : products) { // O(n) * O(n) = O(n^2)
                     if (processedProducts.contains(product)) {
                         continue;
                     }
 
-                    Operation currentOperation = product.getCurrentOperation();
+                    Operation currentOperation = product.getCurrentOperation(); // O(n^2) * O(1) = O(n^2)
 
                     if (currentOperation != null) {
                         List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo);
 
                         boolean operationStarted = false;
-                        for (Workstation workstation : availableWorkstations) {
+                        for (Workstation workstation : availableWorkstations) { // O(n^2) * O(n) = O(n^3)
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
-                                workstation.processProduct(product);
+                                workstation.processProduct(product); // O(n^3) * O(1) = O(n^3)
                                 double operationTime = workstation.getTime();
 
+                                String operationName = currentOperation.getId();
+                                operationTimes.merge(operationName, operationTime, Double::sum);
 
-                                productTimes.merge(product, operationTime, Double::sum); //USEI03
-                                totalProductionTime += operationTime; //USEI03
+                                operationCounts.merge(operationName, 1, Integer::sum);
 
-                                String operationName = currentOperation.getId(); // USEI04
-                                operationTimes.merge(operationName, operationTime, Double::sum); //USEI04
-
-                                operationCounts.merge(operationName, 1, Integer::sum); // USEI06
-
-                                machineFlowAnalyzer.addFlow(workstation, product); // USEI007
+                                machineFlowAnalyzer.addFlow(workstation, product);
 
                                 itemsProcessed = true;
 
@@ -178,7 +175,7 @@ public class Simulator {
                     }
                 }
 
-            } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty());
+            } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty()); // O(n)
 
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
@@ -208,33 +205,34 @@ public class Simulator {
 
     /**
      * Processes the waiting queue, attempting to move products to available workstations.
+     * <p>The complexity is O(n^3).</p>
      */
     private void processWaitingQueue() {
-        for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) {
+        for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) { // O(n)
             String operationId = entry.getKey();
             Queue<Product> queue = entry.getValue();
 
-            while (!queue.isEmpty()) {
+            while (!queue.isEmpty()) { // O(n) * O(n) = O(n^2)
                 Product product = queue.peek();
                 Operation currentOperation = product.getCurrentOperation();
 
                 if (currentOperation != null && currentOperation.getId().equals(operationId)) {
                     List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, false);
 
-                    for (Workstation workstation : availableWorkstations) {
+                    for (Workstation workstation : availableWorkstations) { // O(n^2) * O(n) = O(n^3)
                         if (workstation.isAvailable()) {
                             calculateFinishWaiting(currentOperation);
-                            queue.poll(); // Remove o produto da fila
-                            workstation.processProduct(product);
+                            queue.poll();
+                            workstation.processProduct(product); // O(n^3) * O(1) = O(n^3)
                             double operationTime = workstation.getTime();
 
                             productTimes.merge(product, operationTime, Double::sum);
                             totalProductionTime += operationTime;
                             operationTimes.merge(operationId, operationTime, Double::sum);
 
-                            operationCounts.merge(currentOperation.getId(), 1, Integer::sum); // USEI06
+                            operationCounts.merge(currentOperation.getId(), 1, Integer::sum);
 
-                            machineFlowAnalyzer.addFlow(workstation, product); // USEI007
+                            machineFlowAnalyzer.addFlow(workstation, product);
 
 
                             if (product.moveToNextOperation()) {

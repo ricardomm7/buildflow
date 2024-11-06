@@ -37,26 +37,27 @@ public class WorkstationsPerOperation {
     /**
      * Retrieves a list of available workstations for a specified operation.
      * Optionally sorts the list based on the specified flag.
+     * <p>The complexity is O(n^2).</p>
      *
      * @param operation the operation for which to retrieve available workstations
      * @param b         if true, the returned list is sorted by processing time in ascending order
      * @return a list of available workstations associated with the specified operation
      */
     public List<Workstation> getWorkstationsByOperation(Operation operation, boolean b) {
-        List<Workstation> availableWorkstations = new ArrayList<>();
-        for (Operation keyOperation : workstationsPerOperation.getKeys()) {
+        List<Workstation> availableWorkstations = new ArrayList<>(); // O(1)
+        for (Operation keyOperation : workstationsPerOperation.getKeys()) { // O(n)
             if (keyOperation.getId().equals(operation.getId())) {
-                List<Workstation> workstations = workstationsPerOperation.getByKey(keyOperation);
-                for (Workstation workstation : workstations) {
+                List<Workstation> workstations = workstationsPerOperation.getByKey(keyOperation); // O(n) * O(1) = O(n)
+                for (Workstation workstation : workstations) { // O(n) * O(n) = O(n^2)
                     if (workstation.isAvailable()) {
-                        availableWorkstations.add(workstation);
+                        availableWorkstations.add(workstation); // O(n^2) * O(1) = O(n^2)
                     }
                 }
                 break;
             }
         }
         if (b) {
-            availableWorkstations.sort(Comparator.comparingDouble(Workstation::getTime));
+            availableWorkstations.sort(Comparator.comparingDouble(Workstation::getTime)); // O(nlog(n))
         }
         return availableWorkstations;
     }
