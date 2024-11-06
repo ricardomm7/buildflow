@@ -69,28 +69,29 @@ public class Simulator {
 
     /**
      * Runs the simulation considering product priorities, processing high, normal, and low priority products in order.
+     * The complexity of USEI08 is O(n)
      *
      * @param b a boolean flag for workstation availability filtering
      */
     public void runWithPriority(boolean b) {
-        resetSimulation();
+        resetSimulation(); // O(n)
         if (!productLine.getProductsByPriority(PriorityOrder.HIGH).isEmpty()) {
-            processedProducts.clear();
-            returnToFirstOp(productLine.getAllProducts());
+            processedProducts.clear(); // O(1)
+            returnToFirstOp(productLine.getAllProducts()); // O(n)
             System.out.println("\n\n>>> NOW IT'S PROCESSING THE HIGH PRIORITY PRODUCTS\n\n");
             runSimulation(productLine.getProductsByPriority(PriorityOrder.HIGH), b);
         }
 
         if (!productLine.getProductsByPriority(PriorityOrder.NORMAL).isEmpty()) {
-            processedProducts.clear();
-            returnToFirstOp(productLine.getAllProducts());
+            processedProducts.clear(); // O(1)
+            returnToFirstOp(productLine.getAllProducts()); // O(n)
             System.out.println("\n\n>>> NOW IT'S PROCESSING THE NORMAL PRIORITY PRODUCTS\n\n");
             runSimulation(productLine.getProductsByPriority(PriorityOrder.NORMAL), b);
         }
 
         if (!productLine.getProductsByPriority(PriorityOrder.LOW).isEmpty()) {
-            processedProducts.clear();
-            returnToFirstOp(productLine.getAllProducts());
+            processedProducts.clear(); // O(1)
+            returnToFirstOp(productLine.getAllProducts()); // O(n)
             System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
             runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
         }
@@ -98,6 +99,7 @@ public class Simulator {
 
     /**
      * Runs the simulation without considering product priorities.
+     * The complexity of USEI08 is O(n).
      *
      * @param b a boolean flag for workstation availability filtering
      */
@@ -109,7 +111,7 @@ public class Simulator {
 
     /**
      * Executes the main simulation loop for the given list of products.
-     * <p>The complexity is O(n^3).</p>
+     * <p>The complexity is O(n^6).</p>
      *
      * @param products the list of products to be processed
      * @param boo      a boolean flag for workstation availability filtering
@@ -117,7 +119,7 @@ public class Simulator {
     private void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
         try {
-            do {
+            do { // O(n)
                 itemsProcessed = false;
                 List<Product> articlesToMove = new ArrayList<>();
 
@@ -129,13 +131,13 @@ public class Simulator {
                     Operation currentOperation = product.getCurrentOperation(); // O(n^2) * O(1) = O(n^2)
 
                     if (currentOperation != null) {
-                        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo);
+                        List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo); // O(n^2) * O(n^2) = O(n^4)
 
                         boolean operationStarted = false;
-                        for (Workstation workstation : availableWorkstations) { // O(n^2) * O(n) = O(n^3)
+                        for (Workstation workstation : availableWorkstations) { // O(n^4) * O(n) = O(n^5)
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
-                                workstation.processProduct(product); // O(n^3) * O(1) = O(n^3)
+                                workstation.processProduct(product); // O(n^5) * O(1) = O(n^5)
                                 double operationTime = workstation.getTime();
 
                                 String operationName = currentOperation.getId();
@@ -166,7 +168,7 @@ public class Simulator {
                     }
                 }
                 // Processa a fila de espera, se houver máquinas disponíveis para as operações pendentes
-                processWaitingQueue();
+                processWaitingQueue(); // O(n) * O(n^5) = O(n^6)
 
                 for (Product product : articlesToMove) {
                     Operation nextOperation = product.getCurrentOperation();
@@ -175,7 +177,7 @@ public class Simulator {
                     }
                 }
 
-            } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty()); // O(n)
+            } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty());
 
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
@@ -191,7 +193,7 @@ public class Simulator {
     private void addToWaitingQueue(Product product, Operation operation) {
         operation = calculateBeginingWaiting(operation);
         waitingQueue.computeIfAbsent(operation.getId(), k -> new LinkedList<>()).add(product);
-        waitingTimes.merge(product, 0.0, Double::sum); // Inicializa o tempo de espera, se necessário
+        waitingTimes.merge(product, 0.0, Double::sum);
     }
 
     /**
@@ -205,25 +207,25 @@ public class Simulator {
 
     /**
      * Processes the waiting queue, attempting to move products to available workstations.
-     * <p>The complexity is O(n^3).</p>
+     * <p>The complexity is O(n^5).</p>
      */
     private void processWaitingQueue() {
         for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) { // O(n)
             String operationId = entry.getKey();
             Queue<Product> queue = entry.getValue();
 
-            while (!queue.isEmpty()) { // O(n) * O(n) = O(n^2)
+            while (!queue.isEmpty()) {  // O(n) * O(n) = O(n^2)
                 Product product = queue.peek();
                 Operation currentOperation = product.getCurrentOperation();
 
                 if (currentOperation != null && currentOperation.getId().equals(operationId)) {
-                    List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, false);
+                    List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, false); // O(n^2) * O(n^2) = O(n^4)
 
-                    for (Workstation workstation : availableWorkstations) { // O(n^2) * O(n) = O(n^3)
+                    for (Workstation workstation : availableWorkstations) { // O(n^4) * O(n) = O(n^5)
                         if (workstation.isAvailable()) {
                             calculateFinishWaiting(currentOperation);
                             queue.poll();
-                            workstation.processProduct(product); // O(n^3) * O(1) = O(n^3)
+                            workstation.processProduct(product);
                             double operationTime = workstation.getTime();
 
                             productTimes.merge(product, operationTime, Double::sum);
@@ -257,8 +259,8 @@ public class Simulator {
      * @param f the list of products to reset
      */
     private void returnToFirstOp(List<Product> f) {
-        for (Product a : f) {
-            a.setCurrentOperationIndex(0);
+        for (Product a : f) { // O(n)
+            a.setCurrentOperationIndex(0); // O(n) * O(1) = O(n)
         }
     }
 
@@ -266,6 +268,8 @@ public class Simulator {
 
     /**
      * Prints statistics on production time for each product and total production time.
+     * The complexity of USEI03 is O(1).
+     * The complexity of USEI04 is O(n).
      */
     public void printProductionStatistics() {
         System.out.println();
@@ -288,15 +292,15 @@ public class Simulator {
             System.out.printf(lineFormat, entry.getKey(), String.format("%.2f", entry.getValue()));
         }
         System.out.println(separator);
-        System.out.printf("%nTotal Production Time for all products: %.2f seconds%n", totalProductionTime);
+        System.out.printf("%nTotal Production Time for all products: %.2f seconds%n", totalProductionTime); // O(1)
         System.out.println("\nExecution Time by Operation:");
         System.out.println(separator);
         System.out.printf(lineFormat, "Operation", "Time (sec)");
         System.out.println(separator);
-        for (Map.Entry<String, Double> entry : operationTimes.entrySet()) {
-            String operation = entry.getKey();
-            Double time = entry.getValue();
-            System.out.printf(lineFormat, operation, String.format("%.2f", time));
+        for (Map.Entry<String, Double> entry : operationTimes.entrySet()) { // O(n)
+            String operation = entry.getKey(); // O(n) * O(1) = O(n)
+            Double time = entry.getValue(); // O(n) * O(1) = O(n)
+            System.out.printf(lineFormat, operation, String.format("%.2f", time)); // O(n) * O(1) = O(n)
         }
         System.out.println(separator);
     }
@@ -305,6 +309,7 @@ public class Simulator {
 
     /**
      * Prints analysis on the total operating time and its importance in the production line.
+     * The complexity of USEI05 is O(nlog(n)).
      */
     public void printAnalysis() {
         System.out.println();
@@ -314,7 +319,7 @@ public class Simulator {
         System.out.println(separator);
         System.out.format(lineFormat, "Workstation ID", "Total Operation", "Operation/Execution Percentage");
         System.out.println(separator);
-        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage(totalProductionTime)) {
+        for (Workstation e : workstationsPerOperation.getWorkstationsAscendingByPercentage(totalProductionTime)) { // O(nlog(n))
             if (e.getTotalOperationTime() == 0) {
                 System.out.format(lineFormat, e.getId(), "N/A", "It didn't operate");
             } else {
@@ -332,16 +337,16 @@ public class Simulator {
         for (Workstation a : workstationsPerOperation.getAllWorkstations()) {
             a.setTotalOperationTime(0);
         }
-        productTimes.clear();
-        totalProductionTime = 0.0;
-        operationTimes.clear();
-        waitingQueue.clear();
-        waitingTimes.clear();
-        operationWaitingTimes.clear();
-        countWaiting.clear();
-        processedProducts.clear();
-        MachineFlowAnalyzer.reset();
-        operationCounts.clear();
+        productTimes.clear(); // O(1)
+        totalProductionTime = 0.0; // O(1)
+        operationTimes.clear(); // O(1)
+        waitingQueue.clear(); // O(1)
+        waitingTimes.clear(); // O(1)
+        operationWaitingTimes.clear(); // O(1)
+        countWaiting.clear(); // O(1)
+        processedProducts.clear(); // O(1)
+        MachineFlowAnalyzer.reset(); // O(1)
+        operationCounts.clear(); // O(1)
     }
 
     /**
@@ -372,6 +377,7 @@ public class Simulator {
 
     /**
      * Prints a report on average operating times, waiting times, and total waiting times for operations.
+     * The complexity of the USEI06 is O(n).
      */
     public void printAverageTimesReport() {
         System.out.println();
@@ -390,19 +396,19 @@ public class Simulator {
             System.out.println(separator);
             System.out.printf(lineFormat, "Operation", "Average Operation Time (sec)", "Average Waiting Time (sec)", "Total Waiting Time (sec)", "No. Op");
             System.out.println(separator);
-            for (String name : operationWaitingTimes.keySet()) {
-                double avgWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name, 1);
-                avgWaitingTime = avgWaitingTime * 0.001;
-                BigDecimal roundedWaitingTime = new BigDecimal(avgWaitingTime).setScale(2, RoundingMode.HALF_UP);
+            for (String name : operationWaitingTimes.keySet()) { // O(n)
+                double avgWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name, 1); // O(n) * O(1) = O(n)
+                avgWaitingTime = avgWaitingTime * 0.001; // O(n) * O(1) = O(n)
+                BigDecimal roundedWaitingTime = new BigDecimal(avgWaitingTime).setScale(2, RoundingMode.HALF_UP); // O(n) * O(1) = O(n)
 
-                double totalWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0);
-                totalWaitingTime = totalWaitingTime * 0.001;
-                BigDecimal totalWaiting = new BigDecimal(totalWaitingTime).setScale(2, RoundingMode.HALF_UP);
+                double totalWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0); // O(n) * O(1) = O(n)
+                totalWaitingTime = totalWaitingTime * 0.001; // O(n) * O(1) = O(n)
+                BigDecimal totalWaiting = new BigDecimal(totalWaitingTime).setScale(2, RoundingMode.HALF_UP); // O(n) * O(1) = O(n)
 
-                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1);
-                BigDecimal roundedOperationTime = new BigDecimal(avgOperationTime).setScale(2, RoundingMode.UP);
+                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1); // O(n) * O(1) = O(n)
+                BigDecimal roundedOperationTime = new BigDecimal(avgOperationTime).setScale(2, RoundingMode.UP); // O(n) * O(1) = O(n)
 
-                System.out.printf(lineFormat, name, roundedOperationTime, roundedWaitingTime, totalWaiting, operationCounts.getOrDefault(name, 1));
+                System.out.printf(lineFormat, name, roundedOperationTime, roundedWaitingTime, totalWaiting, operationCounts.getOrDefault(name, 1)); // O(n) * O(1) = O(n)
             }
             System.out.println(separator);
         }

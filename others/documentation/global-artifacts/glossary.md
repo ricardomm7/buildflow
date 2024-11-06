@@ -17,6 +17,7 @@
 | **Customer**                        | An alternative work for "Client".                                                                                                                                    |
 | **Customer’s identification**       | Information used to identify customers, such as tax identification number (NIF).                                                                                     |
 | **Cutlery**                         | One of the sectors that the software solution can be applied to, involving the production of cutlery products.                                                       |
+| **Critical Path**                   | A sequence of stages or tasks that determine the minimum time required to complete a project. Crucial for project management and production scheduling.              |
 | **Delivery**                        | The process of transporting finished products to the customer's address.                                                                                             |
 | **Employee**                        | Individuals who work in the production facility.                                                                                                                     |
 | **Extraction**                      | The process of obtaining raw materials from natural sources.                                                                                                         |
@@ -37,6 +38,7 @@
 | **Layouts**                         | The arrangement of machines, workstations, and equipment on the plant floor.                                                                                         |
 | **Machine operation**               | The process of operating machines to perform specific tasks in the production process.                                                                               |
 | **Machines**                        | Equipment used in the production process to perform various operations.                                                                                              |
+| **MachManager Component**           | A component designed to manage machines on the plant floor, responsible for handling commands and tracking machine activity in the production process.               |
 | **Maintenance**                     | The activities involved in keeping machines and equipment in good working condition.                                                                                 |
 | **Management**                      | The process of overseeing and coordinating production activities.                                                                                                    |
 | **Manufacturing facility**          | The location where products are produced, including all necessary equipment and infrastructure.                                                                      |
@@ -53,6 +55,7 @@
 | **Part**                            | An individual component used in the production of products, identified by a unique Part ID and description.                                                          |
 | **Plant Floor Manager**             | Responsible for specifying the factory production lines and their respective machines.                                                                               |
 | **Planning**                        | The process of organizing and scheduling production activities to meet customer orders and optimize resources.                                                       |
+| **Priority Queue**                  | A  queue structure that assigns processing order based on priority levels (high, normal, low), often used to allocate production items to available machines.        |
 | **Process**                         | A series of actions or steps taken to achieve a particular end in production.                                                                                        |
 | **Processing**                      | The series of operations performed on raw materials to convert them into finished products.                                                                          |
 | **Product**                         | An item produced for sale characterized by attributes such as name, manufacturing date, size, and colour.                                                            |
@@ -69,11 +72,14 @@
 | **Productions Plan**                | A detailed schedule of production activities, including the sequence of operations and the allocation of resources.                                                  |
 | **Product Owner**                   | The Product Owner is responsible for maximizing the value of the product resulting from the work of the development team.                                            |
 | **Project**                         | A temporary endeavor undertaken to create a unique product or service, often involving complex structures and long lead times.                                       |
+| **Project-based Manufacturing**     | A type of manufacturing focused on unique products or short runs, characterized by high customization and often longer production lead times.                        |
 | **Raw materials (leaf nodes)**      | The basic materials used in the production process, represented as leaf nodes in the BOM.                                                                            |
 | **Refining**                        | The process of purifying raw materials to improve their quality.                                                                                                     |
 | **Robotic Units**                   | Automated machines that perform tasks without human intervention.                                                                                                    |
 | **Sectors**                         | Different areas of industry where the software solution can be applied, such as metalworking, furniture, cork, footwear, and cutlery.                                |
+| **Simulation Tool**                 | A tool for evaluating production capacity by simulating production flows, identifying bottlenecks, and assessing workstation utilization and operation times.        |
 | **Software Solutions**              | Software applications developed to support production management and other business processes.                                                                       |
+| **System User**                     | Roles within the system, including Production Manager, Plant Floor Manager, and Administrator, each responsible for specific production and management tasks.        |
 | **Tax identification number (NIF)** | A unique number assigned to individuals and companies for tax purposes.                                                                                              |
 | **Time Frame**                      | The period during which production activities are planned and executed.                                                                                              |
 | **Tree-like structure**             | A hierarchical representation of products, components, and raw materials, often used in BOM and BOO.                                                                 |

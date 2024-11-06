@@ -47,7 +47,7 @@ public class WorkstationsPerOperation {
         List<Workstation> availableWorkstations = new ArrayList<>(); // O(1)
         for (Operation keyOperation : workstationsPerOperation.getKeys()) { // O(n)
             if (keyOperation.getId().equals(operation.getId())) {
-                List<Workstation> workstations = workstationsPerOperation.getByKey(keyOperation); // O(n) * O(1) = O(n)
+                List<Workstation> workstations = workstationsPerOperation.getByKey(keyOperation);
                 for (Workstation workstation : workstations) { // O(n) * O(n) = O(n^2)
                     if (workstation.isAvailable()) {
                         availableWorkstations.add(workstation); // O(n^2) * O(1) = O(n^2)
@@ -71,10 +71,10 @@ public class WorkstationsPerOperation {
      */
     public List<Workstation> getWorkstationsAscendingByPercentage(double t) {
         List<Workstation> workstations = new ArrayList<>(workstationsPerOperation.getAllValues());
-        workstations.sort((Workstation w1, Workstation w2) -> {
+        workstations.sort((Workstation w1, Workstation w2) -> { // O(log(n))
             double percentage1 = (w1.getTotalOperationTime() / t) * 100;
             double percentage2 = (w2.getTotalOperationTime() / t) * 100;
-            return Double.compare(percentage1, percentage2);
+            return Double.compare(percentage1, percentage2); // O(log(n)) * O(n) = O(nlog(n))
         });
         return workstations;
     }

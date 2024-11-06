@@ -44,16 +44,16 @@ public class MachineFlowAnalyzer {
     }
 
     /**
-     * Builds the dependencies between workstations based on the flow of products.
+     *   Builds the dependencies between workstations based on the flow of products.
      * It analyzes the sequence of workstations for each product and updates the
      * transition counts between consecutive workstations.
      */
     public static void buildDependencies() {
         List<Product> products = flowDependency.getKeys(); // Obtém todos os produtos registrados no fluxo
 
-        for (Product product : products) {
+        for (Product product : products) { // O(n)
             List<Workstation> path = flowDependency.getByKey(product);
-            for (int i = 0; i < path.size() - 1; i++) {
+            for (int i = 0; i < path.size() - 1; i++) { // O(n) * O(1) = O(n)
                 String fromId = path.get(i).getId();
                 String toId = path.get(i + 1).getId();
                 updateWorkstationDependencies(fromId, toId);
@@ -78,6 +78,7 @@ public class MachineFlowAnalyzer {
      * Prints the dependencies between workstations in descending order of the
      * frequency of transitions. The output shows each workstation and its
      * dependencies with other workstations.
+     * The complexity of USEI07 is O(nlog(n))
      */
     public static void printDependencies() {
         buildDependencies(); // Constrói as dependências antes de imprimir
@@ -91,20 +92,20 @@ public class MachineFlowAnalyzer {
         // Calcula o número total de transições de cada workstation
         for (Map.Entry<String, Map<String, Integer>> entry : workstationDependencies.entrySet()) {
             int sum = entry.getValue().values().stream().mapToInt(Integer::intValue).sum();
-            totalTransitions.put(entry.getKey(), sum);
+            totalTransitions.put(entry.getKey(), sum); // O(n) * O(1) = O(n)
         }
 
         // Ordena as workstations em ordem decrescente de total de transições
         totalTransitions.entrySet().stream()
                 .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .forEach(entry -> {
+                .forEach(entry -> { // O(nlog(n))
                     String workstation = entry.getKey();
                     List<String> dependencies = new ArrayList<>();
 
                     // Ordena as dependências em ordem decrescente de frequência
                     workstationDependencies.get(workstation).entrySet().stream()
                             .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                            .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue())));
+                            .forEach(e -> dependencies.add(String.format("(%s,%d)", e.getKey(), e.getValue()))); // O(nlog(n))
 
                     System.out.printf(lineFormat, workstation, dependencies);
                 });

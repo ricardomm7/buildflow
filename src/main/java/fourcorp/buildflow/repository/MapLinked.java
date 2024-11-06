@@ -101,10 +101,10 @@ public class MapLinked<T extends Identifiable<ID>, Q, ID> {
      * @return The item of type {@code T} if found, or {@code null} if no item with the given identifier exists.
      */
     public T searchById(ID id) {
-        for (List<T> items : line.values()) {
-            for (T item : items) {
+        for (List<T> items : line.values()) { // O(n)
+            for (T item : items) { // O(n) * O(n) = O(n^2)
                 if (item.getId().equals(id)) {
-                    return item;
+                    return item; // O(n^2) * O(1) = O(n^2)
                 }
             }
         }
