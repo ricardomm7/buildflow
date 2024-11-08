@@ -1,5 +1,6 @@
 package fourcorp.buildflow.ui;
 
+import fourcorp.buildflow.application.DisplayProductionTree;
 import fourcorp.buildflow.application.GraphViz;
 import fourcorp.buildflow.application.MachineFlowAnalyzer;
 import fourcorp.buildflow.application.Simulator;
@@ -34,6 +35,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[8]", "Report average times per operation.");
             System.out.printf("%-5s%-75s%n", "[9]", "Workstation analysis.");
             System.out.printf("%-5s%-75s%n", "[10]", "Generate product-component graph.");
+            System.out.printf("%-5s%-75s%n", "[11]", "Display production tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -118,6 +120,10 @@ public class Menu {
                 } else {
                     System.out.println("Invalid choice. Please select a valid item.");
                 }
+                break;
+            case 11:
+                DisplayProductionTree ptVisualizer = new DisplayProductionTree();
+                ptVisualizer.displayProductionTrees();
                 break;
             case 0:
                 System.out.println("Exiting...");

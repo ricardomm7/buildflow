@@ -8,6 +8,7 @@ public class Repositories {
     private static Repositories instance;
     private final ProductPriorityLine productPriorityLine;
     private final WorkstationsPerOperation workstationsPerOperation;
+    private final ProductionTree productionTree;
 
     /**
      * Private constructor to initialize the repositories.
@@ -16,6 +17,7 @@ public class Repositories {
     public Repositories() {
         productPriorityLine = new ProductPriorityLine();
         workstationsPerOperation = new WorkstationsPerOperation();
+        productionTree = new ProductionTree();
     }
 
     /**
@@ -58,5 +60,14 @@ public class Repositories {
      */
     public WorkstationsPerOperation getWorkstationsPerOperation() {
         return workstationsPerOperation;
+    }
+
+    /**
+     * Get production tree production tree.
+     *
+     * @return the production tree
+     */
+    public ProductionTree getProductionTree() {
+        return productionTree;
     }
 }

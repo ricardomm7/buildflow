@@ -16,8 +16,7 @@ public class Operation implements Identifiable<String> {
     private List<Operation> children; // Lista de operações filhas
     private double price;
 
-
-    public Operation(String id, String name,double price) {
+    public Operation(String id, String name, double price) {
         this.id = id;
         this.name = name;
         this.execute = false;
@@ -26,6 +25,7 @@ public class Operation implements Identifiable<String> {
         this.price = price;
 
     }
+
     public Operation(String id, String name) {
         this.id = id;
         this.name = name;
@@ -94,9 +94,11 @@ public class Operation implements Identifiable<String> {
     public String getName() {
         return name;
     }
+
     public double getPrice() {
         return price;
     }
+
     public void setPrice(double price) {
         this.price = price;
     }

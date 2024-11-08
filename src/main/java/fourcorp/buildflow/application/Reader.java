@@ -5,6 +5,7 @@ import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.Workstation;
 import fourcorp.buildflow.repository.ProductPriorityLine;
+import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
@@ -21,6 +22,7 @@ import java.util.LinkedList;
 public abstract class Reader {
     public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
     public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
+    public static ProductionTree pt = Repositories.getInstance().getProductionTree();
 
     /**
      * Loads product data from a specified file and populates the product priority repository.
@@ -83,6 +85,51 @@ public abstract class Reader {
                 return PriorityOrder.LOW;
             default:
                 throw new IllegalArgumentException("Invalid priority value: " + value);
+        }
+    }
+
+    /**
+     * Load boo.
+     *
+     * @param filepath the filepath
+     * @throws IOException the io exception
+     */
+    public static void loadBOO(String filepath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+            String line;
+            reader.readLine(); // Ignorar a primeira linha (cabeçalho)
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";");
+                String id = parts[0];
+                String name = parts[1];
+                String parentId = parts[2];
+                double price = Double.parseDouble(parts[3]);
+
+                pt.insertNewOperationNode(id, name, price, parentId);
+            }
+        }
+    }
+
+    /**
+     * Load bom.
+     *
+     * @param filepath the filepath
+     * @throws IOException the io exception
+     */
+    public static void loadBOM(String filepath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+            String line;
+            reader.readLine(); // Ignorar cabeçalho
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(";");
+                String materialId = parts[0];
+                String materialName = parts[1];
+                String operationId = parts[2];
+                int quantity = Integer.parseInt(parts[3]);
+                double price = Double.parseDouble(parts[4]);
+
+                pt.insertNewMaterialNode(materialId, materialName, quantity, price, operationId);
+            }
         }
     }
 }

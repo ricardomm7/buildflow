@@ -23,7 +23,7 @@ public class Product implements Identifiable<String> {
         this.operation = new LinkedList<>(operations);
     }
 
-    public Product(String idItem){
+    public Product(String idItem) {
         this.idItem = idItem;
     }
 

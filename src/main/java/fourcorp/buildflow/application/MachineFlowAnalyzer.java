@@ -44,7 +44,7 @@ public class MachineFlowAnalyzer {
     }
 
     /**
-     *   Builds the dependencies between workstations based on the flow of products.
+     * Builds the dependencies between workstations based on the flow of products.
      * It analyzes the sequence of workstations for each product and updates the
      * transition counts between consecutive workstations.
      */
