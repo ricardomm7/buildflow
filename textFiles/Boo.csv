@@ -1,0 +1,42 @@
+ID,Nome,PaiID,Price
+O1,Build Wooden Chair,root,0.00
+O2,Prepare Wood Components,O1,0.00
+O3,Cut legs,O2,3.37
+O4,Cut seat base,O2,4.48
+O5,Cut backrest,O2,2.22
+O6,Cut support bars,O2,2.22
+O7,Assemble Chair Frame,O1,3.52
+O8,Attach seat base,O7,4.44
+O9,Attach backrest,O7,3.54
+O10,Attach legs,O7,1.12
+O11,Attach support bars,O7,2.22
+O12,Packaging,O1,1.12
+O13,Build Bicycle,root,0.00
+O14,Prepare Frame,O1,0.00
+O15,Cut Tubes,O14,10.2
+O16,Weld Frame,O14,12.3
+O17,Assemble Wheels,O13,12.3
+O18,Install Tires,O17,1.12
+O19,Install Brakes,O13,1.12
+O20,Install Chain,O13,12.3
+O21,Final Assembly,O13,32.1
+O22,Packaging,O13,1.12
+O23,Build Dining Table,root,0.00
+O24,Prepare Table Top,O23,0.00
+O25,Cut Wood Planks,O24,4.21
+O26,Sand Table Top,O24,3.12
+O27,Prepare Legs,O23,32.1
+O28,Cut Legs,O27,32.4
+O29,Sand Legs,O27,2.3
+O30,Assemble Table,O23,3.2
+O31,Attach Legs,O30,5.3
+O32,Packaging,O23,2.31
+O33,Print Book,root,0.00
+O34,Prepare Pages,O33,0.00
+O35,Print Pages,O34,9.21
+O36,Bind Pages,O34,1.213
+O37,Prepare Cover,O33,9.1
+O38,Print Cover,O37,2.1
+O39,Assemble Book,O33,2.3
+O40,Attach Cover,O39,1.3
+O41,Packaging,O33,4.2
