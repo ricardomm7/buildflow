@@ -23,6 +23,10 @@ public class Product implements Identifiable<String> {
         this.operation = new LinkedList<>(operations);
     }
 
+    public Product(String idItem){
+        this.idItem = idItem;
+    }
+
     /**
      * Gets the unique identifier for the product.
      *

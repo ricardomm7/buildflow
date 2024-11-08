@@ -1,5 +1,7 @@
 package fourcorp.buildflow.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -7,10 +9,30 @@ import java.util.Objects;
  * This class implements the Identifiable interface, using the operation name as its identifier.
  */
 public class Operation implements Identifiable<String> {
+    private String id;
     private String name;
     private boolean execute;
     private Double time;
+    private List<Operation> children; // Lista de operações filhas
+    private double price;
 
+
+    public Operation(String id, String name,double price) {
+        this.id = id;
+        this.name = name;
+        this.execute = false;
+        this.time = 0.0;
+        this.children = new ArrayList<>(); // Inicializa a lista de filhos
+        this.price = price;
+
+    }
+    public Operation(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.execute = false;
+        this.time = 0.0;
+        this.children = new ArrayList<>(); // Inicializa a lista de filhos
+    }
 
     /**
      * Constructs an Operation with the specified name.
@@ -67,6 +89,35 @@ public class Operation implements Identifiable<String> {
     @Override
     public String getId() {
         return name;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Método para adicionar filhos
+    public void addChild(Operation child) {
+        this.children.add(child);
+    }
+
+    // Método para obter filhos
+    public List<Operation> getChildren() {
+        return children;
+    }
+
+    // Método para verificar se a operação tem filhos
+    public boolean hasChildren() {
+        return !children.isEmpty();
     }
 
     /**
