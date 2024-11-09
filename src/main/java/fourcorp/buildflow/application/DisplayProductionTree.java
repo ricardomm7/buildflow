@@ -1,11 +1,13 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.domain.Material;
 import fourcorp.buildflow.domain.ProductionNode;
+import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 public class DisplayProductionTree {
-    private ProductionTree p;
+    private final ProductionTree p;
 
     public DisplayProductionTree() {
         p = Repositories.getInstance().getProductionTree();
@@ -28,6 +30,15 @@ public class DisplayProductionTree {
 
         for (ProductionNode child : node.getChildren()) {
             displayProductionTree(child, indent + "---", child.getQuantity());
+        }
+    }
+
+    public void displayMaterialsByQuantity(boolean increasingOrder) {
+        for (MaterialQuantityBST.Node node : p.getMaterialBST().getInOrder(increasingOrder)) {
+            System.out.println("Quantity: " + node.getQuantity());
+            for (Material material : node.getMaterials()) {
+                System.out.println(" - Material: " + material.getName() + " (ID: " + material.getId() + ")");
+            }
         }
     }
 }

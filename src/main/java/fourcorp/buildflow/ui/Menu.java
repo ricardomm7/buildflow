@@ -14,10 +14,12 @@ import java.util.Scanner;
 public class Menu {
     private final Scanner scanner;
     private final Simulator s;
+    private final DisplayProductionTree ptVisualizer;
 
     public Menu() {
         scanner = new Scanner(System.in);
         s = new Simulator();
+        ptVisualizer = new DisplayProductionTree();
     }
 
     public void displayMenu() throws IOException {
@@ -36,6 +38,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[9]", "Workstation analysis.");
             System.out.printf("%-5s%-75s%n", "[10]", "Generate product-component graph.");
             System.out.printf("%-5s%-75s%n", "[11]", "Display production tree.");
+            System.out.printf("%-5s%-75s%n", "[12]", "Display materials in increasing order (by quantity).");
+            System.out.printf("%-5s%-75s%n", "[13]", "Display materials in decreasing order (by quantity)");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -122,8 +126,13 @@ public class Menu {
                 }
                 break;
             case 11:
-                DisplayProductionTree ptVisualizer = new DisplayProductionTree();
                 ptVisualizer.displayProductionTrees();
+                break;
+            case 12:
+                ptVisualizer.displayMaterialsByQuantity(true);
+                break;
+            case 13:
+                ptVisualizer.displayMaterialsByQuantity(false);
                 break;
             case 0:
                 System.out.println("Exiting...");

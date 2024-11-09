@@ -23,7 +23,7 @@ public class ProductionTree {
         ProductionNode node = new ProductionNode(id, name, price);
         nodesMap.put(id, node);
 
-        if (parentId.equals("root")) {
+        if (parentId.equalsIgnoreCase("root")) {
             rootNodes.add(node);
         } else {
             ProductionNode parentNode = nodesMap.get(parentId);
@@ -49,5 +49,9 @@ public class ProductionTree {
 
     public List<ProductionNode> getRootNodes() {
         return rootNodes;
+    }
+
+    public MaterialQuantityBST getMaterialBST() {
+        return materialBST;
     }
 }

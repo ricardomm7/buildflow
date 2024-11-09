@@ -28,14 +28,48 @@ public class MaterialQuantityBST {
         return node;
     }
 
-    private class Node {
-        int quantity;
-        List<Material> materials;
+    public List<Node> getInOrder(boolean ascending) {
+        List<Node> nodesList = new ArrayList<>();
+        if (ascending) {
+            getAscending(root, nodesList);
+        } else {
+            getDescending(root, nodesList);
+        }
+        return nodesList;
+    }
+
+    private void getAscending(Node node, List<Node> nodesList) {
+        if (node != null) {
+            getAscending(node.left, nodesList);
+            nodesList.add(node);
+            getAscending(node.right, nodesList);
+        }
+    }
+
+    private void getDescending(Node node, List<Node> nodesList) {
+        if (node != null) {
+            getDescending(node.right, nodesList);
+            nodesList.add(node);
+            getDescending(node.left, nodesList);
+        }
+    }
+
+    public class Node {
+        private int quantity;
+        private List<Material> materials;
         Node left, right;
 
         Node(int quantity) {
             this.quantity = quantity;
             this.materials = new ArrayList<>();
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public List<Material> getMaterials() {
+            return new ArrayList<>(materials);
         }
     }
 }
