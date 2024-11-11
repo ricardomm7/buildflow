@@ -54,4 +54,38 @@ public class ProductionTree {
     public MaterialQuantityBST getMaterialBST() {
         return materialBST;
     }
+
+    public String searchNodeByNameOrId(String identifier) {
+        ProductionNode node = nodesMap.get(identifier);  // Primeiro tenta buscar pelo ID
+
+        if (node == null) {
+            // Se não encontrar pelo ID, tenta buscar pelo nome
+            node = findNodeByName(identifier);
+        }
+
+        if (node == null) {
+            return "Nó não encontrado";
+        }
+
+        // Se encontrou o nó, monta a resposta
+        StringBuilder result = new StringBuilder("Detalhes do Nó:\n");
+        result.append("ID: ").append(node.getId()).append("\n");
+        result.append("Nome: ").append(node.getName()).append("\n");
+        result.append("Tipo: ").append(node.isMaterial() ? "Material" : "Operação").append("\n");
+
+        if (node.isMaterial()) {
+            result.append("Quantidade: ").append(node.getQuantity()).append("\n");
+            result.append("Operação Pai: ").append(node.getParent() != null ? node.getParent().getName() : "Nenhuma").append("\n");
+        }
+        return result.toString();
+    }
+
+    private ProductionNode findNodeByName(String name) {
+        for (ProductionNode node : nodesMap.values()) {
+            if (node.getName().equalsIgnoreCase(name)) {
+                return node;
+            }
+        }
+        return null;  // Retorna null se não encontrar o nó pelo nome
+    }
 }

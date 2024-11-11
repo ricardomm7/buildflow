@@ -41,4 +41,8 @@ public class DisplayProductionTree {
             }
         }
     }
+
+    public ProductionTree getProductionTree() {
+        return p;
+    }
 }
