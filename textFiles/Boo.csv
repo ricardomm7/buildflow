@@ -12,7 +12,7 @@ O10;Attach legs;O7;1.12
 O11;Attach support bars;O7;2.22
 O12;Packaging;O1;1.12
 O13;Build Bicycle;root;0.00
-O14;Prepare Frame;O1;0.00
+O14;Prepare Frame;O13;0.00
 O15;Cut Tubes;O14;10.2
 O16;Weld Frame;O14;12.3
 O17;Assemble Wheels;O13;12.3
