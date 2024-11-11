@@ -47,6 +47,51 @@ public class ProductionTree {
         }
     }
 
+
+    public void updateMaterialQuantity(String materialId, int newQuantity) {
+        // Find the material node by ID
+        ProductionNode materialNode = nodesMap.get(materialId);
+        if (materialNode != null && materialNode.isMaterial()) {
+            // Update the material's quantity
+            materialNode.setQuantity(newQuantity);
+
+            // Update the material in the material BST
+            materialBST.updateMaterialQuantity(materialNode);
+
+            // Cascade the quantity change to parent nodes if necessary
+            cascadeQuantityUpdateToParents(materialNode);
+        } else {
+            System.out.println("Material not found or invalid material ID.");
+        }
+    }
+
+    private void cascadeQuantityUpdateToParents(ProductionNode materialNode) {
+        ProductionNode parentNode = materialNode.getParent();
+        while (parentNode != null) {
+            // Logic to update parent node based on the material change (e.g., cost recalculations)
+            // Example: update operation's cost or total required material quantity
+
+            // If parent node is an operation, you could implement logic to recalculate its cost or material needs
+            if (!parentNode.isMaterial()) {
+                // Example: Recalculate operation cost based on material updates
+                parentNode.setCost(recalculateOperationCost(parentNode));
+            }
+
+            parentNode = parentNode.getParent();  // Move up to the next parent node
+        }
+    }
+
+    private double recalculateOperationCost(ProductionNode operationNode) {
+        double totalCost = 0;
+        for (ProductionNode child : operationNode.getChildren()) {
+            if (child.isMaterial()) {
+                totalCost += child.getCost() * child.getQuantity();
+            }
+        }
+        return totalCost;
+    }
+
+
     public List<ProductionNode> getRootNodes() {
         return rootNodes;
     }

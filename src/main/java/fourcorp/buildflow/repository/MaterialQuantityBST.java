@@ -1,6 +1,7 @@
 package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.Material;
+import fourcorp.buildflow.domain.ProductionNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +53,53 @@ public class MaterialQuantityBST {
             nodesList.add(node);
             getDescending(node.left, nodesList);
         }
+    }
+
+    public void updateMaterialQuantity(ProductionNode materialNode) {
+        // First, remove the old material from the BST
+        root = removeMaterialByQuantity(root, materialNode.getQuantity(), materialNode);
+
+        // Then, insert the updated material with the new quantity
+        addMaterial(new Material(materialNode.getId(), materialNode.getName(), materialNode.getQuantity(), materialNode.getCost()));
+    }
+
+    private Node removeMaterialByQuantity(Node node, int oldQuantity, ProductionNode materialNode) {
+        if (node == null) {
+            return null;
+        }
+
+        if (oldQuantity < node.quantity) {
+            node.left = removeMaterialByQuantity(node.left, oldQuantity, materialNode);
+        } else if (oldQuantity > node.quantity) {
+            node.right = removeMaterialByQuantity(node.right, oldQuantity, materialNode);
+        } else {
+            // Found the node, now remove it
+            node.materials.removeIf(m -> m.getId().equals(materialNode.getId()));
+
+            // If the node has no more materials, remove it from the BST
+            if (node.materials.isEmpty()) {
+                return removeNode(node);
+            }
+        }
+        return node;
+    }
+
+    private Node removeNode(Node node) {
+        if (node.left == null) return node.right;
+        if (node.right == null) return node.left;
+
+        Node minNode = findMin(node.right);
+        node.quantity = minNode.quantity;
+        node.materials = minNode.materials;
+        node.right = removeMaterialByQuantity(node.right, minNode.quantity, null);
+        return node;
+    }
+
+    private Node findMin(Node node) {
+        while (node.left != null) {
+            node = node.left;
+        }
+        return node;
     }
 
     public class Node {

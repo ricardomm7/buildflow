@@ -40,7 +40,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[11]", "Display production tree.");
             System.out.printf("%-5s%-75s%n", "[12]", "Display materials in increasing order (by quantity).");
             System.out.printf("%-5s%-75s%n", "[13]", "Display materials in decreasing order (by quantity)");
-            System.out.printf("%-5s%-75s%n", "[14]", "Search for a node by name or ID");
+            System.out.printf("%-5s%-75s%n", "[14]", "Search for a node by name or ID.");
+            System.out.printf("%-5s%-75s%n", "[15]", "Update material quantity.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -141,6 +142,9 @@ public class Menu {
                 String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier);
                 System.out.println(result);
                 break;
+            case 15:
+                updateMaterialQuantity();
+                break;
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();
@@ -149,6 +153,18 @@ public class Menu {
             default:
                 System.out.println("Invalid option.");
         }
+    }
+
+    private void updateMaterialQuantity() {
+        System.out.print("Enter the ID of the material to update: ");
+        String materialId = scanner.nextLine();
+
+        System.out.print("Enter the new quantity: ");
+        int newQuantity = Integer.parseInt(scanner.nextLine());
+
+        // Update the material quantity in the production tree
+        ptVisualizer.getProductionTree().updateMaterialQuantity(materialId, newQuantity);
+        System.out.println("Material quantity updated successfully.");
     }
 
     private void displayAvailableItems() {
