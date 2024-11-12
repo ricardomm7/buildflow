@@ -3,7 +3,7 @@ package fourcorp.buildflow.domain;
 import java.util.PriorityQueue;
 
 public class CriticalPathHandler {
-
+/*
     private PriorityQueue<ProductionNode> criticalPathQueue;
 
     public CriticalPathHandler() {
@@ -19,8 +19,9 @@ public class CriticalPathHandler {
         System.out.println("Caminho Crítico (Ordem de Importância):");
         while (!criticalPathQueue.isEmpty()) {
             ProductionNode node = criticalPathQueue.poll();
-            System.out.println("Operação: " + node.getName() + " | Profundidade: " + node.getDepth());
+         //   System.out.println("Operação: " + node.getOperation() + " | Profundidade: " + node.getDepth());
         }
     }
+ */
 }
 

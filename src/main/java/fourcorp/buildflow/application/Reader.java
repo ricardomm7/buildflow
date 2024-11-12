@@ -88,47 +88,50 @@ public abstract class Reader {
         }
     }
 
-    /**
-     * Load boo.
-     *
-     * @param filepath the filepath
-     * @throws IOException the io exception
-     */
+    public static void loadItems(String filePath) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        br.readLine();
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            String[] campos = linha.split(",");
+            String id = campos[0];
+            String name = campos[1];
+            pt.insertProductionNode(id, name, true);
+        }
+        br.close();
+    }
+
+    public static void loadSimpleOperations(String s) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(s));
+        br.readLine();
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            String[] campos = linha.split(",");
+            String id = campos[0];
+            String name = campos[1];
+            pt.insertProductionNode(id, name, false);
+        }
+        br.close();
+    }
+
     public static void loadBOO(String filepath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
-            reader.readLine(); // Ignorar a primeira linha (cabeçalho)
+            reader.readLine(); // Pula o cabeçalho
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                String id = parts[0];
-                String name = parts[1];
-                String parentId = parts[2];
-                double price = Double.parseDouble(parts[3]);
+                String[] parts = line.split(",");
 
-                pt.insertNewOperationNode(id, name, price, parentId);
-            }
-        }
-    }
+                String itemId = parts[0];
+                String opId = parts[1];
 
-    /**
-     * Load bom.
-     *
-     * @param filepath the filepath
-     * @throws IOException the io exception
-     */
-    public static void loadBOM(String filepath) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
-            String line;
-            reader.readLine(); // Ignorar cabeçalho
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                String materialId = parts[0];
-                String materialName = parts[1];
-                String operationId = parts[2];
-                int quantity = Integer.parseInt(parts[3]);
-                double price = Double.parseDouble(parts[4]);
+                pt.insertNewNode(itemId, opId); // Associar item com operação
 
-                pt.insertNewMaterialNode(materialId, materialName, quantity, price, operationId);
+                for (int i = 2; i < parts.length; i += 2) {
+                    String subitemId = parts[i];
+                    int qtd = Integer.parseInt(parts[i + 1]);
+
+                    pt.insertSubitemToNode(itemId, subitemId, qtd);
+                }
             }
         }
     }

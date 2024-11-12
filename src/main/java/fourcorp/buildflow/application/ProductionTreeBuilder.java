@@ -1,13 +1,7 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.CriticalPathHandler;
-import fourcorp.buildflow.domain.ProductionNode;
-import fourcorp.buildflow.repository.Repositories;
-
-import java.util.List;
-import java.util.Map;
-
 public class ProductionTreeBuilder {
+    /*
     private final Repositories repository = Repositories.getInstance();
     public Map<String, ProductionNode> nodesMap = repository.getProductionTree().getNodesMap();
     public List<ProductionNode> rootNodes = repository.getProductionTree().rootNodes;  // Lista para múltiplas raízes
@@ -29,12 +23,12 @@ public class ProductionTreeBuilder {
         // Se encontrou o nó, monta a resposta
         StringBuilder result = new StringBuilder("Detalhes do Nó:\n");
         result.append("ID: ").append(node.getId()).append("\n");
-        result.append("Nome: ").append(node.getName()).append("\n");
+        result.append("Nome: ").append(node.getOperation()).append("\n");
         result.append("Tipo: ").append(node.isMaterial() ? "Material" : "Operação").append("\n");
 
         if (node.isMaterial()) {
             result.append("Quantidade: ").append(node.getQuantity()).append("\n");
-            result.append("Operação Pai: ").append(node.getParent() != null ? node.getParent().getName() : "Nenhuma").append("\n");
+            result.append("Operação Pai: ").append(node.getParent() != null ? node.getParent().getOperation() : "Nenhuma").append("\n");
         }
         return result.toString();
     }
@@ -42,7 +36,7 @@ public class ProductionTreeBuilder {
     // Método auxiliar para encontrar um nó pelo nome (caso não encontre pelo ID)
     private ProductionNode findNodeByName(String name) {
         for (ProductionNode node : nodesMap.values()) {
-            if (node.getName().equalsIgnoreCase(name)) {
+            if (node.getOperation().equalsIgnoreCase(name)) {
                 return node;
             }
         }
@@ -59,7 +53,7 @@ public class ProductionTreeBuilder {
     }
 
     private void displayProductionTree(ProductionNode node, String indent) {
-        System.out.println(indent + "- " + node.getName());
+        System.out.println(indent + "- " + node.getOperation());
         for (ProductionNode child : node.getChildren()) {
             displayProductionTree(child, indent + "  ");
         }
@@ -70,7 +64,7 @@ public class ProductionTreeBuilder {
         ProductionNode materialNode = nodesMap.get(materialId);
         if (materialNode != null && materialNode.isMaterial()) {
             materialNode.setQuantity(newQuantity);
-            System.out.println("Quantidade do material " + materialNode.getName() + " foi atualizada para " + newQuantity);
+            System.out.println("Quantidade do material " + materialNode.getOperation() + " foi atualizada para " + newQuantity);
 
             // Propagar a atualização para os filhos (cascata)
             updateMaterialQuantityCascade(materialNode.getParent(), materialNode);
@@ -95,7 +89,7 @@ public class ProductionTreeBuilder {
     public void updateAllMaterialsQuantity() {
         for (ProductionNode node : nodesMap.values()) {
             if (node.isMaterial()) {
-                System.out.println("Atualizando material " + node.getName() + " com quantidade " + node.getQuantity());
+                System.out.println("Atualizando material " + node.getOperation() + " com quantidade " + node.getQuantity());
             }
         }
     }
@@ -108,6 +102,7 @@ public class ProductionTreeBuilder {
         }
     }
 
+    /*
     // Método recursivo para calcular o custo total de produção
     public double calculateTotalCost(ProductionNode node) {
         if (node == null) {
@@ -146,6 +141,7 @@ public class ProductionTreeBuilder {
     }
 
 
+
     // Método para Identificar o caminho crítico
     public void identifyCriticalPath() {
         CriticalPathHandler criticalPathHandler = new CriticalPathHandler();
@@ -156,4 +152,5 @@ public class ProductionTreeBuilder {
     }
 
 
+*/
 }

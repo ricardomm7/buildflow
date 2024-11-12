@@ -5,7 +5,7 @@ import fourcorp.buildflow.domain.ProductionNode;
 import java.util.PriorityQueue;
 
 public class QualityCheckHandler {
-
+/*
     // Fila de prioridade para armazenar verificações de qualidade
     private PriorityQueue<ProductionNode> qualityCheckQueue;
 
@@ -25,7 +25,7 @@ public class QualityCheckHandler {
         PriorityQueue<ProductionNode> tempQueue = new PriorityQueue<>(qualityCheckQueue);
         while (!tempQueue.isEmpty()) {
             ProductionNode check = tempQueue.poll();
-            System.out.println("Operação: " + check.getName() + " | Prioridade (Profundidade): " + check.getDepth());
+            //System.out.println("Operação: " + check.getOperation() + " | Prioridade (Profundidade): " + check.getDepth());
         }
     }
 
@@ -35,7 +35,7 @@ public class QualityCheckHandler {
 
             if (!qualityCheckQueue.isEmpty()) {
                 ProductionNode nextCheck = qualityCheckQueue.poll(); // Remove e retorna o elemento de maior prioridade
-                System.out.println("Executando verificação de qualidade: " + nextCheck.getName() + " (Profundidade: " + nextCheck.getDepth() + ")");
+               // System.out.println("Executando verificação de qualidade: " + nextCheck.getOperation() + " (Profundidade: " + nextCheck.getDepth() + ")");
             } else {
                 System.out.println("Nenhuma verificação de qualidade pendente.");
             }
@@ -46,4 +46,6 @@ public class QualityCheckHandler {
     public boolean isQueueEmpty() {
         return qualityCheckQueue.isEmpty();
     }
+
+ */
 }

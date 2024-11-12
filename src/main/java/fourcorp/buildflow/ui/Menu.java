@@ -37,11 +37,12 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[8]", "Report average times per operation.");
             System.out.printf("%-5s%-75s%n", "[9]", "Workstation analysis.");
             System.out.printf("%-5s%-75s%n", "[10]", "Generate product-component graph.");
-            System.out.printf("%-5s%-75s%n", "[11]", "Display production tree.");
-            System.out.printf("%-5s%-75s%n", "[12]", "Display materials in increasing order (by quantity).");
-            System.out.printf("%-5s%-75s%n", "[13]", "Display materials in decreasing order (by quantity)");
-            System.out.printf("%-5s%-75s%n", "[14]", "Search for a node by name or ID.");
-            System.out.printf("%-5s%-75s%n", "[15]", "Update material quantity.");
+            System.out.printf("%-5s%-75s%n", "[11]", "Display materials in increasing order (by quantity).");
+            System.out.printf("%-5s%-75s%n", "[12]", "Display materials in decreasing order (by quantity)");
+            System.out.printf("%-5s%-75s%n", "[13]", "Search for a node by name or ID.");
+            System.out.printf("%-5s%-75s%n", "[14]", "Update material quantity.");
+            System.out.printf("%-5s%-75s%n", "[15]", "See the production tree (console).");
+            System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -56,7 +57,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 15) {
+                if (choice >= 0 && choice <= 16) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -128,22 +129,25 @@ public class Menu {
                 }
                 break;
             case 11:
-                ptVisualizer.displayProductionTrees();
+                //ptVisualizer.displayMaterialsByQuantity(true);
                 break;
             case 12:
-                ptVisualizer.displayMaterialsByQuantity(true);
+                //ptVisualizer.displayMaterialsByQuantity(false);
                 break;
             case 13:
-                ptVisualizer.displayMaterialsByQuantity(false);
-                break;
-            case 14:
                 System.out.print("Enter the ID or name of the node to search: ");
                 String identifier = scanner.nextLine();
-                String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier, scanner);
-                System.out.println(result);
+                //String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier, scanner);
+                //System.out.println(result);
+                break;
+            case 14:
+                updateMaterialQuantity();
                 break;
             case 15:
-                updateMaterialQuantity();
+                ptVisualizer.displayTree();
+                break;
+            case 16:
+                ptVisualizer.generateGraph();
                 break;
             case 0:
                 System.out.println("Exiting...");
@@ -163,7 +167,7 @@ public class Menu {
         int newQuantity = Integer.parseInt(scanner.nextLine());
 
         // Update the material quantity in the production tree
-        ptVisualizer.getProductionTree().updateMaterialQuantity(materialId, newQuantity);
+        //ptVisualizer.getProductionTree().updateMaterialQuantity(materialId, newQuantity);
         System.out.println("Material quantity updated successfully.");
     }
 
