@@ -1,0 +1,39 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+class Reader {
+    +loadOperations(filePath: String): void
+    +loadMachines(filePath: String): void
+    +loadBOO(filePath: String): void
+    +loadBOM(filePath: String): void
+    -getPriorityOrderFromValue(value: String): PriorityOrder
+
+    +p: ProductPriorityLine
+    +w: WorkstationsPerOperation
+    +pt: ProductionTree
+}
+
+class ProductionTree {
+    +insertNewOperationNode(id: String, name: String, price: Double, parentId: String): void
+    +insertNewMaterialNode(materialId: String, materialName: String, quantity: Int, price: Double, operationId: String): void
+}
+
+class Repositories {
+    +getInstance(): Repositories
+    +getProductPriorityRepository(): ProductPriorityLine
+    +getWorkstationsPerOperation(): WorkstationsPerOperation
+    +getProductionTree(): ProductionTree
+}
+
+class Operation {
+    +Operation(name: String)
+}
+
+Reader --> Repositories : getInstance()
+Repositories --> ProductionTree : getProductionTree()
+
+ProductionTree --> Operation : insertNewOperationNode(), insertNewMaterialNode()
+
+@enduml

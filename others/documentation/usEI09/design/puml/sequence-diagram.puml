@@ -1,0 +1,98 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "User" as User
+participant "Reader" as Reader
+participant "Repositories\n:Repositories" as Repositories
+participant "ProductionTree\n:ProductionTree" as ProductionTree
+participant "DisplayProductionTree" as DisplayProductionTree
+participant "ProductionNode\n:ProductionNode" as ProductionNode
+
+activate User
+
+Reader -> Repositories : getInstance()
+activate Reader
+activate Repositories
+Repositories --> Reader : repository instance
+Reader -> Repositories : getProductionTree()
+Repositories --> Reader : productionTree
+
+deactivate "Reader"
+deactivate Repositories
+
+User -> Reader : loadOperations("path/to/operations.csv")
+activate Reader
+
+Reader -> ProductionTree : insertNewOperationNode(id, name, price, parentId)
+activate ProductionTree
+ProductionTree --> ProductionNode : create
+activate ProductionNode
+ProductionNode --> ProductionTree : add
+deactivate ProductionNode
+ProductionTree --> Reader : node inserted
+deactivate ProductionTree
+deactivate Reader
+
+User -> Reader : loadBOM("path/to/bom.csv")
+activate Reader
+
+Reader -> ProductionTree : insertNewMaterialNode(materialId, materialName, quantity, price, operationId)
+activate ProductionTree
+ProductionTree --> ProductionNode : create
+activate ProductionNode
+ProductionNode --> ProductionTree : add
+deactivate ProductionNode
+ProductionTree --> Reader : material node inserted
+deactivate "Reader"
+deactivate ProductionTree
+
+User -> DisplayProductionTree : displayProductionTrees()
+activate DisplayProductionTree
+
+DisplayProductionTree -> Repositories : getInstance()
+activate Repositories
+Repositories --> DisplayProductionTree : repository instance
+deactivate Repositories
+
+DisplayProductionTree -> ProductionTree : getProductionTree()
+activate ProductionTree
+ProductionTree --> DisplayProductionTree : ProductionTree instance
+deactivate ProductionTree
+
+DisplayProductionTree -> ProductionTree : getRootNodes()
+activate ProductionTree
+ProductionTree --> DisplayProductionTree : list of root nodes
+deactivate ProductionTree
+
+alt For each root node
+    DisplayProductionTree -> ProductionNode : displayProductionTree(node, "", quantity)
+    activate ProductionNode
+
+    loop Traverse child nodes
+        ProductionNode -> ProductionNode : getChildren()
+        activate ProductionNode
+        ProductionNode --> ProductionNode : list of child nodes
+        deactivate ProductionNode
+    end
+
+    deactivate ProductionNode
+end
+
+DisplayProductionTree --> User : display success message
+deactivate DisplayProductionTree
+
+User -> ProductionTree : updateMaterialQuantity(materialId, newQuantity)
+activate ProductionTree
+ProductionTree --> User : quantity updated
+deactivate ProductionTree
+
+User -> ProductionTree : searchNodeByNameOrId(identifier)
+activate ProductionTree
+ProductionTree --> User : node details (or not found)
+deactivate ProductionTree
+
+@enduml

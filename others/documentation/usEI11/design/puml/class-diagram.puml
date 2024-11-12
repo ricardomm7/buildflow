@@ -1,0 +1,76 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+'left to right direction
+
+class ProductionTree {
+    - nodesMap : Map<String, ProductionNode>
+    - rootNodes : List<ProductionNode>
+    - materialBST : MaterialQuantityBST
+    + insertNewOperationNode(id : String, name : String, price : double, parentId : String) : void
+    + insertNewMaterialNode(id : String, name : String, quantity : int, price : double, operationId : String) : void
+    + updateMaterialQuantity(materialId : String, newQuantity : int) : void
+    + getRootNodes() : List<ProductionNode>
+    + getMaterialBST() : MaterialQuantityBST
+    + searchNodeByNameOrId(identifier : String) : String
+}
+
+class MaterialQuantityBST {
+    - root : Node
+    + addMaterial(material : Material) : void
+    + getInOrder(ascending : boolean) : List<Node>
+    + updateMaterialQuantity(materialNode : ProductionNode) : void
+    + removeMaterialByQuantity(node : Node, oldQuantity : int, materialNode : ProductionNode) : Node
+}
+
+class Node {
+    - quantity : int
+    - materials : List<Material>
+    - left : Node
+    - right : Node
+    + getQuantity() : int
+    + getMaterials() : List<Material>
+}
+
+class Material {
+    - id : String
+    - name : String
+    - quantity : int
+    - price : double
+    + Material(id : String, name : String, quantity : int, price : double)
+    + getId() : String
+    + getName() : String
+    + getQuantity() : int
+    + getPrice() : double
+}
+
+class ProductionNode {
+    - id : String
+    - name : String
+    - quantity : int
+    - price : double
+    - cost : double
+    - isMaterial : boolean
+    - parent : ProductionNode
+    - children : List<ProductionNode>
+    + addChild(node : ProductionNode) : void
+    + setMaterial(isMaterial : boolean) : void
+    + setQuantity(quantity : int) : void
+    + setCost(cost : double) : void
+    + getParent() : ProductionNode
+    + getChildren() : List<ProductionNode>
+    + getId() : String
+    + getName() : String
+    + isMaterial() : boolean
+}
+
+ProductionTree --> "*" ProductionNode : nodes
+ProductionTree --> "1" MaterialQuantityBST : materialBST
+MaterialQuantityBST --> "*" Node : nodes
+Node --> "*" Material : materials
+ProductionNode --> "*" ProductionNode : children
+ProductionNode --> "1" ProductionNode : parent
+ProductionNode ..> Material : material
+@enduml

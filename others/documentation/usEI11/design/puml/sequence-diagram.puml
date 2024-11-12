@@ -1,0 +1,59 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "User" as Actor
+participant ":ProductionTree" as ProdTree
+participant ":MaterialQuantityBST" as MaterialBST
+participant ":ProductionNode" as ProdNode
+participant ":Material" as Material
+
+activate Actor
+
+Actor -> ProdTree : create operation
+activate ProdTree
+
+ProdTree -> ProdNode : create(id, name, price)
+activate ProdNode
+ProdNode --> ProdTree : node created
+deactivate ProdNode
+ProdTree --> Actor : node inserted
+deactivate ProdTree
+
+Actor -> ProdTree : create material(param)
+activate ProdTree
+
+ProdTree -> MaterialBST : addMaterial(material)
+activate MaterialBST
+MaterialBST -> MaterialBST : addMaterialRecursive(material)
+activate MaterialBST
+MaterialBST --> MaterialBST : material added
+deactivate MaterialBST
+
+ProdTree -> ProdNode : createMaterialNode(id, name, quantity, price)
+activate ProdNode
+ProdNode --> ProdTree : material node created
+deactivate ProdNode
+ProdTree --> Actor : material node inserted
+deactivate ProdTree
+
+Actor -> ProdTree : updateMaterialQuantity(materialId, newQuantity)
+activate ProdTree
+
+ProdTree -> ProdNode : updateQuantity(materialId, newQuantity)
+activate ProdNode
+ProdNode -> MaterialBST : updateMaterialQuantity(materialNode)
+activate MaterialBST
+MaterialBST -> MaterialBST : updateMaterialQuantity(materialNode)
+deactivate MaterialBST
+ProdNode --> ProdTree : quantity updated
+deactivate ProdNode
+ProdTree --> Actor : quantity updated
+deactivate ProdTree
+
+deactivate Actor
+
+@enduml
