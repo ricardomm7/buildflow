@@ -109,18 +109,18 @@ public class ProductionTree {
         }
 
         if (node == null) {
-            return "Nó não encontrado";
+            return "Node not found.";
         }
 
         // Se encontrou o nó, monta a resposta
-        StringBuilder result = new StringBuilder("Detalhes do Nó:\n");
+        StringBuilder result = new StringBuilder("Node Details:\n");
         result.append("ID: ").append(node.getId()).append("\n");
-        result.append("Nome: ").append(node.getName()).append("\n");
-        result.append("Tipo: ").append(node.isMaterial() ? "Material" : "Operação").append("\n");
+        result.append("Name: ").append(node.getName()).append("\n");
+        result.append("Type: ").append(node.isMaterial() ? "Material" : "Operation").append("\n");
 
         if (node.isMaterial()) {
-            result.append("Quantidade: ").append(node.getQuantity()).append("\n");
-            result.append("Operação Pai: ").append(node.getParent() != null ? node.getParent().getName() : "Nenhuma").append("\n");
+            result.append("Quantity: ").append(node.getQuantity()).append("\n");
+            result.append("Parent Operation: ").append(node.getParent() != null ? node.getParent().getName() : "None").append("\n");
         }
         return result.toString();
     }
