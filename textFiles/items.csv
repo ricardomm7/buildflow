@@ -1,4 +1,4 @@
-ID,Nome
+id_item,item_name
 M1,Chair Leg (Oak 18" length 2" diameter)
 M2,Seat Base (Oak 18" x 18" x 1" thick)
 M3,Backrest (Oak 18" x 12" x 1" thick)
@@ -13,3 +13,18 @@ M11,Table Leg (Oak 30" x 2" diameter)
 M12,Book Page Paper (A4 size)
 M13,Book Binding Glue
 M14,Book Cover (Hardcover 8.5" x 11")
+M15,Metal Screws
+M16,Wood Glue
+M17,Wood Stain
+M18,Wood Chair
+M19,Dining Table
+M20,Bicycle
+M21,Book
+M22,Metal Bolts
+M23,Bicycle Spokes
+M24,Bicycle Seat
+M25,Brake Cable
+M26,Table Finishing Coat
+M27,Cover Paper
+M28,Hardcover Board
+M29,Binding Thread
