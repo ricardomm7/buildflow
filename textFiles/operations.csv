@@ -1,0 +1,42 @@
+ID,Nome
+O1,Build Wooden Chair
+O2,Prepare Wood Components
+O3,Cut legs
+O4,Cut seat base
+O5,Cut backrest
+O6,Cut support bars
+O7,Assemble Chair Frame
+O8,Attach seat base
+O9,Attach backrest
+O10,Attach legs
+O11,Attach support bars
+O12,Packaging
+O13,Build Bicycle
+O14,Prepare Frame
+O15,Cut Tubes
+O16,Weld Frame
+O17,Assemble Wheels
+O18,Install Tires
+O19,Install Brakes
+O20,Install Chain
+O21,Final Assembly
+O22,Packaging
+O23,Build Dining Table
+O24,Prepare Table Top
+O25,Cut Wood Planks
+O26,Sand Table Top
+O27,Prepare Legs
+O28,Cut Legs
+O29,Sand Legs
+O30,Assemble Table
+O31,Attach Legs
+O32,Packaging
+O33,Print Book
+O34,Prepare Pages
+O35,Print Pages
+O36,Bind Pages
+O37,Prepare Cover
+O38,Print Cover
+O39,Assemble Book
+O40,Attach Cover
+O41,Packaging

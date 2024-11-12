@@ -1,0 +1,4 @@
+item_id,op_id,subitem1_id,qtd1,subitem2_id,qtd2,...
+M1,O3,M2,1,M3,4
+M4,O6,M5,5,M6,2,M7,2,M8,2,M9,1
+M10,O25,M11,4,M12,100,M13,1,M14,1
