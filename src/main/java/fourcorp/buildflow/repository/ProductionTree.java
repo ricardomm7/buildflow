@@ -133,4 +133,8 @@ public class ProductionTree {
         }
         return null;  // Retorna null se não encontrar o nó pelo nome
     }
+
+    public Map<String, ProductionNode> getNodesMap() {
+        return new HashMap<>(nodesMap);
+    }
 }

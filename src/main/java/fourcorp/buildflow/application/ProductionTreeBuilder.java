@@ -1,6 +1,5 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.AVLTree;
 import fourcorp.buildflow.domain.CriticalPathHandler;
 import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.Repositories;
@@ -156,22 +155,5 @@ public class ProductionTreeBuilder {
         criticalPathHandler.displayCriticalPath();
     }
 
-    // Método para extrair a árvore BOO e armazenar as operações em uma árvore AVL
-    public AVLTree extractBooToAvl() {
-        AVLTree avlTree = new AVLTree();
-        for (ProductionNode root : rootNodes) { // Considera múltiplas raízes
-            extractBooRecursively(root, avlTree);
-        }
-        return avlTree;
-    }
-
-    private void extractBooRecursively(ProductionNode node, AVLTree avlTree) {
-        if (node != null && !node.isMaterial()) { // Apenas insere nós de operação válidos
-            avlTree.insert(node);
-        }
-        for (ProductionNode child : node.getChildren()) {
-            extractBooRecursively(child, avlTree);
-        }
-    }
 
 }
