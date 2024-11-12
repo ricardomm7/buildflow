@@ -139,7 +139,7 @@ public class Menu {
             case 14:
                 System.out.print("Enter the ID or name of the node to search: ");
                 String identifier = scanner.nextLine();
-                String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier);
+                String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier, scanner);
                 System.out.println(result);
                 break;
             case 15:

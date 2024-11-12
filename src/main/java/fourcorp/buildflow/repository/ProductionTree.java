@@ -3,10 +3,8 @@ package fourcorp.buildflow.repository;
 import fourcorp.buildflow.domain.Material;
 import fourcorp.buildflow.domain.ProductionNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductionTree {
     private Map<String, ProductionNode> nodesMap;
@@ -100,19 +98,57 @@ public class ProductionTree {
         return materialBST;
     }
 
-    public String searchNodeByNameOrId(String identifier) {
-        ProductionNode node = nodesMap.get(identifier);  // Primeiro tenta buscar pelo ID
+    public String searchNodeByNameOrId(String identifier, Scanner scanner) {
+        String lowerCaseIdentifier = identifier.toLowerCase();
+
+        ProductionNode node = nodesMap.values()
+                .stream()
+                .filter(n -> n.getId().equalsIgnoreCase(lowerCaseIdentifier))
+                .findFirst()
+                .orElse(null);
 
         if (node == null) {
-            // Se não encontrar pelo ID, tenta buscar pelo nome
-            node = findNodeByName(identifier);
-        }
+            List<ProductionNode> matchingNodes = findNodesContainingName(lowerCaseIdentifier);
 
-        if (node == null) {
-            return "Node not found.";
-        }
+            if (matchingNodes.isEmpty()) {
+                return "Node not found.";
+            } else if (matchingNodes.size() == 1) {
+                node = matchingNodes.get(0);
+            } else {
+                System.out.println("Multiple matches found. Please select one:");
+                for (int i = 0; i < matchingNodes.size(); i++) {
+                    System.out.println("[" + (i + 1) + "] " + matchingNodes.get(i).getName() + " (ID: " + matchingNodes.get(i).getId() + ")");
+                }
 
-        // Se encontrou o nó, monta a resposta
+                // Loop until a valid choice is entered
+                while (true) {
+                    System.out.print("Enter the number corresponding to the desired node: ");
+                    try {
+                        int choice = Integer.parseInt(scanner.nextLine()) - 1;
+
+                        if (choice >= 0 && choice < matchingNodes.size()) {
+                            node = matchingNodes.get(choice);
+                            break;
+                        } else {
+                            System.out.println("Invalid selection. Please enter a number between 1 and " + matchingNodes.size() + ".");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid input. Please enter a number.");
+                    }
+                }
+            }
+        }
+        return formatNodeDetails(node);
+    }
+
+    private List<ProductionNode> findNodesContainingName(String searchTerm) {
+        return nodesMap.values()
+                .stream()
+                .filter(node -> node.getName().toLowerCase().contains(searchTerm))
+                .collect(Collectors.toList());
+    }
+
+    private String formatNodeDetails(ProductionNode node) {
         StringBuilder result = new StringBuilder("Node Details:\n");
         result.append("ID: ").append(node.getId()).append("\n");
         result.append("Name: ").append(node.getName()).append("\n");
@@ -123,15 +159,6 @@ public class ProductionTree {
             result.append("Parent Operation: ").append(node.getParent() != null ? node.getParent().getName() : "None").append("\n");
         }
         return result.toString();
-    }
-
-    private ProductionNode findNodeByName(String name) {
-        for (ProductionNode node : nodesMap.values()) {
-            if (node.getName().equalsIgnoreCase(name)) {
-                return node;
-            }
-        }
-        return null;  // Retorna null se não encontrar o nó pelo nome
     }
 
     public Map<String, ProductionNode> getNodesMap() {
