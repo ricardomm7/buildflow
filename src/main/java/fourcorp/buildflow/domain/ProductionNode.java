@@ -1,13 +1,9 @@
 package fourcorp.buildflow.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ProductionNode {
     private String id;
     private String name;
-    private boolean isProduct;  // true se for produto, false se for operação
-    private Map<ProductionNode, Integer> subNodes = new HashMap<>();  // Subitens ou suboperações
+    private boolean isProduct;
 
     public ProductionNode(String id, String name, boolean isProduct) {
         this.id = id;
@@ -19,10 +15,6 @@ public class ProductionNode {
         return id;
     }
 
-    public boolean isOperation(){
-        return !isProduct;
-    }
-
     public String getName() {
         return name;
     }
@@ -31,15 +23,12 @@ public class ProductionNode {
         return isProduct;
     }
 
-    public Map<ProductionNode, Integer> getSubNodes() {
-        return subNodes;
+    public boolean isOperation() {
+        return !isProduct;
     }
 
-    public void addSubNode(ProductionNode subNode, int quantity) {
-        subNodes.put(subNode, quantity);
-    }
-
+    @Override
     public String toString() {
-        return (isProduct ? "Produto: " : "Operação: ") + name + " (ID: " + id + ")";
+        return (isProduct ? "Product: " : "Operation: ") + name + " (ID: " + id + ")";
     }
 }

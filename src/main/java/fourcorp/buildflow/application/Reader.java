@@ -1,9 +1,6 @@
 package fourcorp.buildflow.application;
 
-import fourcorp.buildflow.domain.Operation;
-import fourcorp.buildflow.domain.PriorityOrder;
-import fourcorp.buildflow.domain.Product;
-import fourcorp.buildflow.domain.Workstation;
+import fourcorp.buildflow.domain.*;
 import fourcorp.buildflow.repository.ProductPriorityLine;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
@@ -115,24 +112,45 @@ public abstract class Reader {
     }
 
     public static void loadBOO(String filepath) throws IOException {
+        ProductionTree pt = Repositories.getInstance().getProductionTree();
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
-            reader.readLine(); // Pula o cabeçalho
+            reader.readLine();
+
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
 
                 String itemId = parts[0];
                 String opId = parts[1];
 
-                pt.insertNewNode(itemId, opId); // Associar item com operação
+                ProductionNode itemNode = pt.getNodeById(itemId);
+                if (itemNode == null) {
+                    itemNode = new ProductionNode(itemId, itemId, true);
+                    pt.insertProductionNode(itemId, itemId, true);
+                }
+
+                ProductionNode opNode = pt.getNodeById(opId);
+                if (opNode == null) {
+                    opNode = new ProductionNode(opId, opId, false);
+                    pt.insertProductionNode(opId, opId, false);
+                }
+
+                pt.insertNewConnection(itemId, opId, 1); // Quantidade padrão (ou ajustável)
 
                 for (int i = 2; i < parts.length; i += 2) {
                     String subitemId = parts[i];
-                    int qtd = Integer.parseInt(parts[i + 1]);
+                    int quantity = Integer.parseInt(parts[i + 1]);
 
-                    pt.insertSubitemToNode(itemId, subitemId, qtd);
+                    ProductionNode subitemNode = pt.getNodeById(subitemId);
+                    if (subitemNode == null) {
+                        subitemNode = new ProductionNode(subitemId, subitemId, true);
+                        pt.insertProductionNode(subitemId, subitemId, true);
+                    }
+
+                    pt.insertNewConnection(opId, subitemId, quantity);
                 }
             }
         }
     }
+
 }

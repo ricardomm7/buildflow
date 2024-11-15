@@ -2,47 +2,50 @@ package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.ProductionNode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ProductionTree {
-    private Map<String, ProductionNode> productionNodes;
+    private List<ProductionNode> nodes; // Lista de todos os nós
+    private Map<ProductionNode, Map<ProductionNode, Double>> connections; // Relações entre nós
 
     public ProductionTree() {
-        productionNodes = new HashMap<>();
+        nodes = new ArrayList<>();
+        connections = new HashMap<>();
     }
 
     public void insertProductionNode(String id, String name, boolean isProduct) {
-        productionNodes.putIfAbsent(id, new ProductionNode(id, name, isProduct));
-    }
-
-    public void insertNewNode(String itemId, String opId) {
-        ProductionNode item = getNode(itemId);
-        ProductionNode operation = getNode(opId);
-
-        if (item != null && operation != null) {
-            item.addSubNode(operation, 1);  // Associando o item com a operação
-        } else {
-            System.err.println("Item ou Operação não encontrada: " + itemId + " ou " + opId);
+        if (getNodeById(id) == null) {
+            ProductionNode node = new ProductionNode(id, name, isProduct);
+            nodes.add(node);
+            connections.put(node, new HashMap<>());
         }
     }
 
-    public void insertSubitemToNode(String nodeId, String subitemId, int quantity) {
-        ProductionNode node = getNode(nodeId);
-        ProductionNode subitem = getNode(subitemId);
+    public void insertNewConnection(String parentId, String childId, double quantity) {
+        ProductionNode parent = getNodeById(parentId);
+        ProductionNode child = getNodeById(childId);
 
-        if (node != null && subitem != null) {
-            node.addSubNode(subitem, quantity);
+        if (parent != null && child != null) {
+            connections.get(parent).put(child, quantity);
         } else {
-            System.err.println("Node ou Subnode não encontrado: " + nodeId + " ou " + subitemId);
+            System.err.println("Parent ou Child not found: " + parentId + " or " + childId);
         }
     }
 
-    private ProductionNode getNode(String nodeId) {
-        return productionNodes.get(nodeId);
+    public ProductionNode getNodeById(String id) {
+        for (ProductionNode node : nodes) {
+            if (node.getId().equals(id)) {
+                return node;
+            }
+        }
+        return null;
     }
 
-    public Map<String, ProductionNode> getAllProductionNodes() {
-        return productionNodes;
+    public List<ProductionNode> getAllNodes() {
+        return nodes;
+    }
+
+    public Map<ProductionNode, Double> getSubNodes(ProductionNode node) {
+        return connections.getOrDefault(node, new HashMap<>());
     }
 }
