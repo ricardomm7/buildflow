@@ -1,33 +1,56 @@
---USBD12
-CREATE OR REPLACE FUNCTION GetProductParts(p_Product_ID IN CHAR)
-RETURN SYS_REFCURSOR IS
-    v_cursor SYS_REFCURSOR;
+CREATE OR REPLACE FUNCTION GetProductOperationParts(p_Product_ID IN Product.Part_ID%TYPE)
+    RETURN SYS_REFCURSOR
+IS
+    cur_results SYS_REFCURSOR;
 BEGIN
-    OPEN v_cursor FOR
-    SELECT pp.PartPart_ID, pp.Quantity, p.Description
-    FROM Product_Part pp
-    JOIN Part p ON pp.PartPart_ID = p.Part_ID
-    WHERE pp.ProductProduct_ID = p_Product_ID;
-    RETURN v_cursor;
-END GetProductParts;
-/
+    OPEN cur_results FOR
+    SELECT 
+        oi.Part_ID,
+        oi.Quantity
+    FROM 
+        Operation o
+    JOIN 
+        Operation_Input oi ON o.Operation_ID = oi.Operation_ID
+    JOIN 
+        Part p ON oi.Part_ID = p.Part_ID
+    WHERE 
+        o.Product_ID = p_Product_ID
 
+    UNION ALL
 
---For testing
-DECLARE
-    v_parts SYS_REFCURSOR;
-    v_part_id Part.Part_ID%TYPE;
-    v_part_desc Part.Description%TYPE;
-    v_part_quant Product_Part.Quantity%TYPE;
-BEGIN
-    v_parts := GetProductParts('AS12945S22');
-    LOOP
-        FETCH v_parts INTO v_part_id, v_part_quant, v_part_desc;
-        EXIT WHEN v_parts%NOTFOUND;
-        DBMS_OUTPUT.PUT_LINE('Part ID: ' || v_part_id || ', Description: ' || v_part_desc || ', Quantity: ' || v_part_quant);
-    END LOOP;
-    CLOSE v_parts;
+    SELECT 
+        oo.Part_ID,
+        oo.Quantity
+    FROM 
+        Operation o
+    JOIN 
+        Operation_Output oo ON o.Operation_ID = oo.Operation_ID
+    JOIN 
+        Part p ON oo.Part_ID = p.Part_ID
+    WHERE 
+        o.Product_ID = p_Product_ID;
+
+    RETURN cur_results;
 END;
 /
 
---FALTA FAZER A VERIFICAÇÃO SE A PARTE É UM PRODUTO FABRICADO PELA FÁBRICA, CASO SEJA, DEVE MOSTRAR AS PARTES DA PARTE
+
+DECLARE
+    v_cursor SYS_REFCURSOR;
+    v_part_id Part.Part_ID%TYPE;
+    v_quantity NUMBER;
+BEGIN
+    -- Chamar a função passando o ID do produto
+    v_cursor := GetProductOperationParts('PROD001');
+
+    LOOP
+        FETCH v_cursor INTO v_part_id, v_quantity;
+        EXIT WHEN v_cursor%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('Part ID: ' || v_part_id || 
+                             ', Quantity: ' || v_quantity);
+    END LOOP;
+
+    CLOSE v_cursor;
+END;
+/
