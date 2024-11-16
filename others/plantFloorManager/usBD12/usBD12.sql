@@ -2,32 +2,81 @@ CREATE OR REPLACE FUNCTION GetProductOperationParts(p_Product_ID IN Product.Part
     RETURN SYS_REFCURSOR
 IS
     cur_results SYS_REFCURSOR;
+    v_count NUMBER;
+    v_product_exists NUMBER;
 BEGIN
+    -- Verifica se o produto existe
+    SELECT COUNT(*)
+    INTO v_product_exists
+    FROM Product
+    WHERE Part_ID = p_Product_ID;
+
+    IF v_product_exists = 0 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'The specified Product ID does not exist.');
+    END IF;
+
+    -- Conta os dados que seriam retornados
+    SELECT COUNT(*)
+    INTO v_count
+    FROM (
+        SELECT
+            oi.Part_ID,
+            oi.Quantity
+        FROM
+            Operation o
+        JOIN
+            Operation_Input oi ON o.Operation_ID = oi.Operation_ID
+        JOIN
+            Part p ON oi.Part_ID = p.Part_ID
+        WHERE
+            o.Product_ID = p_Product_ID
+
+        UNION ALL
+
+        SELECT
+            oo.Part_ID,
+            oo.Quantity
+        FROM
+            Operation o
+        JOIN
+            Operation_Output oo ON o.Operation_ID = oo.Operation_ID
+        JOIN
+            Part p ON oo.Part_ID = p.Part_ID
+        WHERE
+            o.Product_ID = p_Product_ID
+    );
+
+    -- Verifica se existem dados
+    IF v_count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No data found for the provided Product ID.');
+    END IF;
+
+    -- Abre o cursor se existirem dados
     OPEN cur_results FOR
-    SELECT 
+    SELECT
         oi.Part_ID,
         oi.Quantity
-    FROM 
+    FROM
         Operation o
-    JOIN 
+    JOIN
         Operation_Input oi ON o.Operation_ID = oi.Operation_ID
-    JOIN 
+    JOIN
         Part p ON oi.Part_ID = p.Part_ID
-    WHERE 
+    WHERE
         o.Product_ID = p_Product_ID
 
     UNION ALL
 
-    SELECT 
+    SELECT
         oo.Part_ID,
         oo.Quantity
-    FROM 
+    FROM
         Operation o
-    JOIN 
+    JOIN
         Operation_Output oo ON o.Operation_ID = oo.Operation_ID
-    JOIN 
+    JOIN
         Part p ON oo.Part_ID = p.Part_ID
-    WHERE 
+    WHERE
         o.Product_ID = p_Product_ID;
 
     RETURN cur_results;
@@ -47,7 +96,7 @@ BEGIN
         FETCH v_cursor INTO v_part_id, v_quantity;
         EXIT WHEN v_cursor%NOTFOUND;
 
-        DBMS_OUTPUT.PUT_LINE('Part ID: ' || v_part_id || 
+        DBMS_OUTPUT.PUT_LINE('Part ID: ' || v_part_id ||
                              ', Quantity: ' || v_quantity);
     END LOOP;
 
