@@ -1,45 +1,49 @@
 CREATE OR REPLACE FUNCTION RegisterProduct (
-    p_Part_ID   CHAR,       -- Adjust length to match your table definition, e.g., CHAR(10)
-    p_Name      VARCHAR2
+    p_Part_ID   CHAR,
+    p_Name      VARCHAR2,
+    p_Family_ID VARCHAR2
+
 ) RETURN VARCHAR2
 AS
     v_message VARCHAR2(200);
     v_part_exists INTEGER;
+    v_family_exists INTEGER;
 BEGIN
-    -- Check if the Part_ID exists in the Part table
+    SELECT COUNT(*)
+    INTO v_family_exists
+    FROM Product_Family
+    WHERE Family_ID = p_Family_ID;
+
+    IF v_family_exists = 0 THEN
+        RETURN 'Erro: Product_Family com ID ' || p_Family_ID || ' não existe.';
+    END IF;
+
     SELECT COUNT(*)
     INTO v_part_exists
     FROM Part
     WHERE Part_ID = p_Part_ID;
 
     IF v_part_exists = 0 THEN
-        -- Part does not exist, create a new Part
         INSERT INTO Part (Part_ID, Description)
-        VALUES (p_Part_ID, P_NAME);
+        VALUES (p_Part_ID, p_Name);
 
-        -- Notify that a new Part was created
-        v_message := 'New Part ' || p_Part_ID || ' created. ';
+        v_message := 'Novo Part ' || p_Part_ID || ' criado. ';
     ELSE
-        -- No need to create a new Part
         v_message := '';
     END IF;
 
-    -- Attempt to insert the new Product
-    INSERT INTO Product (Part_ID, Name)
-    VALUES (p_Part_ID, p_Name);
+    INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID)
+    VALUES (p_Part_ID, p_Name, p_Family_ID);
 
-    -- Append success message for Product registration
-    v_message := v_message || 'Product ' || p_Part_ID || ' successfully registered.';
+    v_message := v_message || 'Produto ' || p_Part_ID || ' registrado com sucesso.';
     RETURN v_message;
 
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
-        -- Handle case where the primary key constraint is violated (duplicate Part_ID in Product)
-        v_message := 'Error: Product Part_ID ' || p_Part_ID || ' already exists.';
+        v_message := 'Erro: Produto com Part_ID ' || p_Part_ID || ' já existe.';
         RETURN v_message;
     WHEN OTHERS THEN
-        -- Handle any other errors that may occur
-        v_message := 'Error registering product: ' || SQLERRM;
+        v_message := 'Erro ao registrar o produto: ' || SQLERRM;
         RETURN v_message;
 END RegisterProduct;
 /
