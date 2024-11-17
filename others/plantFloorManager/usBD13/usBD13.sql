@@ -1,65 +1,53 @@
 --USBD13
-CREATE OR REPLACE FUNCTION GetOperationsAndWorkstations (
-    p_Product_ID IN Product.Product_ID%TYPE
-) RETURN SYS_REFCURSOR IS
-    v_cursor SYS_REFCURSOR;
+CREATE OR REPLACE FUNCTION GetProductOperationsAndWorkstations(
+    p_Product_ID IN Product.Part_ID%TYPE
+)
+    RETURN SYS_REFCURSOR
+IS
+    cur_results SYS_REFCURSOR;
 BEGIN
-    OPEN v_cursor FOR
+    OPEN cur_results FOR
     SELECT
-        BOO.Product_FamilyFamily_ID AS Family_ID,
-        BOO.BOOOperation_Sequence AS Operation_Sequence,
-        O.Designation AS Operation_Designation,
-        TWS.WorkstationType_ID AS Workstation_Type,
-        TW.Designation AS Workstation_Type_Description
+        o.Operation_ID,
+        o.Designation AS Operation_Designation,
+        wt.WorkstationType_ID,
+        wt.Designation AS WorkstationType_Designation
     FROM
-        Product P
-    INNER JOIN
-        Product_Family PF ON P.Product_FamilyFamily_ID = PF.Family_ID
-    INNER JOIN
-        BOO_Operation BOO ON PF.Family_ID = BOO.Product_FamilyFamily_ID
-    INNER JOIN
-        Operation O ON BOO.OperationOperation_ID = O.Operation_ID
-    INNER JOIN
-        Operation_Type_Workstation TWS ON O.Operation_ID = TWS.OperationOperation_ID
-    INNER JOIN
-        Type_Workstation TW ON TWS.Type_WorkstationWorkstationType_ID = TW.WorkstationType_ID
+        Operation o
+    JOIN
+        Operation_Type_Workstation otw ON o.Operation_ID = otw.OperationOperation_ID
+    JOIN
+        Type_Workstation wt ON otw.WorkstationType_ID = wt.WorkstationType_ID
     WHERE
-        P.Product_ID = p_Product_ID
-    ORDER BY
-        BOO.BOOOperation_Sequence;
+        o.Product_ID = p_Product_ID;
 
-    RETURN v_cursor;
+    RETURN cur_results;
 END;
 /
 
 
 
---Para teste
+
+-- PARA TESTEEEEEEEEEE
 DECLARE
-    v_result SYS_REFCURSOR;
-    v_Family_ID VARCHAR2(60);
-    v_Operation_Sequence NUMBER;
-    v_Operation_Designation VARCHAR2(60);
-    v_Workstation_Type CHAR(5);
-    v_Workstation_Type_Description VARCHAR2(60);
+    cur SYS_REFCURSOR;
+    v_Operation_ID NUMBER;
+    v_Operation_Designation VARCHAR2(100);
+    v_WorkstationType_ID CHAR(5);
+    v_WorkstationType_Designation VARCHAR2(60);
 BEGIN
-    v_result := GetOperationsAndWorkstations('AS12945S22'); -- Substitua 'P001' pelo ID do produto desejado
+    cur := GetProductOperationsAndWorkstations('PROD001');
 
     LOOP
-        FETCH v_result INTO v_Family_ID, v_Operation_Sequence, v_Operation_Designation, v_Workstation_Type, v_Workstation_Type_Description;
-        EXIT WHEN v_result%NOTFOUND;
+        FETCH cur INTO v_Operation_ID, v_Operation_Designation, v_WorkstationType_ID, v_WorkstationType_Designation;
+        EXIT WHEN cur%NOTFOUND;
 
-        DBMS_OUTPUT.PUT_LINE('Family ID: ' || v_Family_ID ||
-                             ', Sequence: ' || v_Operation_Sequence ||
+        DBMS_OUTPUT.PUT_LINE('Operation ID: ' || v_Operation_ID ||
                              ', Operation: ' || v_Operation_Designation ||
-                             ', Workstation Type: ' || v_Workstation_Type ||
-                             ', Workstation Description: ' || v_Workstation_Type_Description);
+                             ', Workstation Type ID: ' || v_WorkstationType_ID ||
+                             ', Workstation Type: ' || v_WorkstationType_Designation);
     END LOOP;
 
-    CLOSE v_result;
+    CLOSE cur;
 END;
 /
-
-
--- ESTA FUNÇÃO ESTÁ A RETOENAR SEQUENCIAS REPETIDAS DE FORMA A MOSTRAR TODOS OS WORKSTATION TYPES. MUDAR ISSO. FALTA TAMBÉM ESTA PARTE DOS AC:
--- When a part is a subproduct made at the factory, its list of operations should be included. For each operation, the inputs and outputs should be included.
