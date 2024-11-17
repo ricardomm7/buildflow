@@ -20,7 +20,7 @@ public class ProductionTree {
             ProductionNode node = new ProductionNode(id, name, isProduct);
             nodes.add(node);
             connections.put(node, new HashMap<>());
-            nodesMap.put(id, node);
+            nodesMap.put(id.toLowerCase(), node);
         }
     }
 
@@ -36,7 +36,52 @@ public class ProductionTree {
     }
 
     public ProductionNode getNodeById(String id) {
-        return nodesMap.get(id);
+        return nodesMap.get(id.toLowerCase());
+    }
+
+    public List<ProductionNode> searchNodes(String query) {
+        List<ProductionNode> results = new ArrayList<>();
+
+        // Search by ID (case-insensitive)
+        for (ProductionNode node : nodes) {
+            if (node.getId().toLowerCase().contains(query.toLowerCase())) {
+                results.add(node);
+            }
+        }
+
+        // Search by name (case-insensitive)
+        for (ProductionNode node : nodes) {
+            if (node.getName().toLowerCase().contains(query.toLowerCase()) && !results.contains(node)) {
+                results.add(node);
+            }
+        }
+
+        return results;
+    }
+
+    public ProductionNode promptUserToSelectNode(List<ProductionNode> nodes) {
+        if (nodes.isEmpty()) {
+            System.out.println("No matching nodes found.");
+            return null;
+        }
+
+        // Display all the matching nodes
+        System.out.println("Search results:");
+        for (int i = 0; i < nodes.size(); i++) {
+            System.out.println(i + 1 + ". " + nodes.get(i));
+        }
+
+        // Ask the user to select one
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please select a node by entering the number (1-" + nodes.size() + "): ");
+        int choice = scanner.nextInt();
+
+        if (choice < 1 || choice > nodes.size()) {
+            System.out.println("Invalid choice.");
+            return null;
+        }
+
+        return nodes.get(choice - 1);
     }
 
     public List<ProductionNode> getAllNodes() {

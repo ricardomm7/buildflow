@@ -145,6 +145,6 @@ public class Operation implements Identifiable<String> {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hash(name.toLowerCase());
     }
 }

@@ -5,7 +5,9 @@ import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.ProductionTree;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ProductionTreeSearcher {
 
@@ -18,17 +20,39 @@ public class ProductionTreeSearcher {
 
     // Method to search for a node by its name or ID
     public String searchNodeByNameOrId(String identifier) {
-        ProductionNode node = productionTree.getNodesMap().get(identifier);  // Try searching by ID
+        List<ProductionNode> matchingNodes = productionTree.searchNodes(identifier);  // Get all matching nodes
 
-        if (node == null) {
-            // If not found by ID, search by name
-            node = findNodeByName(identifier);
+        // If no nodes match, return an appropriate message
+        if (matchingNodes.isEmpty()) {
+            return "No matching nodes found.";
         }
 
-        if (node == null) {
-            return "Node not found";
+        // If there's only one result, return its details directly
+        if (matchingNodes.size() == 1) {
+            return getNodeDetails(matchingNodes.get(0));
         }
 
+        // If there are multiple matches, prompt the user to select one
+        System.out.println("Multiple matches found:");
+        for (int i = 0; i < matchingNodes.size(); i++) {
+            System.out.println((i + 1) + ". " + matchingNodes.get(i).getName() + " (ID: " + matchingNodes.get(i).getId() + ")");
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please select a node by entering the number (1-" + matchingNodes.size() + "): ");
+        int choice = scanner.nextInt();
+
+        // Validate user choice
+        if (choice < 1 || choice > matchingNodes.size()) {
+            return "Invalid choice.";
+        }
+
+        // Return the details of the selected node
+        return getNodeDetails(matchingNodes.get(choice - 1));
+    }
+
+    // Helper method to get the details of a node
+    private String getNodeDetails(ProductionNode node) {
         StringBuilder result = new StringBuilder("Node Details:\n");
         result.append("ID: ").append(node.getId()).append("\n");
         result.append("Name: ").append(node.getName()).append("\n");
@@ -74,15 +98,4 @@ public class ProductionTreeSearcher {
 
         return result.toString();
     }
-
-    // Helper method to search a node by name if it isn't found by ID
-    private ProductionNode findNodeByName(String name) {
-        for (ProductionNode node : productionTree.getAllNodes()) {
-            if (node.getName().equalsIgnoreCase(name)) {
-                return node;
-            }
-        }
-        return null;  // Return null if no matching node is found by name
-    }
 }
-
