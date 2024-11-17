@@ -2,10 +2,7 @@ package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.ProductionNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MaterialQuantityBST {
     private class Node {
@@ -50,59 +47,44 @@ public class MaterialQuantityBST {
 
     public List<ProductionNode> getListInAscending() {
         List<ProductionNode> consolidatedList = consolidateMaterials();
-        consolidatedList.sort((m1, m2) -> Double.compare(m1.getQuantity(), m2.getQuantity()));
+        consolidatedList.sort(Comparator.comparingDouble(ProductionNode::getQuantity));
         return consolidatedList;
     }
 
     private List<ProductionNode> consolidateMaterials() {
-        Map<String, Double> materialMap = new HashMap<>();
+        Map<String, Map<String, Double>> materialMap = new HashMap<>();
         consolidateNodeMaterials(root, materialMap);
 
         List<ProductionNode> consolidatedList = new ArrayList<>();
-        for (Map.Entry<String, Double> entry : materialMap.entrySet()) {
-            String id = entry.getKey();
-            double totalQuantity = entry.getValue();
+        for (Map.Entry<String, Map<String, Double>> idEntry : materialMap.entrySet()) {
+            String id = idEntry.getKey();
+            Map<String, Double> nameMap = idEntry.getValue();
 
-            String materialName = getMaterialNameById(id);
+            for (Map.Entry<String, Double> nameEntry : nameMap.entrySet()) {
+                String name = nameEntry.getKey();
+                double totalQuantity = nameEntry.getValue();
 
-            ProductionNode node = new ProductionNode(id, materialName, true);
-            node.setQuantity(totalQuantity);
-            consolidatedList.add(node);
+                ProductionNode node = new ProductionNode(id, name, true);
+                node.setQuantity(totalQuantity);
+                consolidatedList.add(node);
+            }
         }
         return consolidatedList;
     }
 
-    private String getMaterialNameById(String id) {
-        Node node = searchByNode(root, id);
-        if (node != null && !node.materials.isEmpty()) {
-            return node.materials.get(0).getName();
-        }
-        return "Unknown Material";
-    }
-
-    private Node searchByNode(Node node, String id) {
-        if (node == null) {
-            return null;
-        }
-
-        for (ProductionNode material : node.materials) {
-            if (material.getId().equals(id)) {
-                return node;
-            }
-        }
-
-        Node foundNode = searchByNode(node.left, id);
-        if (foundNode != null) return foundNode;
-        return searchByNode(node.right, id);
-    }
-
-    private void consolidateNodeMaterials(Node node, Map<String, Double> materialMap) {
+    private void consolidateNodeMaterials(Node node, Map<String, Map<String, Double>> materialMap) {
         if (node == null) {
             return;
         }
 
         for (ProductionNode material : node.materials) {
-            materialMap.put(material.getId(), materialMap.getOrDefault(material.getId(), 0.0) + material.getQuantity());
+            String id = material.getId();
+            String name = material.getName();
+            double quantity = material.getQuantity();
+
+            materialMap
+                    .computeIfAbsent(id, k -> new HashMap<>())
+                    .merge(name, quantity, Double::sum);
         }
 
         consolidateNodeMaterials(node.left, materialMap);
