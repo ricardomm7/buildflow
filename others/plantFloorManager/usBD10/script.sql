@@ -7,10 +7,11 @@ CREATE TABLE Operation_Output (Part_ID char(10) NOT NULL, Operation_ID number(10
 CREATE TABLE Operation_Type_Workstation (OperationOperation_ID number(10) NOT NULL, WorkstationType_ID char(5) NOT NULL, PRIMARY KEY (OperationOperation_ID, WorkstationType_ID));
 CREATE TABLE "Order" (Order_ID varchar2(255) NOT NULL, OrderDate date NOT NULL, DeliveryDate date NOT NULL, CostumerVAT varchar2(20) NOT NULL, PRIMARY KEY (Order_ID));
 CREATE TABLE Part (Part_ID char(10) NOT NULL, Description varchar2(100) NOT NULL, PRIMARY KEY (Part_ID));
-CREATE TABLE Product (Part_ID char(10) NOT NULL, Name varchar2(100) NOT NULL, PRIMARY KEY (Part_ID));
+CREATE TABLE Product (Part_ID char(10) NOT NULL, Name varchar2(100) NOT NULL, Product_FamilyFamily_ID varchar2(60) NOT NULL, PRIMARY KEY (Part_ID));
+CREATE TABLE Product_Family (Family_ID varchar2(60) NOT NULL, Name varchar2(100) NOT NULL, PRIMARY KEY (Family_ID));
 CREATE TABLE Production_Line (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID));
 CREATE TABLE Raw_Material (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
-CREATE TABLE Type_Workstation (WorkstationType_ID char(5) NOT NULL, Designation varchar2(60) NOT NULL, PRIMARY KEY (WorkstationType_ID));
+CREATE TABLE Type_Workstation (WorkstationType_ID char(5) NOT NULL, PRIMARY KEY (WorkstationType_ID));
 CREATE TABLE Workstation (Workstation_ID number(4) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, WorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Workstation_ID));
 ALTER TABLE Production_Line ADD CONSTRAINT FKProduction984405 FOREIGN KEY (Product_ID) REFERENCES Product (Part_ID);
 ALTER TABLE Production_Line ADD CONSTRAINT FKProduction29800 FOREIGN KEY (Order_ID) REFERENCES "Order" (Order_ID);
@@ -28,3 +29,4 @@ ALTER TABLE Operation_Output ADD CONSTRAINT FKOperation_762291 FOREIGN KEY (Oper
 ALTER TABLE Operation ADD CONSTRAINT FKOperation774989 FOREIGN KEY (NextOperation_ID) REFERENCES Operation (Operation_ID);
 ALTER TABLE Operation ADD CONSTRAINT FKOperation98050 FOREIGN KEY (Product_ID) REFERENCES Product (Part_ID);
 ALTER TABLE Product ADD CONSTRAINT FKProduct891385 FOREIGN KEY (Part_ID) REFERENCES Part (Part_ID);
+ALTER TABLE Product ADD CONSTRAINT FKProduct42868 FOREIGN KEY (Product_FamilyFamily_ID) REFERENCES Product_Family (Family_ID);

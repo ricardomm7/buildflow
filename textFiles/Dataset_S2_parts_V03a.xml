@@ -52,56 +52,78 @@
 	</part>
 	<part>
 		<part_number>"AS12945T22"</part_number>
+		<name>"La Belle 22 5l pot"</name>
+		<family>130</family>
 		<description>"5l 22 cm aluminium and teflon non stick pot"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945S22"</part_number>
+		<name>"Pro 22 5l pot"</name>
+		<family>125</family>
 		<description>"5l 22 cm stainless steel pot"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12946S22"</part_number>
+		<name>"Pro 22 5l pot bottom"</name>
+		<family>125</family>
 		<description>"5l 22 cm stainless steel pot bottom"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12947S22"</part_number>
+		<name>"Pro 22 lid"</name>
+		<family>145</family>
 		<description>"22 cm stainless steel lid"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945S20"</part_number>
+		<name>"Pro 20 3l pot"</name>
+		<family>125</family>
 		<description>"3l 20 cm stainless steel pot"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12946S20"</part_number>
+		<name>"Pro 20 3l pot bottom"</name>
+		<family>125</family>
 		<description>"3l 20 cm stainless steel pot bottom"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12947S20"</part_number>
+		<name>"Pro 20 lid"</name>
+		<family>145</family>
 		<description>"20 cm stainless steel lid"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945S17"</part_number>
+		<name>"Pro 17 2l pot"</name>
+		<family>125</family>
 		<description>"2l 17 cm stainless steel pot"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945P17"</part_number>
+		<name>"Pro 17 2l sauce pan"</name>
+		<family>132</family>
 		<description>"2l 17 cm stainless steel souce pan"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945S48"</part_number>
+		<name>"Pro 17 lid"</name>
+		<family>145</family>
 		<description>"17 cm stainless steel lid"</description>
 		<part_type>"Product"</part_type>
 	</part>
 	<part>
 		<part_number>"AS12945G48"</part_number>
+		<name>"Pro Clear 17 lid"</name>
+		<family>146</family>
 		<description>"17 cm glass lid"</description>
 		<part_type>"Product"</part_type>
 	</part>
