@@ -1,9 +1,6 @@
 package fourcorp.buildflow.ui;
 
-import fourcorp.buildflow.application.DisplayProductionTree;
-import fourcorp.buildflow.application.GraphViz;
-import fourcorp.buildflow.application.MachineFlowAnalyzer;
-import fourcorp.buildflow.application.Simulator;
+import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.repository.Repositories;
@@ -15,11 +12,13 @@ public class Menu {
     private final Scanner scanner;
     private final Simulator s;
     private final DisplayProductionTree ptVisualizer;
+    private final ProductionTreeSearcher ptService;
 
     public Menu() {
         scanner = new Scanner(System.in);
         s = new Simulator();
         ptVisualizer = new DisplayProductionTree();
+        ptService = new ProductionTreeSearcher();
     }
 
     public void displayMenu() throws IOException {
@@ -137,8 +136,10 @@ public class Menu {
             case 13:
                 System.out.print("Enter the ID or name of the node to search: ");
                 String identifier = scanner.nextLine();
-                //String result = ptVisualizer.getProductionTree().searchNodeByNameOrId(identifier, scanner);
-                //System.out.println(result);
+
+                // Call the search method from the ProductionTreeService and display the result
+                String result = ptService.searchNodeByNameOrId(identifier);  // Call the method to get the search result
+                System.out.println(result);  // Display the result in the console
                 break;
             case 14:
                 updateMaterialQuantity();

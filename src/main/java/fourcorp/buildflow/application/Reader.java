@@ -135,7 +135,8 @@ public abstract class Reader {
                     pt.insertProductionNode(opId, opId, false);
                 }
 
-                pt.insertNewConnection(itemId, opId, 1); // Quantidade padrão (ou ajustável)
+                pt.insertNewConnection(itemId, opId, 1); // Default quantity (or adjustable)
+                itemNode.setParent(opNode);  // Set the parent operation
 
                 for (int i = 2; i < parts.length; i += 2) {
                     String subitemId = parts[i];
@@ -148,9 +149,10 @@ public abstract class Reader {
                     }
 
                     pt.insertNewConnection(opId, subitemId, quantity);
+                    subitemNode.setParent(opNode);  // Set the parent operation
+                    subitemNode.setQuantity(quantity);  // Set the material quantity
                 }
             }
         }
     }
-
 }
