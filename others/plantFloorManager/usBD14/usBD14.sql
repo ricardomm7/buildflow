@@ -1,11 +1,44 @@
 --USBD14
-SELECT P.Product_ID, P.Name, P.Description
-FROM Product P
-JOIN Product_Family PF ON P.Product_FamilyFamily_ID = PF.Family_ID
-JOIN BOO_Operation BOO ON PF.Family_ID = BOO.Product_FamilyFamily_ID
-JOIN Operation_Type_Workstation OTW ON BOO.OperationOperation_ID = OTW.OperationOperation_ID
-GROUP BY P.Product_ID, P.Name, P.Description
-HAVING COUNT(DISTINCT OTW.Type_WorkstationWorkstationType_ID) =
-       (SELECT COUNT(*) FROM Type_Workstation);
+CREATE OR REPLACE PROCEDURE PrintProductsUsingAllWorkstationTypes
+IS
+    totalWorkstationTypes NUMBER;
+    CURSOR productCursor IS
+        SELECT Part_ID, Name FROM Product;
+    v_Product_ID Product.Part_ID%TYPE;
+    v_Product_Name Product.Name%TYPE;
+    v_UsedWorkstationTypes NUMBER;
+BEGIN
+    SELECT COUNT(*)
+    INTO totalWorkstationTypes
+    FROM Type_Workstation;
 
--- incerteza no output (sem dados)
+    OPEN productCursor;
+
+    LOOP
+        FETCH productCursor INTO v_Product_ID, v_Product_Name;
+        EXIT WHEN productCursor%NOTFOUND;
+
+        -- Conta as WorkstationTypes únicas usadas nas operações do produto
+        SELECT COUNT(DISTINCT otw.WorkstationType_ID)
+        INTO v_UsedWorkstationTypes
+        FROM Operation o
+        JOIN Operation_Type_Workstation otw ON o.Operation_ID = otw.OperationOperation_ID
+        WHERE o.Product_ID = v_Product_ID;
+
+        -- Compara o número de Workstation Types usados com o total existente
+        IF v_UsedWorkstationTypes = totalWorkstationTypes THEN
+            DBMS_OUTPUT.PUT_LINE('Product ID: ' || v_Product_ID || ', Name: ' || v_Product_Name);
+        END IF;
+    END LOOP;
+
+    CLOSE productCursor;
+END;
+/
+
+
+
+-- PARA TESTAR
+BEGIN
+    PrintProductsUsingAllWorkstationTypes;
+END;
+/

@@ -1,3 +1,4 @@
+-- USBD12
 CREATE OR REPLACE FUNCTION GetProductOperationParts(p_Product_ID IN Product.Part_ID%TYPE)
     RETURN SYS_REFCURSOR
 IS
@@ -83,7 +84,7 @@ BEGIN
 END;
 /
 
-
+-- PARA TESTAR
 DECLARE
     v_cursor SYS_REFCURSOR;
     v_part_id Part.Part_ID%TYPE;
