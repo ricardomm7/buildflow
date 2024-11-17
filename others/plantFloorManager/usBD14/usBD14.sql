@@ -18,14 +18,34 @@ BEGIN
         FETCH productCursor INTO v_Product_ID, v_Product_Name;
         EXIT WHEN productCursor%NOTFOUND;
 
-        -- Conta as WorkstationTypes únicas usadas nas operações do produto
         SELECT COUNT(DISTINCT otw.WorkstationType_ID)
         INTO v_UsedWorkstationTypes
-        FROM Operation o
-        JOIN Operation_Type_Workstation otw ON o.Operation_ID = otw.OperationOperation_ID
-        WHERE o.Product_ID = v_Product_ID;
+        FROM (
+            SELECT o.Operation_ID
+            FROM Operation o
+            WHERE o.Product_ID = v_Product_ID
 
-        -- Compara o número de Workstation Types usados com o total existente
+            UNION ALL
+
+            SELECT subo.Operation_ID
+            FROM Operation subo
+            WHERE subo.Product_ID IN (
+                SELECT DISTINCT oi.Part_ID
+                FROM Operation_Input oi
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM Product p
+                    WHERE p.Part_ID = oi.Part_ID
+                )
+                AND oi.Operation_ID IN (
+                    SELECT o.Operation_ID
+                    FROM Operation o
+                    WHERE o.Product_ID = v_Product_ID
+                )
+            )
+        ) operations
+        JOIN Operation_Type_Workstation otw ON operations.Operation_ID = otw.OperationOperation_ID;
+
         IF v_UsedWorkstationTypes = totalWorkstationTypes THEN
             DBMS_OUTPUT.PUT_LINE('Product ID: ' || v_Product_ID || ', Name: ' || v_Product_Name);
         END IF;
@@ -34,7 +54,6 @@ BEGIN
     CLOSE productCursor;
 END;
 /
-
 
 
 -- PARA TESTAR

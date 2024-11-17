@@ -44,8 +44,8 @@ insert into Production_Line (Product_ID, Order_ID, quantity) values ('PROD001', 
 insert into Production_Line (Product_ID, Order_ID, quantity) values ('PROD002', 'ORD002', 5);
 
 -- Insert into Type_Workstation
-insert into Type_Workstation (WorkstationType_ID) values ('WS001');
-insert into Type_Workstation (WorkstationType_ID) values ('WS002');
+insert into Type_Workstation (WorkstationType_ID, Designation) values ('WS001', 'a');
+insert into Type_Workstation (WorkstationType_ID, Designation) values ('WS002', 'v');
 
 -- Insert into Workstation
 insert into Workstation (Workstation_ID, Name, Description, WorkstationType_ID)
