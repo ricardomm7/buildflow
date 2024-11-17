@@ -20,38 +20,42 @@ public class QualityCheckManager {
     }
 
     /**
-     * Exibe todas as operações lidas do repositório de maneira organizada.
+     * Displays all operations from the repository in an organized format, in English.
      */
     public void displayAllOperations() {
-        System.out.println("\n--- Lista de Operações ---");
+        System.out.println("\n--- Operations List ---");
 
-        // Obter todos os nós do grafo de produção
+        // Get all nodes from the production tree
         List<ProductionNode> allNodes = productionTree.getAllNodes();
 
         for (ProductionNode node : allNodes) {
-            // Exibir detalhes para cada operação/nó
-            System.out.println("Operação/Produto: " + node.getName());
+            // Display details for each operation/node
+            System.out.println("Node Name: " + node.getName());
             System.out.println("    ID: " + node.getId());
-            System.out.println("    Tipo: " + (node.isOperation() ? "Operação" : "Produto"));
-            System.out.println("    Dependências: " + formatDependencies(node));
-            System.out.println("    Quantidade Produzida: " + node.getProducedQuantity());
+            System.out.println("    Type: " + (node.isOperation() ? "Operation" : "Product"));
+            System.out.println("    Dependencies: " + formatDependencies(node));
+            if (!node.isOperation()) {
+                System.out.println("    Produced Quantity: " + node.getProducedQuantity());
+
+            }
             System.out.println("---------------------------");
         }
     }
 
     /**
-     * Formata as dependências de um nó, obtidas do grafo de produção.
+     * Formats the dependencies of a node, obtained from the production tree, in English.
      */
     private String formatDependencies(ProductionNode node) {
-        // Obter nós dependentes usando o método do repositório
+        // Get dependent nodes using the repository method
         List<ProductionNode> dependencies = productionTree.getParentNodes(node);
 
         if (dependencies.isEmpty()) {
-            return "Nenhuma";
+            return "None";
         }
 
         return dependencies.stream()
                 .map(ProductionNode::getName)
                 .collect(Collectors.joining(", "));
     }
+
 }

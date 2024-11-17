@@ -45,29 +45,28 @@ public class CriticalPathPrioritizer {
     }
 
     /**
-     * Displays the critical path in a user-friendly format.
-     */
-    /**
-     * Displays the critical path in a structured format.
+     * Displays the critical path in a structured format, in English.
      */
     public void displayCriticalPath() {
         PriorityQueue<ProductionNode> tempQueue = new PriorityQueue<>(
                 (a, b) -> Integer.compare(b.getDepth(productionTree), a.getDepth(productionTree))
         );
 
-        // Adicionar todos os nós na fila de prioridade
+        // Add all nodes to the priority queue
         for (ProductionNode node : productionTree.getAllNodes()) {
             tempQueue.offer(node);
         }
 
-        System.out.println("\n--- Caminho Crítico ---");
+        System.out.println("\n--- Critical Path ---");
         while (!tempQueue.isEmpty()) {
             ProductionNode node = tempQueue.poll();
-            System.out.println("Operação/Produto: " + node.getName());
+            System.out.println("Node Type: " + (node.isOperation() ? "Operation" : "Material"));
+            System.out.println("    Name: " + node.getName());
             System.out.println("    ID: " + node.getId());
-            System.out.println("    Profundidade: " + node.getDepth(productionTree));
+            System.out.println("    Depth: " + node.getDepth(productionTree));
             System.out.println("---------------------------");
         }
     }
+
 }
 

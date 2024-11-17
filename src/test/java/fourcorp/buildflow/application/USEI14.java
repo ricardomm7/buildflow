@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class USEI14 {
 
@@ -40,7 +40,6 @@ public class USEI14 {
             productionTree.addDependency(productD, operationC);   // D depende de C
         }
 
-
         @Test
         void testCriticalPathPriority() {
             // AC1: Ordenar operações pelo caminho crítico usando um heap
@@ -58,11 +57,11 @@ public class USEI14 {
 
             // AC2: Validar ordem por profundidade
             ProductionNode first = queue.poll();
-            assert first != null;
+            assertNotNull(first);
             assertEquals("Produto D", first.getName(), "Primeiro no caminho crítico deve ser o mais profundo");
 
             ProductionNode second = queue.poll();
-            assert second != null;
+            assertNotNull(second);
             assertEquals("Operação C", second.getName(), "Segundo deve ser o próximo mais profundo");
 
             // AC3: Caminho crítico como sequência
@@ -71,6 +70,45 @@ public class USEI14 {
             assertEquals("Operação A", criticalPath.get(0).getName());
             assertEquals("Produto D", criticalPath.get(3).getName());
         }
+
+        @Test
+        void testCriticalPathWithIndependentNodes() {
+            // Adiciona um nó sem dependências
+            ProductionNode independentNode = new ProductionNode("E1", "Operação Independente", false);
+            productionTree.addNode(independentNode);
+
+            List<ProductionNode> criticalPath = productionTree.getCriticalPath();
+
+            // Valida que o caminho crítico ignora o nó independente
+            assertEquals(4, criticalPath.size(), "Caminho crítico deve ignorar nós independentes");
+            assertEquals("Operação A", criticalPath.get(0).getName());
+            assertEquals("Produto D", criticalPath.get(3).getName());
+        }
+
+        @Test
+        void testInvalidDependencyHandling() {
+            // Cenário: Adicionar uma dependência circular direta
+            ProductionNode nodeA = new ProductionNode("A1", "Operação A", false);
+            productionTree.addNode(nodeA);
+
+            // Testar dependência circular direta
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> productionTree.addDependency(nodeA, nodeA),
+                    "Dependências circulares diretas devem lançar uma exceção"
+            );
+
+            assertEquals(
+                    "Cannot add direct circular dependency from a node to itself",
+                    exception.getMessage(),
+                    "A mensagem da exceção deve ser clara e descrever o erro"
+            );
+
+            // Validar que nenhuma dependência foi registrada
+            List<ProductionNode> parentsOfA = productionTree.getParentNodes(nodeA);
+            assertEquals(0, parentsOfA.size(), "O nó A não deve ter dependências após tentativa de dependência circular");
+        }
+
 
     }
 }

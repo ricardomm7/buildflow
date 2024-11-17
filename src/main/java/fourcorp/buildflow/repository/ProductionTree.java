@@ -9,6 +9,7 @@ public class ProductionTree {
     private Map<ProductionNode, Map<ProductionNode, Double>> connections; // Relations between nodes
     private Map<String, ProductionNode> nodesMap; // Nodes mapped by Name for quick lookup
 
+
     public ProductionTree() {
         nodes = new ArrayList<>();
         connections = new HashMap<>();
@@ -117,6 +118,10 @@ public class ProductionTree {
     }
 
     public void addDependency(ProductionNode operationB, ProductionNode operationA) {
+        if (operationB.equals(operationA)) {
+            throw new IllegalArgumentException("Cannot add direct circular dependency from a node to itself");
+        }
+
         if (!connections.containsKey(operationA)) {
             connections.put(operationA, new HashMap<>());
         }

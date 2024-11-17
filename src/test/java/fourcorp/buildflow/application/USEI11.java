@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class USEI11 {
 
@@ -65,6 +65,26 @@ public class USEI11 {
             assertEquals("Produto C", productC.getName());
             assertEquals("Operação B", productionTree.getParentNodes(productC).get(0).getName());
             assertEquals(20, productC.getProducedQuantity());
+        }
+
+        @Test
+        void testEmptyProductionTree() {
+            // Gerenciador com uma árvore vazia
+            ProductionTree emptyTree = new ProductionTree();
+            QualityCheckManager emptyManager = new QualityCheckManager(emptyTree);
+
+            List<ProductionNode> allNodes = emptyTree.getAllNodes();
+            assertTrue(allNodes.isEmpty(), "A árvore de produção deve estar vazia");
+        }
+
+        @Test
+        void testInvalidQuantityHandling() {
+            // Configura uma operação com quantidade inválida
+            ProductionNode invalidNode = new ProductionNode("E1", "Operação Inválida", false);
+            productionTree.addNode(invalidNode);
+
+            invalidNode.setQuantity(-10);
+            assertEquals(-10, invalidNode.getProducedQuantity(), "Quantidade inválida deve ser detectada");
         }
     }
 }
