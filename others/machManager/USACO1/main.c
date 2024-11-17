@@ -8,8 +8,11 @@ int value;
 
 int main() {
     
-    int res = extract_data ( str , token , unit , & value ) ;
-	printf ( "%d :%s ,%d \n" , res , unit , value ); // 0: ,0
+    int res = extract_data ( str , token , unit , &value );
+	printf ( "%d: %s,%d \n" , res , unit , value ); 
+	char token2 [] = "AAA";
+	res = extract_data (str, token2,unit,&value);
+	printf ( "%d: %s,%d \n" , res , unit , value ); //0: ,0
     
     return 0;
 }

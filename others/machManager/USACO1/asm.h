@@ -1,4 +1,4 @@
 #ifndef ASM_H
 #define ASM_H
-extern int extract_data(char* str, char* token, char*unit, int* value) ;
+ int extract_data(char* str, char* token, char*unit, int* value) ;
 #endif

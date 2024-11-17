@@ -10,61 +10,78 @@ extract_data:
     # %rdi = str --> ponteiro char[]
     # %rsi = token --> ponteiro char[]
     # %rdx = unit --> ponteiro char[]
-    # %rcx = value  --> ponteiro int
-
-    #Falta só criar uma função de incio que verifica se rdi está correto e sai se não tiver
-    #Falta tbm corrigir um erro porque o valor sai 2 e nãa 20 o que se deve á imul de 0
-    #ou seja temos de por uma linha que caso o caracter seja zero os numero são multiplicados só por 10 e não adicionados
+    # %rcx = value --> ponteiro int
 
 find_token:
-    movb (%rdi), %al
-    movb (%rsi), %bl
-    cmp %al, %bl
-    je find_index_unit
-    inc %rdi
+    movb (%rdi), %al            
+    cmpb $0, %al                
+    je end_error                
+    cmpb %al, (%rsi)            
+    je verify_token             
+    inc %rdi                    
     jmp find_token
 
+verify_token:
+    movb (%rsi), %al            
+    cmpb $0, %al                
+    je find_index_unit          
+    movb (%rdi), %al            
+    cmpb %al, (%rsi)            
+    jne find_token              
+    inc %rdi                    
+    inc %rsi                    
+    jmp verify_token
+
 find_index_unit:
-    movb (%rdi), %al
-    cmp $'T', %al
-    jne token_H
-    addq $10, %rdi               # Avança o ponteiro str em 10 posições (pula para a unidade)
+    movb (%rdi), %al            
+    cmpb $':', %al              
+    jne skip_unit
+    inc %rdi                    
     jmp save_unit
 
-token_H:
-    cmp $'H', %al
-    addq $9, %rdi
+skip_unit:
+    inc %rdi                    
+    jmp find_index_unit         
 
 save_unit:
-    movb (%rdi), %al
-    cmp $'&', %al                # Verifica se o caractere atual é '&' (final da unidade)
-    je find_index_value
-    movb %al, (%rdx)
-    inc %rdi
-    inc %rdx
+    movb (%rdi), %al            
+    cmpb $'&', %al              
+    je find_index_value         
+    movb %al, (%rdx)            
+    inc %rdi                    
+    inc %rdx                    
     jmp save_unit
 
 find_index_value:
-    addq $7, %rdi                # Avança o ponteiro str para o início do valor numérico
+          
+    addq $7, %rdi               
+    xorq %rax, %rax             
 
 save_value:
-    movb (%rdi), %al
-    cmp $'#', %al
-    je end
-    cmp $'\0', %al
-    je end
+    movzbq (%rdi), %r8          
+    cmpb $0, %r8b               # Verifica se chegou ao final da string
+    je end_success              # Se sim, termina com sucesso
+    cmpb $'#', %r8b             
+    je end_success
 
-    sub $'0', %al                # Converte caractere ASCII para número (0-9)
-    imul $10, %r8d               # Multiplica o valor acumulado por 10
-    add %al, %r8b                # Adiciona o dígito convertido ao acumulador de valor
+    sub $'0', %r8b              # Converte ASCII para número
+    imul $10, %rax              # Multiplica o acumulador por 10
+    addq %r8, %rax              # Adiciona o número atual
 
-    inc %rdi
-    jmp save_value
+    inc %rdi                    
+    jmp save_value              
+
+end_error:
+    movb $0, (%rdx)             # Limpa a unidade
+    movq $0, (%rcx)             # Zera o valor numérico
+    xor %eax, %eax              # Retorna 0 (falha)
+    jmp end
+
+end_success:
+    movq %rax, (%rcx)           # Salva o valor final em *value
+    mov $1, %eax                # Retorna 1 (sucesso)
 
 end:
-    mov %r8d, (%rcx)             # Armazena o valor final em *value
-    mov $1, %eax                 # Define o valor de retorno como 1 (sucesso)
-
     # Epílogo
     mov %rbp, %rsp
     pop %rbp
