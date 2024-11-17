@@ -60,31 +60,6 @@ public class ProductionTree {
         return results;
     }
 
-    public ProductionNode promptUserToSelectNode(List<ProductionNode> nodes) {
-        if (nodes.isEmpty()) {
-            System.out.println("No matching nodes found.");
-            return null;
-        }
-
-        // Display all the matching nodes
-        System.out.println("Search results:");
-        for (int i = 0; i < nodes.size(); i++) {
-            System.out.println(i + 1 + ". " + nodes.get(i));
-        }
-
-        // Ask the user to select one
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Please select a node by entering the number (1-" + nodes.size() + "): ");
-        int choice = scanner.nextInt();
-
-        if (choice < 1 || choice > nodes.size()) {
-            System.out.println("Invalid choice.");
-            return null;
-        }
-
-        return nodes.get(choice - 1);
-    }
-
     /**
      * Retrieves the parent nodes (predecessors) of a given node.
      *
