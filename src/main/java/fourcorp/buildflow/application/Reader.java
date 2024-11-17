@@ -1,10 +1,7 @@
 package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.*;
-import fourcorp.buildflow.repository.ProductPriorityLine;
-import fourcorp.buildflow.repository.ProductionTree;
-import fourcorp.buildflow.repository.Repositories;
-import fourcorp.buildflow.repository.WorkstationsPerOperation;
+import fourcorp.buildflow.repository.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,9 +14,10 @@ import java.util.LinkedList;
  * It provides methods for reading and parsing data from CSV files to create products and workstations.
  */
 public abstract class Reader {
-    public static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
-    public static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
-    public static ProductionTree pt = Repositories.getInstance().getProductionTree();
+    private static ProductPriorityLine p = Repositories.getInstance().getProductPriorityRepository();
+    private static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
+    private static ProductionTree pt = Repositories.getInstance().getProductionTree();
+    private static MaterialQuantityBST bst = Repositories.getInstance().getMaterialBST();
 
     /**
      * Loads product data from a specified file and populates the product priority repository.
@@ -94,6 +92,7 @@ public abstract class Reader {
             String id = campos[0];
             String name = campos[1];
             pt.insertProductionNode(id, name, true);
+            bst.insert(new ProductionNode(id, name, true), 0); // Quantidade inicial definida como 0
         }
         br.close();
     }
@@ -151,6 +150,7 @@ public abstract class Reader {
                     pt.insertNewConnection(opId, subitemId, quantity);
                     subitemNode.setParent(opNode);  // Set the parent operation
                     subitemNode.setQuantity(quantity);  // Set the material quantity
+                    bst.insert(subitemNode, quantity);
                 }
             }
         }

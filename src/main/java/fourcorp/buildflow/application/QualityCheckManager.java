@@ -14,6 +14,7 @@ public class QualityCheckManager {
         // Obter o grafo de produção do repositório
         this.productionTree = Repositories.getInstance().getProductionTree();
     }
+
     public QualityCheckManager(ProductionTree productionTree) {
         this.productionTree = productionTree;
     }

@@ -12,11 +12,10 @@ public class Menu {
     private final Scanner scanner;
     private final Simulator s;
     private final DisplayProductionTree ptVisualizer;
+    private final DisplayBST bstVisualizer;
     private final ProductionTreeSearcher ptService;
     private final CriticalPathPrioritizer prioritize;
     private final QualityCheckManager manager;
-
-
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -25,6 +24,7 @@ public class Menu {
         ptService = new ProductionTreeSearcher();
         prioritize = new CriticalPathPrioritizer();
         manager = new QualityCheckManager();
+        bstVisualizer = new DisplayBST();
     }
 
     public void displayMenu() throws IOException {
@@ -136,10 +136,10 @@ public class Menu {
                 }
                 break;
             case 11:
-                //ptVisualizer.displayMaterialsByQuantity(true);
+                bstVisualizer.displayMaterialsByQuantity(true);
                 break;
             case 12:
-                //ptVisualizer.displayMaterialsByQuantity(false);
+                bstVisualizer.displayMaterialsByQuantity(false);
                 break;
             case 13:
                 System.out.print("Enter the ID or name of the node to search: ");

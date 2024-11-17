@@ -56,20 +56,20 @@ public class ProductionNode {
     }
 
     public int getDepth(ProductionTree productionTree) {
-    return calculateDepth(this, productionTree);
-}
-
-private int calculateDepth(ProductionNode node, ProductionTree tree) {
-    List<ProductionNode> parents = tree.getParentNodes(node);
-    if (parents.isEmpty()) {
-        return 0; // Nó raiz
+        return calculateDepth(this, productionTree);
     }
-    // Calcula a profundidade máxima entre os pais
-    return 1 + parents.stream()
-                      .mapToInt(parent -> calculateDepth(parent, tree))
-                      .max()
-                      .orElse(0);
-}
+
+    private int calculateDepth(ProductionNode node, ProductionTree tree) {
+        List<ProductionNode> parents = tree.getParentNodes(node);
+        if (parents.isEmpty()) {
+            return 0; // Nó raiz
+        }
+        // Calcula a profundidade máxima entre os pais
+        return 1 + parents.stream()
+                .mapToInt(parent -> calculateDepth(parent, tree))
+                .max()
+                .orElse(0);
+    }
 
     @Override
     public String toString() {

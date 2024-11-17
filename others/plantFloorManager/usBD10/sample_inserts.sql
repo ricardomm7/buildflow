@@ -69,6 +69,8 @@ VALUES (2, 'WS002');
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
 VALUES ('P002', 1, 5);
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
+VALUES ('PROD002', 1, 5);
+INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
 VALUES ('P004', 2, 3);
 
 -- Insert into Operation_Output

@@ -9,6 +9,7 @@ public class Repositories {
     private final ProductPriorityLine productPriorityLine;
     private final WorkstationsPerOperation workstationsPerOperation;
     private final ProductionTree productionTree;
+    private final MaterialQuantityBST materialBST;
 
     /**
      * Private constructor to initialize the repositories.
@@ -18,6 +19,7 @@ public class Repositories {
         productPriorityLine = new ProductPriorityLine();
         workstationsPerOperation = new WorkstationsPerOperation();
         productionTree = new ProductionTree();
+        materialBST = new MaterialQuantityBST();
     }
 
     /**
@@ -69,5 +71,14 @@ public class Repositories {
      */
     public ProductionTree getProductionTree() {
         return productionTree;
+    }
+
+    /**
+     * Gets material bst.
+     *
+     * @return the material bst
+     */
+    public MaterialQuantityBST getMaterialBST() {
+        return materialBST;
     }
 }
