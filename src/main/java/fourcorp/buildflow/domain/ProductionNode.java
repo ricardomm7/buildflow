@@ -1,5 +1,9 @@
 package fourcorp.buildflow.domain;
 
+import fourcorp.buildflow.repository.ProductionTree;
+
+import java.util.List;
+
 public class ProductionNode {
     private String id;
     private String name;
@@ -46,6 +50,26 @@ public class ProductionNode {
     public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
+
+    public double getProducedQuantity() {
+        return quantity;
+    }
+
+    public int getDepth(ProductionTree productionTree) {
+    return calculateDepth(this, productionTree);
+}
+
+private int calculateDepth(ProductionNode node, ProductionTree tree) {
+    List<ProductionNode> parents = tree.getParentNodes(node);
+    if (parents.isEmpty()) {
+        return 0; // Nó raiz
+    }
+    // Calcula a profundidade máxima entre os pais
+    return 1 + parents.stream()
+                      .mapToInt(parent -> calculateDepth(parent, tree))
+                      .max()
+                      .orElse(0);
+}
 
     @Override
     public String toString() {

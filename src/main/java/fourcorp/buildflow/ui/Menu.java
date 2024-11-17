@@ -13,12 +13,18 @@ public class Menu {
     private final Simulator s;
     private final DisplayProductionTree ptVisualizer;
     private final ProductionTreeSearcher ptService;
+    private final CriticalPathPrioritizer prioritize;
+    private final QualityCheckManager manager;
+
+
 
     public Menu() {
         scanner = new Scanner(System.in);
         s = new Simulator();
         ptVisualizer = new DisplayProductionTree();
         ptService = new ProductionTreeSearcher();
+        prioritize = new CriticalPathPrioritizer();
+        manager = new QualityCheckManager();
     }
 
     public void displayMenu() throws IOException {
@@ -42,6 +48,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[14]", "Update material quantity.");
             System.out.printf("%-5s%-75s%n", "[15]", "See the production tree (console).");
             System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
+            System.out.printf("%-5s%-75s%n", "[17]", "Prioritize Quality Checks.");
+            System.out.printf("%-5s%-75s%n", "[18]", "Identify and Prioritize Critical path.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -56,7 +64,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 16) {
+                if (choice >= 0 && choice <= 20) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -149,6 +157,12 @@ public class Menu {
                 break;
             case 16:
                 ptVisualizer.generateGraph();
+                break;
+            case 17:
+                manager.displayAllOperations();
+                break;
+            case 18:
+                prioritize.displayCriticalPath();
                 break;
             case 0:
                 System.out.println("Exiting...");
