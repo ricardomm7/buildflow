@@ -15,11 +15,14 @@ INSERT INTO Part (Part_ID, Description) VALUES ('PN52384R45', '250x250 mm 5mm st
 INSERT INTO Part (Part_ID, Description) VALUES ('PN52384R12', '250x250 mm 1mm stainless steel sheet');
 INSERT INTO Part (Part_ID, Description) VALUES ('PN18324C91', 'Stainless steel handle model S26');
 INSERT INTO Part (Part_ID, Description) VALUES ('PN18324C51', 'Stainless steel handle model R11');
+INSERT INTO Part (Part_ID, Description) VALUES ('PN94561L67', 'Coolube 2210XP');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945T22', '5l 22 cm aluminium and teflon non stick pot');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945S22', '5l 22 cm stainless steel pot');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12946S22', '5l 22 cm stainless steel pot bottom');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12947S22', '22 cm stainless steel lid');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945S20', '3l 20 cm stainless steel pot');
+INSERT INTO Part (Part_ID, Description) VALUES ('AS12946S20', '3l 20 cm stainless steel pot bottom');
+INSERT INTO Part (Part_ID, Description) VALUES ('AS12947S20', '3l 25 cm stainless steel pot');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945S17', '2l 17 cm stainless steel pot');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945P17', '2l 17 cm stainless steel sauce pan');
 INSERT INTO Part (Part_ID, Description) VALUES ('AS12945S48', '17 cm stainless steel lid');
@@ -38,10 +41,6 @@ INSERT INTO Part (Part_ID, Description) VALUES ('IP12945A34', '200 mm pot base f
 INSERT INTO Part (Part_ID, Description) VALUES ('IP12947A32', '200 mm lid pressed');
 INSERT INTO Part (Part_ID, Description) VALUES ('IP12947A33', '200 mm lid polished');
 INSERT INTO Part (Part_ID, Description) VALUES ('IP12947A34', '200 mm lid with handle');
-INSERT INTO Part (Part_ID, Description) VALUES ('PN94561L67', 'Coolube 2210XP');
-INSERT INTO Part (Part_ID, Description) VALUES ('AS12946S20', '3l 22 cm stainless steel pot TT');
-INSERT INTO Part (Part_ID, Description) VALUES ('AS12947S20', '3l 25 cm stainless steel pot TT');
-
 -- 2. Insert into Raw_Material
 INSERT INTO Raw_Material (Part_ID) VALUES ('PN94561L67');
 
@@ -75,17 +74,17 @@ INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A33');
 INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A34');
 
 -- 5. Insert into Product
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945T22', '5l 22 cm aluminium and teflon non stick pot', '130');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S22', '5l 22 cm stainless steel pot', '125');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12946S22', '5l 22 cm stainless steel pot bottom', '125');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12947S22', '22 cm stainless steel lid', '145');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S20', '3l 20 cm stainless steel pot', '125');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12946S20', '3l 22 cm stainless steel pot TT', '125');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12947S20', '3l 25 cm stainless steel pot TT', '145');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S17', '2l 17 cm stainless steel pot', '125');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945P17', '2l 17 cm stainless steel sauce pan', '132');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S48', '17 cm stainless steel lid', '145');
-INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945G48', '17 cm glass lid', '146');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945T22', 'La Belle 22 5l pot', '130');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S22', 'Pro 22 5l pot', '125');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12946S22', 'Pro 22 5l pot bottom', '125');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12947S22', 'Pro 22 lid', '145');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S20', 'Pro 20 3l pot', '125');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12946S20', 'Pro 20 3l pot bottom', '125');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12947S20', 'Pro 20 lid', '145');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S17', 'Pro 17 2l pot', '125');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945P17', 'Pro 17 2l sauce pan', '132');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S48', 'Pro 17 lid', '145');
+INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945G48', 'Pro Clear 17 lid', '146');
 
 -- 6. Insert into Type_Workstation
 INSERT INTO Type_Workstation (WorkstationType_ID, Designation) VALUES('A4578', 'Cutting Station');
