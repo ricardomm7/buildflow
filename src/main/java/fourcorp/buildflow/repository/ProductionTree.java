@@ -6,7 +6,7 @@ import java.util.*;
 
 public class ProductionTree {
     private List<ProductionNode> nodes; // List of all nodes
-    private Map<ProductionNode, Map<ProductionNode, Double>> connections; // Relations between nodes
+        private Map<ProductionNode, Map<ProductionNode, Double>> connections; // Relations between nodes
     private Map<String, ProductionNode> nodesMap; // Nodes mapped by Name for quick lookup
 
 
@@ -162,6 +162,10 @@ public class ProductionTree {
         }
 
         return criticalPath;
+    }
+
+    public Map<ProductionNode, Map<ProductionNode, Double>> getConnections() {
+        return connections;
     }
 }
 

@@ -34,12 +34,24 @@ public class MaterialQuantityBST {
             return new Node(quantity, material);
         }
 
-        if (quantity < node.quantity) {
+        int compare = material.getId().compareTo(node.materials.get(0).getId());
+        if (compare < 0) {
             node.left = insert(node.left, material, quantity);
-        } else if (quantity > node.quantity) {
+        } else if (compare > 0) {
             node.right = insert(node.right, material, quantity);
         } else {
-            node.materials.add(material);
+            boolean found = false;
+            for (ProductionNode existingMaterial : node.materials) {
+                if (existingMaterial.getName().equals(material.getName())) {
+                    existingMaterial.setQuantity(existingMaterial.getQuantity() + quantity);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                node.materials.add(material);
+                node.quantity += quantity;
+            }
         }
 
         return node;
@@ -96,7 +108,4 @@ public class MaterialQuantityBST {
         consolidatedList.sort((m1, m2) -> Double.compare(m2.getQuantity(), m1.getQuantity()));
         return consolidatedList;
     }
-
-
-
 }

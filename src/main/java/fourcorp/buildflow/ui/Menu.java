@@ -10,6 +10,7 @@ import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
@@ -178,9 +179,6 @@ public class Menu {
             case 18:
                 prioritize.displayCriticalPath();
                 break;
-            case 19:
-                displayMaterialQuantitiesInBST();
-                break;
             case 20:
                 displayMaterialQuantitiesInProductionTree();
                 break;
@@ -194,21 +192,27 @@ public class Menu {
         }
     }
 
-    private void displayMaterialQuantitiesInBST() {
-        MaterialQuantityBST materialBST = Repositories.getInstance().getMaterialBST();
-        List<ProductionNode> materials = materialBST.getListInAscending();
-        System.out.println("\n>>> Material Quantities in BST (Ascending Order):");
-        for (ProductionNode material : materials) {
-            System.out.println("ID: " + material.getId() + ", Name: " + material.getName() + ", Quantity: " + material.getQuantity());
-        }
-    }
-
     private void displayMaterialQuantitiesInProductionTree() {
-        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
-        List<ProductionNode> nodes = productionTree.getAllNodes();
-        System.out.println("\n>>> Material Quantities in Production Tree:");
-        for (ProductionNode node : nodes) {
-            System.out.println("ID: " + node.getId() + ", Name: " + node.getName() + ", Quantity: " + node.getQuantity());
+        ProductionTree p = Repositories.getInstance().getProductionTree();
+        Map<ProductionNode, Map<ProductionNode, Double>> connections = p.getConnections();
+        if (connections.isEmpty()) {
+            System.out.println("Não há conexões para exibir.");
+            return;
+        }
+
+        System.out.println("Conexões entre os nós:");
+        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
+            ProductionNode parentNode = entry.getKey();
+            Map<ProductionNode, Double> childNodes = entry.getValue();
+
+            for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {
+                ProductionNode childNode = childEntry.getKey();
+                Double quantity = childEntry.getValue();
+
+                System.out.println("Nó Pai: " + parentNode.getName() + " (ID: " + parentNode.getId() + ") -> "
+                        + "Nó Filho: " + childNode.getName() + " (ID: " + childNode.getId() + ")"
+                        + " | Quantidade: " + quantity);
+            }
         }
     }
 
