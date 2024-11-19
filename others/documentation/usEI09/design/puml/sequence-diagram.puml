@@ -9,90 +9,142 @@ actor "User" as User
 participant "Reader" as Reader
 participant "Repositories\n:Repositories" as Repositories
 participant "ProductionTree\n:ProductionTree" as ProductionTree
-participant "DisplayProductionTree" as DisplayProductionTree
 participant "ProductionNode\n:ProductionNode" as ProductionNode
+participant "MaterialQuantityBST\n:MaterialQuantityBST" as MaterialQuantityBST
+participant "DisplayProductionTree" as DisplayProductionTree
 
 activate User
 
+' Step 1: Initialize Repositories
 Reader -> Repositories : getInstance()
 activate Reader
 activate Repositories
 Repositories --> Reader : repository instance
-Reader -> Repositories : getProductionTree()
-Repositories --> Reader : productionTree
-
-deactivate "Reader"
 deactivate Repositories
+deactivate Reader
 
-User -> Reader : loadOperations("path/to/operations.csv")
+' Step 2: Load Items
+User -> Reader : loadItems("path/to/items.csv")
 activate Reader
-
-Reader -> ProductionTree : insertNewOperationNode(id, name, price, parentId)
+Reader -> ProductionTree : insertProductionNode(id, name, true)
 activate ProductionTree
-ProductionTree --> ProductionNode : create
-activate ProductionNode
-ProductionNode --> ProductionTree : add
-deactivate ProductionNode
+ProductionTree --> Reader : node inserted
+deactivate ProductionTree
+Reader -> MaterialQuantityBST : insert(ProductionNode, 0)
+activate MaterialQuantityBST
+MaterialQuantityBST --> Reader : success
+deactivate MaterialQuantityBST
+deactivate Reader
+
+' Step 3: Load Simple Operations
+User -> Reader : loadSimpleOperations("path/to/operations.csv")
+activate Reader
+Reader -> ProductionTree : insertProductionNode(id, name, false)
+activate ProductionTree
 ProductionTree --> Reader : node inserted
 deactivate ProductionTree
 deactivate Reader
 
-User -> Reader : loadBOM("path/to/bom.csv")
+' Step 4: Load Bill of Operations (BOO)
+User -> Reader : loadBOO("path/to/boo.csv")
 activate Reader
+Reader -> ProductionTree : getNodeById(itemId)
+ProductionTree --> Reader : node instance (or null)
+Reader -> ProductionTree : insertProductionNode(itemId, itemId, true) (if null)
+Reader -> ProductionTree : getNodeById(opId)
+ProductionTree --> Reader : node instance (or null)
+Reader -> ProductionTree : insertProductionNode(opId, opId, false) (if null)
+Reader -> ProductionTree : insertNewConnection(itemId, opId, quantity)
+ProductionTree --> Reader : connection added
 
-Reader -> ProductionTree : insertNewMaterialNode(materialId, materialName, quantity, price, operationId)
-activate ProductionTree
-ProductionTree --> ProductionNode : create
-activate ProductionNode
-ProductionNode --> ProductionTree : add
-deactivate ProductionNode
-ProductionTree --> Reader : material node inserted
-deactivate "Reader"
-deactivate ProductionTree
+loop For each subitem
+    Reader -> ProductionTree : getNodeById(subitemId)
+    ProductionTree --> Reader : node instance (or null)
+    Reader -> ProductionTree : insertProductionNode(subitemId, subitemId, true) (if null)
+    Reader -> ProductionTree : insertNewConnection(opId, subitemId, quantity)
+    Reader -> MaterialQuantityBST : insert(subitemNode, quantity)
+    MaterialQuantityBST --> Reader : success
+end
 
-User -> DisplayProductionTree : displayProductionTrees()
+deactivate Reader
+
+' Step 5: Display Production Tree
+User -> DisplayProductionTree : displayTree()
 activate DisplayProductionTree
 
-DisplayProductionTree -> Repositories : getInstance()
-activate Repositories
-Repositories --> DisplayProductionTree : repository instance
-deactivate Repositories
-
-DisplayProductionTree -> ProductionTree : getProductionTree()
+DisplayProductionTree -> ProductionTree : getAllNodes()
 activate ProductionTree
-ProductionTree --> DisplayProductionTree : ProductionTree instance
+ProductionTree --> DisplayProductionTree : list of all nodes
 deactivate ProductionTree
 
-DisplayProductionTree -> ProductionTree : getRootNodes()
-activate ProductionTree
-ProductionTree --> DisplayProductionTree : list of root nodes
-deactivate ProductionTree
-
-alt For each root node
-    DisplayProductionTree -> ProductionNode : displayProductionTree(node, "", quantity)
+alt For each node
+    DisplayProductionTree -> ProductionNode : isProduct()
     activate ProductionNode
+    ProductionNode --> DisplayProductionTree : true/false
+    deactivate ProductionNode
 
-    loop Traverse child nodes
-        ProductionNode -> ProductionNode : getChildren()
+    opt If product node
+        DisplayProductionTree -> ProductionNode : printNode(node, level, visitedNodes)
         activate ProductionNode
-        ProductionNode --> ProductionNode : list of child nodes
+        loop Traverse child nodes
+            ProductionNode -> ProductionTree : getSubNodes(node)
+            activate ProductionTree
+            ProductionTree --> ProductionNode : subNodes and quantities
+            deactivate ProductionTree
+
+            ProductionNode -> DisplayProductionTree : printNode(subNode, level+1, visitedNodes)
+            activate DisplayProductionTree
+            deactivate DisplayProductionTree
+        end
         deactivate ProductionNode
     end
-
-    deactivate ProductionNode
 end
 
 DisplayProductionTree --> User : display success message
 deactivate DisplayProductionTree
 
-User -> ProductionTree : updateMaterialQuantity(materialId, newQuantity)
+' Step 6: Generate Graph
+User -> DisplayProductionTree : generateGraph()
+activate DisplayProductionTree
+
+DisplayProductionTree -> ProductionTree : getAllNodes()
 activate ProductionTree
-ProductionTree --> User : quantity updated
+ProductionTree --> DisplayProductionTree : list of all nodes
 deactivate ProductionTree
 
-User -> ProductionTree : searchNodeByNameOrId(identifier)
-activate ProductionTree
-ProductionTree --> User : node details (or not found)
-deactivate ProductionTree
+alt For each node
+    DisplayProductionTree -> ProductionNode : isProduct()
+    activate ProductionNode
+    ProductionNode --> DisplayProductionTree : true/false
+    deactivate ProductionNode
 
+    opt If product node
+        DisplayProductionTree -> ProductionNode : generateNodeDotRepresentation(node, dotContent, visitedNodes)
+        activate ProductionNode
+        loop Traverse child nodes
+            ProductionNode -> ProductionTree : getSubNodes(node)
+            activate ProductionTree
+            ProductionTree --> ProductionNode : subNodes and quantities
+            deactivate ProductionTree
+
+            ProductionNode -> DisplayProductionTree : generateNodeDotRepresentation(subNode, dotContent, visitedNodes)
+            activate DisplayProductionTree
+            deactivate DisplayProductionTree
+        end
+        deactivate ProductionNode
+    end
+end
+
+DisplayProductionTree -> FileSystem : write .dot file
+activate FileSystem
+FileSystem --> DisplayProductionTree : success/failure
+deactivate FileSystem
+
+DisplayProductionTree -> Runtime : execute GraphViz command
+activate Runtime
+Runtime --> DisplayProductionTree : success/failure
+deactivate Runtime
+
+DisplayProductionTree --> User : generateGraph success message
+deactivate DisplayProductionTree
 @enduml

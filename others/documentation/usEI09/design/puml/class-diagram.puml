@@ -18,6 +18,8 @@ class Reader {
 class ProductionTree {
     +insertNewOperationNode(id: String, name: String, price: Double, parentId: String): void
     +insertNewMaterialNode(materialId: String, materialName: String, quantity: Int, price: Double, operationId: String): void
+    +getAllNodes(): Set<ProductionNode>
+    +getSubNodes(node: ProductionNode): Map<ProductionNode, Double>
 }
 
 class Repositories {
@@ -31,9 +33,32 @@ class Operation {
     +Operation(name: String)
 }
 
+class ProductionNode {
+    +getId(): String
+    +getName(): String
+    +isProduct(): Boolean
+    +isOperation(): Boolean
+}
+
+class DisplayProductionTree {
+    +displayTree(): void
+    +generateGraph(): void
+    -printNode(node: ProductionNode, level: Int, visitedNodes: Set<ProductionNode>): void
+    -generateNodeDotRepresentation(node: ProductionNode, dotContent: StringBuilder, visitedNodes: Set<ProductionNode>): void
+    -escapeForDot(input: String): String
+    -generateGraphVizSVG(): void
+
+    -productionTree: ProductionTree
+}
+
 Reader --> Repositories : getInstance()
 Repositories --> ProductionTree : getProductionTree()
 
 ProductionTree --> Operation : insertNewOperationNode(), insertNewMaterialNode()
+ProductionTree --> ProductionNode : getAllNodes(), getSubNodes()
+
+DisplayProductionTree --> Repositories : getInstance()
+DisplayProductionTree --> ProductionTree : getProductionTree()
+DisplayProductionTree --> ProductionNode : printNode(), generateNodeDotRepresentation()
 
 @enduml

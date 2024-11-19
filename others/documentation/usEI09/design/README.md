@@ -8,7 +8,8 @@
 | 	... loading the operations data from a CSV?                 | Reader                | The `Reader` class is responsible for loading operations data from a CSV file and passing it to the `ProductionTree`.                   |
 | 	... inserting new operation nodes into the production tree? | ProductionTree        | The `ProductionTree` class handles the insertion of new operation nodes, creating new `ProductionNode` objects.                         |
 | 	... inserting new material nodes into the production tree?  | ProductionTree        | The `ProductionTree` class is responsible for inserting new material nodes and associating them with the corresponding operation nodes. |
-| 	... displaying the production tree to the user?             | DisplayProductionTree | The `DisplayProductionTree` class is responsible for displaying the structure of the production tree to the user.                       |
+| 	... displaying the production tree to the user?             | DisplayProductionTree | The `DisplayProductionTree` class is responsible for displaying the structure of the production tree to the user in text format.        |
+| 	... generating a graphical representation of the tree?      | DisplayProductionTree | The `DisplayProductionTree` class generates a `.dot` file and uses Graphviz to produce an SVG representation of the production tree.    |
 | 	... updating material quantities in the tree?               | ProductionTree        | The `ProductionTree` class manages the updating of material quantities and propagates changes throughout the tree.                      |
 | 	... searching for nodes by name or ID?                      | ProductionTree        | The `ProductionTree` class handles searching for nodes by name or ID, retrieving relevant details about the node.                       |
 

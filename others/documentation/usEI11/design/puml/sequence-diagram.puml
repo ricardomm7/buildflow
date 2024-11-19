@@ -26,9 +26,9 @@ deactivate ProdTree
 Actor -> ProdTree : create material(param)
 activate ProdTree
 
-ProdTree -> MaterialBST : addMaterial(material)
+ProdTree -> MaterialBST : addMaterial(material, quantity)
 activate MaterialBST
-MaterialBST -> MaterialBST : addMaterialRecursive(material)
+MaterialBST -> MaterialBST : addMaterialRecursive(material, quantity)
 activate MaterialBST
 MaterialBST --> MaterialBST : material added
 deactivate MaterialBST
@@ -52,6 +52,32 @@ deactivate MaterialBST
 ProdNode --> ProdTree : quantity updated
 deactivate ProdNode
 ProdTree --> Actor : quantity updated
+deactivate ProdTree
+
+Actor -> ProdTree : getMaterialListAscending()
+activate ProdTree
+ProdTree -> MaterialBST : getListInAscending()
+activate MaterialBST
+MaterialBST -> MaterialBST : consolidateMaterials()
+activate MaterialBST
+MaterialBST --> MaterialBST : list consolidated and sorted
+deactivate MaterialBST
+MaterialBST --> ProdTree : sorted material list
+deactivate MaterialBST
+ProdTree --> Actor : return sorted list
+deactivate ProdTree
+
+Actor -> ProdTree : getMaterialListDescending()
+activate ProdTree
+ProdTree -> MaterialBST : getListInDescending()
+activate MaterialBST
+MaterialBST -> MaterialBST : consolidateMaterials()
+activate MaterialBST
+MaterialBST --> MaterialBST : list consolidated and sorted
+deactivate MaterialBST
+MaterialBST --> ProdTree : sorted material list
+deactivate MaterialBST
+ProdTree --> Actor : return sorted list
 deactivate ProdTree
 
 deactivate Actor

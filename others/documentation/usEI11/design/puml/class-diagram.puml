@@ -14,24 +14,28 @@ class ProductionTree {
     + updateMaterialQuantity(materialId : String, newQuantity : int) : void
     + getRootNodes() : List<ProductionNode>
     + getMaterialBST() : MaterialQuantityBST
+    + getMaterialListInAscending() : List<ProductionNode>
+    + getMaterialListInDescending() : List<ProductionNode>
     + searchNodeByNameOrId(identifier : String) : String
 }
 
 class MaterialQuantityBST {
     - root : Node
-    + addMaterial(material : Material) : void
-    + getInOrder(ascending : boolean) : List<Node>
+    + insert(material : ProductionNode, quantity : int) : void
+    + getListInAscending() : List<ProductionNode>
+    + getListInDescending() : List<ProductionNode>
+    + consolidateMaterials() : List<ProductionNode>
     + updateMaterialQuantity(materialNode : ProductionNode) : void
     + removeMaterialByQuantity(node : Node, oldQuantity : int, materialNode : ProductionNode) : Node
 }
 
 class Node {
     - quantity : int
-    - materials : List<Material>
+    - materials : List<ProductionNode>
     - left : Node
     - right : Node
     + getQuantity() : int
-    + getMaterials() : List<Material>
+    + getMaterials() : List<ProductionNode>
 }
 
 class Material {
@@ -64,13 +68,16 @@ class ProductionNode {
     + getId() : String
     + getName() : String
     + isMaterial() : boolean
+    + getQuantity() : int
+    + getCost() : double
 }
 
 ProductionTree --> "*" ProductionNode : nodes
 ProductionTree --> "1" MaterialQuantityBST : materialBST
 MaterialQuantityBST --> "*" Node : nodes
-Node --> "*" Material : materials
+Node --> "*" ProductionNode : materials
 ProductionNode --> "*" ProductionNode : children
 ProductionNode --> "1" ProductionNode : parent
 ProductionNode ..> Material : material
+
 @enduml
