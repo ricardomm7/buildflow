@@ -4,12 +4,10 @@ import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.ProductionNode;
-import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -55,8 +53,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[17]", "Prioritize Quality Checks.");
             System.out.printf("%-5s%-75s%n", "[18]", "Identify and Prioritize Critical path.");
-            System.out.printf("%-5s%-75s%n", "[19]", "View material quantities in the BST.");
-            System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the Production Tree.");
+            System.out.printf("%-5s%-75s%n", "[19]", "View material quantities in the Production Tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -133,14 +130,7 @@ public class Menu {
                 }
                 break;
             case 10:
-                displayAvailableItems();
-                int itemChoice = getUserChoice();
-                String selectedItem = getItemFilePath(itemChoice);
-                if (selectedItem != null) {
-                    GraphViz.run(selectedItem);
-                } else {
-                    System.out.println("Invalid choice. Please select a valid item.");
-                }
+                System.out.println("Not implemented yet");
                 break;
             case 11:
                 bstVisualizer.displayMaterialsByQuantity(true);
@@ -179,7 +169,7 @@ public class Menu {
             case 18:
                 prioritize.displayCriticalPath();
                 break;
-            case 20:
+            case 19:
                 displayMaterialQuantitiesInProductionTree();
                 break;
             case 0:
@@ -214,23 +204,6 @@ public class Menu {
                         + " | Quantidade: " + quantity);
             }
         }
-    }
-
-
-    private void displayAvailableItems() {
-        String lineFormat = "| %-3s | %-10s |%n";
-        String separator = "+-----+------------+";
-        System.out.println("\nAvailable items:");
-        System.out.println(separator);
-        System.out.printf(lineFormat, "No.", "Item");
-        System.out.println(separator);
-        System.out.printf(lineFormat, "1", "Table");
-        System.out.printf(lineFormat, "2", "Chair");
-        System.out.printf(lineFormat, "3", "Bicycle");
-        System.out.printf(lineFormat, "4", "Bookshelf");
-        System.out.printf(lineFormat, "5", "Lamp");
-        System.out.println(separator);
-        System.out.print("Choose an item: ");
     }
 
     private String getItemFilePath(int choice) {

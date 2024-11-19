@@ -88,7 +88,7 @@ public abstract class Reader {
         br.readLine();
         String linha;
         while ((linha = br.readLine()) != null) {
-            String[] campos = linha.split(",");
+            String[] campos = linha.split(";");
             String id = campos[0];
             String name = campos[1];
             pt.insertProductionNode(id, name, true);
@@ -102,7 +102,7 @@ public abstract class Reader {
         br.readLine();
         String linha;
         while ((linha = br.readLine()) != null) {
-            String[] campos = linha.split(",");
+            String[] campos = linha.split(";");
             String id = campos[0];
             String name = campos[1];
             pt.insertProductionNode(id, name, false);
@@ -111,16 +111,17 @@ public abstract class Reader {
     }
 
     public static void loadBOO(String filepath) throws IOException {
-        ProductionTree pt = Repositories.getInstance().getProductionTree();
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
-            reader.readLine();
+            reader.readLine(); // Ignorar o cabeçalho
 
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                line = line.trim();
 
-                String itemId = parts[0];
-                String opId = parts[1];
+                String[] parts = line.split(";");
+                String opId = parts[0];
+                String itemId = parts[1];
+                double itemQnt = Double.parseDouble(parts[2].replace(",", "."));
 
                 ProductionNode itemNode = pt.getNodeById(itemId);
                 if (itemNode == null) {
@@ -134,23 +135,72 @@ public abstract class Reader {
                     pt.insertProductionNode(opId, opId, false);
                 }
 
-                pt.insertNewConnection(itemId, opId, 1); // Default quantity (or adjustable)
-                itemNode.setParent(opNode);  // Set the parent operation
+                pt.insertNewConnection(itemId, opId, itemQnt);
+                itemNode.setParent(opNode);
 
-                for (int i = 2; i < parts.length; i += 2) {
-                    String subitemId = parts[i];
-                    int quantity = Integer.parseInt(parts[i + 1]);
+                int i = 3; // Início após op_id, item_id e item_qtd
+                boolean isOperationsBlock = false;
+                boolean isMaterialsBlock = false;
 
-                    ProductionNode subitemNode = pt.getNodeById(subitemId);
-                    if (subitemNode == null) {
-                        subitemNode = new ProductionNode(subitemId, subitemId, true);
-                        pt.insertProductionNode(subitemId, subitemId, true);
+                while (i < parts.length) {
+                    String part = parts[i].trim();
+                    if (part.isEmpty()) {
+                        i++;
+                        continue;
                     }
 
-                    pt.insertNewConnection(opId, subitemId, quantity);
-                    subitemNode.setParent(opNode);  // Set the parent operation
-                    subitemNode.setQuantity(quantity);  // Set the material quantity
-                    bst.insert(subitemNode, quantity);
+                    if (part.equals("(")) {
+                        if (!isOperationsBlock) {
+                            isOperationsBlock = true;
+                        } else if (isOperationsBlock) {
+                            isMaterialsBlock = true;
+                        }
+                        i++;
+                        continue;
+                    } else if (part.equals(")")) {
+                        if (isMaterialsBlock) {
+                            isMaterialsBlock = false;
+                        } else if (isOperationsBlock) {
+                            isOperationsBlock = false;
+                        }
+                        i++;
+                        continue;
+                    }
+
+                    if (isOperationsBlock && !isMaterialsBlock) {
+                        String subOpId = parts[i];
+                        double subOpQnt = Double.parseDouble(parts[i + 1].replace(",", "."));
+
+                        ProductionNode subOpNode = pt.getNodeById(subOpId);
+                        if (subOpNode == null) {
+                            subOpNode = new ProductionNode(subOpId, subOpId, false);
+                            pt.insertProductionNode(subOpId, subOpId, false);
+                        }
+
+                        pt.insertNewConnection(opId, subOpId, subOpQnt);
+                        subOpNode.setQuantity(subOpQnt);
+                        bst.insert(subOpNode, subOpQnt);
+
+                        i += 2;
+                    } else if (isMaterialsBlock) {
+                        String materialId = parts[i];
+                        double materialQnt = Double.parseDouble(parts[i + 1].replace(",", "."));
+
+                        ProductionNode materialNode = pt.getNodeById(materialId);
+                        if (materialNode == null) {
+                            materialNode = new ProductionNode(materialId, materialId, true);
+                            pt.insertProductionNode(materialId, materialId, true);
+                        }
+
+                        pt.insertNewConnection(opId, materialId, materialQnt);
+                        materialNode.setParent(opNode);
+                        materialNode.setQuantity(materialQnt);
+                        bst.insert(materialNode, materialQnt);
+
+                        i += 2;
+                    } else {
+                        i++;
+                    }
                 }
             }
         }

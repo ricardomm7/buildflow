@@ -1,6 +1,0 @@
-item_id,op_id,subitem1_id,qtd1,subitem2_id,qtd2,subitem3_id,qtd3
-M1,O3,M2,8
-M2,O4,M4,4,M5,1
-M3,O5,M2,4
-M4,O6,M5,1
-M5,O10

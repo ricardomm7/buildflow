@@ -84,7 +84,7 @@ public class DisplayProductionTree {
             ProductionNode subNode = entry.getKey();
             double quantity = entry.getValue();
 
-            String edgeLabel = subNode.isProduct() ? "Q: " + quantity : "";
+            String edgeLabel = "Q: " + quantity;
             dotContent.append("  \"" + node.getId() + "\" -> \"" + subNode.getId() + "\" [label=\"" + edgeLabel + "\"];\n");
 
             generateNodeDotRepresentation(subNode, dotContent, visitedNodes);
