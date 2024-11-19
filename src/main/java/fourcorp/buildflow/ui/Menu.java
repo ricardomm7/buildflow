@@ -3,9 +3,13 @@ package fourcorp.buildflow.ui;
 import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.ProductionNode;
+import fourcorp.buildflow.repository.MaterialQuantityBST;
+import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -50,6 +54,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[17]", "Prioritize Quality Checks.");
             System.out.printf("%-5s%-75s%n", "[18]", "Identify and Prioritize Critical path.");
+            System.out.printf("%-5s%-75s%n", "[19]", "View material quantities in the BST.");
+            System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the Production Tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -150,7 +156,15 @@ public class Menu {
                 System.out.println(result);  // Display the result in the console
                 break;
             case 14:
-                updateMaterialQuantity();
+               /* System.out.print("Enter the Material ID to update: ");
+                String materialId = scanner.nextLine();
+                System.out.print("Enter the new quantity for the material: ");
+                try {
+                    double newQuantity = Double.parseDouble(scanner.nextLine());
+                    Repositories.getInstance().getProductionTree().updateMaterialQuantity(materialId, newQuantity);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid quantity. Please enter a numeric value.");
+                }*/
                 break;
             case 15:
                 ptVisualizer.displayTree();
@@ -164,6 +178,12 @@ public class Menu {
             case 18:
                 prioritize.displayCriticalPath();
                 break;
+            case 19:
+                displayMaterialQuantitiesInBST();
+                break;
+            case 20:
+                displayMaterialQuantitiesInProductionTree();
+                break;
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();
@@ -174,17 +194,24 @@ public class Menu {
         }
     }
 
-    private void updateMaterialQuantity() {
-        System.out.print("Enter the ID of the material to update: ");
-        String materialId = scanner.nextLine();
-
-        System.out.print("Enter the new quantity: ");
-        int newQuantity = Integer.parseInt(scanner.nextLine());
-
-        // Update the material quantity in the production tree
-        //ptVisualizer.getProductionTree().updateMaterialQuantity(materialId, newQuantity);
-        System.out.println("Material quantity updated successfully.");
+    private void displayMaterialQuantitiesInBST() {
+        MaterialQuantityBST materialBST = Repositories.getInstance().getMaterialBST();
+        List<ProductionNode> materials = materialBST.getListInAscending();
+        System.out.println("\n>>> Material Quantities in BST (Ascending Order):");
+        for (ProductionNode material : materials) {
+            System.out.println("ID: " + material.getId() + ", Name: " + material.getName() + ", Quantity: " + material.getQuantity());
+        }
     }
+
+    private void displayMaterialQuantitiesInProductionTree() {
+        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
+        List<ProductionNode> nodes = productionTree.getAllNodes();
+        System.out.println("\n>>> Material Quantities in Production Tree:");
+        for (ProductionNode node : nodes) {
+            System.out.println("ID: " + node.getId() + ", Name: " + node.getName() + ", Quantity: " + node.getQuantity());
+        }
+    }
+
 
     private void displayAvailableItems() {
         String lineFormat = "| %-3s | %-10s |%n";

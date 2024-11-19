@@ -3,6 +3,7 @@ package fourcorp.buildflow.domain;
 import fourcorp.buildflow.repository.ProductionTree;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ProductionNode {
     private String id;
@@ -75,5 +76,24 @@ public class ProductionNode {
     public String toString() {
         return (isProduct ? "Product: " : "Operation: ") + name + " (ID: " + id + ")";
     }
+
+   /* @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Check if same instance
+        if (obj == null || getClass() != obj.getClass()) return false; // Check if same class
+
+        ProductionNode other = (ProductionNode) obj;
+
+        // Compare id for equality (case-insensitive)
+        return id.equalsIgnoreCase(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        // Compute hash code based on id (case-insensitive)
+        return id.toLowerCase().hashCode();
+    }*/
+
+
 }
 

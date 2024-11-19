@@ -40,6 +40,17 @@ public class ProductionTree {
         return nodesMap.get(id.toLowerCase());
     }
 
+    /*public void updateMaterialQuantity(String materialId, double newQuantity) {
+        ProductionNode materialNode = getNodeById(materialId);
+
+        if (materialNode != null) {
+            materialNode.setQuantity(newQuantity);
+            System.out.println("Material quantity updated for " + materialNode.getName() + " (ID: " + materialNode.getId() + ")");
+        } else {
+            System.out.println("Material with ID " + materialId + " not found.");
+        }
+    }*/
+
     public List<ProductionNode> searchNodes(String query) {
         List<ProductionNode> results = new ArrayList<>();
 

@@ -6,11 +6,11 @@ import java.util.*;
 
 public class MaterialQuantityBST {
     private class Node {
-        int quantity;
+        double quantity;
         List<ProductionNode> materials;
         Node left, right;
 
-        Node(int quantity, ProductionNode material) {
+        Node(double quantity, ProductionNode material) {
             this.quantity = quantity;
             this.materials = new ArrayList<>();
             this.materials.add(material);
@@ -25,11 +25,11 @@ public class MaterialQuantityBST {
         root = null;
     }
 
-    public void insert(ProductionNode material, int quantity) {
+    public void insert(ProductionNode material, double quantity) {
         root = insert(root, material, quantity);
     }
 
-    private Node insert(Node node, ProductionNode material, int quantity) {
+    private Node insert(Node node, ProductionNode material, double quantity) {
         if (node == null) {
             return new Node(quantity, material);
         }
@@ -96,4 +96,7 @@ public class MaterialQuantityBST {
         consolidatedList.sort((m1, m2) -> Double.compare(m2.getQuantity(), m1.getQuantity()));
         return consolidatedList;
     }
+
+
+
 }
