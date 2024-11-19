@@ -19,6 +19,7 @@ public class Menu {
     private final ProductionTreeSearcher ptService;
     private final CriticalPathPrioritizer prioritize;
     private final QualityCheckManager manager;
+    private final CriticalPathCalculator calculator;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -28,6 +29,7 @@ public class Menu {
         prioritize = new CriticalPathPrioritizer();
         manager = new QualityCheckManager();
         bstVisualizer = new DisplayBST();
+        calculator = new CriticalPathCalculator();
     }
 
     public void displayMenu() throws IOException {
@@ -52,8 +54,9 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[15]", "See the production tree (console).");
             System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[17]", "Prioritize Quality Checks.");
-            System.out.printf("%-5s%-75s%n", "[18]", "Identify and Prioritize Critical path.");
-            System.out.printf("%-5s%-75s%n", "[19]", "View material quantities in the Production Tree.");
+            System.out.printf("%-5s%-75s%n", "[18]", "Prioritize Critical path by Number of Dependencies.");
+            System.out.printf("%-5s%-75s%n", "[19]", "Prioritize Critical path by Depth Level.");
+            System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the Production Tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -164,12 +167,15 @@ public class Menu {
                 ptVisualizer.generateGraph();
                 break;
             case 17:
-                manager.displayAllOperations();
+                manager.prioritizeAndExecuteQualityChecks();
                 break;
             case 18:
-                prioritize.displayCriticalPath();
+                calculator.displayOperationsWithDependencies();
                 break;
             case 19:
+                prioritize.displayCriticalPathByDepth();
+                break;
+            case 20:
                 displayMaterialQuantitiesInProductionTree();
                 break;
             case 0:

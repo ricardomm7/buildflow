@@ -4,14 +4,12 @@ import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.PriorityQueue;
 
 public class QualityCheckManager {
     private final ProductionTree productionTree;
 
     public QualityCheckManager() {
-        // Obter o grafo de produção do repositório
         this.productionTree = Repositories.getInstance().getProductionTree();
     }
 
@@ -20,42 +18,31 @@ public class QualityCheckManager {
     }
 
     /**
-     * Displays all operations from the repository in an organized format, in English.
+     * Displays and processes quality checks in order of priority.
      */
-    public void displayAllOperations() {
-        System.out.println("\n--- Operations List ---");
+    public void prioritizeAndExecuteQualityChecks() {
+        PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
+                (o1, o2) -> Integer.compare(
+                        o2.getDepth(productionTree),
+                        o1.getDepth(productionTree)
+                )
+        );
 
-        // Get all nodes from the production tree
-        List<ProductionNode> allNodes = productionTree.getAllNodes();
-
-        for (ProductionNode node : allNodes) {
-            // Display details for each operation/node
-            System.out.println("Node Name: " + node.getName());
-            System.out.println("    ID: " + node.getId());
-            System.out.println("    Type: " + (node.isOperation() ? "Operation" : "Product"));
-            System.out.println("    Dependencies: " + formatDependencies(node));
-            if (!node.isOperation()) {
-                System.out.println("    Produced Quantity: " + node.getProducedQuantity());
-
+        for (ProductionNode node : productionTree.getAllNodes()) {
+            if (node.isOperation()) {
+                qualityChecks.add(node);
             }
-            System.out.println("---------------------------");
-        }
-    }
-
-    /**
-     * Formats the dependencies of a node, obtained from the production tree, in English.
-     */
-    private String formatDependencies(ProductionNode node) {
-        // Get dependent nodes using the repository method
-        List<ProductionNode> dependencies = productionTree.getParentNodes(node);
-
-        if (dependencies.isEmpty()) {
-            return "None";
         }
 
-        return dependencies.stream()
-                .map(ProductionNode::getName)
-                .collect(Collectors.joining(", "));
-    }
+        System.out.println("\n--- Quality Checks in Priority Order ---");
 
+        while (!qualityChecks.isEmpty()) {
+            ProductionNode operation = qualityChecks.poll();
+            System.out.println("Executing Operation: " + operation.getName());
+            System.out.println("    ID: " + operation.getId());
+            System.out.println("    Depth: " + operation.getDepth(productionTree));
+            System.out.println("-----------------------------------------");
+
+        }
+    }
 }
