@@ -3,7 +3,6 @@ package fourcorp.buildflow.domain;
 import fourcorp.buildflow.repository.ProductionTree;
 
 import java.util.List;
-import java.util.Objects;
 
 public class ProductionNode {
     private String id;

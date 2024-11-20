@@ -3,13 +3,11 @@ package fourcorp.buildflow.ui;
 import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
-import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
@@ -149,10 +147,8 @@ public class Menu {
             case 13:
                 System.out.print("Enter the ID or name of the node to search: ");
                 String identifier = scanner.nextLine();
-
-                // Call the search method from the ProductionTreeService and display the result
-                String result = ptService.searchNodeByNameOrId(identifier);  // Call the method to get the search result
-                System.out.println(result);  // Display the result in the console
+                String result = ptService.searchNodeByNameOrId(identifier);
+                System.out.println(result);
                 break;
             case 14:
                 materialUpdater.updateMaterialQuantity();
@@ -173,7 +169,7 @@ public class Menu {
                 prioritize.displayCriticalPathByDepth();
                 break;
             case 20:
-                displayMaterialQuantitiesInProductionTree();
+                ptVisualizer.displayMaterialQuantitiesInProductionTree();
                 break;
             case 0:
                 System.out.println("Exiting...");
@@ -182,30 +178,6 @@ public class Menu {
                 break;
             default:
                 System.out.println("Invalid option.");
-        }
-    }
-
-    private void displayMaterialQuantitiesInProductionTree() {
-        ProductionTree p = Repositories.getInstance().getProductionTree();
-        Map<ProductionNode, Map<ProductionNode, Double>> connections = p.getConnections();
-        if (connections.isEmpty()) {
-            System.out.println("Não há conexões para exibir.");
-            return;
-        }
-
-        System.out.println("Conexões entre os nós:");
-        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
-            ProductionNode parentNode = entry.getKey();
-            Map<ProductionNode, Double> childNodes = entry.getValue();
-
-            for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {
-                ProductionNode childNode = childEntry.getKey();
-                Double quantity = childEntry.getValue();
-
-                System.out.println("Nó Pai: " + parentNode.getName() + " (ID: " + parentNode.getId() + ") -> "
-                        + "Nó Filho: " + childNode.getName() + " (ID: " + childNode.getId() + ")"
-                        + " | Quantidade: " + quantity);
-            }
         }
     }
 }

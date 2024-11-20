@@ -111,4 +111,27 @@ public class DisplayProductionTree {
             e.printStackTrace();
         }
     }
+
+    public void displayMaterialQuantitiesInProductionTree() {
+        System.out.println();
+        Map<ProductionNode, Map<ProductionNode, Double>> connections = productionTree.getConnections();
+        if (connections.isEmpty()) {
+            System.out.println("There are no connections to display.");
+            return;
+        }
+
+        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
+            ProductionNode parentNode = entry.getKey();
+            Map<ProductionNode, Double> childNodes = entry.getValue();
+
+            for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {
+                ProductionNode childNode = childEntry.getKey();
+                Double quantity = childEntry.getValue();
+
+                System.out.println("Father Node: " + parentNode.getName() + " (ID: " + parentNode.getId() + ") -> "
+                        + "Son Node: " + childNode.getName() + " (ID: " + childNode.getId() + ")"
+                        + " | Quantity: " + quantity);
+            }
+        }
+    }
 }

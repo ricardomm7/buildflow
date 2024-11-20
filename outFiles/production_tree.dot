@@ -48,7 +48,7 @@ digraph G {
   "1007" [shape=box label="nut M16"];
   "1005" [shape=box label="bolt M6"];
   "1006" [shape=box label="finished bench"];
-  "1006" -> "20" [label="Q: 56.0"];
+  "1006" -> "20" [label="Q: 1.0"];
   "20" [shape=hexagon label="varnish bench "];
   "20" -> "1014" [label="Q: 0.125"];
   "1014" [shape=box label="varnish"];

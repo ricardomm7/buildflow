@@ -1,0 +1,129 @@
+20:41:31.386 -> Initial Temperature = 19.80 °C
+20:41:31.386 -> Initial Humidity = 78.00 %
+20:41:31.386 -> Temperature = 19.80 °C
+20:41:31.386 -> Humidity = 78.00 %
+20:41:31.386 -> The temperature light is off.
+20:41:31.386 -> The humidity light is off.
+20:42:01.445 -> Temperature = 19.80 °C
+20:42:01.445 -> Humidity = 78.00 %
+20:42:01.445 -> The temperature light is off.
+20:42:01.445 -> The humidity light is off.
+20:42:31.444 -> Temperature = 20.60 °C
+20:42:31.444 -> Humidity = 93.00 %
+20:42:31.444 -> The temperature light is off.
+20:42:31.444 -> The humidity light is on.
+20:43:01.474 -> Temperature = 20.20 °C
+20:43:01.474 -> Humidity = 93.00 %
+20:43:01.474 -> The temperature light is off.
+20:43:01.474 -> The humidity light is on.
+20:43:31.501 -> Temperature = 20.00 °C
+20:43:31.501 -> Humidity = 90.00 %
+20:43:31.501 -> The temperature light is off.
+20:43:31.501 -> The humidity light is on.
+20:44:01.530 -> Temperature = 19.80 °C
+20:44:01.530 -> Humidity = 86.00 %
+20:44:01.530 -> The temperature light is off.
+20:44:01.530 -> The humidity light is on.
+20:44:31.529 -> Temperature = 19.80 °C
+20:44:31.529 -> Humidity = 82.00 %
+20:44:31.529 -> The temperature light is off.
+20:44:31.529 -> The humidity light is on.
+20:45:01.588 -> Temperature = 19.80 °C
+20:45:01.588 -> Humidity = 81.00 %
+20:45:01.588 -> The temperature light is off.
+20:45:01.588 -> The humidity light is off.
+20:45:01.588 -> Humidity = 81.00 %
+20:45:01.588 -> The temperature light is off.
+20:45:01.588 -> The humidity light is off.
+20:45:31.606 -> Temperature = 19.80 °C
+20:45:31.606 -> Humidity = 80.00 %
+20:45:31.606 -> The temperature light is off.
+20:45:31.606 -> The humidity light is off.
+20:46:01.647 -> Temperature = 19.80 °C
+20:46:01.647 -> Humidity = 79.00 %
+20:46:01.647 -> The temperature light is off.
+20:46:01.647 -> The humidity light is off.
+20:46:31.668 -> Temperature = 19.80 °C
+20:46:31.668 -> Humidity = 79.00 %
+20:46:31.668 -> The temperature light is off.
+20:46:31.668 -> The humidity light is off.
+20:47:01.657 -> Temperature = 19.80 °C
+20:47:01.657 -> Humidity = 79.00 %
+20:47:01.657 -> The temperature light is off.
+20:47:01.657 -> The humidity light is off.
+20:47:31.683 -> Temperature = 19.80 °C
+20:47:31.683 -> Humidity = 78.00 %
+20:47:31.683 -> The temperature light is off.
+20:47:31.683 -> The humidity light is off.
+20:48:01.748 -> Temperature = 19.80 °C
+20:48:01.748 -> Humidity = 78.00 %
+20:48:01.748 -> The temperature light is off.
+20:48:01.748 -> The humidity light is off.
+20:48:31.736 -> Temperature = 19.80 °C
+20:48:31.736 -> Humidity = 78.00 %
+20:48:31.736 -> The temperature light is off.
+20:48:31.736 -> The humidity light is off.
+20:49:01.761 -> Temperature = 19.80 °C
+20:49:01.761 -> Humidity = 78.00 %
+20:49:01.761 -> The temperature light is off.
+20:49:01.794 -> The humidity light is off.
+20:49:31.787 -> Temperature = 19.80 °C
+20:49:31.821 -> Humidity = 78.00 %
+20:49:31.821 -> The temperature light is off.
+20:49:31.821 -> The humidity light is off.
+20:50:01.821 -> Temperature = 19.80 °C
+20:50:01.821 -> Humidity = 78.00 %
+20:50:01.821 -> The temperature light is off.
+20:50:01.821 -> The humidity light is off.
+20:50:31.862 -> Temperature = 19.80 °C
+20:50:31.862 -> Humidity = 78.00 %
+20:50:31.862 -> The temperature light is off.
+20:50:31.862 -> The humidity light is off.
+20:51:01.908 -> Temperature = 19.80 °C
+20:51:01.908 -> Humidity = 78.00 %
+20:51:01.908 -> The temperature light is off.
+20:51:01.908 -> The humidity light is off.
+20:51:31.918 -> Temperature = 28.00 °C
+20:51:31.918 -> Humidity = 98.00 %
+20:51:31.918 -> The temperature light is on.
+20:51:31.918 -> The humidity light is on.
+20:52:01.947 -> Temperature = 30.20 °C
+20:52:01.947 -> Humidity = 98.00 %
+20:52:01.947 -> The temperature light is on.
+20:52:01.947 -> The humidity light is on.
+20:52:31.980 -> Temperature = 26.70 °C
+20:52:31.980 -> Humidity = 98.00 %
+20:52:31.980 -> The temperature light is on.
+20:52:31.980 -> The humidity light is on.
+20:53:01.990 -> Temperature = 24.50 °C
+20:53:01.990 -> Humidity = 98.00 %
+20:53:01.990 -> The temperature light is off.
+20:53:01.990 -> The humidity light is on.
+20:53:32.036 -> Temperature = 23.40 °C
+20:53:32.036 -> Humidity = 98.00 %
+20:53:32.036 -> The temperature light is off.
+20:53:32.036 -> The humidity light is on.
+20:54:02.036 -> Temperature = 22.20 °C
+20:54:02.036 -> Humidity = 98.00 %
+20:54:02.036 -> The temperature light is off.
+20:54:02.036 -> The humidity light is on.
+20:54:32.044 -> Temperature = 21.80 °C
+20:54:32.080 -> Humidity = 98.00 %
+20:54:32.080 -> The temperature light is off.
+20:54:32.080 -> The humidity light is on.
+20:55:02.092 -> Temperature = 21.40 °C
+20:55:02.092 -> Humidity = 98.00 %
+20:55:02.092 -> The temperature light is off.
+20:55:02.092 -> The humidity light is on.
+20:55:32.120 -> Temperature = 21.00 °C
+20:55:32.120 -> Humidity = 98.00 %
+20:55:32.120 -> The temperature light is off.
+20:55:32.120 -> The humidity light is on.
+20:56:02.146 -> Temperature = 20.60 °C
+20:56:02.147 -> Humidity = 98.00 %
+20:56:02.147 -> The temperature light is off.
+20:56:02.147 -> The humidity light is on.
+20:56:32.175 -> Temperature = 20.60 °C
+20:56:32.175 -> Humidity = 98.00 %
+20:56:32.175 -> The temperature light is off.
+20:56:32.175 -> The humidity light is on.
