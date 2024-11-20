@@ -207,4 +207,8 @@ public abstract class Reader {
             }
         }
     }
+
+    public static void setAtt(ProductionTree p) {
+        pt = p;
+    }
 }
