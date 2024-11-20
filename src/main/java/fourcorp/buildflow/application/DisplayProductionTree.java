@@ -50,11 +50,16 @@ public class DisplayProductionTree {
 
     public void generateGraph() {
         StringBuilder dotContent = new StringBuilder();
-        dotContent.append("digraph G {\n");
+        dotContent.append("graph G {\n");
         dotContent.append("  splines=false;\n");
+        dotContent.append("  nodesep=0.5;\n");
+        dotContent.append("  ranksep=0.5;\n");
+
+        Set<String> processedEdges = new HashSet<>();
+
         for (ProductionNode node : productionTree.getAllNodes()) {
             if (node.isProduct()) {
-                generateNodeDotRepresentation(node, dotContent, new HashSet<>());
+                generateNodeDotRepresentation(node, dotContent, new HashSet<>(), processedEdges);
             }
         }
         dotContent.append("}\n");
@@ -69,14 +74,14 @@ public class DisplayProductionTree {
         generateGraphVizSVG();
     }
 
-    private void generateNodeDotRepresentation(ProductionNode node, StringBuilder dotContent, Set<ProductionNode> visitedNodes) {
+    private void generateNodeDotRepresentation(ProductionNode node, StringBuilder dotContent, Set<ProductionNode> visitedNodes, Set<String> processedEdges) {
         if (!visitedNodes.add(node)) {
             dotContent.append("  \"" + node.getId() + "\" [style=dashed color=red];\n");
             return;
         }
 
         String shape = node.isProduct() ? "box" : "hexagon";
-        String label = node.isProduct() ? escapeForDot(node.getName()) : escapeForDot(node.getName());
+        String label = escapeForDot(node.getName());
         dotContent.append("  \"" + node.getId() + "\" [shape=" + shape + " label=\"" + label + "\"];\n");
 
         Map<ProductionNode, Double> subNodes = productionTree.getSubNodes(node);
@@ -84,10 +89,15 @@ public class DisplayProductionTree {
             ProductionNode subNode = entry.getKey();
             double quantity = entry.getValue();
 
-            String edgeLabel = "Q: " + quantity;
-            dotContent.append("  \"" + node.getId() + "\" -> \"" + subNode.getId() + "\" [label=\"" + edgeLabel + "\"];\n");
+            String edgeKey = node.getId() + "--" + subNode.getId();
 
-            generateNodeDotRepresentation(subNode, dotContent, visitedNodes);
+            if (!processedEdges.contains(edgeKey)) {
+                processedEdges.add(edgeKey);
+                String edgeLabel = "" + quantity;
+                dotContent.append("  \"" + node.getId() + "\" -- \"" + subNode.getId() + "\" [label=\"" + edgeLabel + "\"];\n");
+            }
+
+            generateNodeDotRepresentation(subNode, dotContent, visitedNodes, processedEdges);
         }
 
         visitedNodes.remove(node);

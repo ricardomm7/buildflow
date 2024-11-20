@@ -56,10 +56,10 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[14]", "Update material quantity.");
             System.out.printf("%-5s%-75s%n", "[15]", "See the production tree (console).");
             System.out.printf("%-5s%-75s%n", "[16]", "See the production tree (graphical).");
-            System.out.printf("%-5s%-75s%n", "[17]", "Prioritize Quality Checks.");
-            System.out.printf("%-5s%-75s%n", "[18]", "Prioritize Critical path by Number of Dependencies.");
-            System.out.printf("%-5s%-75s%n", "[19]", "Prioritize Critical path by Depth Level.");
-            System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the Production Tree.");
+            System.out.printf("%-5s%-75s%n", "[17]", "Prioritize quality checks.");
+            System.out.printf("%-5s%-75s%n", "[18]", "Prioritize critical path by number of dependencies.");
+            System.out.printf("%-5s%-75s%n", "[19]", "Prioritize critical path by depth Level.");
+            System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the production tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
