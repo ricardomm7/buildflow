@@ -145,10 +145,7 @@ public class Menu {
                 bstVisualizer.displayMaterialsByQuantity(false);
                 break;
             case 13:
-                System.out.print("Enter the ID or name of the node to search: ");
-                String identifier = scanner.nextLine();
-                String result = ptService.searchNodeByNameOrId(identifier);
-                System.out.println(result);
+                ptService.handleNodeSearch();
                 break;
             case 14:
                 materialUpdater.updateMaterialQuantity();

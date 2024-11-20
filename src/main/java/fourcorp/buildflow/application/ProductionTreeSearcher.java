@@ -18,6 +18,17 @@ public class ProductionTreeSearcher {
         this.productionTree = Repositories.getInstance().getProductionTree();
     }
 
+    public void handleNodeSearch() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the ID or name of the node to search: ");
+        String identifier = scanner.nextLine();
+
+        String result = searchNodeByNameOrId(identifier);
+
+        System.out.println(result);
+    }
+
     // Method to search for a node by its name or ID
     public String searchNodeByNameOrId(String identifier) {
         List<ProductionNode> matchingNodes = productionTree.searchNodes(identifier);  // Get all matching nodes
@@ -57,18 +68,21 @@ public class ProductionTreeSearcher {
         result.append("ID: ").append(node.getId()).append("\n");
         result.append("Name: ").append(node.getName()).append("\n");
 
-        if (node.getId().startsWith("M")) {
+        // Identify the type based on the ID format
+        if (isMaterialId(node.getId())) {
             result.append("Type: Material\n");
 
             // Handle material details
             Map<ProductionNode, Double> subNodes = productionTree.getSubNodes(node);
             if (!subNodes.isEmpty()) {
+                result.append("Material Quantities:\n");
                 subNodes.forEach((materialNode, quantity) ->
-                        result.append("Quantity: ").append(quantity).append("\n"));
+                        result.append("  ").append(materialNode.getName())
+                                .append(" - Quantity: ").append(quantity).append("\n"));
             } else {
                 result.append("No material details available.\n");
             }
-        } else if (node.getId().startsWith("O")) {
+        } else if (isOperationId(node.getId())) {
             result.append("Type: Operation\n");
 
             // Check if parent is an Operation (not just a ProductionNode)
@@ -93,9 +107,29 @@ public class ProductionTreeSearcher {
                 result.append("No sub-nodes available.\n");
             }
         } else {
-            result.append("Unknown Type\n");
+            result.append("Type: Unknown\n");
         }
 
         return result.toString();
+    }
+
+
+    private boolean isOperationId(String id) {
+        try {
+            int numericId = Integer.parseInt(id);
+            return numericId < 100; // Assuming IDs less than 100 are for materials
+        } catch (NumberFormatException e) {
+            return false; // Invalid format, can't be a material ID
+        }
+    }
+
+    // Helper method to check if ID corresponds to an Operation
+    private boolean isMaterialId(String id) {
+        try {
+            int numericId = Integer.parseInt(id);
+            return numericId >= 100; // Assuming IDs 100 and above are for materials
+        } catch (NumberFormatException e) {
+            return false; // Invalid format, can't be an operation ID
+        }
     }
 }
