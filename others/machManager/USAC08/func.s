@@ -2,29 +2,27 @@
 
 # Parametros esperados:
 # buffer - %rdi
-# length - %rsi
+# length - %esi
 # tail   - %rdx
 # head   - %rcx
-# n      - %r8
+# n      - %r8d
 # array  - %r9
 
 move_n_to_array:
-    xor %rbx, %rbx  # inicializar rbx para 0
+    movl $0, %r10d
 
 loop_start:
-    cmp %r8, %rbx  # compara contador %rbx com o número de elementos %r8
-    jge verify  # se %rbx >= %r8, sai do loop
+    cmpl %r8d, %r10d  # compara contador %r10d com o número de elementos %r8d
+    jge verify  # se %r10d >= %r8d, sai do loop
 
-    # Move o valor de buffer[rbx] para array[rbx]
-    mov (%rdi, %rbx, 4), %rax  # carrega buffer[rbx] em %rax
-    mov %rax, (%r9, %rbx, 4)  # armazena em array[rbx]
+    movl (%rdi, %r10, 4), %eax  # carrega buffer[r10d] em %eax
+    movl %eax, (%r9, %r10, 4)  # armazena em array[r10d]
 
-    inc %rbx # incrementa o contador
+    incl %r10d # incrementa o contador
     jmp loop_start # volta ao início do loop
 
 verify:
-    # Verifica se todos os elementos foram movidos
-    cmp %r8, %rbx  # verifica se movemos exatamente 'n' elementos
+    cmpl %r8d, %r10d  # verifica se movemos exatamente 'n' elementos
     jne fail  # se não, retorna 0 (falha)
 
 success:
