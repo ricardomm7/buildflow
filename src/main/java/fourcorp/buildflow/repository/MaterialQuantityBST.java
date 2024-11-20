@@ -57,6 +57,33 @@ public class MaterialQuantityBST {
         return node;
     }
 
+    public void updateQuantity(ProductionNode material, double newQuantity) {
+        root = updateQuantity(root, material, newQuantity);
+    }
+
+    private Node updateQuantity(Node node, ProductionNode material, double newQuantity) {
+        if (node == null) {
+            return null;
+        }
+
+        int compare = material.getId().compareTo(node.materials.get(0).getId());
+        if (compare < 0) {
+            node.left = updateQuantity(node.left, material, newQuantity);
+        } else if (compare > 0) {
+            node.right = updateQuantity(node.right, material, newQuantity);
+        } else {
+            // Update the quantity of the material
+            for (ProductionNode existingMaterial : node.materials) {
+                if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {
+                    existingMaterial.setQuantity(newQuantity);  // Update quantity
+                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum(); // Update total node quantity
+                    break;
+                }
+            }
+        }
+        return node;
+    }
+
     public List<ProductionNode> getListInAscending() {
         List<ProductionNode> consolidatedList = consolidateMaterials();
         consolidatedList.sort(Comparator.comparingDouble(ProductionNode::getQuantity));

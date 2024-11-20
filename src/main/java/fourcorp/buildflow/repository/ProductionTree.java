@@ -50,7 +50,6 @@ public class ProductionTree {
     }
 
 
-
     public List<ProductionNode> getCriticalPath() {
         List<ProductionNode> criticalPath = new ArrayList<>();
         if (nodes.isEmpty()) {
@@ -141,6 +140,23 @@ public class ProductionTree {
 
     public Map<ProductionNode, Map<ProductionNode, Double>> getConnections() {
         return connections;
+    }
+
+    public void updateNodeQuantity(ProductionNode nodeToUpdate, double newQuantity) {
+        nodeToUpdate.setQuantity(newQuantity);
+
+        // Now, propagate the new quantity to all connections in the tree
+        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
+            Map<ProductionNode, Double> subNodes = entry.getValue();
+            for (Map.Entry<ProductionNode, Double> subEntry : subNodes.entrySet()) {
+                ProductionNode dependentNode = subEntry.getKey();
+                if (dependentNode.getId().equals(nodeToUpdate.getId())) {
+                    // Here you can update the quantities of the dependent nodes accordingly if needed
+                    // You may want to scale or adjust the quantities based on the new value
+                    subEntry.setValue(newQuantity); // This is a simple example to show updating the value
+                }
+            }
+        }
     }
 
 

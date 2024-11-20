@@ -4,6 +4,7 @@ import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.ProductionNode;
+import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
@@ -20,6 +21,7 @@ public class Menu {
     private final CriticalPathPrioritizer prioritize;
     private final QualityCheckManager manager;
     private final CriticalPathCalculator calculator;
+    private final MaterialQuantityUpdater materialUpdater;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -30,6 +32,9 @@ public class Menu {
         manager = new QualityCheckManager();
         bstVisualizer = new DisplayBST();
         calculator = new CriticalPathCalculator();
+        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
+        MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
+        materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
     }
 
     public void displayMenu() throws IOException {
@@ -150,15 +155,7 @@ public class Menu {
                 System.out.println(result);  // Display the result in the console
                 break;
             case 14:
-               /* System.out.print("Enter the Material ID to update: ");
-                String materialId = scanner.nextLine();
-                System.out.print("Enter the new quantity for the material: ");
-                try {
-                    double newQuantity = Double.parseDouble(scanner.nextLine());
-                    Repositories.getInstance().getProductionTree().updateMaterialQuantity(materialId, newQuantity);
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid quantity. Please enter a numeric value.");
-                }*/
+                materialUpdater.updateMaterialQuantity();
                 break;
             case 15:
                 ptVisualizer.displayTree();
@@ -209,23 +206,6 @@ public class Menu {
                         + "Nó Filho: " + childNode.getName() + " (ID: " + childNode.getId() + ")"
                         + " | Quantidade: " + quantity);
             }
-        }
-    }
-
-    private String getItemFilePath(int choice) {
-        switch (choice) {
-            case 1:
-                return "textFiles/table.csv";
-            case 2:
-                return "textFiles/chair.csv";
-            case 3:
-                return "textFiles/bicycle.csv";
-            case 4:
-                return "textFiles/bookshelf.csv";
-            case 5:
-                return "textFiles/lamp.csv";
-            default:
-                return null;
         }
     }
 }
