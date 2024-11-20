@@ -26,6 +26,7 @@ public class MaterialQuantityBST {
     }
 
     public void insert(ProductionNode material, double quantity) {
+        if (material.isOperation()) return;
         root = insert(root, material, quantity);
     }
 

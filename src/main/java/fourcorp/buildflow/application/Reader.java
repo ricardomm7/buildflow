@@ -128,6 +128,8 @@ public abstract class Reader {
                     itemNode = new ProductionNode(itemId, itemId, true);
                     pt.insertProductionNode(itemId, itemId, true);
                 }
+                itemNode.setQuantity(itemQnt);
+                bst.insert(itemNode, itemQnt);
 
                 ProductionNode opNode = pt.getNodeById(opId);
                 if (opNode == null) {
