@@ -484,4 +484,31 @@ public class DatabaseFunctionsController {
     }
 
 
+    // USBD16
+    public String RegisterNewProduct(String partId, String name, String familyId) {
+        String result = null;
+        String query = "{? = call RegisterProduct(?, ?, ?)}";
+
+        try (CallableStatement callableStatement = connection.prepareCall(query)) {
+            // Definir o tipo de retorno
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+
+            // Definir os parâmetros de entrada
+            callableStatement.setString(2, partId);
+            callableStatement.setString(3, name);
+            callableStatement.setString(4, familyId);
+
+            // Executar a função
+            callableStatement.execute();
+
+            // Obter o resultado
+            result = callableStatement.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = "Error: An unexpected database error occurred.";
+        }
+
+        return result;
+    }
+
 }

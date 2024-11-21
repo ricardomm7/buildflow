@@ -1,49 +1,59 @@
-CREATE OR REPLACE FUNCTION RegisterProduct (
-    p_Part_ID   CHAR,
-    p_Name      VARCHAR2,
-    p_Family_ID VARCHAR2
+create or replace function RegisterProduct (
+    p_Part_ID   char,
+    p_Name      varchar2,
+    p_Family_ID varchar2
+) return varchar2
+as
+    v_message       varchar2(200);
+    v_part_exists   integer;
+    v_family_exists integer;
+    v_product_exists integer;
+begin
+    -- Verificar se a família existe
+    select count(*)
+    into v_family_exists
+    from Product_Family
+    where Family_ID = p_Family_ID;
 
-) RETURN VARCHAR2
-AS
-    v_message VARCHAR2(200);
-    v_part_exists INTEGER;
-    v_family_exists INTEGER;
-BEGIN
-    SELECT COUNT(*)
-    INTO v_family_exists
-    FROM Product_Family
-    WHERE Family_ID = p_Family_ID;
+    if v_family_exists = 0 then
+        return 'Error: Product_Family with ID ' || p_Family_ID || ' does not exist.';
+    end if;
 
-    IF v_family_exists = 0 THEN
-        RETURN 'Erro: Product_Family com ID ' || p_Family_ID || ' não existe.';
-    END IF;
+    -- Verificar se o Part já existe
+    select count(*)
+    into v_part_exists
+    from Part
+    where Part_ID = p_Part_ID;
 
-    SELECT COUNT(*)
-    INTO v_part_exists
-    FROM Part
-    WHERE Part_ID = p_Part_ID;
+    -- Criar Part se não existir
+    if v_part_exists = 0 then
+        insert into Part (Part_ID, Description)
+        values (p_Part_ID, p_Name);
 
-    IF v_part_exists = 0 THEN
-        INSERT INTO Part (Part_ID, Description)
-        VALUES (p_Part_ID, p_Name);
-
-        v_message := 'Novo Part ' || p_Part_ID || ' criado. ';
-    ELSE
+        v_message := 'New Part ' || p_Part_ID || ' created. ';
+    else
         v_message := '';
-    END IF;
+    end if;
 
-    INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID)
-    VALUES (p_Part_ID, p_Name, p_Family_ID);
+    -- Verificar se o Produto já existe
+    select count(*)
+    into v_product_exists
+    from Product
+    where Part_ID = p_Part_ID;
 
-    v_message := v_message || 'Produto ' || p_Part_ID || ' registrado com sucesso.';
-    RETURN v_message;
+    if v_product_exists > 0 then
+        return 'Error: Product with Part_ID ' || p_Part_ID || ' already exists.';
+    end if;
 
-EXCEPTION
-    WHEN DUP_VAL_ON_INDEX THEN
-        v_message := 'Erro: Produto com Part_ID ' || p_Part_ID || ' já existe.';
-        RETURN v_message;
-    WHEN OTHERS THEN
-        v_message := 'Erro ao registrar o produto: ' || SQLERRM;
-        RETURN v_message;
-END RegisterProduct;
+    -- Inserir o Produto
+    insert into Product (Part_ID, Name, Product_FamilyFamily_ID)
+    values (p_Part_ID, p_Name, p_Family_ID);
+
+    v_message := v_message || 'Product ' || p_Part_ID || ' registered successfully.';
+    return v_message;
+
+exception
+    when others then
+        return 'Error: Failed to register the product: ' || sqlerrm;
+end RegisterProduct;
 /

@@ -31,6 +31,7 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[4]", "Deactivate a costumer.");
             System.out.printf("%-5s%-75s%n", "[5]", "Import from Database BOM and BOO and generate production tree.");
             System.out.printf("%-5s%-75s%n", "[6]", "Create a new order.");
+            System.out.printf("%-5s%-75s%n", "[7]", "Register new Product.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -180,9 +181,34 @@ public class DatabaseMenu {
                     e.printStackTrace();
                 }
                 break;
+            case 7:
+                System.out.println();
+                String result;
+                do {
+                    System.out.print("Enter Product ID: ");
+                    String pid2 = scanner.nextLine();
 
+                    System.out.print("Enter Product Name: ");
+                    String pname = scanner.nextLine();
 
+                    System.out.print("Enter Family ID: ");
+                    String fid = scanner.nextLine();
 
+                    // Chamar o método para registrar o produto
+                    result = db.RegisterNewProduct(pid2, pname, fid);
+
+                    // Exibir o feedback para o usuário
+                    System.out.println(result);
+
+                    // Se o resultado indicar sucesso, sair do loop
+                    if (result.contains("registered successfully")) {
+                        break;
+                    }
+
+                    // Caso contrário, permitir nova tentativa
+                    System.out.println("Please, try again.");
+                } while (true);
+                break;
             case 0:
                 return;
             default:
