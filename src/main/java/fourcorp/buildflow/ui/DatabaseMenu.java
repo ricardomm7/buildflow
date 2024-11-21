@@ -6,6 +6,7 @@ import fourcorp.buildflow.application.Reader;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class DatabaseMenu {
@@ -29,6 +30,7 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[3]", "Know which product uses all types of machines available.");
             System.out.printf("%-5s%-75s%n", "[4]", "Deactivate a costumer.");
             System.out.printf("%-5s%-75s%n", "[5]", "Import from Database BOM and BOO and generate production tree.");
+            System.out.printf("%-5s%-75s%n", "[6]", "Create a new order.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -98,6 +100,89 @@ public class DatabaseMenu {
                 Reader.loadBOO("textFiles/boo_v2Lapr.csv");
                 ptVisualizer.generateGraph();
                 break;
+            case 6:
+                System.out.println();
+                System.out.println("Creating a new order:");
+
+                // Input Order ID
+                String orderId;
+                while (true) {
+                    System.out.print("Enter Order ID: ");
+                    orderId = scanner.nextLine();
+                    if (orderId.isEmpty()) {
+                        System.out.println("Error: Order ID cannot be empty. Please enter a valid Order ID.");
+                    } else {
+                        break;
+                    }
+                }
+
+                // Input Order Date
+                LocalDate orderDate = null;
+                while (true) {
+                    System.out.print("Enter Order Date (yyyy-mm-dd): ");
+                    String orderDateInput = scanner.nextLine();
+                    try {
+                        orderDate = LocalDate.parse(orderDateInput);
+                        break;  // Break if the date is valid
+                    } catch (Exception e) {
+                        System.out.println("Error: Invalid date format. Please enter the Order Date in yyyy-mm-dd format.");
+                    }
+                }
+
+                // Input Delivery Date and verify it is not before the Order Date
+                LocalDate deliveryDate = null;
+                while (true) {
+                    System.out.print("Enter Delivery Date (yyyy-mm-dd): ");
+                    String deliveryDateInput = scanner.nextLine();
+                    try {
+                        deliveryDate = LocalDate.parse(deliveryDateInput);
+                        // Check if the delivery date is before the order date
+                        if (deliveryDate.isBefore(orderDate)) {
+                            System.out.println("Error: Delivery date cannot be before the order date. Please enter a valid Delivery Date.");
+                        } else {
+                            break;  // Break if the date is valid
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error: Invalid date format. Please enter the Delivery Date in yyyy-mm-dd format.");
+                    }
+                }
+
+                // Input VAT (Simple validation: check if it's not empty)
+                String vat;
+                while (true) {
+                    System.out.print("Enter Customer VAT: ");
+                    vat = scanner.nextLine();
+                    if (vat.isEmpty()) {
+                        System.out.println("Error: VAT cannot be empty. Please enter a valid VAT.");
+                    } else {
+                        break;
+                    }
+                }
+
+                // Input Product ID (Simple validation: check if it's not empty)
+                String productId6;
+                while (true) {
+                    System.out.print("Enter Product ID: ");
+                    productId6 = scanner.nextLine();
+                    if (productId6.isEmpty()) {
+                        System.out.println("Error: Product ID cannot be empty. Please enter a valid Product ID.");
+                    } else {
+                        break;
+                    }
+                }
+
+                try {
+                    // Call the registerOrder function if all details are valid
+                    String result = db.registerOrder(orderId, orderDate, deliveryDate, vat, productId6);
+                    System.out.println("\nResult: " + result);
+                } catch (Exception e) {
+                    System.out.println("Error: System failure while processing the order. Please try again.");
+                    e.printStackTrace();
+                }
+                break;
+
+
+
             case 0:
                 return;
             default:

@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -458,5 +459,29 @@ public class DatabaseFunctionsController {
             e.printStackTrace();
         }
     }
+
+    public String registerOrder(String orderId, LocalDate orderDate, LocalDate deliveryDate, String vat, String productId) {
+        String result = null;
+        String query = "{? = call REGISTER_ORDER(?, ?, ?, ?, ?)}"; // PL/SQL Function Call
+
+        try (CallableStatement callableStatement = connection.prepareCall(query)) {
+            // Bind parameters to the PL/SQL function
+            callableStatement.registerOutParameter(1, Types.VARCHAR); // Result parameter
+            callableStatement.setString(2, orderId);                 // p_order_id
+            callableStatement.setDate(3, Date.valueOf(orderDate));    // p_order_date
+            callableStatement.setDate(4, Date.valueOf(deliveryDate)); // p_delivery_date
+            callableStatement.setString(5, vat);                     // p_customer_vat
+            callableStatement.setString(6, productId);               // p_product_id
+
+            // Execute the PL/SQL function
+            callableStatement.execute();
+            result = callableStatement.getString(1); // Retrieve the result
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 
 }
