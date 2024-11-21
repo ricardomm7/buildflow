@@ -1,0 +1,130 @@
+Initial Temperature = 24.50 °C
+Initial Humidity = 61.00 %
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 61.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.50 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.20 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.20 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 60.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 24.10 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.80 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.60 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.40 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
+Temperature = 23.40 °C
+Humidity = 59.00 %
+The temperature light is off.
+The humidity light is off.
