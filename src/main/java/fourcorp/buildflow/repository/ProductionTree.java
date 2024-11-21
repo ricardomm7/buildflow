@@ -162,6 +162,10 @@ public class ProductionTree {
         }
     }
 
-
+    public void clear() {
+        nodes.clear();
+        connections.clear();
+        nodesMap.clear();
+    }
 }
 

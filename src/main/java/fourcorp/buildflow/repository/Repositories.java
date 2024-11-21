@@ -8,7 +8,7 @@ public class Repositories {
     private static Repositories instance;
     private final ProductPriorityLine productPriorityLine;
     private final WorkstationsPerOperation workstationsPerOperation;
-    private final ProductionTree productionTree;
+    private static ProductionTree productionTree;
     private final MaterialQuantityBST materialBST;
 
     /**
@@ -81,4 +81,9 @@ public class Repositories {
     public MaterialQuantityBST getMaterialBST() {
         return materialBST;
     }
+
+    public static void clear() {
+        productionTree.clear();
+    }
+
 }
