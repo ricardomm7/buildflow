@@ -2,7 +2,7 @@ module fourcorp.buildflow {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.naming;
-    requires java.xml;
+    requires java.sql;
 
     opens fourcorp.buildflow to javafx.fxml;
     exports fourcorp.buildflow;

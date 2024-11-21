@@ -60,6 +60,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[18]", "Prioritize critical path by number of dependencies.");
             System.out.printf("%-5s%-75s%n", "[19]", "Prioritize critical path by depth Level.");
             System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the production tree.");
+            System.out.printf("%-5s%-75s%n", "[21]", "Database connected features (submenu).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -74,7 +75,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 20) {
+                if (choice >= 0 && choice <= 21) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -167,6 +168,10 @@ public class Menu {
                 break;
             case 20:
                 ptVisualizer.displayMaterialQuantitiesInProductionTree();
+                break;
+            case 21:
+                DatabaseMenu m = new DatabaseMenu();
+                m.displayMenu();
                 break;
             case 0:
                 System.out.println("Exiting...");
