@@ -1,6 +1,9 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.DatabaseFunctionsController;
+import fourcorp.buildflow.application.DisplayProductionTree;
+import fourcorp.buildflow.application.Reader;
+import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -8,10 +11,12 @@ import java.util.Scanner;
 public class DatabaseMenu {
     private final Scanner scanner;
     private final DatabaseFunctionsController db;
+    private final DisplayProductionTree ptVisualizer;
 
     public DatabaseMenu() {
         scanner = new Scanner(System.in);
         db = new DatabaseFunctionsController();
+        ptVisualizer = new DisplayProductionTree();
     }
 
     public void displayMenu() throws IOException {
@@ -23,6 +28,7 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[2]", "See the list of operations involved in the production of a product.");
             System.out.printf("%-5s%-75s%n", "[3]", "Know which product uses all types of machines available.");
             System.out.printf("%-5s%-75s%n", "[4]", "Deactivate a costumer.");
+            System.out.printf("%-5s%-75s%n", "[5]", "Import from Database BOM and BOO and generate production tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -30,6 +36,12 @@ public class DatabaseMenu {
             int choice = getUserChoice();
             handleChoice(choice);
             if (choice == 0) {
+                Repositories.clear();
+                Reader.loadOperations("textFiles/articles.csv");
+                Reader.loadMachines("textFiles/workstations.csv");
+                Reader.loadItems("textFiles/items.csv");
+                Reader.loadSimpleOperations("textFiles/operations.csv");
+                Reader.loadBOO("textFiles/boo_v2.csv");
                 return;
             }
         }
@@ -74,6 +86,17 @@ public class DatabaseMenu {
                 System.out.print("Enter Costumer VAT: ");
                 String nif = scanner.nextLine();
                 db.callDeactivateCustomer(nif);
+                break;
+            case 5:
+                System.out.println();
+                System.out.print("Enter Product ID: ");
+                String pid = scanner.nextLine();
+                db.graphicVisualization(pid);
+                Repositories.clear();
+                Reader.loadSimpleOperations("textFiles/operationsLapr.csv");
+                Reader.loadItems("textFiles/itemsLapr.csv");
+                Reader.loadBOO("textFiles/boo_v2Lapr.csv");
+                ptVisualizer.generateGraph();
                 break;
             case 0:
                 return;

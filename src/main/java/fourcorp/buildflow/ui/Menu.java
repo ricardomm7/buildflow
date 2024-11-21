@@ -61,7 +61,6 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[19]", "Prioritize critical path by depth Level.");
             System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the production tree.");
             System.out.printf("%-5s%-75s%n", "[21]", "Database connected features (submenu).");
-            System.out.printf("%-5s%-75s%n", "[22]", "Import from Database BOM and BOO and generate production tree.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -173,17 +172,6 @@ public class Menu {
             case 21:
                 DatabaseMenu m = new DatabaseMenu();
                 m.displayMenu();
-                break;
-
-            case 22:
-                OracleDataExporter.start(scanner);
-
-                Reader.loadSimpleOperations("textFiles/operationsLapr.csv");
-                Reader.loadItems("textFiles/itemsLapr.csv");
-                Reader.loadBOO("textFiles/boo_v2Lapr.csv");
-
-                ptVisualizer.displayMaterialQuantitiesInProductionTree();
-
                 break;
             case 0:
                 System.out.println("Exiting...");
