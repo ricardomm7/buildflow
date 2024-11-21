@@ -72,5 +72,5 @@ void loop() {
     Serial.println("The humidity light is off.");
   }
   
-  delay(30000);
+  delay(2000);
 }
