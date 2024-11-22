@@ -357,12 +357,122 @@ public class USEI11 {
     }
 
     @Test
-    void testReadTree() throws IOException {
-       ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv","src/test/java/fourcorp/buildflow/items_test.csv","src/test/java/fourcorp/buildflow/boo_test.csv");
+    void testOperationsAreAddedToPriorityQueue_AC1() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
+                (o1, o2) -> Integer.compare(
+                        o2.getDepth(testTree),
+                        o1.getDepth(testTree)
+                )
+        );
+
+        for (ProductionNode node : testTree.getAllNodes()) {
+            if (node.isOperation()) {
+                qualityChecks.add(node);
+            }
+        }
+
+        assertEquals(5, qualityChecks.size(), "A fila de prioridade deve conter todas as 5 operações.");
+        assertTrue(qualityChecks.stream().allMatch(ProductionNode::isOperation),
+                "Todos os nós na fila de prioridade devem ser operações.");
+    }
+
+    @Test
+    void testNoDuplicateOperationsInQueue_AC1() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
+                (o1, o2) -> Integer.compare(
+                        o2.getDepth(testTree),
+                        o1.getDepth(testTree)
+                )
+        );
+
+        for (ProductionNode node : testTree.getAllNodes()) {
+            if (node.isOperation()) {
+                qualityChecks.add(node);
+            }
+        }
+
+        List<String> operationIds = new ArrayList<>();
+        while (!qualityChecks.isEmpty()) {
+            operationIds.add(qualityChecks.poll().getId());
+        }
+
+        long distinctCount = operationIds.stream().distinct().count();
+        assertEquals(operationIds.size(), distinctCount, "Não deve haver operações duplicadas na fila de prioridade.");
+    }
+
+    @Test
+    void testOperationDepths_AC1() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        for (ProductionNode node : testTree.getAllNodes()) {
+            if (node.isOperation()) {
+                int depth = node.getDepth(testTree);
+                assertTrue(depth >= 0, "A profundidade da operação deve ser válida e >= 0.");
+            }
+        }
+
+        ProductionNode paintOperation = testTree.getNodeById("5");
+        assertNotNull(paintOperation, "A operação 'Pintar caixa' deve existir na árvore.");
+        assertEquals(1, paintOperation.getDepth(testTree), "A profundidade da operação 'Pintar caixa' deve ser 1.");
+    }
+
+
+    @Test
+    void testQualityChecksArePrioritizedByDepth() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
         DisplayProductionTree display = new DisplayProductionTree();
         display.setProductionTree(testTree);
         display.generateGraph();
 
+
+        // Verifica se a prioridade de profundidade está correta
+        PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
+                (o1, o2) -> Integer.compare(
+                        o2.getDepth(testTree),
+                        o1.getDepth(testTree)
+                )
+        );
+
+        for (ProductionNode node : testTree.getAllNodes()) {
+            if (node.isOperation()) {
+                qualityChecks.add(node);
+            }
+        }
+
+        List<String> expectedOrder = List.of(
+                "cortar tábua de madeira",
+                "montar caixa",
+                "pregar cantos da caixa",
+                "lixar caixa de madeira",
+                "pintar caixa"
+
+        );
+
+        List<String> actualOrder = new ArrayList<>();
+        while (!qualityChecks.isEmpty()) {
+            actualOrder.add(qualityChecks.poll().getName());
+        }
+
+        assertEquals(expectedOrder, actualOrder, "As operações devem ser executadas na ordem de prioridade por profundidade.");
     }
+
+    @Test
+    void testQualityChecksExecutionDoesNotThrowErrors() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+        DisplayProductionTree display = new DisplayProductionTree();
+        display.setProductionTree(testTree);
+        display.generateGraph();
+
+        QualityCheckManager manager = new QualityCheckManager(testTree);
+
+        // Executar o método de verificação de qualidade
+        assertDoesNotThrow(manager::prioritizeAndExecuteQualityChecks,
+                "O método de execução de verificações de qualidade não deve lançar exceções.");
+    }
+
 
 }
