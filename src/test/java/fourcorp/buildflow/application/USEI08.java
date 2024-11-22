@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class USEI09 {
+public class USEI08 {
 
     @Test
     void testLoadItems() throws IOException {

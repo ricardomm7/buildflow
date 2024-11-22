@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class USEI09 {
+class USEI08 {
     private ProductionTree productionTree;
 
     @BeforeEach
