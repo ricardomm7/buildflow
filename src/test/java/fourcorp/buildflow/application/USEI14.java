@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -13,12 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class USEI14 {
 
+    private ProductionTree productionTree;
+
     @Nested
     class CriticalPathManagerTest {
         private ProductionTree productionTree;
 
-        @BeforeEach
-        void setUp() {
+
+        @Test
+        void testCriticalPathPriority() {
             // Inicializar árvore de produção
             productionTree = new ProductionTree();
 
@@ -38,10 +42,8 @@ public class USEI14 {
             productionTree.addDependency(operationB, operationA); // B depende de A
             productionTree.addDependency(operationC, operationB); // C depende de B
             productionTree.addDependency(productD, operationC);   // D depende de C
-        }
 
-        @Test
-        void testCriticalPathPriority() {
+
             // AC1: Ordenar operações pelo caminho crítico usando um heap
             PriorityQueue<ProductionNode> queue = new PriorityQueue<>(
                     (a, b) -> Integer.compare(
@@ -73,6 +75,28 @@ public class USEI14 {
 
         @Test
         void testCriticalPathWithIndependentNodes() {
+
+            // Inicializar árvore de produção
+            productionTree = new ProductionTree();
+
+            // Configurar nós para teste
+            ProductionNode operationA = new ProductionNode("A1", "Operação A", false);
+            ProductionNode operationB = new ProductionNode("B1", "Operação B", false);
+            ProductionNode operationC = new ProductionNode("C1", "Operação C", false);
+            ProductionNode productD = new ProductionNode("D1", "Produto D", true);
+
+            // Adicionar nós à árvore
+            productionTree.addNode(operationA);
+            productionTree.addNode(operationB);
+            productionTree.addNode(operationC);
+            productionTree.addNode(productD);
+
+            // Definir dependências
+            productionTree.addDependency(operationB, operationA); // B depende de A
+            productionTree.addDependency(operationC, operationB); // C depende de B
+            productionTree.addDependency(productD, operationC);   // D depende de C
+
+
             // Adiciona um nó sem dependências
             ProductionNode independentNode = new ProductionNode("E1", "Operação Independente", false);
             productionTree.addNode(independentNode);
@@ -87,6 +111,27 @@ public class USEI14 {
 
         @Test
         void testInvalidDependencyHandling() {
+            // Inicializar árvore de produção
+            productionTree = new ProductionTree();
+
+            // Configurar nós para teste
+            ProductionNode operationA = new ProductionNode("A1", "Operação A", false);
+            ProductionNode operationB = new ProductionNode("B1", "Operação B", false);
+            ProductionNode operationC = new ProductionNode("C1", "Operação C", false);
+            ProductionNode productD = new ProductionNode("D1", "Produto D", true);
+
+            // Adicionar nós à árvore
+            productionTree.addNode(operationA);
+            productionTree.addNode(operationB);
+            productionTree.addNode(operationC);
+            productionTree.addNode(productD);
+
+            // Definir dependências
+            productionTree.addDependency(operationB, operationA); // B depende de A
+            productionTree.addDependency(operationC, operationB); // C depende de B
+            productionTree.addDependency(productD, operationC);   // D depende de C
+
+
             // Cenário: Adicionar uma dependência circular direta
             ProductionNode nodeA = new ProductionNode("A1", "Operação A", false);
             productionTree.addNode(nodeA);
@@ -108,7 +153,134 @@ public class USEI14 {
             List<ProductionNode> parentsOfA = productionTree.getParentNodes(nodeA);
             assertEquals(0, parentsOfA.size(), "O nó A não deve ter dependências após tentativa de dependência circular");
         }
-
-
     }
+
+    @Test
+    void testCriticalPathWithMultipleBranches() {
+        // Inicializar árvore de produção
+        productionTree = new ProductionTree();
+
+        // Configurar nós para teste
+        ProductionNode operationA = new ProductionNode("A1", "Operação A", false);
+        ProductionNode operationB = new ProductionNode("B1", "Operação B", false);
+        ProductionNode operationC = new ProductionNode("C1", "Operação C", false);
+        ProductionNode operationD = new ProductionNode("D1", "Operação D", false);
+        ProductionNode operationE = new ProductionNode("E1", "Operação E", false);
+        ProductionNode productF = new ProductionNode("F1", "Produto Final", true);
+
+        // Adicionar nós à árvore
+        productionTree.addNode(operationA);
+        productionTree.addNode(operationB);
+        productionTree.addNode(operationC);
+        productionTree.addNode(operationD);
+        productionTree.addNode(operationE);
+        productionTree.addNode(productF);
+
+        // Configurar múltiplos ramos
+        productionTree.addDependency(operationB, operationA); // B depende de A
+        productionTree.addDependency(operationC, operationA); // C depende de A
+        productionTree.addDependency(operationD, operationB); // D depende de B
+        productionTree.addDependency(operationE, operationC); // E depende de C
+        productionTree.addDependency(productF, operationD);   // Produto depende de D
+        productionTree.addDependency(productF, operationE);   // Produto depende de E
+
+        // Validar o caminho crítico
+        List<ProductionNode> criticalPath = productionTree.getCriticalPath();
+        assertEquals(4, criticalPath.size(), "Caminho crítico deve ter 4 operações.");
+        assertEquals("Operação A", criticalPath.get(0).getName());
+        assertEquals("Operação B", criticalPath.get(1).getName());
+        assertEquals("Operação D", criticalPath.get(2).getName());
+        assertEquals("Produto Final", criticalPath.get(3).getName());
+    }
+
+    @Test
+    void testNodesWithEqualDepth() {
+        // Inicializar árvore de produção
+        productionTree = new ProductionTree();
+
+        // Configurar nós para teste
+        ProductionNode operationA = new ProductionNode("A1", "Operação A", false);
+        ProductionNode operationB = new ProductionNode("B1", "Operação B", false);
+        ProductionNode operationC = new ProductionNode("C1", "Operação C", false);
+        ProductionNode productD = new ProductionNode("D1", "Produto Final", true);
+
+        // Adicionar nós à árvore
+        productionTree.addNode(operationA);
+        productionTree.addNode(operationB);
+        productionTree.addNode(operationC);
+        productionTree.addNode(productD);
+
+        // Configurar dependências (profundidade igual)
+        productionTree.addDependency(operationB, operationA); // B depende de A
+        productionTree.addDependency(operationC, operationA); // C depende de A
+        productionTree.addDependency(productD, operationB);   // Produto depende de B
+        productionTree.addDependency(productD, operationC);   // Produto depende de C
+
+        PriorityQueue<ProductionNode> byDepth = new PriorityQueue<>(
+                (node1, node2) -> Integer.compare(
+                        node2.getDepth(productionTree),
+                        node1.getDepth(productionTree)
+                )
+        );
+
+        for (ProductionNode node : productionTree.getAllNodes()) {
+            if (node.isOperation()) {
+                byDepth.add(node);
+            }
+        }
+
+        // Verificar que as operações com profundidade igual são tratadas corretamente
+        List<ProductionNode> result = new ArrayList<>();
+        while (!byDepth.isEmpty()) {
+            result.add(byDepth.poll());
+        }
+
+        assertEquals(3, result.size(), "Deve haver 3 operações na fila.");
+        assertTrue(result.contains(operationA), "Operação A deve estar presente.");
+        assertTrue(result.contains(operationB), "Operação B deve estar presente.");
+        assertTrue(result.contains(operationC), "Operação C deve estar presente.");
+    }
+
+    @Test
+    void testEmptyProductionTree() {
+        // Inicializar uma árvore vazia
+        productionTree = new ProductionTree();
+
+        // Validar que o caminho crítico está vazio
+        List<ProductionNode> criticalPath = productionTree.getCriticalPath();
+        assertTrue(criticalPath.isEmpty(), "Caminho crítico deve estar vazio para uma árvore vazia.");
+    }
+
+
+    @Test
+    void testDisplayCriticalPathInSequence() {
+        // Inicializar árvore de produção
+        productionTree = new ProductionTree();
+
+        // Configurar nós para teste
+        ProductionNode operationA = new ProductionNode("A1", "Operação A", false);
+        ProductionNode operationB = new ProductionNode("B1", "Operação B", false);
+        ProductionNode operationC = new ProductionNode("C1", "Operação C", false);
+        ProductionNode productD = new ProductionNode("D1", "Produto Final", true);
+
+        // Adicionar nós à árvore
+        productionTree.addNode(operationA);
+        productionTree.addNode(operationB);
+        productionTree.addNode(operationC);
+        productionTree.addNode(productD);
+
+        // Configurar dependências
+        productionTree.addDependency(operationB, operationA); // B depende de A
+        productionTree.addDependency(operationC, operationB); // C depende de B
+        productionTree.addDependency(productD, operationC);   // Produto depende de C
+
+        // Validar ordem do caminho crítico
+        List<ProductionNode> criticalPath = productionTree.getCriticalPath();
+        assertEquals(4, criticalPath.size(), "Caminho crítico deve ter 4 nós.");
+        assertEquals("Operação A", criticalPath.get(0).getName());
+        assertEquals("Operação B", criticalPath.get(1).getName());
+        assertEquals("Operação C", criticalPath.get(2).getName());
+        assertEquals("Produto Final", criticalPath.get(3).getName());
+    }
+
 }

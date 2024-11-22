@@ -20,13 +20,15 @@ public class CriticalPathPrioritizer {
 
     /**
      * Displays critical path operations prioritized by depth in the production tree.
+     * Overall complexity: O(n log n) where n is the number of nodes in the production tree
      */
     public void displayCriticalPathByDepth() {
         PriorityQueue<ProductionNode> byDepth = new PriorityQueue<>(
-                (node1, node2) -> Integer.compare(
-                        node2.getDepth(productionTree),
-                        node1.getDepth(productionTree)
-                )
+                    (node1, node2) -> {
+                        int depth1 = node1.getDepth(productionTree);
+                        int depth2 = node2.getDepth(productionTree);
+                        return depth2 - depth1;
+                    }
         ); // O(n)
 
         for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
