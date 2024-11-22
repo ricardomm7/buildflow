@@ -150,22 +150,78 @@ public class ProductionTree {
         return connections;
     }
 
-    public void updateNodeQuantity(ProductionNode nodeToUpdate, double newQuantity) {
+    public void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity) {
         nodeToUpdate.setQuantity(newQuantity);
 
-        // Now, propagate the new quantity to all connections in the tree
+        // Propagate the quantity update to child nodes, ensuring connections are correctly updated
+        propagateQuantityUpdate(nodeToUpdate, newQuantity);
+
+        // Update the connection quantities as well
+        updateConnectionQuantities(nodeToUpdate);
+
+        // After propagating the updates, delete the old connection and create a new one with updated quantity
+        deleteAndCreateNewConnections(nodeToUpdate, newQuantity);
+    }
+
+    private void deleteAndCreateNewConnections(ProductionNode nodeToUpdate, double newQuantity) {
+        // Iterate through all parent-child connections for this node
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
             Map<ProductionNode, Double> subNodes = entry.getValue();
-            for (Map.Entry<ProductionNode, Double> subEntry : subNodes.entrySet()) {
-                ProductionNode dependentNode = subEntry.getKey();
-                if (dependentNode.getId().equals(nodeToUpdate.getId())) {
-                    // Here you can update the quantities of the dependent nodes accordingly if needed
-                    // You may want to scale or adjust the quantities based on the new value
-                    subEntry.setValue(newQuantity); // This is a simple example to show updating the value
-                }
+
+            // If the node is part of the connections, remove and re-add the connection with updated quantity
+            if (subNodes.containsKey(nodeToUpdate)) {
+                // Remove the old connection
+                subNodes.remove(nodeToUpdate);
+
+                // Calculate the new connection quantity based on the updated quantity
+                double updatedConnectionQuantity = newQuantity;
+
+                // Add the new connection with the updated quantity
+                subNodes.put(nodeToUpdate, updatedConnectionQuantity);
             }
         }
     }
+
+
+    private void propagateQuantityUpdate(ProductionNode node, double newQuantity) {
+        if (!connections.containsKey(node)) {
+            return; // No sub-nodes, nothing to propagate
+        }
+
+        Map<ProductionNode, Double> subNodes = connections.get(node);
+
+        for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
+            ProductionNode childNode = entry.getKey();
+            double relationshipMultiplier = entry.getValue(); // Relationship between parent and child
+
+            // Update the child's quantity based on the parent's new quantity and the relationship multiplier
+            double updatedChildQuantity = newQuantity * relationshipMultiplier;
+
+            // Update the child node's quantity
+            childNode.setQuantity(updatedChildQuantity);
+
+            // Continue propagating if necessary (no need to propagate if leaf node)
+            if (connections.containsKey(childNode)) {
+                propagateQuantityUpdate(childNode, updatedChildQuantity); // Continue propagating if necessary
+            }
+        }
+    }
+
+
+    private void updateConnectionQuantities(ProductionNode nodeToUpdate) {
+        if (!connections.containsKey(nodeToUpdate)) {
+            return;
+        }
+
+        Map<ProductionNode, Double> subNodes = connections.get(nodeToUpdate);
+        for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
+            // Ensure connection quantities are recalculated based on new node quantity
+            ProductionNode childNode = entry.getKey();
+            double updatedQuantity = nodeToUpdate.getQuantity() * entry.getValue();
+            entry.setValue(updatedQuantity); // Update the connection quantity in the map
+        }
+    }
+
 
     public void clear() {
         nodes.clear();

@@ -136,11 +136,13 @@ public class DisplayProductionTree {
 
             for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {
                 ProductionNode childNode = childEntry.getKey();
-                Double quantity = childEntry.getValue();
+                Double connectionQuantity = childEntry.getValue();
 
-                System.out.println("Father Node: " + parentNode.getName() + " (ID: " + parentNode.getId() + ") -> "
-                        + "Son Node: " + childNode.getName() + " (ID: " + childNode.getId() + ")"
-                        + " | Quantity: " + quantity);
+                System.out.println("Father Node: " + parentNode.getName() + " (ID: " + parentNode.getId() + ")" +
+                        " | Quantity: " + parentNode.getQuantity() +
+                        " -> Son Node: " + childNode.getName() + " (ID: " + childNode.getId() + ")" +
+                        " | Connection Quantity: " + connectionQuantity +
+                        " | Child Node Quantity: " + childNode.getQuantity());
             }
         }
     }

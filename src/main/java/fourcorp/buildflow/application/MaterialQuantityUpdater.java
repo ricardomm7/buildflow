@@ -89,37 +89,28 @@ public class MaterialQuantityUpdater {
         // Update the quantity in MaterialQuantityBST
         materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity);
 
-        // Update the quantity in the ProductionTree and the connections
-        updateConnectionsQuantity(nodeToUpdate, newQuantity);
-
-        productionTree.updateNodeQuantity(nodeToUpdate, newQuantity);
+        // Update the quantity in the ProductionTree and propagate changes
+        productionTree.updateConnectionsQuantity(nodeToUpdate, newQuantity); // Use the updated method
 
         System.out.println("Quantity updated successfully!");
         System.out.printf("Updated quantity for '%s': %.2f (Previous: %.2f)%n", nodeToUpdate.getName(), nodeToUpdate.getQuantity(), previousQuantity);
     }
 
+
+
     private double getNewQuantity() {
         while (true) {
             try {
-                return Double.parseDouble(scanner.nextLine());
+                double newQuantity = Double.parseDouble(scanner.nextLine());
+                if (newQuantity < 0) {
+                    System.out.print("Invalid input. Quantity cannot be negative. Please enter a non-negative value: ");
+                } else {
+                    return newQuantity;
+                }
             } catch (NumberFormatException e) {
                 System.out.print("Invalid input. Please enter a numeric value: ");
             }
         }
     }
 
-    private void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity) {
-        // Update the material quantity in the production tree connections
-        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : productionTree.getConnections().entrySet()) {
-            Map<ProductionNode, Double> subNodes = entry.getValue();
-            for (Map.Entry<ProductionNode, Double> subEntry : subNodes.entrySet()) {
-                ProductionNode dependentNode = subEntry.getKey();
-                if (dependentNode.getId().equals(nodeToUpdate.getId())) {
-                    // Here you can update the quantities of the dependent nodes accordingly if needed
-                    // You may want to scale or adjust the quantities based on the new value
-                    subEntry.setValue(newQuantity); // This is a simple example to show updating the value
-                }
-            }
-        }
-    }
 }
