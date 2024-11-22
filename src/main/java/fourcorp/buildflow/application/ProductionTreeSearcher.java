@@ -135,13 +135,13 @@ public class ProductionTreeSearcher {
         }
     }
 
-    public void CalculateQuantityOfMaterials() {
+    public void calculateQuantityOfMaterials() {
         if (connections == null || connections.isEmpty()) {
             System.out.println("No connections available.");
             return;
         }
 
-        System.out.println("  Material --> Quantity");
+        System.out.println("Material --> Quantity");
 
         // Mapa para armazenar as quantidades somadas por nome
         Map<String, Double> totalQuantities = new HashMap<>();
@@ -246,7 +246,4 @@ public class ProductionTreeSearcher {
         System.out.println("Processing operations in BOO order:");
         operationAVL.inOrderTraversal(nodeDependencyLevels);  // Passa o mapa de dependências para a simulação
     }
-
-
-
 }

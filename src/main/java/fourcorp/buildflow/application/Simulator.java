@@ -116,7 +116,7 @@ public class Simulator {
      * @param products the list of products to be processed
      * @param boo      a boolean flag for workstation availability filtering
      */
-    private void runSimulation(List<Product> products, boolean boo) {
+    public void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
         try {
             do { // O(n)
