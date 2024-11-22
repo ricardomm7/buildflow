@@ -208,6 +208,129 @@ public abstract class Reader {
         }
     }
 
+    public static ProductionTree loadProductionTree(String operationsFile, String itemsFile, String booFile) throws IOException {
+        ProductionTree productionTree = new ProductionTree(); // Cria uma nova árvore de produção
+
+        // Ler operações
+        try (BufferedReader br = new BufferedReader(new FileReader(operationsFile))) {
+            br.readLine(); // Ignorar cabeçalho
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] campos = linha.split(";");
+                String opId = campos[0];
+                String opName = campos[1];
+                productionTree.addNode(new ProductionNode(opId, opName, false)); // Adiciona operação como nó
+            }
+        }
+
+        // Ler itens
+        try (BufferedReader br = new BufferedReader(new FileReader(itemsFile))) {
+            br.readLine(); // Ignorar cabeçalho
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] campos = linha.split(";");
+                String itemId = campos[0];
+                String itemName = campos[1];
+                productionTree.addNode(new ProductionNode(itemId, itemName, true)); // Adiciona item como nó
+            }
+        }
+
+        // Ler BOO e construir dependências
+        try (BufferedReader br = new BufferedReader(new FileReader(booFile))) {
+            br.readLine(); // Ignorar cabeçalho
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] campos = linha.split(";");
+
+                String opId = campos[0];
+                String itemId = campos[1];
+                double itemQtd = Double.parseDouble(campos[2].replace(",", "."));
+
+                // Cria ou obtém os nós existentes
+                ProductionNode opNode = productionTree.getNodeById(opId);
+                ProductionNode itemNode = productionTree.getNodeById(itemId);
+
+                if (opNode == null) {
+                    opNode = new ProductionNode(opId, opId, false);
+                    productionTree.addNode(opNode);
+                }
+                if (itemNode == null) {
+                    itemNode = new ProductionNode(itemId, itemId, true);
+                    productionTree.addNode(itemNode);
+                }
+
+                // Conecta a operação ao produto final
+                productionTree.addDependency(opNode, itemNode); // Agora, opNode depende de itemNode
+                itemNode.setQuantity(itemQtd);
+
+                // Adicionar dependências de operações e materiais
+                int i = 3;
+                boolean isOperationsBlock = false;
+                boolean isMaterialsBlock = false;
+
+                while (i < campos.length) {
+                    String part = campos[i].trim();
+                    if (part.isEmpty()) {
+                        i++;
+                        continue;
+                    }
+
+                    if (part.equals("(")) {
+                        if (!isOperationsBlock) {
+                            isOperationsBlock = true;
+                        } else if (isOperationsBlock) {
+                            isMaterialsBlock = true;
+                        }
+                        i++;
+                        continue;
+                    } else if (part.equals(")")) {
+                        if (isMaterialsBlock) {
+                            isMaterialsBlock = false;
+                        } else if (isOperationsBlock) {
+                            isOperationsBlock = false;
+                        }
+                        i++;
+                        continue;
+                    }
+
+                    if (isOperationsBlock && !isMaterialsBlock) {
+                        String subOpId = campos[i];
+                        double subOpQtd = Double.parseDouble(campos[i + 1].replace(",", "."));
+
+                        ProductionNode subOpNode = productionTree.getNodeById(subOpId);
+                        if (subOpNode == null) {
+                            subOpNode = new ProductionNode(subOpId, subOpId, false);
+                            productionTree.addNode(subOpNode);
+                        }
+
+                        productionTree.addDependency(subOpNode, opNode); // Inverte a dependência
+                        subOpNode.setQuantity(subOpQtd);
+
+                        i += 2;
+                    } else if (isMaterialsBlock) {
+                        String materialId = campos[i];
+                        double materialQtd = Double.parseDouble(campos[i + 1].replace(",", "."));
+
+                        ProductionNode materialNode = productionTree.getNodeById(materialId);
+                        if (materialNode == null) {
+                            materialNode = new ProductionNode(materialId, materialId, true);
+                            productionTree.addNode(materialNode);
+                        }
+
+                        productionTree.addDependency(materialNode, opNode); // Inverte a dependência
+                        materialNode.setQuantity(materialQtd);
+
+                        i += 2;
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        }
+
+        return productionTree; // Retorna a árvore construída
+    }
+
     public static void setAtt(ProductionTree p) {
         pt = p;
     }

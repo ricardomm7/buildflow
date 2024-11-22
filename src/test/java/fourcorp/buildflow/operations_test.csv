@@ -1,4 +1,6 @@
 op_id;op_name
-11;assemble bench
-12;cut bench leg
-13;cut bench seat
+1;cortar tábua de madeira
+2;montar caixa
+3;pregar cantos da caixa
+4;lixar caixa de madeira
+5;pintar caixa

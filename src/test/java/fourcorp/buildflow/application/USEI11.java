@@ -5,6 +5,7 @@ import fourcorp.buildflow.repository.ProductionTree;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -353,6 +354,15 @@ public class USEI11 {
         }
 
         assertTrue(qualityChecks.isEmpty(), "Nenhuma operação deve ser encontrada na árvore.");
+    }
+
+    @Test
+    void testReadTree() throws IOException {
+       ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv","src/test/java/fourcorp/buildflow/items_test.csv","src/test/java/fourcorp/buildflow/boo_test.csv");
+        DisplayProductionTree display = new DisplayProductionTree();
+        display.setProductionTree(testTree);
+        display.generateGraph();
+
     }
 
 }
