@@ -63,6 +63,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[21]", "Database connected features (submenu).");
             System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials.");
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
+            System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -182,6 +183,12 @@ public class Menu {
             case 23:
                 System.out.println();
                 ptService.simulateProductionExecution();
+                break;
+            case 24:
+                System.out.println();
+                System.out.print("Enter Product ID: ");
+                String id = scanner.nextLine();
+                ptVisualizer.generateGraphFromNode(id);
                 break;
             case 0:
                 System.out.println("Exiting...");

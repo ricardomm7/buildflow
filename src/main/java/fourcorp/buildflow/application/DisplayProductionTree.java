@@ -66,6 +66,39 @@ public class DisplayProductionTree {
     }
 
     /**
+     * Generate graph from node.
+     *
+     * @param rootId the root id
+     */
+    public void generateGraphFromNode(String rootId) {
+        ProductionNode rootNode = productionTree.getNodeById(rootId);
+        if (rootNode == null) {
+            System.out.println("Node with ID " + rootId + " not found.");
+            return;
+        }
+
+        StringBuilder dotContent = new StringBuilder();
+        dotContent.append("graph G {\n");
+        dotContent.append("  splines=false;\n");
+        dotContent.append("  nodesep=0.5;\n");
+        dotContent.append("  ranksep=0.5;\n");
+
+        Set<String> processedEdges = new HashSet<>();
+
+        generateNodeDotRepresentation(rootNode, dotContent, new HashSet<>(), processedEdges);
+        dotContent.append("}\n");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("outFiles/production_tree.dot"))) {
+            writer.write(dotContent.toString());
+            System.out.println("File .dot generated for node " + rootId + "!");
+        } catch (IOException e) {
+            System.err.println("Error writing to .dot file: " + e.getMessage());
+        }
+
+        generateGraphVizSVG();
+    }
+
+    /**
      * Generates a Graphviz DOT representation of the production tree and writes it to a file.
      * It also calls Graphviz to generate an SVG image of the production tree.
      */
