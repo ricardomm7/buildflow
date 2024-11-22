@@ -3,16 +3,15 @@
 
 char str [] ="TEMP&unit:celsius&value:20#HUM&unit:percentage&value:80";
 char token [] ="TEMP" ;
-char unit [20];
+char unit [20] ;
 int value;
 
 int main() {
     
     int res = extract_data ( str , token , unit , &value );
 	printf ( "%d: %s,%d \n" , res , unit , value ); 
-	char token2 [] = "AAA";
+	char token2 [] = "HUM";
 	res = extract_data (str, token2,unit,&value);
-	printf ( "%d: %s,%d \n" , res , unit , value ); //0: ,0
+	printf ( "%d: %s,%d \n" , res , unit , value ); 
     
-    return 0;
 }
