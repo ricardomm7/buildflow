@@ -1,36 +1,54 @@
+.section .text
 .global move_n_to_array
 
-# Parametros esperados:
-# buffer - %rdi
-# length - %esi
-# tail   - %rdx
-# head   - %rcx
-# n      - %r8d
-# array  - %r9
+# Parameters:
+# %rdi -> buffer (int*)
+# %esi -> length (int)
+# %rdx -> tail pointer (int*)
+# %rcx -> head pointer (int*)
+# %r8d -> n (int)
+# %r9  -> array (int*)
 
 move_n_to_array:
-    movl $0, %r10d
+    movl (%rcx), %r10d         # r10d = *head
+    movl (%rdx), %r11d         # r11d = *tail
+    
+    movl %r10d, %eax          # eax = head
+    subl %r11d, %eax          # eax = head - tail
+    addl %esi, %eax           # Add length to handle negative result
+    
+    cmpl %esi, %eax			  # Compares with the buffer size
+    jl skip_mod				  # If eax<esi skips
+    subl %esi, %eax           # Subtract length if result >= length
+    
+skip_mod:
+    cmpl %r8d, %eax			  # Compares the available elements with n
+    jl fail
+    
+    xorl %eax, %eax           # i = 0
+    movl (%rdx), %r11d        # Current tail position
+    
+copy_loop:
+    cmpl %r8d, %eax           # Compare i with n
+    jge copy_done
+    
+    movl (%rdi,%r11,4), %r10d # Load buffer[tail]
+    movl %r10d, (%r9,%rax,4)  # Store to array[i]
+    
+    incl %r11d
+    cmpl %esi, %r11d          # Compare tail with length
+    jl no_wrap
+    xorl %r11d, %r11d         # Reset tail to 0 if at length
 
-loop_start:
-    cmpl %r8d, %r10d  # compara contador %r10d com o número de elementos %r8d
-    jge verify  # se %r10d >= %r8d, sai do loop
+no_wrap:
+    incl %eax                 # Increment counter
+    jmp copy_loop
 
-    movl (%rdi, %r10, 4), %eax  # carrega buffer[r10d] em %eax
-    movl %eax, (%r9, %r10, 4)  # armazena em array[r10d]
-
-    incl %r10d # incrementa o contador
-    jmp loop_start # volta ao início do loop
-
-verify:
-    cmpl %r8d, %r10d  # verifica se movemos exatamente 'n' elementos
-    jne fail  # se não, retorna 0 (falha)
-
-success:
-    movl $1, %eax  # coloca 1 em %eax para indicar sucesso
-    jmp end
+copy_done:
+    movl %r11d, (%rdx)
+    movl $1, %eax             # Return success
+    ret
 
 fail:
-    movl $0, %eax  # coloca 0 em %eax para indicar falha
-
-end:
+    movl $0, %eax             # Return failure
     ret

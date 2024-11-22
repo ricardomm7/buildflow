@@ -6,8 +6,10 @@ int main() {
 	int size=10;
 	int n = 5;
 	int array[n];
+	int tail = 0;
+	int head = 9;
 	
-	int result = move_n_to_array(buffer, size,&buffer[9],&buffer[0],n,array);
+	int result = move_n_to_array(buffer, size,&tail,&head,n,array);
 	
 	printf("\n\nThe result is %d.\n\n", result);
 	
@@ -17,7 +19,7 @@ int main() {
     }
     printf("\n\n");
     
-    printf("Inicial Array contents: \n");
+    printf("Buffer contents after: \n");
     for (int i = 0; i < size; i++) {
         printf("%d ", buffer[i]);
     }
