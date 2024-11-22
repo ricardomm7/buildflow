@@ -227,6 +227,7 @@ public class DatabaseFunctionsController {
         return columnWidths;
     }
 
+    // USBD18
     public void callDeactivateCustomer(String nif) {
         String query = "BEGIN DBMS_OUTPUT.PUT_LINE(DeactivateCustomer(?)); END;";
 
@@ -525,7 +526,7 @@ public class DatabaseFunctionsController {
         }
     }
 
-    // USBD18
+    // USBD19
     public void callProductWithMostOperations() {
         String query = "{? = call ProductWithMostOperations()}";
 
@@ -541,13 +542,58 @@ public class DatabaseFunctionsController {
 
 
             if (result != null) {
-                System.out.println("Produto com a maior sequência: " + result);
+                System.out.println("Product with the longest sequence: " + result);
             } else {
-                System.out.println("Nenhum produto encontrado.");
+                System.out.println("No product found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
+
+    // USBD15
+    public String registerWorkstation(String workstationId, String name, String description, String workstationType) {
+        String result = null;
+        String query = "{? = call RegisterWorkstation(?, ?, ?, ?)}";
+
+        try (CallableStatement callableStatement = connection.prepareCall(query)) {
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+
+            callableStatement.setString(2, workstationId);
+            callableStatement.setString(3, name);
+            callableStatement.setString(4, description);
+            callableStatement.setString(5, workstationType);
+
+            callableStatement.execute();
+
+            result = callableStatement.getString(1);
+            System.out.println(result);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            result = "Error: An unexpected database error occurred.";
+        }
+
+        return result;
+    }
+
+    public void showWorkstationTypes() {
+        String query = "SELECT WorkstationType_ID, Designation FROM Type_Workstation";
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            List<String[]> rows = new ArrayList<>();
+            rows.add(new String[]{"Workstation Type ID", "Designation"}); // Cabeçalhos
+
+            while (rs.next()) {
+                String id = rs.getString("WorkstationType_ID");
+                String description = rs.getString("Designation");
+                rows.add(new String[]{id, description});
+            }
+
+            printTable(rows);
+        } catch (SQLException e) {
+            System.out.println("Error fetching workstation types: " + e.getMessage());
+        }
+    }
+
 }

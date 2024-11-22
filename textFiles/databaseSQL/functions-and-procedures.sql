@@ -334,7 +334,7 @@ BEGIN
 END;
 /
 
-
+--USBD16
 create or replace function RegisterProduct (
     p_Part_ID   char,
     p_Name      varchar2,
@@ -393,4 +393,71 @@ exception
     when others then
         return 'Error: Failed to register the product: ' || sqlerrm;
 end RegisterProduct;
+/
+
+-- USBD19
+CREATE OR REPLACE FUNCTION ProductWithMostOperations
+RETURN VARCHAR2 IS
+  max_product_id VARCHAR2(100);
+BEGIN
+  SELECT Product_ID
+  INTO max_product_id
+  FROM (
+    SELECT Product_ID, MAX(sequencia) AS maior_sequencia
+    FROM (
+      SELECT Product_ID,
+             Operation_ID AS StartOperation,
+             LEVEL AS sequencia
+      FROM Operation
+      CONNECT BY PRIOR NextOperation_ID = Operation_ID
+      START WITH NextOperation_ID IS NOT NULL
+    )
+    GROUP BY Product_ID
+    ORDER BY maior_sequencia DESC
+  )
+  WHERE ROWNUM = 1;
+
+  RETURN max_product_id;
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Nenhuma sequência encontrada.');
+    RETURN NULL;
+END;
+/
+
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Produto com a maior sequência: ' || ProductWithMostOperations());
+END;
+/
+
+-- USBD15
+CREATE OR REPLACE FUNCTION RegisterWorkstation(
+    var_workstation_id IN VARCHAR2,
+    var_name IN VARCHAR2,
+    var_description IN VARCHAR2,
+    var_Workstation_type IN VARCHAR2
+) RETURN VARCHAR2
+AS
+    result_message VARCHAR2(255);
+    workstation_exists INT;
+BEGIN
+    -- Verifica se a workstation já existe
+    SELECT COUNT(*)
+    INTO workstation_exists
+    FROM Workstation
+    WHERE Workstation_ID = var_workstation_id;
+
+    -- Se já existir, retorna erro
+    IF workstation_exists > 0 THEN
+        result_message := 'Error: Workstation ID already exists.';
+    ELSE
+        -- Insere uma nova workstation
+        INSERT INTO Workstation (Workstation_ID, Name, Description, WorkstationType_ID)
+        VALUES (var_workstation_id, var_name, var_description, var_Workstation_type);
+
+        result_message := 'Success: Workstation registered successfully.';
+    END IF;
+
+    RETURN result_message;
+END;
 /

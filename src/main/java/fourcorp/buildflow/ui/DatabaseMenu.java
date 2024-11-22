@@ -6,7 +6,6 @@ import fourcorp.buildflow.application.Reader;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Scanner;
 
 public class DatabaseMenu {
@@ -32,7 +31,8 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[5]", "Import from Database BOM and BOO and generate production tree.");
             System.out.printf("%-5s%-75s%n", "[6]", "Create a new order.");
             System.out.printf("%-5s%-75s%n", "[7]", "Register new Product.");
-            System.out.printf("%-5s%-75s%n", "[8]", "Product with the most operation in its BOO");
+            System.out.printf("%-5s%-75s%n", "[8]", "Product with the most operation in its BOO.");
+            System.out.printf("%-5s%-75s%n", "[9]", "Register a Workstation.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -115,14 +115,11 @@ public class DatabaseMenu {
                 String productId3 = scanner.nextLine();
 
                 try {
-                    // Parse dates
                     java.time.LocalDate orderDate = java.time.LocalDate.parse(orderDateInput);
                     java.time.LocalDate deliveryDate = java.time.LocalDate.parse(deliveryDateInput);
 
-                    // Call the `registerOrder` method
                     String result = db.registerOrder(orderDate, deliveryDate, customerVat, productId3);
 
-                    // Display result to the user
                     System.out.println(result);
                 } catch (Exception e) {
                     System.out.println("Invalid input. Please ensure the dates are in the correct format and try again.");
@@ -141,27 +138,52 @@ public class DatabaseMenu {
                     System.out.print("Enter Family ID: ");
                     String fid = scanner.nextLine();
 
-                    // Chamar o método para registrar o produto
                     result = db.RegisterNewProduct(pid2, pname, fid);
 
-                    // Exibir o feedback para o usuário
                     System.out.println(result);
-
-                    // Se o resultado indicar sucesso, sair do loop
                     if (result.contains("registered successfully")) {
                         break;
                     }
-
-                    // Caso contrário, permitir nova tentativa
                     System.out.println("Please, try again.");
                 } while (true);
                 break;
             case 8:
                 System.out.println();
-                System.out.println("Product with the most operation in its BOO");
-                 db.callProductWithMostOperations();
-
+                db.callProductWithMostOperations();
                 break;
+            case 9:
+                System.out.println();
+
+                System.out.print("Enter Workstation ID (4 characters, numeric): ");
+                String workstationId = scanner.nextLine().trim();
+                while (!workstationId.matches("^[0-9]{4}$")) {
+                    System.out.print("Invalid Workstation ID. Must be 4 numbers. Try again: ");
+                    workstationId = scanner.nextLine().trim();
+                }
+
+                System.out.print("Enter Workstation Name (max 60 characters): ");
+                String name = scanner.nextLine().trim();
+                while (name.isEmpty() || name.length() > 60) {
+                    System.out.print("Invalid Workstation Name. Must be 1 to 60 characters. Try again: ");
+                    name = scanner.nextLine().trim();
+                }
+
+                System.out.print("Enter Workstation Description (max 100 characters): ");
+                String description = scanner.nextLine().trim();
+                while (description.isEmpty() || description.length() > 100) {
+                    System.out.print("Invalid Workstation Description. Must be 1 to 100 characters. Try again: ");
+                    description = scanner.nextLine().trim();
+                }
+
+                db.showWorkstationTypes();
+                System.out.print("Enter Workstation Type ID (5 characters, alphanumeric): ");
+                String workstationType = scanner.nextLine().trim();
+                while (!workstationType.matches("^[A-Za-z0-9]{5}$")) {
+                    System.out.print("Invalid Workstation Type ID. Must be 5 alphanumeric characters. Try again: ");
+                    workstationType = scanner.nextLine().trim();
+                }
+
+                db.registerWorkstation(workstationId, name, description, workstationType);
             case 0:
                 return;
             default:
