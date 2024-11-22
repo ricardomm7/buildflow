@@ -460,29 +460,6 @@ public class DatabaseFunctionsController {
         }
     }
 
-    public String registerOrder(String orderId, LocalDate orderDate, LocalDate deliveryDate, String vat, String productId) {
-        String result = null;
-        String query = "{? = call REGISTER_ORDER(?, ?, ?, ?, ?)}"; // PL/SQL Function Call
-
-        try (CallableStatement callableStatement = connection.prepareCall(query)) {
-            // Bind parameters to the PL/SQL function
-            callableStatement.registerOutParameter(1, Types.VARCHAR); // Result parameter
-            callableStatement.setString(2, orderId);                 // p_order_id
-            callableStatement.setDate(3, Date.valueOf(orderDate));    // p_order_date
-            callableStatement.setDate(4, Date.valueOf(deliveryDate)); // p_delivery_date
-            callableStatement.setString(5, vat);                     // p_customer_vat
-            callableStatement.setString(6, productId);               // p_product_id
-
-            // Execute the PL/SQL function
-            callableStatement.execute();
-            result = callableStatement.getString(1); // Retrieve the result
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
 
     // USBD16
     public String RegisterNewProduct(String partId, String name, String familyId) {
@@ -510,5 +487,43 @@ public class DatabaseFunctionsController {
 
         return result;
     }
+
+    //USBD17
+    public String registerOrder(java.time.LocalDate orderDate, java.time.LocalDate deliveryDate, String vat, String productId) {
+        String plsqlBlock = """
+                DECLARE
+                    v_result VARCHAR2(255);
+                BEGIN
+                    v_result := REGISTER_ORDER(
+                        p_order_date    => TO_DATE(?, 'YYYY-MM-DD'),
+                        p_delivery_date => TO_DATE(?, 'YYYY-MM-DD'),
+                        p_customer_vat  => ?,
+                        p_product_id    => ?
+                    );
+                    ? := v_result;
+                END;
+                """;
+
+        try (CallableStatement callableStatement = connection.prepareCall(plsqlBlock)) {
+            // Set input parameters
+            callableStatement.setString(1, orderDate.toString()); // Order date
+            callableStatement.setString(2, deliveryDate.toString()); // Delivery date
+            callableStatement.setString(3, vat); // VAT
+            callableStatement.setString(4, productId); // Product ID
+
+            // Register output parameter
+            callableStatement.registerOutParameter(5, Types.VARCHAR);
+
+            // Execute the PL/SQL block
+            callableStatement.execute();
+
+            // Get the result
+            return callableStatement.getString(5);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
 
 }
