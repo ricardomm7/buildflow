@@ -65,7 +65,16 @@ public class Repositories {
     }
 
     /**
-     * Get production tree production tree.
+     * Sets the production tree repository.
+     *
+     * @param productionTree the production tree to set
+     */
+    public static void setProductionTree(ProductionTree productionTree) {
+        Repositories.productionTree = productionTree;
+    }
+
+    /**
+     * Retrieves the production tree repository.
      *
      * @return the production tree
      */
