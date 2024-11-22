@@ -24,11 +24,11 @@ public class CriticalPathPrioritizer {
      */
     public void displayCriticalPathByDepth() {
         PriorityQueue<ProductionNode> byDepth = new PriorityQueue<>(
-                    (node1, node2) -> {
-                        int depth1 = node1.getDepth(productionTree);
-                        int depth2 = node2.getDepth(productionTree);
-                        return depth2 - depth1;
-                    }
+                (node1, node2) -> {
+                    int depth1 = node1.getDepth(productionTree);
+                    int depth2 = node2.getDepth(productionTree);
+                    return depth2 - depth1;
+                }
         ); // O(n)
 
         for (ProductionNode node : productionTree.getAllNodes()) { // O(n)

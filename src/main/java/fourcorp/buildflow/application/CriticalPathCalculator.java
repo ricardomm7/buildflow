@@ -37,7 +37,7 @@ public class CriticalPathCalculator {
      * @param node      the current node
      * @param collected the list of dependencies collected so far
      * @param visited   nodes already visited to prevent cycles
-     * The complexity of this method is O(n^2), where n is the number of nodes in the production tree.
+     *                  The complexity of this method is O(n^2), where n is the number of nodes in the production tree.
      */
     private void collectAllDependenciesFromBottom(ProductionNode node, List<ProductionNode> collected, List<ProductionNode> visited) {
         if (visited.contains(node)) { // O(n)
@@ -100,9 +100,9 @@ public class CriticalPathCalculator {
     /**
      * Formats the details of an operation, including its name, ID, direct dependencies, total dependencies, and the total number of dependencies.
      *
-     * @param node             the operation node
+     * @param node               the operation node
      * @param directDependencies the direct dependencies of the operation
-     * @param allDependencies   the total dependencies of the operation
+     * @param allDependencies    the total dependencies of the operation
      * @return a formatted string containing the operation details
      * The complexity of this method is O(n), where n is the number of dependencies.
      */
@@ -154,7 +154,7 @@ public class CriticalPathCalculator {
      *
      * @param productionTree the production tree
      */
-    public  void setProductionTree(ProductionTree productionTree) {
+    public void setProductionTree(ProductionTree productionTree) {
         this.productionTree = productionTree;
     }
 }

@@ -5,20 +5,36 @@ import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * The MaterialQuantityUpdater class provides functionality to update the quantity of materials
+ * in the production system. It allows the user to search for materials by name or ID, select the material,
+ * and update its quantity. The class interacts with both the ProductionTree and MaterialQuantityBST
+ * repositories to ensure the changes are propagated correctly.
+ */
 public class MaterialQuantityUpdater {
+
     private final ProductionTree productionTree;
     private final MaterialQuantityBST materialQuantityBST;
     private final Scanner scanner;
 
+    /**
+     * Constructs a MaterialQuantityUpdater instance.
+     *
+     * @param productionTree      The ProductionTree containing the nodes (materials) to be updated.
+     * @param materialQuantityBST The MaterialQuantityBST repository to manage the material quantities.
+     */
     public MaterialQuantityUpdater(ProductionTree productionTree, MaterialQuantityBST materialQuantityBST) {
         this.productionTree = productionTree;
         this.materialQuantityBST = materialQuantityBST;
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Prompts the user to enter a material's name or ID, searches for matching materials, and allows
+     * the user to update the quantity of the selected material.
+     */
     public void updateMaterialQuantity() {
         System.out.print("Enter the name or ID of the material to update: ");
         String searchQuery = scanner.nextLine();
@@ -60,6 +76,12 @@ public class MaterialQuantityUpdater {
         updateQuantityForNode(selectedNode);
     }
 
+    /**
+     * Validates and retrieves the user's choice when selecting a material from a list.
+     *
+     * @param max The maximum number of available options.
+     * @return The user's choice (1-based index), or -1 for invalid selection.
+     */
     private int getUserChoice(int max) {
         while (true) {
             try {
@@ -74,6 +96,12 @@ public class MaterialQuantityUpdater {
         }
     }
 
+    /**
+     * Updates the quantity of the selected material node and propagates the change
+     * to the relevant data structures.
+     *
+     * @param selectedNode The production node whose quantity is being updated.
+     */
     private void updateQuantityForNode(ProductionNode selectedNode) {
         System.out.print("Enter the new quantity: ");
         double newQuantity = getNewQuantity();
@@ -96,8 +124,11 @@ public class MaterialQuantityUpdater {
         System.out.printf("Updated quantity for '%s': %.2f (Previous: %.2f)%n", nodeToUpdate.getName(), nodeToUpdate.getQuantity(), previousQuantity);
     }
 
-
-
+    /**
+     * Continuously prompts the user to input a valid non-negative numeric quantity.
+     *
+     * @return The validated quantity entered by the user.
+     */
     private double getNewQuantity() {
         while (true) {
             try {
@@ -112,5 +143,4 @@ public class MaterialQuantityUpdater {
             }
         }
     }
-
 }

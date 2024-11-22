@@ -82,6 +82,9 @@ public class Repositories {
         return materialBST;
     }
 
+    /**
+     * Clear the production tree.
+     */
     public static void clear() {
         productionTree.clear();
     }

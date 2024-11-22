@@ -5,10 +5,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for managing database-related tasks and procedures.
+ * This class handles the initialization of the database, execution of SQL scripts,
+ * and calling stored procedures to fetch or process data.
+ */
 public class DatabaseFunctionsController {
     private final String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
     private final String USERNAME = "fourcorp";
@@ -17,12 +21,19 @@ public class DatabaseFunctionsController {
     private final String DATA_INSERTS_AND_CREATION = "textFiles/databaseSQL/tables-insert-and-drop.sql";
     private final String FUNCTIONS_AND_PROCEDURES = "textFiles/databaseSQL/functions-and-procedures.sql";
 
+    /**
+     * Constructs a new {@code DatabaseFunctionsController}, connects to the database,
+     * and executes all tasks to set up the database.
+     */
     public DatabaseFunctionsController() {
         System.out.println();
         connect();
         executeAllTasks();
     }
 
+    /**
+     * Establishes a connection to the database.
+     */
     private void connect() {
         try {
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -32,6 +43,10 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Executes all database setup tasks, including running SQL scripts for creating tables,
+     * inserting data, and defining stored procedures.
+     */
     private void executeAllTasks() {
         int totalSteps = calculateTotalSteps();
         int currentStep = 0;
@@ -44,10 +59,22 @@ public class DatabaseFunctionsController {
         System.out.println("\nDatabase setup completed successfully.");
     }
 
+    /**
+     * Calculates the total number of SQL commands in all scripts to estimate progress.
+     *
+     * @return the total number of SQL commands.
+     */
     private int calculateTotalSteps() {
         return countSteps(DATA_INSERTS_AND_CREATION, ";") + countSteps(FUNCTIONS_AND_PROCEDURES, "/");
     }
 
+    /**
+     * Counts the number of SQL commands in a given file based on a delimiter.
+     *
+     * @param filePath  the path to the SQL file.
+     * @param delimiter the delimiter used to separate SQL commands.
+     * @return the number of SQL commands in the file.
+     */
     private int countSteps(String filePath, String delimiter) {
         int count = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -63,6 +90,15 @@ public class DatabaseFunctionsController {
         return count;
     }
 
+    /**
+     * Executes all SQL commands in a given file.
+     *
+     * @param filePath    the path to the SQL file.
+     * @param delimiter   the delimiter used to separate SQL commands.
+     * @param currentStep the current progress step.
+     * @param totalSteps  the total number of steps.
+     * @return the updated progress step.
+     */
     private int executeTask(String filePath, String delimiter, int currentStep, int totalSteps) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             StringBuilder sql = new StringBuilder();
@@ -94,6 +130,12 @@ public class DatabaseFunctionsController {
         return currentStep;
     }
 
+    /**
+     * Displays a progress bar in the console.
+     *
+     * @param current the current progress step.
+     * @param total   the total number of steps.
+     */
     private void displayProgressBar(int current, int total) {
         int width = 35;
         int completed = (current * width) / total;
@@ -105,6 +147,11 @@ public class DatabaseFunctionsController {
         System.out.print("\r" + bar);
     }
 
+    /**
+     * Calls the stored function {@code GetProductOperationParts} to fetch parts and their quantities for a given product.
+     *
+     * @param productId the ID of the product.
+     */
     public void callSeeProductParts(String productId) {
         String query = "{? = call GetProductOperationParts(?)}"; // Ajuste conforme necessário para seu banco de dados
         try (CallableStatement callableStatement = connection.prepareCall(query)) {
@@ -130,6 +177,12 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Calls the stored function {@code GetProductOperationsAndWorkstations} to fetch operations
+     * and workstation details for a given product.
+     *
+     * @param productId the ID of the product.
+     */
     public void callGetProductOperationsAndWorkstations(String productId) {
         String query = "{? = call GetProductOperationsAndWorkstations(?)}"; // Ajuste conforme necessário para seu banco de dados
         try (CallableStatement callableStatement = connection.prepareCall(query)) {
@@ -156,6 +209,10 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Calls the stored procedure {@code PrintProductsUsingAllWorkstationTypes} to print details
+     * of products using all workstation types.
+     */
     public void callPrintProductsUsingAllWorkstationTypes() {
         String query = "{call PrintProductsUsingAllWorkstationTypes}";
 
@@ -191,6 +248,11 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Prints a formatted table to the console.
+     *
+     * @param rows the data to be printed, where each sub-array represents a row.
+     */
     private void printTable(List<String[]> rows) {
         int[] columnWidths = getColumnWidths(rows);
 
@@ -215,6 +277,12 @@ public class DatabaseFunctionsController {
         System.out.println(separator);
     }
 
+    /**
+     * Calculates the maximum width for each column in the table.
+     *
+     * @param rows the data to be printed, where each sub-array represents a row.
+     * @return an array of integers representing the width of each column.
+     */
     private int[] getColumnWidths(List<String[]> rows) {
         int columns = rows.get(0).length;
         int[] columnWidths = new int[columns];
@@ -227,7 +295,11 @@ public class DatabaseFunctionsController {
         return columnWidths;
     }
 
-    // USBD18
+    /**
+     * Deactivates a customer by calling a PL/SQL procedure that deactivates the customer based on their NIF (Tax Identification Number).
+     *
+     * @param nif the NIF of the customer to be deactivated.
+     */
     public void callDeactivateCustomer(String nif) {
         String query = "BEGIN DBMS_OUTPUT.PUT_LINE(DeactivateCustomer(?)); END;";
 
@@ -263,6 +335,12 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Initiates a process of graphical visualization by fetching product details
+     * and exporting related data to CSV files based on the given product ID.
+     *
+     * @param pid the product ID or name to fetch the product details.
+     */
     public void graphicVisualization(String pid) {
         while (true) {
             String productId = fetchProductId(pid);
@@ -281,6 +359,12 @@ public class DatabaseFunctionsController {
 
     }
 
+    /**
+     * Fetches the product ID from the database based on the user input.
+     *
+     * @param userInput the user input, which could be either the product ID or name.
+     * @return the product ID if found, otherwise null.
+     */
     private String fetchProductId(String userInput) {
         String sql = "SELECT Part_ID FROM Product WHERE Part_ID = ? OR Name = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -298,6 +382,12 @@ public class DatabaseFunctionsController {
         return null;
     }
 
+    /**
+     * Exports the items related to a specific product ID to a CSV file.
+     *
+     * @param connection the database connection.
+     * @param productId  the ID of the product whose items will be exported.
+     */
     private static void exportItems(Connection connection, String productId) {
         String sql = """
                 SELECT DISTINCT Part_ID, Description 
@@ -331,6 +421,13 @@ public class DatabaseFunctionsController {
         }
     }
 
+    /**
+     * Exports the Bill of Operations (BOO) for a given product ID to a CSV file.
+     * The exported file contains detailed information about operations and materials used.
+     *
+     * @param connection the database connection.
+     * @param productId  the ID of the product for which the BOO will be exported.
+     */
     private void exportBOO(Connection connection, String productId) {
         String sql = """
                 SELECT 
@@ -422,8 +519,11 @@ public class DatabaseFunctionsController {
     }
 
     /**
-     * Garante que uma seção contenha exatamente 7 delimitadores ";".
-     * Se o número de entradas for menor, preenche com espaços extras.
+     * Pads a section of data to ensure it contains exactly 7 semicolons as delimiters.
+     * If the section has fewer entries, it is padded with extra semicolons.
+     *
+     * @param section the section of data to be padded.
+     * @return the padded section with exactly 7 delimiters.
      */
     private String padSection(String section) {
         int currentDelimiterCount = (int) section.chars().filter(ch -> ch == ';').count();
@@ -434,7 +534,12 @@ public class DatabaseFunctionsController {
         return section;
     }
 
-
+    /**
+     * Exports the operations associated with a given product to a CSV file.
+     *
+     * @param connection The database connection to use for querying.
+     * @param productId  The ID of the product whose operations are to be exported.
+     */
     private void exportOperations(Connection connection, String productId) {
         String sql = """
                 SELECT DISTINCT Operation_ID AS op_id, Designation 
@@ -461,8 +566,14 @@ public class DatabaseFunctionsController {
         }
     }
 
-
-    // USBD16
+    /**
+     * Registers a new product in the system by calling a stored procedure in the database.
+     *
+     * @param partId   The part ID of the product.
+     * @param name     The name of the product.
+     * @param familyId The family ID of the product.
+     * @return A string indicating the result of the operation, either success or error message.
+     */
     public String RegisterNewProduct(String partId, String name, String familyId) {
         String result = null;
         String query = "{? = call RegisterProduct(?, ?, ?)}";
@@ -489,7 +600,15 @@ public class DatabaseFunctionsController {
         return result;
     }
 
-    //USBD17
+    /**
+     * Registers a new order by calling a PL/SQL stored procedure.
+     *
+     * @param orderDate    The order date.
+     * @param deliveryDate The expected delivery date.
+     * @param vat          The VAT number of the customer.
+     * @param productId    The ID of the product being ordered.
+     * @return A string indicating the result of the order registration, either success or error message.
+     */
     public String registerOrder(java.time.LocalDate orderDate, java.time.LocalDate deliveryDate, String vat, String productId) {
         String plsqlBlock = """
                 DECLARE
@@ -526,7 +645,9 @@ public class DatabaseFunctionsController {
         }
     }
 
-    // USBD19
+    /**
+     * Calls the stored procedure to find the product with the most operations associated with it.
+     */
     public void callProductWithMostOperations() {
         String query = "{? = call ProductWithMostOperations()}";
 
@@ -551,7 +672,15 @@ public class DatabaseFunctionsController {
         }
     }
 
-    // USBD15
+    /**
+     * Registers a new workstation in the system by calling a stored procedure in the database.
+     *
+     * @param workstationId   The ID of the workstation.
+     * @param name            The name of the workstation.
+     * @param description     A description of the workstation.
+     * @param workstationType The type of the workstation.
+     * @return A string indicating the result of the operation, either success or error message.
+     */
     public String registerWorkstation(String workstationId, String name, String description, String workstationType) {
         String result = null;
         String query = "{? = call RegisterWorkstation(?, ?, ?, ?)}";
@@ -576,6 +705,9 @@ public class DatabaseFunctionsController {
         return result;
     }
 
+    /**
+     * Displays the available workstation types by querying the database and printing the results.
+     */
     public void showWorkstationTypes() {
         String query = "SELECT WorkstationType_ID, Designation FROM Type_Workstation";
         try (Statement stmt = connection.createStatement();

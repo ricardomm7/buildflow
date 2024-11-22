@@ -11,10 +11,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The DisplayProductionTree class is responsible for displaying the production tree in different formats.
+ * It can display the tree structure in the console, generate a DOT representation of the tree,
+ * and create a visual graph using Graphviz. Additionally, it can display the material quantities
+ * in the production tree and handle cycles in the tree structure.
+ */
 public class DisplayProductionTree {
-
     private ProductionTree productionTree = Repositories.getInstance().getProductionTree();
 
+    /**
+     * Displays the production tree structure in the console.
+     * It prints the nodes and their respective sub-nodes recursively.
+     */
     public void displayTree() {
         System.out.println();
         for (ProductionNode node : productionTree.getAllNodes()) {
@@ -25,6 +34,14 @@ public class DisplayProductionTree {
         }
     }
 
+    /**
+     * Recursively prints a production node and its sub-nodes in the tree structure.
+     * This method also detects cycles to prevent infinite loops.
+     *
+     * @param node         The current production node.
+     * @param level        The level of the current node in the tree (used for indentation).
+     * @param visitedNodes A set of visited nodes to detect cycles in the tree.
+     */
     private void printNode(ProductionNode node, int level, Set<ProductionNode> visitedNodes) {
         if (!visitedNodes.add(node)) {
             System.out.println("  ".repeat(level) + "[CYCLE DETECTED - ABORTING] " + node.getId());
@@ -48,6 +65,10 @@ public class DisplayProductionTree {
         visitedNodes.remove(node);
     }
 
+    /**
+     * Generates a Graphviz DOT representation of the production tree and writes it to a file.
+     * It also calls Graphviz to generate an SVG image of the production tree.
+     */
     public void generateGraph() {
         StringBuilder dotContent = new StringBuilder();
         dotContent.append("graph G {\n");
@@ -57,6 +78,7 @@ public class DisplayProductionTree {
 
         Set<String> processedEdges = new HashSet<>();
 
+        // Generate DOT representation for each product node
         for (ProductionNode node : productionTree.getAllNodes()) {
             if (node.isProduct()) {
                 generateNodeDotRepresentation(node, dotContent, new HashSet<>(), processedEdges);
@@ -64,6 +86,7 @@ public class DisplayProductionTree {
         }
         dotContent.append("}\n");
 
+        // Write the DOT content to a file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("outFiles/production_tree.dot"))) {
             writer.write(dotContent.toString());
             System.out.println("File .dot generated!");
@@ -71,9 +94,18 @@ public class DisplayProductionTree {
             System.err.println("Error writing to .dot file: " + e.getMessage());
         }
 
+        // Generate SVG image using Graphviz
         generateGraphVizSVG();
     }
 
+    /**
+     * Recursively generates the DOT representation for a given node and its sub-nodes.
+     *
+     * @param node           The current node to represent.
+     * @param dotContent     The StringBuilder containing the DOT content.
+     * @param visitedNodes   A set of visited nodes to prevent cycles in the DOT graph.
+     * @param processedEdges A set of processed edges to prevent duplicate edges.
+     */
     private void generateNodeDotRepresentation(ProductionNode node, StringBuilder dotContent, Set<ProductionNode> visitedNodes, Set<String> processedEdges) {
         if (!visitedNodes.add(node)) {
             dotContent.append("  \"" + node.getId() + "\" [style=dashed color=red];\n");
@@ -103,10 +135,19 @@ public class DisplayProductionTree {
         visitedNodes.remove(node);
     }
 
+    /**
+     * Escapes the input string for proper usage in DOT notation.
+     *
+     * @param input The input string to escape.
+     * @return The escaped string.
+     */
     private String escapeForDot(String input) {
         return input.replace("\"", "\\\"");
     }
 
+    /**
+     * Calls Graphviz to generate an SVG image of the production tree from the DOT file.
+     */
     private void generateGraphVizSVG() {
         try {
             String command = "dot -Tsvg outFiles/production_tree.dot -o outFiles/production_tree.svg";
@@ -122,6 +163,10 @@ public class DisplayProductionTree {
         }
     }
 
+    /**
+     * Displays the material quantities in the production tree structure.
+     * It prints the quantities of materials used in the production process.
+     */
     public void displayMaterialQuantitiesInProductionTree() {
         System.out.println();
         Map<ProductionNode, Map<ProductionNode, Double>> connections = productionTree.getConnections();
@@ -147,6 +192,12 @@ public class DisplayProductionTree {
         }
     }
 
+    /**
+     * Sets a new production tree for this DisplayProductionTree instance.
+     * This is useful for changing the tree dynamically.
+     *
+     * @param productionTree The new ProductionTree to set.
+     */
     public void setProductionTree(ProductionTree productionTree) {
         this.productionTree = productionTree;
     }

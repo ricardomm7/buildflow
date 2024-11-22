@@ -49,6 +49,7 @@ is_odd:
     movl (%rax), %eax
     movl %eax, (%rdx)
     movl $1, %eax
+
 end:
 	# Epílogo
     popq %r13           # Restaura registradores callee-saved
@@ -56,7 +57,6 @@ end:
     popq %rbx
     movq %rbp, %rsp     # Restaura stack pointer
     popq %rbp           # Restaura base pointer antigo
-    
     ret
     
 end_bad:

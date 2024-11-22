@@ -83,6 +83,12 @@ public abstract class Reader {
         }
     }
 
+    /**
+     * Load items.
+     *
+     * @param filePath the file path
+     * @throws IOException the io exception
+     */
     public static void loadItems(String filePath) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
@@ -97,6 +103,12 @@ public abstract class Reader {
         br.close();
     }
 
+    /**
+     * Load simple operations.
+     *
+     * @param s the s
+     * @throws IOException the io exception
+     */
     public static void loadSimpleOperations(String s) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(s));
         br.readLine();
@@ -110,6 +122,12 @@ public abstract class Reader {
         br.close();
     }
 
+    /**
+     * Load boo.
+     *
+     * @param filepath the filepath
+     * @throws IOException the io exception
+     */
     public static void loadBOO(String filepath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
@@ -208,6 +226,15 @@ public abstract class Reader {
         }
     }
 
+    /**
+     * Load production tree production tree.
+     *
+     * @param operationsFile the operations file
+     * @param itemsFile      the items file
+     * @param booFile        the boo file
+     * @return the production tree
+     * @throws IOException the io exception
+     */
     public static ProductionTree loadProductionTree(String operationsFile, String itemsFile, String booFile) throws IOException {
         ProductionTree productionTree = new ProductionTree(); // Cria uma nova árvore de produção
 

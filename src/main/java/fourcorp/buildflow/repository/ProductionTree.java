@@ -7,18 +7,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The ProductionTree class represents a tree-like structure to manage production nodes and their dependencies.
+ * It allows inserting nodes, adding dependencies between them, and managing their quantities. The tree also supports
+ * searching nodes, retrieving the critical path, and propagating updates to dependent nodes.
+ */
 public class ProductionTree {
     private List<ProductionNode> nodes; // List of all nodes
     private Map<ProductionNode, Map<ProductionNode, Double>> connections; // Relations between nodes
     private Map<String, ProductionNode> nodesMap; // Nodes mapped by Name for quick lookup
 
-
+    /**
+     * Constructs an empty ProductionTree.
+     */
     public ProductionTree() {
         nodes = new ArrayList<>();
         connections = new HashMap<>();
         nodesMap = new HashMap<>();
     }
 
+    /**
+     * Searches for nodes based on the provided query. The search is case-insensitive and looks for matches
+     * in both the ID and the name of the nodes.
+     *
+     * @param query The query string to search for.
+     * @return A list of nodes whose ID or name contains the query.
+     */
     public List<ProductionNode> searchNodes(String query) {
         List<ProductionNode> results = new ArrayList<>();
 
@@ -37,15 +51,27 @@ public class ProductionTree {
         return results;
     }
 
+    /**
+     * Adds a new node to the tree.
+     *
+     * @param node The node to be added.
+     * @throws IllegalArgumentException If the node is null.
+     */
     public void addNode(ProductionNode node) {
         if (node == null) {
             throw new IllegalArgumentException("O nó não pode ser nulo.");
         }
         nodes.add(node);
-        nodesMap.put(node.getId().toLowerCase(), node); // Adiciona o nó ao mapa para busca eficiente
+        nodesMap.put(node.getId().toLowerCase(), node); // Adds the node to the map for efficient lookup
     }
 
-
+    /**
+     * Adds a dependency from one node (operationA) to another (operationB).
+     *
+     * @param operationB The dependent node (child).
+     * @param operationA The parent node.
+     * @throws IllegalArgumentException If the dependency would create a circular reference.
+     */
     public void addDependency(ProductionNode operationB, ProductionNode operationA) {
         if (operationB.equals(operationA)) {
             throw new IllegalArgumentException("Cannot add direct circular dependency from a node to itself");
@@ -57,7 +83,13 @@ public class ProductionTree {
         connections.get(operationA).put(operationB, 1.0);
     }
 
-
+    /**
+     * Calculates and returns the critical path in the production process.
+     * The critical path is the longest path from any node to a leaf node, where each node represents a task
+     * and the edges represent dependencies.
+     *
+     * @return A list of nodes representing the critical path in the production process.
+     */
     public List<ProductionNode> getCriticalPath() {
         List<ProductionNode> criticalPath = new ArrayList<>();
         if (nodes.isEmpty()) {
@@ -104,6 +136,13 @@ public class ProductionTree {
         return criticalPath;
     }
 
+    /**
+     * Inserts a new production node if it does not already exist in the tree.
+     *
+     * @param id        The ID of the new node.
+     * @param name      The name of the new node.
+     * @param isProduct A flag indicating whether the node is a product.
+     */
     public void insertProductionNode(String id, String name, boolean isProduct) {
         if (getNodeById(id) == null) {
             ProductionNode node = new ProductionNode(id, name, isProduct);
@@ -113,6 +152,13 @@ public class ProductionTree {
         }
     }
 
+    /**
+     * Adds a new connection between two nodes, indicating a dependency from parent to child.
+     *
+     * @param parentId The ID of the parent node.
+     * @param childId  The ID of the child node.
+     * @param quantity The quantity associated with this connection.
+     */
     public void insertNewConnection(String parentId, String childId, double quantity) {
         ProductionNode parent = getNodeById(parentId);
         ProductionNode child = getNodeById(childId);
@@ -124,10 +170,22 @@ public class ProductionTree {
         }
     }
 
+    /**
+     * Retrieves a node by its ID.
+     *
+     * @param id The ID of the node to retrieve.
+     * @return The node with the given ID, or null if not found.
+     */
     public ProductionNode getNodeById(String id) {
         return nodesMap.get(id.toLowerCase());
     }
 
+    /**
+     * Retrieves all parent nodes of a given node.
+     *
+     * @param node The node for which to find parent nodes.
+     * @return A list of parent nodes.
+     */
     public List<ProductionNode> getParentNodes(ProductionNode node) {
         List<ProductionNode> parents = new ArrayList<>();
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) { // O(n)
@@ -138,18 +196,40 @@ public class ProductionTree {
         return parents;
     }
 
+    /**
+     * Retrieves all nodes in the tree.
+     *
+     * @return A list of all production nodes.
+     */
     public List<ProductionNode> getAllNodes() {
         return nodes;
     }
 
+    /**
+     * Retrieves all the sub-nodes (dependencies) of a given node.
+     *
+     * @param node The node whose sub-nodes to retrieve.
+     * @return A map of sub-nodes and their corresponding quantities.
+     */
     public Map<ProductionNode, Double> getSubNodes(ProductionNode node) {
         return connections.getOrDefault(node, new HashMap<>());
     }
 
+    /**
+     * Retrieves all connections between nodes.
+     *
+     * @return A map of connections where the key is a node and the value is a map of child nodes with their quantities.
+     */
     public Map<ProductionNode, Map<ProductionNode, Double>> getConnections() {
         return connections;
     }
 
+    /**
+     * Updates the quantity of a given node and propagates the update to all dependent nodes.
+     *
+     * @param nodeToUpdate The node whose quantity needs to be updated.
+     * @param newQuantity  The new quantity to set for the node.
+     */
     public void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity) {
         nodeToUpdate.setQuantity(newQuantity);
 
@@ -163,26 +243,29 @@ public class ProductionTree {
         deleteAndCreateNewConnections(nodeToUpdate, newQuantity);
     }
 
+    /**
+     * Deletes and recreates connections with updated quantities after a node's quantity is updated.
+     *
+     * @param nodeToUpdate The node whose connections need to be updated.
+     * @param newQuantity  The updated quantity.
+     */
     private void deleteAndCreateNewConnections(ProductionNode nodeToUpdate, double newQuantity) {
-        // Iterate through all parent-child connections for this node
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
             Map<ProductionNode, Double> subNodes = entry.getValue();
 
-            // If the node is part of the connections, remove and re-add the connection with updated quantity
             if (subNodes.containsKey(nodeToUpdate)) {
-                // Remove the old connection
                 subNodes.remove(nodeToUpdate);
-
-                // Calculate the new connection quantity based on the updated quantity
-                double updatedConnectionQuantity = newQuantity;
-
-                // Add the new connection with the updated quantity
-                subNodes.put(nodeToUpdate, updatedConnectionQuantity);
+                subNodes.put(nodeToUpdate, newQuantity); // Update the connection with the new quantity
             }
         }
     }
 
-
+    /**
+     * Propagates the quantity update from a parent node to its child nodes.
+     *
+     * @param node        The node whose quantity update needs to be propagated.
+     * @param newQuantity The new quantity of the parent node.
+     */
     private void propagateQuantityUpdate(ProductionNode node, double newQuantity) {
         if (!connections.containsKey(node)) {
             return; // No sub-nodes, nothing to propagate
@@ -192,22 +275,22 @@ public class ProductionTree {
 
         for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
             ProductionNode childNode = entry.getKey();
-            double relationshipMultiplier = entry.getValue(); // Relationship between parent and child
+            double relationshipMultiplier = entry.getValue();
 
-            // Update the child's quantity based on the parent's new quantity and the relationship multiplier
             double updatedChildQuantity = newQuantity * relationshipMultiplier;
-
-            // Update the child node's quantity
             childNode.setQuantity(updatedChildQuantity);
 
-            // Continue propagating if necessary (no need to propagate if leaf node)
             if (connections.containsKey(childNode)) {
                 propagateQuantityUpdate(childNode, updatedChildQuantity); // Continue propagating if necessary
             }
         }
     }
 
-
+    /**
+     * Updates the quantities of all connections for a given node.
+     *
+     * @param nodeToUpdate The node whose connections need to be updated.
+     */
     private void updateConnectionQuantities(ProductionNode nodeToUpdate) {
         if (!connections.containsKey(nodeToUpdate)) {
             return;
@@ -215,18 +298,18 @@ public class ProductionTree {
 
         Map<ProductionNode, Double> subNodes = connections.get(nodeToUpdate);
         for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
-            // Ensure connection quantities are recalculated based on new node quantity
             ProductionNode childNode = entry.getKey();
             double updatedQuantity = nodeToUpdate.getQuantity() * entry.getValue();
             entry.setValue(updatedQuantity); // Update the connection quantity in the map
         }
     }
 
-
+    /**
+     * Clears all nodes and connections from the tree.
+     */
     public void clear() {
         nodes.clear();
         connections.clear();
         nodesMap.clear();
     }
 }
-
