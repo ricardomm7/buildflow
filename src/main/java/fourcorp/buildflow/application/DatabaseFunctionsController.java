@@ -525,5 +525,29 @@ public class DatabaseFunctionsController {
         }
     }
 
+    // USBD18
+    public void callProductWithMostOperations() {
+        String query = "{? = call ProductWithMostOperations()}";
 
+        try (CallableStatement callableStatement = connection.prepareCall(query)) {
+
+            callableStatement.registerOutParameter(1, Types.VARCHAR);
+
+
+            callableStatement.execute();
+
+
+            String result = callableStatement.getString(1);
+
+
+            if (result != null) {
+                System.out.println("Produto com a maior sequência: " + result);
+            } else {
+                System.out.println("Nenhum produto encontrado.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

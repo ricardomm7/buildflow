@@ -32,6 +32,7 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[5]", "Import from Database BOM and BOO and generate production tree.");
             System.out.printf("%-5s%-75s%n", "[6]", "Create a new order.");
             System.out.printf("%-5s%-75s%n", "[7]", "Register new Product.");
+            System.out.printf("%-5s%-75s%n", "[8]", "Product with the most operation in its BOO");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -154,6 +155,12 @@ public class DatabaseMenu {
                     // Caso contrário, permitir nova tentativa
                     System.out.println("Please, try again.");
                 } while (true);
+                break;
+            case 8:
+                System.out.println();
+                System.out.println("Product with the most operation in its BOO");
+                 db.callProductWithMostOperations();
+
                 break;
             case 0:
                 return;
