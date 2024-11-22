@@ -144,4 +144,8 @@ public class DisplayProductionTree {
             }
         }
     }
+
+    public void setProductionTree(ProductionTree productionTree) {
+        this.productionTree = productionTree;
+    }
 }
