@@ -3,7 +3,7 @@ TARGET = program
 
 # Arquivos fonte
 SRC_C = main.c
-SRC_ASM = func.s
+SRC_ASM = func.s ../usac09/asm.s
 
 # Regra para compilar o código C
 $(TARGET): main.o func.o

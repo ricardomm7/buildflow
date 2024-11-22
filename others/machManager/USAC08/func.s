@@ -10,6 +10,15 @@
 # %r9  -> array (int*)
 
 move_n_to_array:
+	# Prólogo
+    pushq %rbp
+    movq %rsp, %rbp
+    pushq %rbx
+    pushq %r12
+    pushq %r13
+    pushq %r14
+    pushq %r15
+
     movl (%rcx), %r10d         # r10d = *head
     movl (%rdx), %r11d         # r11d = *tail
     
@@ -47,8 +56,18 @@ no_wrap:
 copy_done:
     movl %r11d, (%rdx)
     movl $1, %eax             # Return success
-    ret
+    jmp end
 
 fail:
     movl $0, %eax             # Return failure
+
+end:
+	# Epílogo
+	popq %r15
+    popq %r14
+    popq %r13
+    popq %r12
+    popq %rbx
+    movq %rbp, %rsp
+    popq %rbp
     ret
