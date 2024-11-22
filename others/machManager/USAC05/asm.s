@@ -1,50 +1,47 @@
-.section .text
 .global enqueue_value
 
-
-	# %rdi --> buffer (*int)
-    # %rsi --> length (int)
-    # %rdx --> tail (*int)
-    # %rcx --> head (*int)
-    # %r8  --> value (int)
-    
 enqueue_value:
-   xorq %rax, %rax
-    
-    cmp (%rdx), %rsi
-    je restart_buffer
-    
+    pushq %rbp
+	movq %rsp, %rbp
 
-    movq (%rdx), %rax
-    imulq $4, %rax
-    addq %rax, %rdi
+    # Parameters mapping:
+    # %rdi = buffer pointer
+    # %rsi = length  (buffer size)
+    # %rdx = read pointer (head)
+    # %rcx = write pointer (tail)
+    # %r8d = value to insert
 
-    movl %r8d, (%rdi)
-    
-    # Incrementa o índice
-    movq (%rdx), %rax
-    addq $1, %rax
-    movq %rax, (%rdx)
-    jmp end
+    movl (%rdx), %r9d    # r9d = read position
+	movl (%rcx), %r10d   # r10d = write position
 
-restart_buffer:
-	movq $0, (%rdx)
-	jmp enqueue_value
+	movl %r8d, (%rdi,%r10,4)  # buffer[write] = value
 
-end:
+	movl %r10d, %r11d    # r11d = current write
+	addl $1, %r11d       # r11d = write + 1
+	cmpl %esi, %r11d     # Compare with length
+	jl write_no_wrap     # If less than length, skip next instruction
+	xorl %r11d, %r11d    # If equal/greater, reset to 0
 
-    # Carrega o índice do último elemento com base no comprimento do buffer
-    movq %rsi, %rax       
-    sub $1, %rax             
-    imulq $4, %rax        
-    addq %rax, %rdi       
+write_no_wrap:
+	movl %r11d, (%rcx)   # Store new write position
 
-    cmpq $0, (%rdi)       
-    jne empty
-    movq $1, %rax         
-    ret
-empty:
-	xor %rax,%rax
+	cmpl %r11d, %r9d     # Compare read with new write
+	jne buffer_not_full  # If not equal, buffer not full
+
+	movl %r11d, %r9d     # New read position = new write position
+	addl $1, %r9d        # Increment read position
+	cmpl %esi, %r9d      # Compare with length
+	jl read_no_wrap                 # If less than length, skip next instruction
+	xorl %r9d, %r9d      # If equal/greater, reset to 0
+
+read_no_wrap :
+	movl %r9d, (%rdx)    # Update read pointer
+	movl $1, %eax        # Return 1 (buffer full)
+	jmp end_function     # Jump to end
+
+buffer_not_full:
+	movl $0, %eax        # Return 0
+
+end_function:
+	popq %rbp
 	ret
-    
-
