@@ -2,12 +2,13 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -281,6 +282,112 @@ public class USEI14 {
         assertEquals("Operação B", criticalPath.get(1).getName());
         assertEquals("Operação C", criticalPath.get(2).getName());
         assertEquals("Produto Final", criticalPath.get(3).getName());
+    }
+
+    @Test
+    void testOperationsPrioritizedByDepthUsingHeap_AC1() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+        DisplayProductionTree display = new DisplayProductionTree();
+        display.setProductionTree(testTree);
+        display.generateGraph();
+
+
+        PriorityQueue<ProductionNode> priorityQueue = new PriorityQueue<>(
+                (node1, node2) -> Integer.compare(
+                        node2.getDepth(testTree),
+                        node1.getDepth(testTree)
+                )
+        );
+
+        for (ProductionNode node : testTree.getAllNodes()) {
+            if (node.isOperation()) {
+                priorityQueue.add(node);
+            }
+        }
+
+        assertEquals(5, priorityQueue.size(), "A fila de prioridade deve conter as 5 operações da árvore.");
+
+        List<String> expectedOrder = List.of(
+                "cortar tábua de madeira",
+                "montar caixa",
+                "pregar cantos da caixa",
+                "lixar caixa de madeira",
+                "pintar caixa"
+
+        );
+
+        List<String> actualOrder = new ArrayList<>();
+        while (!priorityQueue.isEmpty()) {
+            actualOrder.add(priorityQueue.poll().getName());
+        }
+
+        assertEquals(expectedOrder, actualOrder, "As operações devem ser priorizadas pela profundidade na fila.");
+    }
+
+    @Test
+    void testCriticalPathDisplayByDepth_AC2() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        CriticalPathPrioritizer prioritizer = new CriticalPathPrioritizer();
+        prioritizer.setProductionTree(testTree);
+
+        // Verifica se o método exibe corretamente o caminho crítico
+        assertDoesNotThrow(prioritizer::displayCriticalPathByDepth,
+                "A exibição do caminho crítico por profundidade não deve lançar exceções.");
+    }
+
+    @Test
+    void testCriticalPathOperationDepths_AC2_AC3() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        CriticalPathCalculator calculator = new CriticalPathCalculator();
+        calculator.setProductionTree(testTree);
+
+        List<ProductionNode> criticalPath = testTree.getCriticalPath();
+
+        for (ProductionNode node : criticalPath) {
+            int depth = node.getDepth(testTree);
+            assertTrue(depth >= 0, "A profundidade de cada operação deve ser válida (>= 0).");
+        }
+
+        // Verifica profundidades específicas de algumas operações
+        ProductionNode paintOperation = testTree.getNodeById("5");
+        assertNotNull(paintOperation, "A operação 'Pintar caixa' deve existir na árvore.");
+        assertEquals(1, paintOperation.getDepth(testTree), "A profundidade da operação 'Pintar caixa' deve ser 1.");
+    }
+
+    @Test
+    void testTotalDependenciesForCriticalPathOperations() throws IOException {
+        ProductionTree testTree = Reader.loadProductionTree("src/test/java/fourcorp/buildflow/operations_test.csv", "src/test/java/fourcorp/buildflow/items_test.csv", "src/test/java/fourcorp/buildflow/boo_test.csv");
+
+        CriticalPathCalculator calculator = new CriticalPathCalculator();
+        calculator.setProductionTree(testTree);
+        // Obter o caminho crítico da árvore de produção
+        List<ProductionNode> criticalPath = testTree.getCriticalPath();
+
+        // Mapeamento esperado: Nome da Operação -> Número Total de Dependências
+        Map<String, Integer> expectedDependencies = Map.of(
+                "pintar caixa", 4,        // Depende de "Lixar caixa", "Pregar cantos da caixa", "Montar caixa", "Cortar tábua de madeira"
+                "lixar caixa de madeira", 3,         // Depende de "Pregar cantos da caixa", "Montar caixa", "Cortar tábua de madeira"
+                "pregar cantos da caixa", 2, // Depende de "Montar caixa", "Cortar tábua de madeira"
+                "montar caixa", 1,        // Depende de "Cortar tábua de madeira"
+                "cortar tábua de madeira", 0 // Não tem dependências
+        );
+
+        for (ProductionNode node : criticalPath) {
+            // Verificar se o nó é uma operação
+            if (node.isOperation()) {
+                // Calcular todas as dependências da operação
+                List<ProductionNode> dependencies = calculator.calculateAllDependencies(node);
+
+                // Verificar se o número de dependências é o esperado
+                assertEquals(
+                        expectedDependencies.get(node.getName()),
+                        dependencies.size(),
+                        "O número total de dependências para " + node.getName() + " está incorreto."
+                );
+            }
+        }
     }
 
 }

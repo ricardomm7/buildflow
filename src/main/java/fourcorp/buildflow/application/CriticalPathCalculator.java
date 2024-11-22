@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CriticalPathCalculator {
-    private final ProductionTree productionTree;
+    private ProductionTree productionTree;
 
     public CriticalPathCalculator() {
         Repositories repositories = Repositories.getInstance();
@@ -22,12 +22,12 @@ public class CriticalPathCalculator {
      *
      * @param node the node whose dependencies are to be calculated
      * @return a list of all dependent nodes (only operations)
-     * The complexity of this method is O(n), where n is the number of nodes in the production tree.
+     * The complexity of this method is O(n^2), where n is the number of nodes in the production tree.
      */
-    private List<ProductionNode> calculateAllDependencies(ProductionNode node) {
+    List<ProductionNode> calculateAllDependencies(ProductionNode node) {
         List<ProductionNode> allDependencies = new ArrayList<>();
         List<ProductionNode> visited = new ArrayList<>();
-        collectAllDependenciesFromBottom(node, allDependencies, visited); // O(n)
+        collectAllDependenciesFromBottom(node, allDependencies, visited); // O(n^2)
         return allDependencies;
     }
 
@@ -72,7 +72,7 @@ public class CriticalPathCalculator {
 
     /**
      * Displays operations with their dependencies (direct and total) in a user-friendly format.
-     * The complexity of this method is O(n^2), where n is the number of operations.
+     * The complexity of this method is O(n^3), where n is the number of operations.
      */
     public void displayOperationsWithDependencies() {
         List<ProductionNode> operations = productionTree.getAllNodes().stream()
@@ -91,7 +91,7 @@ public class CriticalPathCalculator {
 
         for (ProductionNode node : operations) { // O(n)
             List<ProductionNode> directDependencies = filterOperations(productionTree.getParentNodes(node)); // O(n) * O(n) = O(n^2)
-            List<ProductionNode> allDependencies = calculateAllDependencies(node); // O(n) * O(n) = O(n^2)
+            List<ProductionNode> allDependencies = calculateAllDependencies(node); // O(n) * O(n^2) = O(n^3)
 
             System.out.println("\n" + formatOperationDetails(node, directDependencies, allDependencies)); // O(n) * O(1) = O(n)
         }
@@ -147,5 +147,14 @@ public class CriticalPathCalculator {
                 .map(ProductionNode::getName) // O(n)
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("None");
+    }
+
+    /**
+     * Sets new production tree.
+     *
+     * @param productionTree the production tree
+     */
+    public  void setProductionTree(ProductionTree productionTree) {
+        this.productionTree = productionTree;
     }
 }

@@ -8,7 +8,7 @@ import java.util.PriorityQueue;
 
 public class CriticalPathPrioritizer {
     private final CriticalPathCalculator calculator;
-    private final ProductionTree productionTree;
+    private ProductionTree productionTree;
     private Repositories r = Repositories.getInstance();
 
 
@@ -48,5 +48,13 @@ public class CriticalPathPrioritizer {
         }
     }
 
+    /**
+     * Sets new production tree.
+     *
+     * @param productionTree the production tree
+     */
+    public void setProductionTree(ProductionTree productionTree) {
+        this.productionTree = productionTree;
+    }
 }
 
