@@ -5,17 +5,19 @@ import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+
+import java.util.*;
 
 public class ProductionTreeSearcher {
 
     private final ProductionTree productionTree;
+    private Map<ProductionNode, Map<ProductionNode, Double>> connections;
+    private AVLTree<ProductionNode> operationAVL;
 
     public ProductionTreeSearcher() {
         // Initialize with the repository's production tree
         this.productionTree = Repositories.getInstance().getProductionTree();
+        this.connections = productionTree.getConnections();
     }
 
     public void handleNodeSearch() {
@@ -132,4 +134,119 @@ public class ProductionTreeSearcher {
             return false; // Invalid format, can't be an operation ID
         }
     }
+
+    public void CalculateQuantityOfMaterials() {
+        if (connections == null || connections.isEmpty()) {
+            System.out.println("No connections available.");
+            return;
+        }
+
+        System.out.println("  Material --> Quantity");
+
+        // Mapa para armazenar as quantidades somadas por nome
+        Map<String, Double> totalQuantities = new HashMap<>();
+
+        // Iterar sobre as conexões
+        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
+            ProductionNode node = entry.getKey(); // Nó de origem
+            Map<ProductionNode, Double> connectedNodes = entry.getValue(); // Nós conectados e suas quantidades
+
+            if (node.isOperation()) {
+                // Se o nó é uma operação, iterar nos materiais conectados a ela
+                if (connectedNodes != null) {
+                    for (Map.Entry<ProductionNode, Double> connectedEntry : connectedNodes.entrySet()) {
+                        ProductionNode connectedNode = connectedEntry.getKey();
+                        Double quantity = connectedEntry.getValue();
+
+                        // Acumular apenas se o nó conectado é um material
+                        if (connectedNode.isProduct()) {
+                            totalQuantities.merge(connectedNode.getName(), quantity, Double::sum);
+                        }
+                    }
+                }
+            } else if (node.isProduct()) {
+                // Se o nó é um material, considerar diretamente
+                totalQuantities.merge(node.getName(), node.getQuantity(), Double::sum);
+            }
+        }
+
+        // Imprimir os resultados acumulados
+        for (Map.Entry<String, Double> entry : totalQuantities.entrySet()) {
+            System.out.println(entry.getKey() + " --> " + entry.getValue());
+        }
+    }
+
+    public void calculateDependencyLevel(ProductionNode node, Map<ProductionNode, Integer> nodeDependencyLevels) {
+        if (nodeDependencyLevels.containsKey(node)) {
+            return;
+        }
+
+        int maxDependencyLevel = 0;
+        List<ProductionNode> parentNodes = productionTree.getParentNodes(node);
+
+        if (parentNodes != null) { // Verifica se há pais
+            for (ProductionNode parent : parentNodes) {
+                calculateDependencyLevel(parent, nodeDependencyLevels);
+                maxDependencyLevel = Math.max(maxDependencyLevel, nodeDependencyLevels.get(parent) + 1);
+            }
+        }
+
+        nodeDependencyLevels.put(node, maxDependencyLevel); // Define o nível, mesmo que seja 0
+    }
+
+    public void extractBOOAndSimulate() {
+        Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>();
+
+        // Comparador baseado no nível de dependência
+        Comparator<ProductionNode> comparator = (node1, node2) -> {
+            Integer level1 = nodeDependencyLevels.getOrDefault(node1, 0);
+            Integer level2 = nodeDependencyLevels.getOrDefault(node2, 0);
+            return level1.compareTo(level2); // Comparar níveis de dependência
+        };
+
+        AVLTree<ProductionNode> operationAVL = new AVLTree<>(comparator);
+
+        // Calcular níveis de dependência e inserir na AVL tree
+        for (ProductionNode node : productionTree.getAllNodes()) {
+            if (node.isOperation()) {
+                calculateDependencyLevel(node, nodeDependencyLevels); // Calcula o nível
+                operationAVL.insert(node); // Insere na AVL tree
+                System.out.println("Inserted " + node.getName() + " into AVL tree with dependency level " +
+                        nodeDependencyLevels.get(node));
+            }
+        }
+
+        // Processar as operações na ordem BOO
+        System.out.println("Processing operations in BOO order:");
+        operationAVL.inOrderTraversal(nodeDependencyLevels); // Processa os nós
+    }
+
+    public void simulateProductionExecution() {
+        // Mapa para armazenar os níveis de dependência
+        Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>();
+
+        // Cria o comparador baseado nos níveis de dependência (ordem decrescente)
+        Comparator<ProductionNode> comparator = (node1, node2) ->
+                Integer.compare(nodeDependencyLevels.get(node2), nodeDependencyLevels.get(node1));
+
+        // Inicializa a AVLTree com o comparador
+        operationAVL = new AVLTree<>(comparator);
+
+        // Calcular os níveis de dependência e inserir na árvore AVL
+        for (ProductionNode node : productionTree.getAllNodes()) {
+            if (node.isOperation()) {
+                calculateDependencyLevel(node, nodeDependencyLevels);  // Calcula o nível de dependência
+                int dependencyLevel = nodeDependencyLevels.get(node);  // Acessa o nível de dependência
+                operationAVL.insert(node);  // Insere o nó na árvore AVL
+                System.out.println("Inserted " + node.getName() + " into AVL tree with dependency level " + dependencyLevel);
+            }
+        }
+
+        // Simula a execução processando as operações na ordem BOO
+        System.out.println("Processing operations in BOO order:");
+        operationAVL.inOrderTraversal(nodeDependencyLevels);  // Passa o mapa de dependências para a simulação
+    }
+
+
+
 }

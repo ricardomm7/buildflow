@@ -4,7 +4,7 @@ import fourcorp.buildflow.repository.ProductionTree;
 
 import java.util.List;
 
-public class ProductionNode {
+public class ProductionNode implements Comparable<ProductionNode> {
     private String id;
     private String name;
     private boolean isProduct;
@@ -74,6 +74,11 @@ public class ProductionNode {
     @Override
     public String toString() {
         return (isProduct ? "Product: " : "Operation: ") + name + " (ID: " + id + ")";
+    }
+
+    @Override
+    public int compareTo(ProductionNode o) {
+        return 0;
     }
 
    /* @Override

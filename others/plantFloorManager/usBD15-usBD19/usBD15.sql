@@ -1,37 +1,31 @@
 
-CREATE FUNCTION RegisterWorkstation(
-    var_workstation_id VARCHAR(255)
-    var_name VARCHAR(50),
-    var_description VARCHAR(255),
-    var_type_workstationWorkstation_type VARCHAR(100)
-)
-RETURNS VARCHAR(255)
-
+CREATE OR REPLACE FUNCTION RegisterWorkstation(
+    var_workstation_id IN VARCHAR2,
+    var_name IN VARCHAR2,
+    var_description IN VARCHAR2,
+    var_Workstation_type IN VARCHAR2
+) RETURN VARCHAR2
+AS
+    result_message VARCHAR2(255);
+    workstation_exists INT;
 BEGIN
-    DECLARE result_message VARCHAR(255);
-    DECLARE workstation_exists INT;
-
-    -- verifica se a workstation existe na tabela
+    -- Verifica se a workstation já existe
     SELECT COUNT(*)
     INTO workstation_exists
-    FROM Type_Workstation
-    WHERE Workstation_ID = workstation_id;
+    FROM Workstation
+    WHERE Workstation_ID = var_workstation_id;
 
-    -- se já exister retorna error
-    IF EXISTS (SELECT 1 FROM Workstation WHERE Workstation_ID = var_workstation_id) THEN
-        SET result_message = 'Error: Workstation id already exists.';
+    -- Se já existir, retorna erro
+    IF workstation_exists > 0 THEN
+        result_message := 'Error: Workstation ID already exists.';
     ELSE
-        -- insere a workstation se se houver algum problema retorna um erro
-        BEGIN
-            INSERT INTO Workstation (Workstation_ID,Name, Description, Type_WorkstationWorkstationType_ID)
-            VALUES (var_workstation_id,var_name,var_description,var_type_workstationWorkstation_type);
-            SET result_message = 'Success: Workstation registered successfully.';
-        EXCEPTION
-            WHEN OTHERS THEN
-                SET result_message = 'Error: Could not register workstation due to an unknown error.';
-        END;
+        -- Insere uma nova workstation
+        INSERT INTO Workstation (Workstation_ID, Name, Description, WorkstationType_ID)
+        VALUES (var_workstation_id, var_name, var_description, var_Workstation_type);
+
+        result_message := 'Success: Workstation registered successfully.';
     END IF;
+
     RETURN result_message;
-
-END RegisterWorkstation;
-
+END;
+/

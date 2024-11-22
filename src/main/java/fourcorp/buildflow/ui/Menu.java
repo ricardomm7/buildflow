@@ -20,6 +20,7 @@ public class Menu {
     private final QualityCheckManager manager;
     private final CriticalPathCalculator calculator;
     private final MaterialQuantityUpdater materialUpdater;
+    private final AVLTree componentsIntoProduction;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -33,6 +34,7 @@ public class Menu {
         ProductionTree productionTree = Repositories.getInstance().getProductionTree();
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
+        componentsIntoProduction = new AVLTree();
     }
 
     public void displayMenu() throws IOException {
@@ -61,6 +63,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[19]", "Prioritize critical path by depth Level.");
             System.out.printf("%-5s%-75s%n", "[20]", "View material quantities in the production tree.");
             System.out.printf("%-5s%-75s%n", "[21]", "Database connected features (submenu).");
+            System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials");
+            System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -172,6 +176,12 @@ public class Menu {
             case 21:
                 DatabaseMenu m = new DatabaseMenu();
                 m.displayMenu();
+                break;
+            case 22:
+                ptService.CalculateQuantityOfMaterials();
+                break;
+            case 23:
+                ptService.simulateProductionExecution();
                 break;
             case 0:
                 System.out.println("Exiting...");
