@@ -37,9 +37,14 @@ public class ProductionTree {
         return results;
     }
 
-    public void addNode(ProductionNode operationA) {
-        nodes.add(operationA);
+    public void addNode(ProductionNode node) {
+        if (node == null) {
+            throw new IllegalArgumentException("O nó não pode ser nulo.");
+        }
+        nodes.add(node);
+        nodesMap.put(node.getId().toLowerCase(), node); // Adiciona o nó ao mapa para busca eficiente
     }
+
 
     public void addDependency(ProductionNode operationB, ProductionNode operationA) {
         if (operationB.equals(operationA)) {
