@@ -104,15 +104,6 @@ public class ProductionNode implements Comparable<ProductionNode> {
     }
 
     /**
-     * Gets the produced quantity for this production node, which is the same as the quantity in this implementation.
-     *
-     * @return The produced quantity of the product node.
-     */
-    public double getProducedQuantity() {
-        return quantity;
-    }
-
-    /**
      * Calculates the depth of this production node in the production tree, based on the number of parent operations.
      * The depth represents how many levels up the node is in the tree from the root node.
      *
@@ -125,13 +116,14 @@ public class ProductionNode implements Comparable<ProductionNode> {
 
     /**
      * Helper method to calculate the depth of this production node by traversing up its parent nodes.
+     * The complexity of this method is: O(1).
      *
      * @param node The current node for which to calculate the depth.
      * @param tree The production tree object used to retrieve parent nodes.
      * @return The depth of the node in the production tree.
      */
     private int calculateDepth(ProductionNode node, ProductionTree tree) {
-        List<ProductionNode> parents = tree.getParentNodes(node);
+        List<ProductionNode> parents = tree.getParentNodes(node); // O(1)
         if (parents.isEmpty()) {
             return 0; // Root node, no parents
         }
@@ -139,7 +131,7 @@ public class ProductionNode implements Comparable<ProductionNode> {
         return 1 + parents.stream()
                 .mapToInt(parent -> calculateDepth(parent, tree))
                 .max()
-                .orElse(0);
+                .orElse(0);// O(1)
     }
 
     /**

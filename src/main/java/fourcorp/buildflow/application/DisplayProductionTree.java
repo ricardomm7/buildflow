@@ -23,12 +23,13 @@ public class DisplayProductionTree {
     /**
      * Displays the production tree structure in the console.
      * It prints the nodes and their respective sub-nodes recursively.
+     * The complexity of this method is: O(n^3).
      */
     public void displayTree() {
         System.out.println();
-        for (ProductionNode node : productionTree.getAllNodes()) {
+        for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
             if (node.isProduct()) {
-                printNode(node, 0, new HashSet<>());
+                printNode(node, 0, new HashSet<>()); // O (n^3)
                 System.out.println();
             }
         }
@@ -37,6 +38,7 @@ public class DisplayProductionTree {
     /**
      * Recursively prints a production node and its sub-nodes in the tree structure.
      * This method also detects cycles to prevent infinite loops.
+     * The complexity of this method is: O(n^2).
      *
      * @param node         The current production node.
      * @param level        The level of the current node in the tree (used for indentation).
@@ -51,7 +53,7 @@ public class DisplayProductionTree {
         System.out.println("  ".repeat(level) + node.getId() + " - " + node.getName());
 
         Map<ProductionNode, Double> subNodes = productionTree.getSubNodes(node);
-        for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
+        for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) { // O(n)
             ProductionNode subNode = entry.getKey();
             double quantity = entry.getValue();
 
@@ -59,14 +61,15 @@ public class DisplayProductionTree {
                     (subNode.isOperation() ? "OPERATION" : "NEEDED MATERIAL") + ": " +
                     subNode.getName() + (subNode.isOperation() ? "" : " (Q: " + quantity + ")"));
 
-            printNode(subNode, level + 1, visitedNodes);
+            printNode(subNode, level + 1, visitedNodes); // O(n^2)
         }
 
         visitedNodes.remove(node);
     }
 
     /**
-     * Generate graph from node.
+     * Generates graph from node.
+     * The complexity of this method is: O(n^2).
      *
      * @param rootId the root id
      */
@@ -85,7 +88,7 @@ public class DisplayProductionTree {
 
         Set<String> processedEdges = new HashSet<>();
 
-        generateNodeDotRepresentation(rootNode, dotContent, new HashSet<>(), processedEdges);
+        generateNodeDotRepresentation(rootNode, dotContent, new HashSet<>(), processedEdges); // O(n^2)
         dotContent.append("}\n");
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("outFiles/production_tree.dot"))) {
@@ -100,6 +103,7 @@ public class DisplayProductionTree {
 
     /**
      * Recursively generates the DOT representation for a given node and its sub-nodes.
+     * The complexity of this method is: O(n^2).
      *
      * @param node           The current node to represent.
      * @param dotContent     The StringBuilder containing the DOT content.
@@ -127,17 +131,17 @@ public class DisplayProductionTree {
         dotContent.append("  \"" + node.getId() + "\" [shape=" + shape + " style=filled fillcolor=" + color +
                 " label=\"" + escapeForDot(node.getName()) + "\"];\n");
 
-        for (Map.Entry<ProductionNode, Double> entry : productionTree.getSubNodes(node).entrySet()) {
+        for (Map.Entry<ProductionNode, Double> entry : productionTree.getSubNodes(node).entrySet()) { // O(n)
             ProductionNode subNode = entry.getKey();
             double quantity = entry.getValue();
 
             String edgeKey = node.getId() + "--" + subNode.getId();
             if (!processedEdges.contains(edgeKey)) {
-                processedEdges.add(edgeKey);
+                processedEdges.add(edgeKey); // O(1)
                 dotContent.append("  \"" + node.getId() + "\" -- \"" + subNode.getId() + "\" [label=\"" + quantity + "\"];\n");
             }
 
-            generateNodeDotRepresentation(subNode, dotContent, visitedNodes, processedEdges);
+            generateNodeDotRepresentation(subNode, dotContent, visitedNodes, processedEdges); // O(n^2)
         }
         visitedNodes.remove(node);
     }
@@ -157,6 +161,7 @@ public class DisplayProductionTree {
     /**
      * Generates a Graphviz DOT representation of the production tree and writes it to a file.
      * It also calls Graphviz to generate an SVG image of the production tree.
+     * The complexity of this method is: O(n^3).
      */
     public void generateGraph() {
         StringBuilder dotContent = new StringBuilder();
@@ -168,9 +173,9 @@ public class DisplayProductionTree {
         Set<String> processedEdges = new HashSet<>();
 
         // Generate DOT representation for each product node
-        for (ProductionNode node : productionTree.getAllNodes()) {
+        for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
             if (node.isProduct()) {
-                generateNodeDotRepresentation(node, dotContent, new HashSet<>(), processedEdges);
+                generateNodeDotRepresentation(node, dotContent, new HashSet<>(), processedEdges); // O(n^3)
             }
         }
         dotContent.append("}\n");
@@ -218,6 +223,7 @@ public class DisplayProductionTree {
     /**
      * Displays the material quantities in the production tree structure.
      * It prints the quantities of materials used in the production process.
+     * The complexity of this method is: O(n^2).
      */
     public void displayMaterialQuantitiesInProductionTree() {
         System.out.println();
@@ -227,11 +233,11 @@ public class DisplayProductionTree {
             return;
         }
 
-        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) {
+        for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) { // O(n)
             ProductionNode parentNode = entry.getKey();
             Map<ProductionNode, Double> childNodes = entry.getValue();
 
-            for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {
+            for (Map.Entry<ProductionNode, Double> childEntry : childNodes.entrySet()) {  // O(n^2)
                 ProductionNode childNode = childEntry.getKey();
                 Double connectionQuantity = childEntry.getValue();
 

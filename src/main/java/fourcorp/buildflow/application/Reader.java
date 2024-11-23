@@ -85,6 +85,7 @@ public abstract class Reader {
 
     /**
      * Load items.
+     * The complexity of this method is: O(n^2).
      *
      * @param filePath the file path
      * @throws IOException the io exception
@@ -93,18 +94,19 @@ public abstract class Reader {
         BufferedReader br = new BufferedReader(new FileReader(filePath));
         br.readLine();
         String linha;
-        while ((linha = br.readLine()) != null) {
+        while ((linha = br.readLine()) != null) { // O(n)
             String[] campos = linha.split(";");
             String id = campos[0];
             String name = campos[1];
-            pt.insertProductionNode(id, name, true);
-            bst.insert(new ProductionNode(id, name, true), 0); // Quantidade inicial definida como 0
+            pt.insertProductionNode(id, name, true); // O(1)
+            bst.insert(new ProductionNode(id, name, true), 0); // O(n^2log(n)) // Quantidade inicial definida como 0
         }
         br.close();
     }
 
     /**
      * Load simple operations.
+     * The complexity of this method is: O(n).
      *
      * @param s the s
      * @throws IOException the io exception
@@ -113,17 +115,18 @@ public abstract class Reader {
         BufferedReader br = new BufferedReader(new FileReader(s));
         br.readLine();
         String linha;
-        while ((linha = br.readLine()) != null) {
+        while ((linha = br.readLine()) != null) { // O(n)
             String[] campos = linha.split(";");
             String id = campos[0];
             String name = campos[1];
-            pt.insertProductionNode(id, name, false);
+            pt.insertProductionNode(id, name, false);  // O(1)
         }
         br.close();
     }
 
     /**
      * Load boo.
+     * The complexity of this method is: O(n^2log(n)).
      *
      * @param filepath the filepath
      * @throws IOException the io exception
@@ -133,7 +136,7 @@ public abstract class Reader {
             String line;
             reader.readLine(); // Ignorar o cabeçalho
 
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) { // O(n)
                 line = line.trim();
 
                 String[] parts = line.split(";");
@@ -141,28 +144,28 @@ public abstract class Reader {
                 String itemId = parts[1];
                 double itemQnt = Double.parseDouble(parts[2].replace(",", "."));
 
-                ProductionNode itemNode = pt.getNodeById(itemId);
+                ProductionNode itemNode = pt.getNodeById(itemId); // O(1)
                 if (itemNode == null) {
                     itemNode = new ProductionNode(itemId, itemId, true);
-                    pt.insertProductionNode(itemId, itemId, true);
+                    pt.insertProductionNode(itemId, itemId, true); // O(1)
                 }
                 itemNode.setQuantity(itemQnt);
-                bst.insert(itemNode, itemQnt);
+                bst.insert(itemNode, itemQnt); // O(nlog(n))
 
-                ProductionNode opNode = pt.getNodeById(opId);
+                ProductionNode opNode = pt.getNodeById(opId); // O(1)
                 if (opNode == null) {
                     opNode = new ProductionNode(opId, opId, false);
-                    pt.insertProductionNode(opId, opId, false);
+                    pt.insertProductionNode(opId, opId, false); // O(1)
                 }
 
-                pt.insertNewConnection(itemId, opId, itemQnt);
+                pt.insertNewConnection(itemId, opId, itemQnt); // O(1)
                 itemNode.setParent(opNode);
 
                 int i = 3; // Início após op_id, item_id e item_qtd
                 boolean isOperationsBlock = false;
                 boolean isMaterialsBlock = false;
 
-                while (i < parts.length) {
+                while (i < parts.length) { // O(1)
                     String part = parts[i].trim();
                     if (part.isEmpty()) {
                         i++;
@@ -191,31 +194,31 @@ public abstract class Reader {
                         String subOpId = parts[i];
                         double subOpQnt = Double.parseDouble(parts[i + 1].replace(",", "."));
 
-                        ProductionNode subOpNode = pt.getNodeById(subOpId);
+                        ProductionNode subOpNode = pt.getNodeById(subOpId); // O(1)
                         if (subOpNode == null) {
                             subOpNode = new ProductionNode(subOpId, subOpId, false);
-                            pt.insertProductionNode(subOpId, subOpId, false);
+                            pt.insertProductionNode(subOpId, subOpId, false); // O(1)
                         }
 
-                        pt.insertNewConnection(opId, subOpId, subOpQnt);
+                        pt.insertNewConnection(opId, subOpId, subOpQnt);  // O(1)
                         subOpNode.setQuantity(subOpQnt);
-                        bst.insert(subOpNode, subOpQnt);
+                        bst.insert(subOpNode, subOpQnt); // O(nlog(n))
 
                         i += 2;
                     } else if (isMaterialsBlock) {
                         String materialId = parts[i];
                         double materialQnt = Double.parseDouble(parts[i + 1].replace(",", "."));
 
-                        ProductionNode materialNode = pt.getNodeById(materialId);
+                        ProductionNode materialNode = pt.getNodeById(materialId);  // O(1)
                         if (materialNode == null) {
                             materialNode = new ProductionNode(materialId, materialId, true);
-                            pt.insertProductionNode(materialId, materialId, true);
+                            pt.insertProductionNode(materialId, materialId, true);  // O(1)
                         }
 
-                        pt.insertNewConnection(opId, materialId, materialQnt);
+                        pt.insertNewConnection(opId, materialId, materialQnt);  // O(1)
                         materialNode.setParent(opNode);
                         materialNode.setQuantity(materialQnt);
-                        bst.insert(materialNode, materialQnt);
+                        bst.insert(materialNode, materialQnt);  // O(nlog(n))
 
                         i += 2;
                     } else {
@@ -228,6 +231,7 @@ public abstract class Reader {
 
     /**
      * Load production tree production tree.
+     * The complexity of this method is: O(n^3).
      *
      * @param operationsFile the operations file
      * @param itemsFile      the items file
@@ -242,11 +246,11 @@ public abstract class Reader {
         try (BufferedReader br = new BufferedReader(new FileReader(operationsFile))) {
             br.readLine(); // Ignorar cabeçalho
             String linha;
-            while ((linha = br.readLine()) != null) {
+            while ((linha = br.readLine()) != null) { // O(n)
                 String[] campos = linha.split(";");
                 String opId = campos[0];
                 String opName = campos[1];
-                productionTree.addNode(new ProductionNode(opId, opName, false)); // Adiciona operação como nó
+                productionTree.addNode(new ProductionNode(opId, opName, false)); // O(n^2) // Adiciona operação como nó
             }
         }
 
@@ -254,11 +258,11 @@ public abstract class Reader {
         try (BufferedReader br = new BufferedReader(new FileReader(itemsFile))) {
             br.readLine(); // Ignorar cabeçalho
             String linha;
-            while ((linha = br.readLine()) != null) {
+            while ((linha = br.readLine()) != null) { // O(n)
                 String[] campos = linha.split(";");
                 String itemId = campos[0];
                 String itemName = campos[1];
-                productionTree.addNode(new ProductionNode(itemId, itemName, true)); // Adiciona item como nó
+                productionTree.addNode(new ProductionNode(itemId, itemName, true)); // O(n^2) // Adiciona item como nó
             }
         }
 
@@ -266,7 +270,7 @@ public abstract class Reader {
         try (BufferedReader br = new BufferedReader(new FileReader(booFile))) {
             br.readLine(); // Ignorar cabeçalho
             String linha;
-            while ((linha = br.readLine()) != null) {
+            while ((linha = br.readLine()) != null) {  // O(n)
                 String[] campos = linha.split(";");
 
                 String opId = campos[0];
@@ -274,20 +278,20 @@ public abstract class Reader {
                 double itemQtd = Double.parseDouble(campos[2].replace(",", "."));
 
                 // Cria ou obtém os nós existentes
-                ProductionNode opNode = productionTree.getNodeById(opId);
-                ProductionNode itemNode = productionTree.getNodeById(itemId);
+                ProductionNode opNode = productionTree.getNodeById(opId);  // O(1)
+                ProductionNode itemNode = productionTree.getNodeById(itemId);  // O(1)
 
                 if (opNode == null) {
                     opNode = new ProductionNode(opId, opId, false);
-                    productionTree.addNode(opNode);
+                    productionTree.addNode(opNode); // O(n^2)
                 }
                 if (itemNode == null) {
                     itemNode = new ProductionNode(itemId, itemId, true);
-                    productionTree.addNode(itemNode);
+                    productionTree.addNode(itemNode); // O(n^2)
                 }
 
                 // Conecta a operação ao produto final
-                productionTree.addDependency(opNode, itemNode); // Agora, opNode depende de itemNode
+                productionTree.addDependency(opNode, itemNode); //O(1) // Agora, opNode depende de itemNode
                 itemNode.setQuantity(itemQtd);
 
                 // Adicionar dependências de operações e materiais
@@ -295,7 +299,7 @@ public abstract class Reader {
                 boolean isOperationsBlock = false;
                 boolean isMaterialsBlock = false;
 
-                while (i < campos.length) {
+                while (i < campos.length) { // O(1)
                     String part = campos[i].trim();
                     if (part.isEmpty()) {
                         i++;
@@ -330,7 +334,7 @@ public abstract class Reader {
                             productionTree.addNode(subOpNode);
                         }
 
-                        productionTree.addDependency(subOpNode, opNode); // Inverte a dependência
+                        productionTree.addDependency(subOpNode, opNode); //O(1) // Inverte a dependência
                         subOpNode.setQuantity(subOpQtd);
 
                         i += 2;
@@ -338,13 +342,13 @@ public abstract class Reader {
                         String materialId = campos[i];
                         double materialQtd = Double.parseDouble(campos[i + 1].replace(",", "."));
 
-                        ProductionNode materialNode = productionTree.getNodeById(materialId);
+                        ProductionNode materialNode = productionTree.getNodeById(materialId); // O(n^1)
                         if (materialNode == null) {
                             materialNode = new ProductionNode(materialId, materialId, true);
-                            productionTree.addNode(materialNode);
+                            productionTree.addNode(materialNode); // O(n^2)
                         }
 
-                        productionTree.addDependency(materialNode, opNode); // Inverte a dependência
+                        productionTree.addDependency(materialNode, opNode); //O(1) // Inverte a dependência
                         materialNode.setQuantity(materialQtd);
 
                         i += 2;

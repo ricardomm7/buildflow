@@ -54,6 +54,7 @@ public class MaterialQuantityBST {
 
     /**
      * Helper method to recursively insert a material into the tree.
+     * The complexity of this method is: O(nlog(n)).
      *
      * @param node     The current node being examined.
      * @param material The material to insert.
@@ -67,13 +68,13 @@ public class MaterialQuantityBST {
 
         int compare = material.getId().compareTo(node.materials.get(0).getId());
         if (compare < 0) {
-            node.left = insert(node.left, material, quantity);  // Insert in left subtree
+            node.left = insert(node.left, material, quantity);  // O(log(n)) // Insert in left subtree
         } else if (compare > 0) {
-            node.right = insert(node.right, material, quantity);  // Insert in right subtree
+            node.right = insert(node.right, material, quantity);  // O(log(n)) // Insert in right subtree
         } else {
             // If material with the same ID exists, check by name and update quantity if necessary
             boolean found = false;
-            for (ProductionNode existingMaterial : node.materials) {
+            for (ProductionNode existingMaterial : node.materials) { // O(n)
                 if (existingMaterial.getName().equals(material.getName())) {
                     existingMaterial.setQuantity(existingMaterial.getQuantity() + quantity);
                     found = true;
@@ -81,7 +82,7 @@ public class MaterialQuantityBST {
                 }
             }
             if (!found) {
-                node.materials.add(material);  // Add new material if not found
+                node.materials.add(material);  // O(1) // Add new material if not found
                 node.quantity += quantity;  // Update the total quantity in the node
             }
         }
@@ -102,6 +103,7 @@ public class MaterialQuantityBST {
 
     /**
      * Helper method to recursively update the quantity of a material in the tree.
+     * The complexity of this method is: O(n).
      *
      * @param node        The current node being examined.
      * @param material    The material whose quantity needs to be updated.
@@ -123,7 +125,7 @@ public class MaterialQuantityBST {
             for (ProductionNode existingMaterial : node.materials) {  // O(n)
                 if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {  // O(1)
                     existingMaterial.setQuantity(newQuantity);  // O(1)
-                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum();  // O(n)
+                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum();  // O(1)
                     break;  // O(1)
                 }
             }
@@ -134,36 +136,38 @@ public class MaterialQuantityBST {
     /**
      * Returns a list of materials sorted in ascending order by their total quantity.
      * The list is consolidated to sum the quantities of materials with the same ID and name.
+     * The complexity of this method is: O(n^2).
      *
      * @return A list of materials sorted by quantity in ascending order.
      */
     public List<ProductionNode> getListInAscending() {
-        List<ProductionNode> consolidatedList = consolidateMaterials();
-        consolidatedList.sort(Comparator.comparingDouble(ProductionNode::getQuantity));
+        List<ProductionNode> consolidatedList = consolidateMaterials();  // O(n^2)
+        consolidatedList.sort(Comparator.comparingDouble(ProductionNode::getQuantity)); // O(nlog(n))
         return consolidatedList;
     }
 
     /**
      * Consolidates all materials from the tree into a list, summing quantities for materials with the same ID and name.
+     * The complexity of this method is: O(n^2).
      *
      * @return A list of consolidated materials.
      */
     private List<ProductionNode> consolidateMaterials() {
         Map<String, Map<String, Double>> materialMap = new HashMap<>();
-        consolidateNodeMaterials(root, materialMap);
+        consolidateNodeMaterials(root, materialMap); // O(n)
 
         List<ProductionNode> consolidatedList = new ArrayList<>();
-        for (Map.Entry<String, Map<String, Double>> idEntry : materialMap.entrySet()) {
+        for (Map.Entry<String, Map<String, Double>> idEntry : materialMap.entrySet()) { // O(n)
             String id = idEntry.getKey();
             Map<String, Double> nameMap = idEntry.getValue();
 
-            for (Map.Entry<String, Double> nameEntry : nameMap.entrySet()) {
+            for (Map.Entry<String, Double> nameEntry : nameMap.entrySet()) { // O(n^2)
                 String name = nameEntry.getKey();
                 double totalQuantity = nameEntry.getValue();
 
                 ProductionNode node = new ProductionNode(id, name, true);
                 node.setQuantity(totalQuantity);
-                consolidatedList.add(node);
+                consolidatedList.add(node); // O(1)
             }
         }
         return consolidatedList;
@@ -172,6 +176,7 @@ public class MaterialQuantityBST {
     /**
      * Helper method to recursively consolidate materials from the tree.
      * It accumulates the quantities of materials with the same ID and name.
+     * The complexity of this method is: O(n^n).
      *
      * @param node        The current node in the tree.
      * @param materialMap The map that accumulates quantities by material ID and name.
@@ -182,30 +187,31 @@ public class MaterialQuantityBST {
         }
 
         // Add the materials in the current node to the map
-        for (ProductionNode material : node.materials) {
+        for (ProductionNode material : node.materials) { // O(n)
             String id = material.getId();
             String name = material.getName();
             double quantity = material.getQuantity();
 
             materialMap
                     .computeIfAbsent(id, k -> new HashMap<>())
-                    .merge(name, quantity, Double::sum);
+                    .merge(name, quantity, Double::sum); // O(1)
         }
 
         // Recursively consolidate materials in left and right subtrees
-        consolidateNodeMaterials(node.left, materialMap);
-        consolidateNodeMaterials(node.right, materialMap);
+        consolidateNodeMaterials(node.left, materialMap); // O(n)
+        consolidateNodeMaterials(node.right, materialMap); // O(n)
     }
 
     /**
      * Returns a list of materials sorted in descending order by their total quantity.
      * The list is consolidated to sum the quantities of materials with the same ID and name.
+     * The complexity of this method is: O(n^2).
      *
      * @return A list of materials sorted by quantity in descending order.
      */
     public List<ProductionNode> getListInDescending() {
-        List<ProductionNode> consolidatedList = consolidateMaterials();
-        consolidatedList.sort((m1, m2) -> Double.compare(m2.getQuantity(), m1.getQuantity())); // Sort in descending order
+        List<ProductionNode> consolidatedList = consolidateMaterials(); // O(n^2)
+        consolidatedList.sort((m1, m2) -> Double.compare(m2.getQuantity(), m1.getQuantity())); // O(nlog(n))
         return consolidatedList;
     }
 }

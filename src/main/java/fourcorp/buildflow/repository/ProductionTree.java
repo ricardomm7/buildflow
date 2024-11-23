@@ -29,6 +29,7 @@ public class ProductionTree {
     /**
      * Searches for nodes based on the provided query. The search is case-insensitive and looks for matches
      * in both the ID and the name of the nodes.
+     * The complexity of this method is: O(n).
      *
      * @param query The query string to search for.
      * @return A list of nodes whose ID or name contains the query.
@@ -53,6 +54,7 @@ public class ProductionTree {
 
     /**
      * Adds a new node to the tree.
+     * The complexity of this method is: O(n).
      *
      * @param node The node to be added.
      * @throws IllegalArgumentException If the node is null.
@@ -61,12 +63,13 @@ public class ProductionTree {
         if (node == null) {
             throw new IllegalArgumentException("O nó não pode ser nulo.");
         }
-        nodes.add(node);
-        nodesMap.put(node.getId().toLowerCase(), node); // Adds the node to the map for efficient lookup
+        nodes.add(node); // O(1)
+        nodesMap.put(node.getId().toLowerCase(), node); // O(1) // Adds the node to the map for efficient lookup
     }
 
     /**
      * Adds a dependency from one node (operationA) to another (operationB).
+     * The complexity of this method is: O(1).
      *
      * @param operationB The dependent node (child).
      * @param operationA The parent node.
@@ -77,29 +80,31 @@ public class ProductionTree {
             throw new IllegalArgumentException("Cannot add direct circular dependency from a node to itself");
         }
 
-        if (!connections.containsKey(operationA)) {
-            connections.put(operationA, new HashMap<>());
+        if (!connections.containsKey(operationA)) { // O(1)
+            connections.put(operationA, new HashMap<>()); // O(1)
         }
-        connections.get(operationA).put(operationB, 1.0);
+        connections.get(operationA).put(operationB, 1.0); // O(1)
     }
 
     /**
      * Adds a dependency between a parent node and a child node, with a specified quantity.
+     * The complexity of this method is: O(1).
      *
-     * @param parent The parent node.
-     * @param child The child node.
+     * @param parent   The parent node.
+     * @param child    The child node.
      * @param quantity The quantity of the dependency.
      */
     public void addDependencyBom(ProductionNode parent, ProductionNode child, double quantity) {
-    connections.computeIfAbsent(parent, k -> new HashMap<>())
-               .put(child, quantity);
-}
+        connections.computeIfAbsent(parent, k -> new HashMap<>())
+                .put(child, quantity); // O(1)
+    }
 
 
     /**
      * Calculates and returns the critical path in the production process.
      * The critical path is the longest path from any node to a leaf node, where each node represents a task
      * and the edges represent dependencies.
+     * The complexity of this method is: O(n^2).
      *
      * @return A list of nodes representing the critical path in the production process.
      */
@@ -151,6 +156,7 @@ public class ProductionTree {
 
     /**
      * Inserts a new production node if it does not already exist in the tree.
+     * The complexity of this method is: O(1).
      *
      * @param id        The ID of the new node.
      * @param name      The name of the new node.
@@ -159,14 +165,15 @@ public class ProductionTree {
     public void insertProductionNode(String id, String name, boolean isProduct) {
         if (getNodeById(id) == null) {
             ProductionNode node = new ProductionNode(id, name, isProduct);
-            nodes.add(node);
-            connections.put(node, new HashMap<>());
-            nodesMap.put(id.toLowerCase(), node);
+            nodes.add(node); // O(1)
+            connections.put(node, new HashMap<>()); // O(1)
+            nodesMap.put(id.toLowerCase(), node); // O(1)
         }
     }
 
     /**
      * Adds a new connection between two nodes, indicating a dependency from parent to child.
+     * The complexity of this method is: O(1).
      *
      * @param parentId The ID of the parent node.
      * @param childId  The ID of the child node.
@@ -177,7 +184,7 @@ public class ProductionTree {
         ProductionNode child = getNodeById(childId);
 
         if (parent != null && child != null) {
-            connections.get(parent).put(child, quantity);
+            connections.get(parent).put(child, quantity); // O(1)
         } else {
             System.err.println("Parent or Child not found: " + parentId + " or " + childId);
         }
@@ -185,16 +192,18 @@ public class ProductionTree {
 
     /**
      * Retrieves a node by its ID.
+     * The complexity of this method is: O(1).
      *
      * @param id The ID of the node to retrieve.
      * @return The node with the given ID, or null if not found.
      */
     public ProductionNode getNodeById(String id) {
-        return nodesMap.get(id.toLowerCase());
+        return nodesMap.get(id.toLowerCase()); // O(1)
     }
 
     /**
      * Gets node by name or id.
+     * The complexity of this method is: O(n).
      *
      * @param nameOrId the name or id
      * @return the node by name or id
@@ -204,7 +213,7 @@ public class ProductionTree {
         if (node != null) {
             return node;
         }
-        for (ProductionNode n : nodes) {
+        for (ProductionNode n : nodes) { // O(n)
             if (n.getName().equalsIgnoreCase(nameOrId) || n.getId().equalsIgnoreCase(nameOrId)) {
                 return n;
             }
@@ -215,6 +224,7 @@ public class ProductionTree {
 
     /**
      * Retrieves all parent nodes of a given node.
+     * The complexity of this method is: O(n).
      *
      * @param node The node for which to find parent nodes.
      * @return A list of parent nodes.
@@ -223,7 +233,7 @@ public class ProductionTree {
         List<ProductionNode> parents = new ArrayList<>();
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) { // O(n)
             if (entry.getValue().containsKey(node)) {
-                parents.add(entry.getKey());
+                parents.add(entry.getKey()); // O(1)
             }
         }
         return parents;
@@ -259,6 +269,7 @@ public class ProductionTree {
 
     /**
      * Updates the quantity of a given node and propagates the update to all dependent nodes.
+     * The complexity of this method is: O(n).
      *
      * @param nodeToUpdate The node whose quantity needs to be updated.
      * @param newQuantity  The new quantity to set for the node.
@@ -277,6 +288,7 @@ public class ProductionTree {
 
     /**
      * Deletes and recreates connections with updated quantities after a node's quantity is updated.
+     * The complexity of this method is: O(n).
      *
      * @param nodeToUpdate The node whose connections need to be updated.
      * @param newQuantity  The updated quantity.
@@ -295,6 +307,7 @@ public class ProductionTree {
 
     /**
      * Propagates the quantity update from a parent node to its child nodes.
+     * The complexity of this method is: O(n^2).
      *
      * @param node        The node whose quantity update needs to be propagated.
      * @param newQuantity The new quantity of the parent node.
@@ -320,12 +333,13 @@ public class ProductionTree {
             childNode.setQuantity(newChildQuantity); // O(1)
 
             // Recursively propagate the update to all descendants of the child node
-            propagateQuantityUpdate(childNode, newChildQuantity, childNode.getQuantity()); // O(n)
+            propagateQuantityUpdate(childNode, newChildQuantity, childNode.getQuantity()); // O(n^2)
         }
     }
 
     /**
      * Updates the quantities of all connections for a given node.
+     * The complexity of this method is: O(n^2).
      *
      * @param nodeToUpdate The node whose connections need to be updated.
      */
@@ -346,10 +360,9 @@ public class ProductionTree {
             entry.setValue(newConnectionQuantity); // O(1)
 
             // Recurse into the child node to update all connections
-            updateConnectionQuantities(childNode, newConnectionQuantity); // O(n)
+            updateConnectionQuantities(childNode, newConnectionQuantity); // O(n^2)
         }
     }
-
 
     /**
      * Clears all nodes and connections from the tree.

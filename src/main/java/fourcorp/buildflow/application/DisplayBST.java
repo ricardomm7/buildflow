@@ -15,15 +15,16 @@ public class DisplayBST {
 
     /**
      * Displays the materials sorted by their quantity in either ascending or descending order.
+     * The complexity of this method is: O(n^2).
      *
      * @param ascending A boolean indicating the sorting order. If true, materials are displayed in ascending order;
      *                  if false, they are displayed in descending order.
      */
     public void displayMaterialsByQuantity(boolean ascending) {
-        List<ProductionNode> materials = ascending ? bst.getListInAscending() : bst.getListInDescending();
+        List<ProductionNode> materials = ascending ? bst.getListInAscending() : bst.getListInDescending(); // O(n^2)
 
         System.out.println();
-        for (ProductionNode material : materials) {
+        for (ProductionNode material : materials) { // O(n)
             System.out.println("- " + material.getId() + " " + material.getName() + " (QUANTITY: " + material.getQuantity() + ")");
         }
     }

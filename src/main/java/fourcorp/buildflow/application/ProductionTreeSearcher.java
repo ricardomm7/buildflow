@@ -169,8 +169,8 @@ public class ProductionTreeSearcher {
     /**
      * Recursively calculates the dependency level of a given production node based on its parent nodes.
      *
-     * @param node                  the production node whose dependency level is to be calculated.
-     * @param nodeDependencyLevels  a map storing the dependency levels of nodes.
+     * @param node                 the production node whose dependency level is to be calculated.
+     * @param nodeDependencyLevels a map storing the dependency levels of nodes.
      */
     public void calculateDependencyLevel(ProductionNode node, Map<ProductionNode, Integer> nodeDependencyLevels) {
         if (nodeDependencyLevels.containsKey(node)) { // O(1)
