@@ -1,24 +1,57 @@
 .section .text
-.global get_n_element
+	.global get_n_element
 
-
-	# %rdi --> buffer (*int)
-    # %rsi --> length (int)
-    # %rdx --> tail (*int)
-    # %rcx --> head (*int)
-
-    #atenção este codigo só deve ser chamado se o buffer estiver com o deque e enqueu e o sort
-    #bem feitos isto pk se tiver um zero entre tres elemntos ele não irá ler os proximos
-    #pois o zero é a flag que sinaliza o termino do vetor
 get_n_element:
-	xorq %rax,%rax
-loop:
-	cmpb $0, (%rdi)
-	je end
-	add $1, %rax
-	add $4, %rdi
-	jmp loop
-	
-end: 
-	ret
+
+    # Prólogo
+    pushq %rbp
+    movq %rsp, %rbp
+
+
+    cmpl $0, %esi           # length <= 0?
+    jle return_zero
+
+    cmpq $0, %rdx           # tail == NULL?
+    je return_zero
+
+    cmpq $0, %rcx           # head == NULL?
+    je return_zero
+
+    movl (%rdx), %edx
+    movl (%rcx), %ecx
+
+    cmpl $0, %edx           # tail < 0
+    jl return_zero
+
+    cmpl %esi, %edx         # tail >= length
+    jge return_zero
+
+    cmpl $0, %ecx           # head < 0
+    jl return_zero
+
+    cmpl %esi, %ecx         # head >= length
+    jge return_zero
+
+
+    cmpl %ecx, %edx         # tail == head
+    je return_zero
+
+
+    movl %ecx, %eax
+    subl %edx, %eax
+
+    # Ajuste para se tail > head
+    cmpl $0, %eax
+    jge done
+    addl %esi, %eax
+
+done:
+    # Epílogo
+    movq %rbp, %rsp
+    popq %rbp
+    ret
+
+return_zero:
+    xorl %eax, %eax
+    jmp done
 
