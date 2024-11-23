@@ -1,67 +1,71 @@
 .section .text
-    .global get_number
-
+	.global get_number
 get_number:
-    # Prólogo
-    push %rbp                   # Salva o valor base da pilha
-    mov %rsp, %rbp              # Atualiza o valor base da pilha
+    # Prologue
+    push %rbp
+    mov %rsp, %rbp
 
-	#rdi *char
-	#rsi *int
-	movq $0, %rdx
-	xorq %rax,%rax
 
-	movb (%rdi), %al
-	cmp $0,%al
-	je  error
+    xorq %rdx, %rdx
+    xorq %rax, %rax
+
+
+    cmpb $0, (%rdi)
+    je error
 
 skip_spaces:
-	cmpb $' ',(%rdi)
-	jne add_numbers
-
-
-	inc %rdi
-	jmp skip_spaces
-
-add_numbers:
     movb (%rdi), %al
     cmpb $0, %al
-    je end
+    je error
+    cmpb $' ', %al
+    jne process_number
+    inc %rdi
+    jmp skip_spaces
 
+
+process_number:
+    movb (%rdi), %al
+    cmpb $0, %al
+    je success
+    cmpb $' ', %al
+    je check_trailing
+
+    # Verify it's a digit
     cmpb $'0', %al
-    jl verify_space
+    jl error
     cmpb $'9', %al
     jg error
 
-
-    # Converte caractere para número
+    # Convert char to number
     subb $'0', %al
     movzbq %al, %rax
-    imul $10, %rdx
-    add %rax, %rdx
+
+    # Multiply current total by 10
+    imulq $10, %rdx
+    addq %rax, %rdx
 
     inc %rdi
-    jmp add_numbers
+    jmp process_number
 
-verify_space:
+check_trailing:
+    inc %rdi
+    movb (%rdi), %al
+    cmpb $0, %al
+    je success
     cmpb $' ', %al
-    jne error         # Se não for espaço, é erro
-    inc %rdi
-    jmp add_numbers
+    je check_trailing
+    jmp error
 
 error:
-	movl $0, (%rsi)
-	xorq %rdx, %rdx
-	movq %rdx, %rax
-	jmp done
+    movl $0, (%rsi)
+    xorq %rax, %rax
+    jmp done
 
-end:
-
+success:
+    movl %edx, (%rsi)
     movq $1, %rax
-    movq %rdx, (%rsi)
 
 done:
-    # Epílogo
-    mov %rbp, %rsp              # Restaura a pilha
-    pop %rbp                    # Restaura o valor base da pilha
+    mov %rbp, %rsp
+    pop %rbp
     ret
