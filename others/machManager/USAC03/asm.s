@@ -1,68 +1,64 @@
-.section .text  
-.global get_number
+.section .text
+    .global get_number
 
 get_number:
     # Prólogo
     push %rbp                   # Salva o valor base da pilha
     mov %rsp, %rbp              # Atualiza o valor base da pilha
-    
+
 	#rdi *char
 	#rsi *int
 	movq $0, %rdx
-	movq $0, %rcx
-skip:
+	xorq %rax,%rax
+
+	movb (%rdi), %al
+	cmp $0,%al
+	je  error
+
+skip_spaces:
 	cmpb $' ',(%rdi)
 	jne add_numbers
-	
+
+
 	inc %rdi
-	jmp skip
-	
+	jmp skip_spaces
+
 add_numbers:
-    movb (%rdi), %al            
-    cmpb $0, %al                
-    je end                      
-    
-    cmpb $'0', %al              
-    jl verify_digit     
-    cmpb $'9', %al              
-    jg end    
-	
-	add $1, %rcx 
+    movb (%rdi), %al
+    cmpb $0, %al
+    je end
+
+    cmpb $'0', %al
+    jl verify_space
+    cmpb $'9', %al
+    jg error
+
+
     # Converte caractere para número
-    subb $'0', %al 
-    movzbq %al, %rax             
-    imul $10, %rdx             
-    add %rax, %rdx             
-                      
+    subb $'0', %al
+    movzbq %al, %rax
+    imul $10, %rdx
+    add %rax, %rdx
 
-    inc %rdi                    
-    jmp add_numbers             
-
-verify_digit:
-
-	cmpb $0, (%rdi)
-    je end 
-    
-    cmpb $' ', (%rdi)              
-    jne bad_character              
-    
-          
     inc %rdi
-    jmp verify_digit
-bad_character:
-	xor %rcx,%rcx
+    jmp add_numbers
+
+verify_space:
+    cmpb $' ', %al
+    jne error         # Se não for espaço, é erro
+    inc %rdi
+    jmp add_numbers
+
+error:
+	movl $0, (%rsi)
+	xorq %rdx, %rdx
+	movq %rdx, %rax
+	jmp done
 
 end:
-    cmpq $0, %rcx               # Verifica se encontrou algum dígito
-    jg end_sucess              # Se não encontrou, falha
 
-    movq $0, (%rsi)           # Salva o número (32 bits) em *n
-    movq $0, %rax               # Retorna 1 (sucesso)
-    jmp done
-
-end_sucess:
-    mov $1, %rax             # Retorna 0 (falha)
-    movq %rdx, (%rsi)             # Zera o valor de *n (32 bits)
+    movq $1, %rax
+    movq %rdx, (%rsi)
 
 done:
     # Epílogo
