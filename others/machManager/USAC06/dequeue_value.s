@@ -9,10 +9,12 @@
 # %r8  --> value (int*)
 
 dequeue_value:
-    # Prólogo: guarda o estado da stack
-    pushq %rbp                   # Salva o valor do base pointer (bp)
-    movq %rsp, %rbp              # Alinha o primeiro pointer ao stack pointer
-    subq $16, %rsp               # Reserva espaço na stack
+    # Prólogo - Guardar apenas registos necessários
+    push %r8             # Guarda o registo r8 na stack
+    push %r9             # Guarda o registo r9 na stack
+    push %rdi            # Guarda o registo rdi na stack
+    push %rsi            # Guarda o registo rsi na stack
+    push %rdx            # Guarda o registo rdx na stack
 
     # Lógica da função
     movl (%rdx), %eax            # eax = read
@@ -38,7 +40,10 @@ empty:
     movl $0, %eax                # retorna falha
 
 end:
-    # Epílogo: restaura o estado original da stack
-    movq %rbp, %rsp              # Restaura o stack pointer ao primeiro pointer
-    popq %rbp                    # Restaura o primeiro pointer
-    ret
+    # Epílogo - Restaura registos
+    pop %rdx             # Restaura rdx
+    pop %rsi             # Restaura rsi
+    pop %rdi             # Restaura rdi
+    pop %r9              # Restaura r9
+    pop %r8              # Restaura r8
+    ret                   # Retorna

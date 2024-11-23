@@ -65,7 +65,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials.");
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
-            System.out.printf("%-5s%-75s%n", "[25]", "See a specific product Material tree (console).");
+            System.out.printf("%-5s%-75s%n", "[25]", "See a specific product Material tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 

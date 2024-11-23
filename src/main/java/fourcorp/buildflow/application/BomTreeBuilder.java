@@ -84,7 +84,7 @@ public class BomTreeBuilder {
 
         // Create tree starting from requested node
         buildTreeRecursively(rootNode, tree, itemNames, directConnections,
-                operationResults, operationDependencies);
+                operationResults, operationDependencies, new HashMap<>());
 
         return tree;
     }
@@ -94,7 +94,8 @@ public class BomTreeBuilder {
                                              Map<String, String> itemNames,
                                              Map<String, List<Pair<String, Double>>> directConnections,
                                              Map<String, String> operationResults,
-                                             Map<String, List<Pair<String, Double>>> operationDependencies) {
+                                             Map<String, List<Pair<String, Double>>> operationDependencies,
+                                             Map<String, Double> processedOperations) {
 
         String currentItemId = currentNode.getId();
         double currentQuantity = currentNode.getQuantity();
@@ -121,7 +122,7 @@ public class BomTreeBuilder {
                 tree.addDependencyBom(currentNode, childNode, totalQuantity);
 
                 buildTreeRecursively(childNode, tree, itemNames, directConnections,
-                        operationResults, operationDependencies);
+                        operationResults, operationDependencies, processedOperations);
             }
         }
 
@@ -130,7 +131,9 @@ public class BomTreeBuilder {
             String opId = entry.getKey();
             String resultItemId = entry.getValue();
 
-            if (resultItemId.equals(currentItemId)) {
+            if (resultItemId.equals(currentItemId) && !processedOperations.containsKey(opId)) {
+                processedOperations.put(opId, currentQuantity);
+
                 List<Pair<String, Double>> depOps = operationDependencies.get(opId);
                 if (depOps != null) {
                     for (Pair<String, Double> depOp : depOps) {
@@ -139,7 +142,8 @@ public class BomTreeBuilder {
                         String depItemId = operationResults.get(depOpId);
 
                         if (depItemId != null) {
-                            double totalQuantity = opQuantity * currentQuantity;
+                            // Use the operation quantity directly without multiplying by current quantity
+                            double totalQuantity = opQuantity;
 
                             ProductionNode depNode = tree.getNodeById(depItemId);
                             if (depNode == null) {
@@ -155,7 +159,7 @@ public class BomTreeBuilder {
                             tree.addDependencyBom(currentNode, depNode, totalQuantity);
 
                             buildTreeRecursively(depNode, tree, itemNames, directConnections,
-                                    operationResults, operationDependencies);
+                                    operationResults, operationDependencies, processedOperations);
                         }
                     }
                 }

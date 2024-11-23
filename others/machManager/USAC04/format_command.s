@@ -1,26 +1,21 @@
 .section .text
 .global format_command
 format_command:
-    # Prólogo - Guardar registos usados
-    pushq %rbp            # Guarda o base pointer
-    movq %rsp, %rbp       # Estabelece novo frame pointer
-    pushq %r8             # Guarda o registo r8 na pilha
-    pushq %r9             # Guarda o registo r9 na pilha
-    pushq %rdi            # Guarda o registo rdi na pilha
-    pushq %rsi            # Guarda o registo rsi na pilha
-    pushq %rdx            # Guarda o registo rdx na pilha
+    # Prólogo - Guardar apenas registos necessários
+    push %r8             # Guarda o registo r8 na stack
+    push %r9             # Guarda o registo r9 na stack
+    push %rdi            # Guarda o registo rdi na stack
+    push %rsi            # Guarda o registo rsi na stack
+    push %rdx            # Guarda o registo rdx na stack
 
-    cmpq $0, %rdi         # Verifica se string de entrada é nula
+    cmpq $0, %rdi         # Verifica se string str é nula
     je invalid_input
     cmpq $0, %rdx         # Verifica se cmd é nulo
     je invalid_input
 
-    movq %rdi, %r8        # r8 = endereço da string de entrada
+    movq %rdi, %r8        # r8 = endereço da string str
     movq %rdx, %r9        # r9 = endereço do cmd
-    movl %esi, %r11d      # r11d = valor de n
-
-    subq $32, %rsp        # Reserva 32 bytes na stack (16 bytes alinhados)
-    movq %rsp, %rdx       # rdx aponta para o array temporário
+    movl %esi, %esi       # guarda n em esi
 
     xorl %ecx, %ecx       # ecx = 0 (contador de caracteres)
 
@@ -39,8 +34,7 @@ copy_no_spaces:
     subb $32, %al         # Converte para maiúscula
 
 store_char:
-    movb %al, (%rdx)      # Guarda o caractere no array temporário
-    incq %rdx             # Avança no array temporário
+    movb %al, (%r9, %rcx) # Guarda caractere temporariamente no início de cmd
     incl %ecx             # Incrementa o contador
 
 skip_space:
@@ -48,40 +42,38 @@ skip_space:
     jmp copy_no_spaces    # Continua o loop
 
 end_copy:
-    movb $0, (%rdx)       # Termina a string com null
-
-    movq %rsp, %rdi       # rdi aponta para início do array temporário
+    movb $0, (%r9, %rcx)  # Termina a string com null
 
     cmpl $2, %ecx         # Verifica se tem 2 caracteres
     je check_two_chars    # Se sim, verifica ON/OP
     cmpl $3, %ecx         # Verifica se tem 3 caracteres
     je check_commands     # Se sim, verifica OFF
-    jmp cleanup_invalid   # Se não, é inválido
+    jmp invalid_input     # Se não, é inválido
 
 check_two_chars:
     # Verifica se é "ON"
-    cmpb $'O', (%rdi)     # Verifica primeiro caractere
+    cmpb $'O', (%r9)      # Verifica primeiro caractere
     jne check_if_op       # Se não for 'O', verifica se é OP
-    cmpb $'N', 1(%rdi)    # Verifica segundo caractere
+    cmpb $'N', 1(%r9)     # Verifica segundo caractere
     je on_command         # Se for 'N', é comando ON
 
 check_if_op:
     # Verifica se é "OP"
-    cmpb $'O', (%rdi)     # Verifica primeiro caractere
-    jne cleanup_invalid   # Se não for 'O', é inválido
-    cmpb $'P', 1(%rdi)    # Verifica segundo caractere
+    cmpb $'O', (%r9)      # Verifica primeiro caractere
+    jne invalid_input     # Se não for 'O', é inválido
+    cmpb $'P', 1(%r9)     # Verifica segundo caractere
     je op_command         # Se for 'P', é comando OP
-    jmp cleanup_invalid   # Se não, é inválido
+    jmp invalid_input     # Se não, é inválido
 
 check_commands:
     # Verifica se é "OFF"
-    cmpb $'O', (%rdi)     # Verifica primeiro caractere
-    jne cleanup_invalid   # Se não for 'O', é invalido
-    cmpb $'F', 1(%rdi)    # Verifica segundo caractere
-    jne cleanup_invalid   # Se não for 'F', é inválido
-    cmpb $'F', 2(%rdi)    # Verifica terceiro caractere
+    cmpb $'O', (%r9)      # Verifica primeiro caractere
+    jne invalid_input     # Se não for 'O', é invalido
+    cmpb $'F', 1(%r9)     # Verifica segundo caractere
+    jne invalid_input     # Se não for 'F', é inválido
+    cmpb $'F', 2(%r9)     # Verifica terceiro caractere
     je off_command        # Se for 'F', é comando OFF
-    jmp cleanup_invalid   # Se não, é inválido
+    jmp invalid_input     # Se não, é inválido
 
 on_command:
     movq %r9, %rdx        # rdx aponta para cmd
@@ -106,23 +98,33 @@ off_command:
     movb $'F', 2(%rdx)    # Escreve 'F'
     movb $',', 3(%rdx)    # Escreve ','
     addq $4, %rdx         # Avança 4 posições
-    jmp convert_binary    # Converte número para binário
 
 convert_binary:
     movq %rdx, %r8        # Guarda posição atual
+    movl %esi, %edi       # Move n para primeiro argumento
+    leaq 16(%r9), %rsi    # Usa espaço após o comando para bits
 
-    subq $16, %rsp        # Reserva espaço para array de bits
-    movq %rsp, %rsi       # rsi aponta para array de bits
-    movl %r11d, %edi      # Restaura n para conversão
+    push %r8
+    push %r9
+    push %rdi
+    push %rdx
+    push %rcx
+    push %rax
 
     call get_number_binary # Chama função de conversão para binário
 
-    cmpl $0, %eax          # Verifica se houve erro
-    je cleanup_all_invalid # Se sim, limpa e retorna erro
+    cmpl $0, %eax         # Verifica se houve erro
+    je invalid_input      # Se sim, retorna erro
+
+    pop %rax
+    pop %rcx
+    pop %rdx
+    pop %rdi
+    pop %r9
+    pop %r8
 
     movq %r8, %rdx        # Restaura posição no cmd
-    movq %rsp, %rsi       # rsi aponta para array de bits
-    addq $4, %rsi         # Aponta para último bit
+    leaq 20(%r9), %rsi    # rsi aponta para último bit
     movl $5, %ecx         # Contador = 5 bits
 
 convert_loop:
@@ -139,21 +141,7 @@ convert_loop:
 
 finish_string:
     movb $0, (%rdx)       # Termina string com null
-    jmp success           # Finaliza com sucesso
-
-cleanup_all_invalid:
-    addq $16, %rsp        # Remove espaço do array de bits
-    addq $32, %rsp        # Remove espaço do array temporário
-    jmp invalid_input     # Vai para tratamento de erro
-
-cleanup_invalid:
-    addq $32, %rsp        # Remove espaço do array temporário
-    jmp invalid_input     # Vai para tratamento de erro
-
-success:
-    addq $16, %rsp        # Remove espaço do array de bits
-    addq $32, %rsp        # Remove espaço do array temporário
-    movl $1, %eax         # Retorna 1
+    movl $1, %eax         # Retorna sucesso
     jmp end               # Vai para final
 
 invalid_input:
@@ -163,11 +151,9 @@ invalid_input:
 
 end:
     # Epílogo - Restaura registos
-    popq %rdx             # Restaura rdx
-    popq %rsi             # Restaura rsi
-    popq %rdi             # Restaura rdi
-    popq %r9              # Restaura r9
-    popq %r8              # Restaura r8
-    movq %rbp, %rsp       # Restaura stack pointer
-    popq %rbp             # Restaura base pointer
+    pop %rdx             # Restaura rdx
+    pop %rsi             # Restaura rsi
+    pop %rdi             # Restaura rdi
+    pop %r9              # Restaura r9
+    pop %r8              # Restaura r8
     ret                   # Retorna
