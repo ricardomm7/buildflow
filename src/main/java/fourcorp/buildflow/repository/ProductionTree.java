@@ -84,6 +84,19 @@ public class ProductionTree {
     }
 
     /**
+     * Adds a dependency between a parent node and a child node, with a specified quantity.
+     *
+     * @param parent The parent node.
+     * @param child The child node.
+     * @param quantity The quantity of the dependency.
+     */
+    public void addDependencyBom(ProductionNode parent, ProductionNode child, double quantity) {
+    connections.computeIfAbsent(parent, k -> new HashMap<>())
+               .put(child, quantity);
+}
+
+
+    /**
      * Calculates and returns the critical path in the production process.
      * The critical path is the longest path from any node to a leaf node, where each node represents a task
      * and the edges represent dependencies.

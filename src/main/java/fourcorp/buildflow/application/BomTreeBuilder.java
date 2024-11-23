@@ -114,14 +114,12 @@ public class BomTreeBuilder {
                     childNode.setQuantity(totalQuantity);
                     tree.addNode(childNode);
                 } else {
-                    // Update quantity if node exists
-                    childNode.setQuantity(childNode.getQuantity() + totalQuantity);
+                    double updatedQuantity = childNode.getQuantity() + totalQuantity;
+                    childNode.setQuantity(updatedQuantity);
                 }
 
-                // Add dependency
-                tree.addDependency(childNode, currentNode);
+                tree.addDependencyBom(currentNode, childNode, totalQuantity);
 
-                // Recurse on child
                 buildTreeRecursively(childNode, tree, itemNames, directConnections,
                         operationResults, operationDependencies);
             }
@@ -133,7 +131,6 @@ public class BomTreeBuilder {
             String resultItemId = entry.getValue();
 
             if (resultItemId.equals(currentItemId)) {
-                // Get dependent operations
                 List<Pair<String, Double>> depOps = operationDependencies.get(opId);
                 if (depOps != null) {
                     for (Pair<String, Double> depOp : depOps) {
@@ -144,7 +141,6 @@ public class BomTreeBuilder {
                         if (depItemId != null) {
                             double totalQuantity = opQuantity * currentQuantity;
 
-                            // Create or get dependent node
                             ProductionNode depNode = tree.getNodeById(depItemId);
                             if (depNode == null) {
                                 String depItemName = itemNames.get(depItemId);
@@ -152,14 +148,12 @@ public class BomTreeBuilder {
                                 depNode.setQuantity(totalQuantity);
                                 tree.addNode(depNode);
                             } else {
-                                // Update quantity if node exists
-                                depNode.setQuantity(depNode.getQuantity() + totalQuantity);
+                                double updatedQuantity = depNode.getQuantity() + totalQuantity;
+                                depNode.setQuantity(updatedQuantity);
                             }
 
-                            // Add dependency
-                            tree.addDependency(depNode, currentNode);
+                            tree.addDependencyBom(currentNode, depNode, totalQuantity);
 
-                            // Recurse on dependent item
                             buildTreeRecursively(depNode, tree, itemNames, directConnections,
                                     operationResults, operationDependencies);
                         }
