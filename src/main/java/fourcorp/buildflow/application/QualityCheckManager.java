@@ -4,6 +4,7 @@ import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class QualityCheckManager {
@@ -19,18 +20,21 @@ public class QualityCheckManager {
 
     /**
      * Displays and processes quality checks in order of priority.
+     * The complexity of this method is O(n) where n is the number of nodes in the production tree.
      */
     public void prioritizeAndExecuteQualityChecks() {
         PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
-                (o1, o2) -> Integer.compare(
-                        o2.getDepth(productionTree),
-                        o1.getDepth(productionTree)                              // O(log n)
-                )
+                    new Comparator<ProductionNode>() {
+                        @Override
+                        public int compare(ProductionNode o1, ProductionNode o2) {
+                            return Integer.compare(o2.getDepth(productionTree), o1.getDepth(productionTree)); // O(n)
+                        }
+                    }
         );
 
         for (ProductionNode node : productionTree.getAllNodes()) {               // O(n)
             if (node.isOperation()) {
-                qualityChecks.add(node);                                         // O(log n)
+                qualityChecks.add(node);                                         // O(1) * O(n) = O(n)
             }
         }
 
@@ -40,7 +44,7 @@ public class QualityCheckManager {
             ProductionNode operation = qualityChecks.poll();                     // O(log n)
             System.out.println("Executing Operation: " + operation.getName());   // O(1)
             System.out.println("    ID: " + operation.getId());                  // O(1)
-            System.out.println("    Depth: " + operation.getDepth(productionTree)); // O(log n)
+            System.out.println("    Depth: " + operation.getDepth(productionTree)); // O(n)
             System.out.println("-----------------------------------------");     // O(1)
 
         }

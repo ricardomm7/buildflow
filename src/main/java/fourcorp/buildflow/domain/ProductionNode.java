@@ -109,21 +109,22 @@ public class ProductionNode implements Comparable<ProductionNode> {
      *
      * @param productionTree The production tree object used to retrieve parent nodes.
      * @return The depth of the node in the production tree.
+     * The complexity of this method is: O(n).
      */
     public int getDepth(ProductionTree productionTree) {
-        return calculateDepth(this, productionTree);
+        return calculateDepth(this, productionTree); // O(n)
     }
 
     /**
      * Helper method to calculate the depth of this production node by traversing up its parent nodes.
-     * The complexity of this method is: O(1).
+     * The complexity of this method is: O(n).
      *
      * @param node The current node for which to calculate the depth.
      * @param tree The production tree object used to retrieve parent nodes.
      * @return The depth of the node in the production tree.
      */
     private int calculateDepth(ProductionNode node, ProductionTree tree) {
-        List<ProductionNode> parents = tree.getParentNodes(node); // O(1)
+        List<ProductionNode> parents = tree.getParentNodes(node); // O(n)
         if (parents.isEmpty()) {
             return 0; // Root node, no parents
         }
@@ -131,7 +132,7 @@ public class ProductionNode implements Comparable<ProductionNode> {
         return 1 + parents.stream()
                 .mapToInt(parent -> calculateDepth(parent, tree))
                 .max()
-                .orElse(0);// O(1)
+                .orElse(0);// O(n)
     }
 
     /**
