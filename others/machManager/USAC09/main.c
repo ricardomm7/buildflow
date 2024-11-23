@@ -10,7 +10,7 @@ void print_array(int* arr, int len, const char* message) {
 }
 
 int main() {
-    // Test case 1: Ascending order
+    //Ascending order
 	int arr1[] = {64, 34, 25, 12, 22, 11, 90};
 	int len1 = sizeof(arr1) / sizeof(arr1[0]);
 	print_array(arr1, len1, "Original array");
@@ -22,7 +22,7 @@ int main() {
 		printf("Sort failed for ascending order\n");
 	}
     
-    // Test case 2: Descending order
+    //Descending order
 	int arr2[] = {11, 22, 33, 44, 55, 66, 77};
 	int len2 = sizeof(arr2) / sizeof(arr2[0]);
 	print_array(arr2, len2, "\nOriginal array");
@@ -34,7 +34,7 @@ int main() {
 		printf("Sort failed for descending order\n");
 	}
     
-    // Test case 3: Array with duplicate elements
+    //Array with duplicate elements
 	int arr3[] = {5, 2, 8, 5, 1, 9, 2, 8};
 	int len3 = sizeof(arr3) / sizeof(arr3[0]);
 	print_array(arr3, len3, "\nOriginal array with duplicates");
@@ -46,12 +46,12 @@ int main() {
 		printf("Sort failed for array with duplicates\n");
 	}
     
-    // Test case 4: Invalid length
+    //Invalid length
 	int arr4[] = {1};
 	int result4 = sort_array(arr4, 0, 1);
 	printf("\nTest with invalid length (0): %s\n", result4 ? "Incorrectly succeeded" : "Correctly failed");
     
-    // Test case 5: Single element
+    //Single element
 	int arr5[] = {42};
 	int len5 = 1;
 	print_array(arr5, len5, "\nSingle element array");
