@@ -36,45 +36,46 @@ public class MaterialQuantityUpdater {
      * the user to update the quantity of the selected material.
      */
     public void updateMaterialQuantity() {
-        System.out.print("Enter the name or ID of the material to update: ");
-        String searchQuery = scanner.nextLine();
-        List<ProductionNode> searchResults = productionTree.searchNodes(searchQuery);
+        System.out.print("Enter the name or ID of the material to update: "); // O(1)
+        String searchQuery = scanner.nextLine(); // O(1)
+        List<ProductionNode> searchResults = productionTree.searchNodes(searchQuery); // O(n)
 
-        if (searchResults.isEmpty()) {
-            System.out.println("No materials found matching the query.");
-            return;
+        if (searchResults.isEmpty()) { // O(1)
+            System.out.println("No materials found matching the query."); // O(1)
+            return; // O(1)
         }
 
-        if (searchResults.size() > 1) {
-            System.out.println("Multiple materials found. Please select the material you want to update:");
-            for (int i = 0; i < searchResults.size(); i++) {
-                ProductionNode node = searchResults.get(i);
-                System.out.printf("[%d] %s (ID: %s) | Current Quantity: %.2f%n", i + 1, node.getName(), node.getId(), node.getQuantity());
+        if (searchResults.size() > 1) { // O(1)
+            System.out.println("Multiple materials found. Please select the material you want to update:"); // O(1)
+            for (int i = 0; i < searchResults.size(); i++) { // O(n)
+                ProductionNode node = searchResults.get(i); // O(1)
+                System.out.printf("[%d] %s (ID: %s) | Current Quantity: %.2f%n", i + 1, node.getName(), node.getId(), node.getQuantity()); // O(1)
             }
-            System.out.print("Enter the number corresponding to the material: ");
-        } else {
-            System.out.println("Material found:");
-            ProductionNode node = searchResults.get(0);
-            System.out.printf("%s (ID: %s) | Current Quantity: %.2f%n", node.getName(), node.getId(), node.getQuantity());
-            System.out.print("Would you like to update this material's quantity? (y/n): ");
-            String confirmation = scanner.nextLine();
-            if (confirmation.equalsIgnoreCase("y")) {
-                updateQuantityForNode(searchResults.get(0));
+            System.out.print("Enter the number corresponding to the material: "); // O(1)
+        } else { // O(1)
+            System.out.println("Material found:"); // O(1)
+            ProductionNode node = searchResults.get(0); // O(1)
+            System.out.printf("%s (ID: %s) | Current Quantity: %.2f%n", node.getName(), node.getId(), node.getQuantity()); // O(1)
+            System.out.print("Would you like to update this material's quantity? (y/n): "); // O(1)
+            String confirmation = scanner.nextLine(); // O(1)
+            if (confirmation.equalsIgnoreCase("y")) { // O(1)
+                updateQuantityForNode(searchResults.get(0)); // O(n) for searching & updating node in ProductionTree, O(n) for updating MaterialQuantityBST, O(n) for updating connections in ProductionTree
             }
-            return;
+            return; // O(1)
         }
 
-        int choice = getUserChoice(searchResults.size());
-        if (choice == -1) {
-            System.out.println("Invalid selection. Returning to main menu.");
-            return;
+        int choice = getUserChoice(searchResults.size()); // O(n)
+        if (choice == -1) { // O(1)
+            System.out.println("Invalid selection. Returning to main menu."); // O(1)
+            return; // O(1)
         }
 
-        ProductionNode selectedNode = searchResults.get(choice - 1);
+        ProductionNode selectedNode = searchResults.get(choice - 1); // O(1)
 
-        System.out.printf("Current quantity of '%s': %.2f%n", selectedNode.getName(), selectedNode.getQuantity());
-        updateQuantityForNode(selectedNode);
+        System.out.printf("Current quantity of '%s': %.2f%n", selectedNode.getName(), selectedNode.getQuantity()); // O(1)
+        updateQuantityForNode(selectedNode); // O(n) for searching & updating node in ProductionTree, O(n) for updating MaterialQuantityBST, O(n) for updating connections in ProductionTree
     }
+
 
     /**
      * Validates and retrieves the user's choice when selecting a material from a list.
@@ -83,15 +84,15 @@ public class MaterialQuantityUpdater {
      * @return The user's choice (1-based index), or -1 for invalid selection.
      */
     private int getUserChoice(int max) {
-        while (true) {
+        while (true) { // O(n)
             try {
-                int choice = Integer.parseInt(scanner.nextLine());
-                if (choice >= 1 && choice <= max) {
-                    return choice;
+                int choice = Integer.parseInt(scanner.nextLine()); // O(1)
+                if (choice >= 1 && choice <= max) { // O(1)
+                    return choice; // O(1)
                 }
-                System.out.print("Invalid selection. Try again: ");
-            } catch (NumberFormatException e) {
-                System.out.print("Please enter a valid number: ");
+                System.out.print("Invalid selection. Try again: "); // O(1)
+            } catch (NumberFormatException e) { // O(1)
+                System.out.print("Please enter a valid number: "); // O(1)
             }
         }
     }
@@ -103,25 +104,25 @@ public class MaterialQuantityUpdater {
      * @param selectedNode The production node whose quantity is being updated.
      */
     private void updateQuantityForNode(ProductionNode selectedNode) {
-        System.out.print("Enter the new quantity: ");
-        double newQuantity = getNewQuantity();
-        double previousQuantity = selectedNode.getQuantity();
+        System.out.print("Enter the new quantity: "); // O(1)
+        double newQuantity = getNewQuantity(); // O(n)
+        double previousQuantity = selectedNode.getQuantity(); // O(1)
 
         // Ensure the correct node is retrieved from ProductionTree
-        ProductionNode nodeToUpdate = productionTree.getNodeById(selectedNode.getId());
-        if (nodeToUpdate == null) {
-            System.err.println("Error: Node not found in the ProductionTree.");
-            return;
+        ProductionNode nodeToUpdate = productionTree.getNodeById(selectedNode.getId()); // O(n)
+        if (nodeToUpdate == null) { // O(1)
+            System.err.println("Error: Node not found in the ProductionTree."); // O(1)
+            return; // O(1)
         }
 
         // Update the quantity in MaterialQuantityBST
-        materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity);
+        materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity); // O(n)
 
         // Update the quantity in the ProductionTree and propagate changes
-        productionTree.updateConnectionsQuantity(nodeToUpdate, newQuantity); // Use the updated method
+        productionTree.updateConnectionsQuantity(nodeToUpdate, newQuantity); // O(n)
 
-        System.out.println("Quantity updated successfully!");
-        System.out.printf("Updated quantity for '%s': %.2f (Previous: %.2f)%n", nodeToUpdate.getName(), nodeToUpdate.getQuantity(), previousQuantity);
+        System.out.println("Quantity updated successfully!"); // O(1)
+        System.out.printf("Updated quantity for '%s': %.2f (Previous: %.2f)%n", nodeToUpdate.getName(), nodeToUpdate.getQuantity(), previousQuantity); // O(1)
     }
 
     /**
@@ -130,16 +131,16 @@ public class MaterialQuantityUpdater {
      * @return The validated quantity entered by the user.
      */
     private double getNewQuantity() {
-        while (true) {
+        while (true) { // O(n)
             try {
-                double newQuantity = Double.parseDouble(scanner.nextLine());
-                if (newQuantity < 0) {
-                    System.out.print("Invalid input. Quantity cannot be negative. Please enter a non-negative value: ");
-                } else {
-                    return newQuantity;
+                double newQuantity = Double.parseDouble(scanner.nextLine()); // O(1)
+                if (newQuantity < 0) { // O(1)
+                    System.out.print("Invalid input. Quantity cannot be negative. Please enter a non-negative value: "); // O(1)
+                } else { // O(1)
+                    return newQuantity; // O(1)
                 }
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a numeric value: ");
+            } catch (NumberFormatException e) { // O(1)
+                System.out.print("Invalid input. Please enter a numeric value: "); // O(1)
             }
         }
     }

@@ -97,7 +97,7 @@ public class MaterialQuantityBST {
      * @param newQuantity The new quantity for the material.
      */
     public void updateQuantity(ProductionNode material, double newQuantity) {
-        root = updateQuantity(root, material, newQuantity);
+        root = updateQuantity(root, material, newQuantity);  // O(n)
     }
 
     /**
@@ -110,25 +110,25 @@ public class MaterialQuantityBST {
      */
     private Node updateQuantity(Node node, ProductionNode material, double newQuantity) {
         if (node == null) {
-            return null;
+            return null;  // O(1)
         }
 
-        int compare = material.getId().compareTo(node.materials.get(0).getId());
+        int compare = material.getId().compareTo(node.materials.get(0).getId());  // O(1)
         if (compare < 0) {
-            node.left = updateQuantity(node.left, material, newQuantity);  // Update in left subtree
+            node.left = updateQuantity(node.left, material, newQuantity);  // O(n)
         } else if (compare > 0) {
-            node.right = updateQuantity(node.right, material, newQuantity);  // Update in right subtree
+            node.right = updateQuantity(node.right, material, newQuantity);  // O(n)
         } else {
             // Update the quantity of the material in the current node
-            for (ProductionNode existingMaterial : node.materials) {
-                if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {
-                    existingMaterial.setQuantity(newQuantity);
-                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum(); // Update node quantity
-                    break;
+            for (ProductionNode existingMaterial : node.materials) {  // O(n)
+                if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {  // O(1)
+                    existingMaterial.setQuantity(newQuantity);  // O(1)
+                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum();  // O(n)
+                    break;  // O(1)
                 }
             }
         }
-        return node;
+        return node;  // O(1)
     }
 
     /**
