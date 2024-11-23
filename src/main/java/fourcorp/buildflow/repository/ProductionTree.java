@@ -181,6 +181,26 @@ public class ProductionTree {
     }
 
     /**
+     * Gets node by name or id.
+     *
+     * @param nameOrId the name or id
+     * @return the node by name or id
+     */
+    public ProductionNode getNodeByNameOrId(String nameOrId) {
+        ProductionNode node = nodesMap.get(nameOrId.toLowerCase());
+        if (node != null) {
+            return node;
+        }
+        for (ProductionNode n : nodes) {
+            if (n.getName().equalsIgnoreCase(nameOrId) || n.getId().equalsIgnoreCase(nameOrId)) {
+                return n;
+            }
+        }
+        return null;
+
+    }
+
+    /**
      * Retrieves all parent nodes of a given node.
      *
      * @param node The node for which to find parent nodes.

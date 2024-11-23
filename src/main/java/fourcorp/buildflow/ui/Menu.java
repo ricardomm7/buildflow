@@ -3,6 +3,7 @@ package fourcorp.buildflow.ui;
 import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
+import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
@@ -64,6 +65,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials.");
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
+            System.out.printf("%-5s%-75s%n", "[25]", "See a specific product Material tree (console).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -189,6 +191,23 @@ public class Menu {
                 System.out.print("Enter Product ID: ");
                 String id = scanner.nextLine();
                 ptVisualizer.generateGraphFromNode(id);
+                break;
+
+            case 25:
+                ProductionTree tree = Repositories.getInstance().getProductionTree();
+                System.out.println();
+                System.out.print("Enter Product Name or ID: ");
+                String rootNode = scanner.nextLine();
+
+                ProductionNode rootNodeId = tree.getNodeByNameOrId(rootNode);
+                while (rootNodeId == null) {
+                    System.out.println("Product ID not found. Please enter a valid Product ID: ");
+                    rootNode = scanner.nextLine();
+                    rootNodeId = tree.getNodeByNameOrId(rootNode);
+                }
+                ProductionTree bomTree = BomTreeBuilder.createBOMTree("textFiles/boo_v2.csv", "textFiles/items.csv", rootNodeId);
+                ptVisualizer.setProductionTree(bomTree);
+                ptVisualizer.generateGraph();
                 break;
             case 0:
                 System.out.println("Exiting...");

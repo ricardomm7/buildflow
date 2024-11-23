@@ -99,6 +99,62 @@ public class DisplayProductionTree {
     }
 
     /**
+     * Recursively generates the DOT representation for a given node and its sub-nodes.
+     *
+     * @param node           The current node to represent.
+     * @param dotContent     The StringBuilder containing the DOT content.
+     * @param visitedNodes   A set of visited nodes to prevent cycles in the DOT graph.
+     * @param processedEdges A set of processed edges to prevent duplicate edges.
+     */
+    private void generateNodeDotRepresentation(ProductionNode node, StringBuilder dotContent, Set<ProductionNode> visitedNodes, Set<String> processedEdges) {
+        if (!visitedNodes.add(node)) {
+            dotContent.append("  \"" + node.getId() + "\" [style=dashed color=red];\n");
+            return;
+        }
+
+        String shape, color;
+        if (node.isOperation()) {
+            shape = "rect"; // Retângulo para operações
+            color = "lightblue";
+        } else if (isResultOfOperation(node)) {
+            shape = "hexagon"; // Oval para itens resultantes de operações
+            color = "orange";
+        } else {
+            shape = "ellipse"; // Hexágono para itens standalone
+            color = "lightgreen";
+        }
+
+        dotContent.append("  \"" + node.getId() + "\" [shape=" + shape + " style=filled fillcolor=" + color +
+                " label=\"" + escapeForDot(node.getName()) + "\"];\n");
+
+        for (Map.Entry<ProductionNode, Double> entry : productionTree.getSubNodes(node).entrySet()) {
+            ProductionNode subNode = entry.getKey();
+            double quantity = entry.getValue();
+
+            String edgeKey = node.getId() + "--" + subNode.getId();
+            if (!processedEdges.contains(edgeKey)) {
+                processedEdges.add(edgeKey);
+                dotContent.append("  \"" + node.getId() + "\" -- \"" + subNode.getId() + "\" [label=\"" + quantity + "\"];\n");
+            }
+
+            generateNodeDotRepresentation(subNode, dotContent, visitedNodes, processedEdges);
+        }
+        visitedNodes.remove(node);
+    }
+
+
+    /**
+     * Checks if a node is the result of an operation.
+     *
+     * @param node The node to check.
+     * @return True if the node results from an operation, false otherwise.
+     */
+    private boolean isResultOfOperation(ProductionNode node) {
+        return productionTree.getAllNodes().stream()
+                .anyMatch(parent -> productionTree.getSubNodes(parent).containsKey(node) && parent.isOperation());
+    }
+
+    /**
      * Generates a Graphviz DOT representation of the production tree and writes it to a file.
      * It also calls Graphviz to generate an SVG image of the production tree.
      */
@@ -129,43 +185,6 @@ public class DisplayProductionTree {
 
         // Generate SVG image using Graphviz
         generateGraphVizSVG();
-    }
-
-    /**
-     * Recursively generates the DOT representation for a given node and its sub-nodes.
-     *
-     * @param node           The current node to represent.
-     * @param dotContent     The StringBuilder containing the DOT content.
-     * @param visitedNodes   A set of visited nodes to prevent cycles in the DOT graph.
-     * @param processedEdges A set of processed edges to prevent duplicate edges.
-     */
-    private void generateNodeDotRepresentation(ProductionNode node, StringBuilder dotContent, Set<ProductionNode> visitedNodes, Set<String> processedEdges) {
-        if (!visitedNodes.add(node)) {
-            dotContent.append("  \"" + node.getId() + "\" [style=dashed color=red];\n");
-            return;
-        }
-
-        String shape = node.isProduct() ? "box" : "hexagon";
-        String label = escapeForDot(node.getName());
-        dotContent.append("  \"" + node.getId() + "\" [shape=" + shape + " label=\"" + label + "\"];\n");
-
-        Map<ProductionNode, Double> subNodes = productionTree.getSubNodes(node);
-        for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
-            ProductionNode subNode = entry.getKey();
-            double quantity = entry.getValue();
-
-            String edgeKey = node.getId() + "--" + subNode.getId();
-
-            if (!processedEdges.contains(edgeKey)) {
-                processedEdges.add(edgeKey);
-                String edgeLabel = "" + quantity;
-                dotContent.append("  \"" + node.getId() + "\" -- \"" + subNode.getId() + "\" [label=\"" + edgeLabel + "\"];\n");
-            }
-
-            generateNodeDotRepresentation(subNode, dotContent, visitedNodes, processedEdges);
-        }
-
-        visitedNodes.remove(node);
     }
 
     /**
