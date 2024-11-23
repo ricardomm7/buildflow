@@ -251,16 +251,16 @@ public class ProductionTree {
      * @param newQuantity  The new quantity to set for the node.
      */
     public void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity) {
+        double oldQuantity = nodeToUpdate.getQuantity();
         nodeToUpdate.setQuantity(newQuantity);
 
-        // Propagate the quantity update to child nodes, ensuring connections are correctly updated
-        propagateQuantityUpdate(nodeToUpdate, newQuantity);
+        // Propagate the updated quantity to all descendant nodes
+        propagateQuantityUpdate(nodeToUpdate, newQuantity, oldQuantity);
 
-        // Update the connection quantities as well
-        updateConnectionQuantities(nodeToUpdate);
-
-        // After propagating the updates, delete the old connection and create a new one with updated quantity
+        // Update all connections' quantities based on the new quantity
+        updateConnectionQuantities(nodeToUpdate, newQuantity);
         deleteAndCreateNewConnections(nodeToUpdate, newQuantity);
+
     }
 
     /**
@@ -280,29 +280,35 @@ public class ProductionTree {
         }
     }
 
+
     /**
      * Propagates the quantity update from a parent node to its child nodes.
      *
      * @param node        The node whose quantity update needs to be propagated.
      * @param newQuantity The new quantity of the parent node.
      */
-    private void propagateQuantityUpdate(ProductionNode node, double newQuantity) {
+    private void propagateQuantityUpdate(ProductionNode node, double newQuantity, double oldQuantity) {
         if (!connections.containsKey(node)) {
             return; // No sub-nodes, nothing to propagate
         }
 
-        Map<ProductionNode, Double> subNodes = connections.get(node);
+        // Calculate the ratio for propagating the quantity change
+        double ratio = newQuantity / oldQuantity;
 
+        // Iterate through all sub-nodes (descendants)
+        Map<ProductionNode, Double> subNodes = connections.get(node);
         for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
             ProductionNode childNode = entry.getKey();
-            double relationshipMultiplier = entry.getValue();
+            double connectionQuantity = entry.getValue();
 
-            double updatedChildQuantity = newQuantity * relationshipMultiplier;
-            childNode.setQuantity(updatedChildQuantity);
+            // Recalculate the child node's new quantity
+            double newChildQuantity = newQuantity * connectionQuantity;
 
-            if (connections.containsKey(childNode)) {
-                propagateQuantityUpdate(childNode, updatedChildQuantity); // Continue propagating if necessary
-            }
+            // Update the child node's quantity
+            childNode.setQuantity(newChildQuantity);
+
+            // Recursively propagate the update to all descendants of the child node
+            propagateQuantityUpdate(childNode, newChildQuantity, childNode.getQuantity());
         }
     }
 
@@ -311,7 +317,7 @@ public class ProductionTree {
      *
      * @param nodeToUpdate The node whose connections need to be updated.
      */
-    private void updateConnectionQuantities(ProductionNode nodeToUpdate) {
+    private void updateConnectionQuantities(ProductionNode nodeToUpdate, double newQuantity) {
         if (!connections.containsKey(nodeToUpdate)) {
             return;
         }
@@ -319,10 +325,19 @@ public class ProductionTree {
         Map<ProductionNode, Double> subNodes = connections.get(nodeToUpdate);
         for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) {
             ProductionNode childNode = entry.getKey();
-            double updatedQuantity = nodeToUpdate.getQuantity() * entry.getValue();
-            entry.setValue(updatedQuantity); // Update the connection quantity in the map
+
+            // Recalculate the connection quantity
+            double connectionQuantity = entry.getValue();
+            double newConnectionQuantity = newQuantity * connectionQuantity;
+
+            // Update the connection quantity between the parent node and the child node
+            entry.setValue(newConnectionQuantity);
+
+            // Recurse into the child node to update all connections
+            updateConnectionQuantities(childNode, newConnectionQuantity);
         }
     }
+
 
     /**
      * Clears all nodes and connections from the tree.
