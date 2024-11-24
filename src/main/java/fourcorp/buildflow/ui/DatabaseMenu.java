@@ -1,8 +1,8 @@
 package fourcorp.buildflow.ui;
 
-import fourcorp.buildflow.application.DatabaseFunctionsController;
-import fourcorp.buildflow.application.DisplayProductionTree;
-import fourcorp.buildflow.application.Reader;
+import fourcorp.buildflow.application.*;
+import fourcorp.buildflow.repository.MaterialQuantityBST;
+import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
@@ -12,11 +12,25 @@ public class DatabaseMenu {
     private final Scanner scanner;
     private final DatabaseFunctionsController db;
     private final DisplayProductionTree ptVisualizer;
+    private final ProductionTreeSearcher ptService;
+    private final DisplayBST bstVisualizer;
+    private final QualityCheckManager manager;
+    private final CriticalPathCalculator calculator;
+    private final CriticalPathPrioritizer prioritize;
+    private final MaterialQuantityUpdater materialUpdater;
 
     public DatabaseMenu() {
         scanner = new Scanner(System.in);
         db = new DatabaseFunctionsController();
         ptVisualizer = new DisplayProductionTree();
+        ptService = new ProductionTreeSearcher();
+        prioritize = new CriticalPathPrioritizer();
+        manager = new QualityCheckManager();
+        bstVisualizer = new DisplayBST();
+        calculator = new CriticalPathCalculator();
+        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
+        MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
+        materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
     }
 
     public void displayMenu() throws IOException {
@@ -33,6 +47,15 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[7]", "Register new Product.");
             System.out.printf("%-5s%-75s%n", "[8]", "Product with the most operation in its BOO.");
             System.out.printf("%-5s%-75s%n", "[9]", "Register a Workstation.");
+            System.out.printf("%-5s%-75s%n", "[10]", "Search for a node by name or ID.");
+            System.out.printf("%-5s%-75s%n", "[11]", "Display materials in increasing order (by quantity).");
+            System.out.printf("%-5s%-75s%n", "[12]", "Display materials in decreasing order (by quantity).");
+            System.out.printf("%-5s%-75s%n", "[13]", "Prioritize quality checks.");
+            System.out.printf("%-5s%-75s%n", "[14]", "Update material quantity.");
+            System.out.printf("%-5s%-75s%n", "[15]", "View material quantities in the production tree.");
+            System.out.printf("%-5s%-75s%n", "[16]", "Prioritize critical path by number of dependencies.");
+            System.out.printf("%-5s%-75s%n", "[17]", "Prioritize critical path by depth Level.");
+            System.out.printf("%-5s%-75s%n", "[18]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -56,7 +79,7 @@ public class DatabaseMenu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 10) {
+                if (choice >= 0 && choice <= 18) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -184,7 +207,35 @@ public class DatabaseMenu {
                 }
 
                 db.registerWorkstation(workstationId, name, description, workstationType);
+            case 10:
+                ptService.handleNodeSearch();
+                break;
+            case 11:
+                bstVisualizer.displayMaterialsByQuantity(true);
+                break;
+            case 12:
+                bstVisualizer.displayMaterialsByQuantity(false);
+                break;
+            case 13:
+                manager.prioritizeAndExecuteQualityChecks();
+                break;
+            case 14:
+                materialUpdater.updateMaterialQuantity();
+                break;
+            case 15:
+                ptVisualizer.displayMaterialQuantitiesInProductionTree();
+                break;
+            case 16:
+                calculator.displayOperationsWithDependencies();
+                break;
+            case 17:
+                prioritize.displayCriticalPathByDepth();
+                break;
+            case 18:
+                ptService.simulateProductionExecution();
+                break;
             case 0:
+
                 return;
             default:
                 System.out.println("Invalid option.");

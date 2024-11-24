@@ -214,4 +214,9 @@ public class MaterialQuantityBST {
         consolidatedList.sort((m1, m2) -> Double.compare(m2.getQuantity(), m1.getQuantity())); // O(nlog(n))
         return consolidatedList;
     }
+
+
+    public void clear() {
+        root = null;
+    }
 }

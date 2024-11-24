@@ -346,7 +346,7 @@ public class DatabaseFunctionsController {
             String productId = fetchProductId(pid);
             if (productId == null) {
                 System.err.println("Produto não encontrado! Tente novamente.");
-                continue;
+                return;
             }
 
             System.out.println("Produto encontrado: " + productId);
