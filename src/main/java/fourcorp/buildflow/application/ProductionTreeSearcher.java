@@ -256,5 +256,75 @@ public class ProductionTreeSearcher {
             System.out.println("Processing node in BOO order: " + operation.getName() +
                     " with dependency level " + dependencyLevel); // O(1)
         }
+        Product product = convertNodesToProduct(orderedOperations);
+        List<Product> lista = new ArrayList<>();
+        lista.add(product);
+        for (Product p : lista) {
+            System.out.println("Product ID: " + p.getIdItem());
+            for (Operation op : p.getOperations()) {
+                System.out.println("Operation ID: " + op.getId());
+                System.out.println("Operation Name: " + op.getName());
+            }
+        }
+
+        simulator.runSimulation(lista,false);
+
     }
+
+
+
+    public Product convertNodesToProduct(List<ProductionNode> productionNodes) {
+        if (productionNodes == null || productionNodes.isEmpty()) {
+            throw new IllegalArgumentException("The list of ProductionNodes cannot be null or empty.");
+        }
+
+        // O último nó da lista determina o ID do produto
+        String productId = productionNodes.get(productionNodes.size() - 1).getId();
+
+        // Mapeamento de nome da operação para ID numérico da estação de trabalho
+        Map<String, String> operationNameToWorkstationIdMap = new HashMap<>();
+
+        // Preenche o mapeamento de operações para IDs numéricos das estações de trabalho
+        operationNameToWorkstationIdMap.put("assemble bench", "11");
+        operationNameToWorkstationIdMap.put("cut bench leg", "12");
+        operationNameToWorkstationIdMap.put("cut bench seat", "13");
+        operationNameToWorkstationIdMap.put("drill bench leg", "21");
+        operationNameToWorkstationIdMap.put("drill bench seat", "22");
+        operationNameToWorkstationIdMap.put("fix bolt M16 22", "31");
+        operationNameToWorkstationIdMap.put("fix nut M16 21", "32");
+        operationNameToWorkstationIdMap.put("polish bench leg", "41");
+        operationNameToWorkstationIdMap.put("polish bench seat", "42");
+        operationNameToWorkstationIdMap.put("varnish bench", "51");
+
+        // Lista para armazenar as operações com a tradução do ID da estação de trabalho
+        List<Operation> operations = new ArrayList<>();
+
+        // Converte os ProductionNodes em operações, utilizando o ID da máquina
+        for (ProductionNode node : productionNodes) {
+            if (node.isOperation()) {
+                String operationName = node.getName(); // Nome da operação
+
+                // Verifica se a operação existe no mapa e armazena o ID da estação de trabalho
+                if (operationNameToWorkstationIdMap.containsKey(operationName)) {
+                    String wsId = operationNameToWorkstationIdMap.get(operationName); // ID numérico da estação de trabalho
+
+                    // Cria a operação com o ID da máquina (workstationId)
+                    // Usamos o ID original do ProductionNode, mas associamos o workstationId da máquina
+                    Operation operation = new Operation(node.getId(), operationName, 0.0);
+                    operations.add(operation);
+                }
+            }
+        }
+
+        // Cria o produto com o ID e as operações traduzidas
+        Product product = new Product(productId, operations);
+
+        // Define o índice da operação atual como 0
+        product.setCurrentOperationIndex(0);
+
+        return product;
+    }
+
+
+
 }
