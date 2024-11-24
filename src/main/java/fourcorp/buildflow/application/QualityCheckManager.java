@@ -24,12 +24,12 @@ public class QualityCheckManager {
      */
     public void prioritizeAndExecuteQualityChecks() {
         PriorityQueue<ProductionNode> qualityChecks = new PriorityQueue<>(
-                    new Comparator<ProductionNode>() {
-                        @Override
-                        public int compare(ProductionNode o1, ProductionNode o2) {
-                            return Integer.compare(o2.getDepth(productionTree), o1.getDepth(productionTree)); // O(n)
-                        }
+                new Comparator<ProductionNode>() {
+                    @Override
+                    public int compare(ProductionNode o1, ProductionNode o2) {
+                        return Integer.compare(o2.getDepth(productionTree), o1.getDepth(productionTree)); // O(n)
                     }
+                }
         );
 
         for (ProductionNode node : productionTree.getAllNodes()) {               // O(n)

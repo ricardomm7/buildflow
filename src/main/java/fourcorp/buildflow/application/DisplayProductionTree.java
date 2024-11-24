@@ -68,37 +68,117 @@ public class DisplayProductionTree {
     }
 
     /**
-     * Generates graph from node.
-     * The complexity of this method is: O(n^2).
+     * Generates a sub-tree from the specified node identifier, updates the current production tree with the sub-tree,
+     * generates its graph, and then restores the original production tree.
+     * <p>
+     * The complexity of this method is: **O(n)**
      *
-     * @param rootId the root id
+     * @param nodeIdentifier the identifier (name or ID) of the root node to generate the sub-tree from.
+     * @throws IllegalArgumentException if the node with the specified identifier is not found in the production tree.
      */
-    public void generateGraphFromNode(String rootId) {
-        ProductionNode rootNode = productionTree.getNodeById(rootId);
-        if (rootNode == null) {
-            System.out.println("Node with ID " + rootId + " not found.");
-            return;
+    public void loadSubTreeFromNode(String nodeIdentifier) {
+        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
+        ProductionNode startNode = productionTree.getNodeByNameOrId(nodeIdentifier); // O(n)
+        if (startNode == null) {
+            throw new IllegalArgumentException("Node with identifier '" + nodeIdentifier + "' not found in the production tree.");
         }
 
-        StringBuilder dotContent = new StringBuilder();
-        dotContent.append("graph G {\n");
-        dotContent.append("  splines=false;\n");
-        dotContent.append("  nodesep=0.5;\n");
-        dotContent.append("  ranksep=0.5;\n");
+        ProductionTree newPt = createSubTree(productionTree, startNode); // O(n)
+        setProductionTree(newPt);
+        generateGraph();
+        setProductionTree(Repositories.getInstance().getProductionTree());
+    }
 
-        Set<String> processedEdges = new HashSet<>();
+    /**
+     * Creates a sub-tree starting from a specified node by copying the node and its dependencies.
+     * <p>
+     * The complexity of this method is: **O(n)**.
+     *
+     * @param originalTree the original production tree.
+     * @param startNode    the starting node to create the sub-tree from.
+     * @return a new production tree containing the sub-tree rooted at the specified node.
+     */
+    private ProductionTree createSubTree(ProductionTree originalTree, ProductionNode startNode) {
+        ProductionTree subTree = new ProductionTree();
 
-        generateNodeDotRepresentation(rootNode, dotContent, new HashSet<>(), processedEdges); // O(n^2)
-        dotContent.append("}\n");
+        ProductionNode newStartNode = copyNode(startNode);
+        subTree.addNode(newStartNode); // O(n)
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("outFiles/production_tree.dot"))) {
-            writer.write(dotContent.toString());
-            System.out.println("File .dot generated for node " + rootId + "!");
-        } catch (IOException e) {
-            System.err.println("Error writing to .dot file: " + e.getMessage());
+        addNodeDependenciesIncludingResults(originalTree, subTree, startNode, newStartNode); // O(n)
+
+        return subTree;
+    }
+
+    /**
+     * Recursively adds dependencies and results of a node to the sub-tree.
+     * <p>
+     * The complexity of this method is: **O(n^2)**.
+     *
+     * @param originalTree the original production tree containing all nodes and dependencies.
+     * @param subTree      the sub-tree being built.
+     * @param originalNode the current node in the original tree.
+     * @param newNode      the corresponding node in the sub-tree.
+     */
+    private void addNodeDependenciesIncludingResults(ProductionTree originalTree, ProductionTree subTree, ProductionNode originalNode, ProductionNode newNode) {
+        for (var entry : originalTree.getSubNodes(originalNode).entrySet()) { // O(n)
+            ProductionNode originalChild = entry.getKey();
+            Double quantity = entry.getValue();
+
+            ProductionNode newChild = subTree.getNodeById(originalChild.getId()); // O(1)
+            if (newChild == null) {
+                newChild = copyNode(originalChild);
+                subTree.addNode(newChild);
+            }
+
+            subTree.addDependencyBom(newNode, newChild, quantity);
+
+            if (!originalChild.isProduct()) {
+                processOperationResults(originalTree, subTree, originalChild, newChild); // O(n^2)
+            }
+
+            addNodeDependenciesIncludingResults(originalTree, subTree, originalChild, newChild);  // O(1)
         }
+    }
 
-        generateGraphVizSVG();
+    /**
+     * Processes operation results by identifying and copying nodes that depend on a specified operation.
+     * <p>
+     * The complexity of this method is: **O(n)**.
+     *
+     * @param originalTree the original production tree.
+     * @param subTree      the sub-tree being built.
+     * @param operation    the operation node in the original tree.
+     * @param newOperation the corresponding operation node in the sub-tree.
+     */
+    private void processOperationResults(ProductionTree originalTree, ProductionTree subTree, ProductionNode operation, ProductionNode newOperation) {
+        for (ProductionNode node : originalTree.getAllNodes()) { // O(n)
+            Map<ProductionNode, Double> dependencies = originalTree.getSubNodes(node);
+
+            if (dependencies.containsKey(operation)) {
+                ProductionNode resultNode = subTree.getNodeById(node.getId()); // O(1)
+                if (resultNode == null) {
+                    resultNode = copyNode(node);
+                    subTree.addNode(resultNode);
+                }
+
+                Double resultQuantity = dependencies.get(operation);
+                subTree.addDependencyBom(resultNode, newOperation, resultQuantity);
+            }
+        }
+    }
+
+    /**
+     * Creates a copy of a production node with the same properties.
+     * <p>
+     * The complexity of this method is: **O(1)**, as it involves creating and initializing a single object.
+     *
+     * @param original the original production node to copy.
+     * @return a new production node with the same properties as the original.
+     */
+    private ProductionNode copyNode(ProductionNode original) {
+        ProductionNode copy = new ProductionNode(original.getId(), original.getName(), original.isProduct());
+        copy.setQuantity(original.getQuantity());  // O(1)
+        return copy;
     }
 
     /**

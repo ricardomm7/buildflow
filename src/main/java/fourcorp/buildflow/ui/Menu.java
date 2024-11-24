@@ -190,7 +190,7 @@ public class Menu {
                 System.out.println();
                 System.out.print("Enter Product ID: ");
                 String id = scanner.nextLine();
-                ptVisualizer.generateGraphFromNode(id);
+                ptVisualizer.loadSubTreeFromNode(id);
                 break;
 
             case 25:
