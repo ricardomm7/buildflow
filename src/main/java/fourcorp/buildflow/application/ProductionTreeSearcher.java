@@ -7,6 +7,7 @@ import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * The {@code ProductionTreeSearcher} class is responsible for searching and managing operations and materials within a production tree.
@@ -223,41 +224,44 @@ public class ProductionTreeSearcher {
      * Simulates the execution of production operations based on the dependency levels calculated earlier.
      */
     public void simulateProductionExecution() {
-        Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>(); // O(1)
+        Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>();
 
         // Comparador para ordenar os nós com base no nível de dependência
         Comparator<ProductionNode> comparator = (node1, node2) ->
-                Integer.compare(nodeDependencyLevels.get(node2), nodeDependencyLevels.get(node1)); // O(1)
+                Integer.compare(nodeDependencyLevels.get(node2), nodeDependencyLevels.get(node1));
 
         // Árvore AVL com o comparador
-        operationAVL = new AVLTree<>(comparator); // O(1)
+        operationAVL = new AVLTree<>(comparator);
 
         // Preenche a árvore AVL com os nós ordenados por dependência
-        for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
-            if (node.isOperation()) { // O(1)
-                calculateDependencyLevel(node, nodeDependencyLevels); // O(n)
-                int dependencyLevel = nodeDependencyLevels.get(node); // O(1)
-                operationAVL.insert(node); // O(log n)
-                System.out.println("Inserted " + node.getName() + " into AVL tree with dependency level " + dependencyLevel); // O(1)
+        for (ProductionNode node : productionTree.getAllNodes()) {
+            if (node.isOperation()) {
+                calculateDependencyLevel(node, nodeDependencyLevels);
+                int dependencyLevel = nodeDependencyLevels.get(node);
+                operationAVL.insert(node);
+                System.out.println("Inserted " + node.getName() + " into AVL tree with dependency level " + dependencyLevel);
             }
         }
 
         // Lista para armazenar as operações ordenadas por dependência
         List<ProductionNode> orderedOperations = new ArrayList<>();
-        System.out.println("Processing operations in BOO order:"); // O(1)
+        System.out.println("Processing operations in BOO order:");
 
         // Adiciona as operações na lista com base na travessia em ordem da árvore AVL
-        operationAVL.inOrderTraversal(nodeDependencyLevels, orderedOperations); // O(n)
+        operationAVL.inOrderTraversal(nodeDependencyLevels, orderedOperations);
 
         // Exibe as operações na ordem desejada
         for (ProductionNode operation : orderedOperations) {
             int dependencyLevel = nodeDependencyLevels.get(operation);
             System.out.println("Processing node in BOO order: " + operation.getName() +
-                    " with dependency level " + dependencyLevel); // O(1)
+                    " with dependency level " + dependencyLevel);
         }
+
+        // Convertendo nós para produto
         Product product = convertNodesToProduct(orderedOperations);
         List<Product> lista = new ArrayList<>();
         lista.add(product);
+
         for (Product p : lista) {
             System.out.println("Product ID: " + p.getIdItem());
             for (Operation op : p.getOperations()) {
@@ -266,10 +270,25 @@ public class ProductionTreeSearcher {
             }
         }
 
-        simulator.runSimulation(lista,false);
+        /* Executor para limitar o tempo de execução do método runSimulation*/
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<?> future = executor.submit(() -> simulator.runSimulation(lista, false));
 
+        try {
+            // Aguarda a execução com timeout de 3 segundos
+            future.get(3, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            System.err.println("Simulation timed out after 3 seconds. Returning to Menu...");
+            future.cancel(true); // Interrompe a execução da thread
+            return; // Retorna para evitar continuar o processamento
+        } catch (ExecutionException e) {
+            System.err.println("An error occurred during simulation: " + e.getCause().getMessage());
+        } catch (InterruptedException e) {
+            System.err.println("Simulation was interrupted.");
+        } finally {
+            executor.shutdownNow(); // Garante que o executor será encerrado
+        }
     }
-
 
 
     public Product convertNodesToProduct(List<ProductionNode> productionNodes) {
@@ -277,13 +296,9 @@ public class ProductionTreeSearcher {
             throw new IllegalArgumentException("The list of ProductionNodes cannot be null or empty.");
         }
 
-        // O último nó da lista determina o ID do produto
         String productId = productionNodes.get(productionNodes.size() - 1).getId();
 
-        // Mapeamento de nome da operação para ID numérico da estação de trabalho
         Map<String, String> operationNameToWorkstationIdMap = new HashMap<>();
-
-        // Preenche o mapeamento de operações para IDs numéricos das estações de trabalho
         operationNameToWorkstationIdMap.put("assemble bench", "11");
         operationNameToWorkstationIdMap.put("cut bench leg", "12");
         operationNameToWorkstationIdMap.put("cut bench seat", "13");
@@ -295,32 +310,22 @@ public class ProductionTreeSearcher {
         operationNameToWorkstationIdMap.put("polish bench seat", "42");
         operationNameToWorkstationIdMap.put("varnish bench", "51");
 
-        // Lista para armazenar as operações com a tradução do ID da estação de trabalho
         List<Operation> operations = new ArrayList<>();
-
-        // Converte os ProductionNodes em operações, utilizando o ID da máquina
         for (ProductionNode node : productionNodes) {
             if (node.isOperation()) {
-                String operationName = node.getName(); // Nome da operação
-
-                // Verifica se a operação existe no mapa e armazena o ID da estação de trabalho
+                String operationName = node.getName();
                 if (operationNameToWorkstationIdMap.containsKey(operationName)) {
-                    String wsId = operationNameToWorkstationIdMap.get(operationName); // ID numérico da estação de trabalho
-
-                    // Cria a operação com o ID da máquina (workstationId)
-                    // Usamos o ID original do ProductionNode, mas associamos o workstationId da máquina
+                    String wsId = operationNameToWorkstationIdMap.get(operationName);
                     Operation operation = new Operation(node.getId(), operationName, 0.0);
                     operations.add(operation);
                 }
             }
         }
 
-        // Cria o produto com o ID e as operações traduzidas
         Product product = new Product(productId, operations);
-
-        // Define o índice da operação atual como 0
         product.setCurrentOperationIndex(0);
 
         return product;
     }
 }
+
