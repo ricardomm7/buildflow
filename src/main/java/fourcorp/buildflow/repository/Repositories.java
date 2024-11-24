@@ -9,7 +9,7 @@ public class Repositories {
     private final ProductPriorityLine productPriorityLine;
     private final WorkstationsPerOperation workstationsPerOperation;
     private static ProductionTree productionTree;
-    private final MaterialQuantityBST materialBST;
+    private static  MaterialQuantityBST materialBST;
 
     /**
      * Private constructor to initialize the repositories.
@@ -96,6 +96,7 @@ public class Repositories {
      */
     public static void clear() {
         productionTree.clear();
+        materialBST.clear();
     }
 
 }
