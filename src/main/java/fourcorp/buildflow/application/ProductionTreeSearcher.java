@@ -191,32 +191,6 @@ public class ProductionTreeSearcher {
         nodeDependencyLevels.put(node, maxDependencyLevel); // O(1)
     }
 
-    /**
-     * Extracts the Bill of Operations (BOO) order by calculating the dependency levels of operations and simulating the production execution.
-     *//*
-    public void extractBOOAndSimulate() {
-        Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>(); // O(1)
-
-        Comparator<ProductionNode> comparator = (node1, node2) -> { // O(1)
-            Integer level1 = nodeDependencyLevels.getOrDefault(node1, 0); // O(1)
-            Integer level2 = nodeDependencyLevels.getOrDefault(node2, 0); // O(1)
-            return level1.compareTo(level2); // O(1)
-        };
-
-        AVLTree<ProductionNode> operationAVL = new AVLTree<>(comparator); // O(1)
-
-        for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
-            if (node.isOperation()) { // O(1)
-                calculateDependencyLevel(node, nodeDependencyLevels); // O(n)
-                operationAVL.insert(node); // O(log n)
-                System.out.println("Inserted " + node.getName() + " into AVL tree with dependency level " +
-                        nodeDependencyLevels.get(node)); // O(1)
-            }
-        }
-
-        System.out.println("Processing operations in BOO order:"); // O(1)
-        operationAVL.inOrderTraversal(nodeDependencyLevels); // O(n)
-    }*/
 
     /**
      * Simulates the execution of production operations based on the dependency levels calculated earlier.
