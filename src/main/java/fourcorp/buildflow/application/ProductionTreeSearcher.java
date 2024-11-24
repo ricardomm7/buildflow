@@ -4,6 +4,8 @@ import fourcorp.buildflow.domain.Operation;
 import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
+import fourcorp.buildflow.application.Simulator;
+import  fourcorp.buildflow.domain.Product;
 
 import java.util.*;
 
@@ -17,6 +19,7 @@ public class ProductionTreeSearcher {
     private final ProductionTree productionTree;
     private Map<ProductionNode, Map<ProductionNode, Double>> connections;
     private AVLTree<ProductionNode> operationAVL;
+    private Simulator simulator = new Simulator();
 
 
     /**
@@ -192,7 +195,7 @@ public class ProductionTreeSearcher {
 
     /**
      * Extracts the Bill of Operations (BOO) order by calculating the dependency levels of operations and simulating the production execution.
-     */
+     *//*
     public void extractBOOAndSimulate() {
         Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>(); // O(1)
 
@@ -215,7 +218,7 @@ public class ProductionTreeSearcher {
 
         System.out.println("Processing operations in BOO order:"); // O(1)
         operationAVL.inOrderTraversal(nodeDependencyLevels); // O(n)
-    }
+    }*/
 
     /**
      * Simulates the execution of production operations based on the dependency levels calculated earlier.
@@ -223,11 +226,14 @@ public class ProductionTreeSearcher {
     public void simulateProductionExecution() {
         Map<ProductionNode, Integer> nodeDependencyLevels = new HashMap<>(); // O(1)
 
-        Comparator<ProductionNode> comparator = (node1, node2) -> // O(1)
+        // Comparador para ordenar os nós com base no nível de dependência
+        Comparator<ProductionNode> comparator = (node1, node2) ->
                 Integer.compare(nodeDependencyLevels.get(node2), nodeDependencyLevels.get(node1)); // O(1)
 
+        // Árvore AVL com o comparador
         operationAVL = new AVLTree<>(comparator); // O(1)
 
+        // Preenche a árvore AVL com os nós ordenados por dependência
         for (ProductionNode node : productionTree.getAllNodes()) { // O(n)
             if (node.isOperation()) { // O(1)
                 calculateDependencyLevel(node, nodeDependencyLevels); // O(n)
@@ -237,7 +243,18 @@ public class ProductionTreeSearcher {
             }
         }
 
+        // Lista para armazenar as operações ordenadas por dependência
+        List<ProductionNode> orderedOperations = new ArrayList<>();
         System.out.println("Processing operations in BOO order:"); // O(1)
-        operationAVL.inOrderTraversal(nodeDependencyLevels); // O(n)
+
+        // Adiciona as operações na lista com base na travessia em ordem da árvore AVL
+        operationAVL.inOrderTraversal(nodeDependencyLevels, orderedOperations); // O(n)
+
+        // Exibe as operações na ordem desejada
+        for (ProductionNode operation : orderedOperations) {
+            int dependencyLevel = nodeDependencyLevels.get(operation);
+            System.out.println("Processing node in BOO order: " + operation.getName() +
+                    " with dependency level " + dependencyLevel); // O(1)
+        }
     }
 }

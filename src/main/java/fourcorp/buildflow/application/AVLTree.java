@@ -3,6 +3,7 @@ package fourcorp.buildflow.application;
 import fourcorp.buildflow.domain.ProductionNode;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -179,8 +180,8 @@ public class AVLTree<T> {
      *
      * @param nodeDependencyLevels a map containing the dependency levels of {@link ProductionNode}s.
      */
-    public void inOrderTraversal(Map<ProductionNode, Integer> nodeDependencyLevels) {
-        inOrderRec(root, nodeDependencyLevels);
+    public void inOrderTraversal(Map<ProductionNode, Integer> nodeDependencyLevels, List<ProductionNode> orderedOperations) {
+        inOrderRec(root, nodeDependencyLevels, orderedOperations);
     }
 
     /**
@@ -189,21 +190,20 @@ public class AVLTree<T> {
      * @param node                 the root of the subtree.
      * @param nodeDependencyLevels a map containing the dependency levels of {@link ProductionNode}s.
      */
-    private void inOrderRec(Node node, Map<ProductionNode, Integer> nodeDependencyLevels) {
+
+
+    private void inOrderRec(Node node, Map<ProductionNode, Integer> nodeDependencyLevels, List<ProductionNode> orderedOperations) {
         if (node != null) {
             // Traverse the left subtree first
-            inOrderRec(node.left, nodeDependencyLevels);
+            inOrderRec(node.left, nodeDependencyLevels, orderedOperations);
 
             // Process the current node
             ProductionNode productionNode = (ProductionNode) node.key;
-            int dependencyLevel = nodeDependencyLevels.getOrDefault(productionNode, -1);
-
-            // Simulate processing
-            System.out.println("Processing node in BOO order: " + productionNode.getName() +
-                    " with dependency level " + dependencyLevel);
+            orderedOperations.add(productionNode); // Adiciona o nó na lista de operações
 
             // Traverse the right subtree
-            inOrderRec(node.right, nodeDependencyLevels);
+            inOrderRec(node.right, nodeDependencyLevels, orderedOperations);
         }
     }
+
 }
