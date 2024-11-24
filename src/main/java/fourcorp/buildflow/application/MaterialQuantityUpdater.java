@@ -56,9 +56,9 @@ public class MaterialQuantityUpdater {
             System.out.println("Material found:"); // O(1)
             ProductionNode node = searchResults.get(0); // O(1)
             System.out.printf("%s (ID: %s) | Current Quantity: %.2f%n", node.getName(), node.getId(), node.getQuantity()); // O(1)
-            System.out.print("Would you like to update this material's quantity? (y/n): "); // O(1)
-            String confirmation = scanner.nextLine(); // O(1)
-            if (confirmation.equalsIgnoreCase("y")) { // O(1)
+
+            // Confirmation step with retry on invalid input
+            if (confirmUpdate()) { // O(n)
                 updateQuantityForNode(searchResults.get(0)); // O(n) for searching & updating node in ProductionTree, O(n) for updating MaterialQuantityBST, O(n) for updating connections in ProductionTree
             }
             return; // O(1)
@@ -75,6 +75,28 @@ public class MaterialQuantityUpdater {
         System.out.printf("Current quantity of '%s': %.2f%n", selectedNode.getName(), selectedNode.getQuantity()); // O(1)
         updateQuantityForNode(selectedNode); // O(n) for searching & updating node in ProductionTree, O(n) for updating MaterialQuantityBST, O(n) for updating connections in ProductionTree
     }
+
+    /**
+     * Prompts the user to confirm if they want to update the material's quantity.
+     * Ensures valid input ("y" or "n") is provided, and asks the user to try again for invalid inputs.
+     *
+     * @return true if the user confirms ("y"), false otherwise.
+     */
+    private boolean confirmUpdate() {
+        while (true) { // O(n)
+            System.out.print("Would you like to update this material's quantity? (y/n): "); // O(1)
+            String confirmation = scanner.nextLine().trim(); // O(1)
+            if (confirmation.equalsIgnoreCase("y")) { // O(1)
+                return true; // User confirmed update
+            } else if (confirmation.equalsIgnoreCase("n")) { // O(1)
+                System.out.println("Update canceled."); // O(1)
+                return false; // User declined update
+            } else { // O(1)
+                System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no."); // O(1)
+            }
+        }
+    }
+
 
 
     /**
@@ -104,9 +126,14 @@ public class MaterialQuantityUpdater {
      * @param selectedNode The production node whose quantity is being updated.
      */
     private void updateQuantityForNode(ProductionNode selectedNode) {
-        System.out.print("Enter the new quantity: "); // O(1)
-        double newQuantity = getNewQuantity(); // O(n)
         double previousQuantity = selectedNode.getQuantity(); // O(1)
+
+        // Prompt user for a valid quantity
+        double newQuantity = getNewQuantity(); // O(n)
+        if (newQuantity == -1) { // Check for cancellation
+            System.out.println("No changes were made to the material quantity."); // O(1)
+            return; // O(1)
+        }
 
         // Ensure the correct node is retrieved from ProductionTree
         ProductionNode nodeToUpdate = productionTree.getNodeById(selectedNode.getId()); // O(n)
@@ -132,15 +159,21 @@ public class MaterialQuantityUpdater {
      */
     private double getNewQuantity() {
         while (true) { // O(n)
+            System.out.print("Enter a new quantity (or type 'cancel' to exit): "); // O(1)
+            String input = scanner.nextLine(); // O(1)
+            if (input.equalsIgnoreCase("cancel")) { // O(1)
+                System.out.println("Operation canceled by user."); // O(1)
+                return -1; // Indicates cancellation
+            }
             try {
-                double newQuantity = Double.parseDouble(scanner.nextLine()); // O(1)
-                if (newQuantity < 0) { // O(1)
-                    System.out.print("Invalid input. Quantity cannot be negative. Please enter a non-negative value: "); // O(1)
+                double newQuantity = Double.parseDouble(input); // O(1)
+                if (newQuantity <= 0) { // O(1)
+                    System.out.println("Invalid input. Quantity must be greater than zero."); // O(1)
                 } else { // O(1)
                     return newQuantity; // O(1)
                 }
             } catch (NumberFormatException e) { // O(1)
-                System.out.print("Invalid input. Please enter a numeric value: "); // O(1)
+                System.out.println("Invalid input. Please enter a numeric value greater than zero."); // O(1)
             }
         }
     }
