@@ -82,7 +82,7 @@ public class ProductionTreeSearcher {
      * @param node the production node whose details are to be retrieved.
      * @return a string containing the details of the node.
      */
-    private String getNodeDetails(ProductionNode node) {
+    public String getNodeDetails(ProductionNode node) {
         StringBuilder result = new StringBuilder("Node Details:\n"); // O(1)
         result.append("ID: ").append(node.getId()).append("\n"); // O(1)
         result.append("Name: ").append(node.getName()).append("\n"); // O(1)

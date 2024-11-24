@@ -73,7 +73,7 @@ public class MaterialQuantityUpdater {
         ProductionNode selectedNode = searchResults.get(choice - 1); // O(1)
 
         System.out.printf("Current quantity of '%s': %.2f%n", selectedNode.getName(), selectedNode.getQuantity()); // O(1)
-        updateQuantityForNode(selectedNode); // O(n) for searching & updating node in ProductionTree, O(n) for updating MaterialQuantityBST, O(n) for updating connections in ProductionTree
+        updateQuantityForNode(selectedNode); // O(n)
     }
 
     /**
@@ -82,7 +82,7 @@ public class MaterialQuantityUpdater {
      *
      * @return true if the user confirms ("y"), false otherwise.
      */
-    private boolean confirmUpdate() {
+    public boolean confirmUpdate() {
         while (true) { // O(n)
             System.out.print("Would you like to update this material's quantity? (y/n): "); // O(1)
             String confirmation = scanner.nextLine().trim(); // O(1)
@@ -125,7 +125,7 @@ public class MaterialQuantityUpdater {
      *
      * @param selectedNode The production node whose quantity is being updated.
      */
-    private void updateQuantityForNode(ProductionNode selectedNode) {
+    void updateQuantityForNode(ProductionNode selectedNode) {
         double previousQuantity = selectedNode.getQuantity(); // O(1)
 
         // Prompt user for a valid quantity
@@ -142,11 +142,7 @@ public class MaterialQuantityUpdater {
             return; // O(1)
         }
 
-        // Update the quantity in MaterialQuantityBST
-        materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity); // O(n)
-
-        // Update the quantity in the ProductionTree and propagate changes
-        productionTree.updateConnectionsQuantity(nodeToUpdate, newQuantity); // O(n)
+        productionTree.updateConnectionsQuantity(nodeToUpdate, newQuantity, materialQuantityBST); // O(n)
 
         System.out.println("Quantity updated successfully!"); // O(1)
         System.out.printf("Updated quantity for '%s': %.2f (Previous: %.2f)%n", nodeToUpdate.getName(), nodeToUpdate.getQuantity(), previousQuantity); // O(1)
@@ -157,7 +153,7 @@ public class MaterialQuantityUpdater {
      *
      * @return The validated quantity entered by the user.
      */
-    private double getNewQuantity() {
+    public double getNewQuantity() {
         while (true) { // O(n)
             System.out.print("Enter a new quantity (or type 'cancel' to exit): "); // O(1)
             String input = scanner.nextLine(); // O(1)
