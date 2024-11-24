@@ -94,16 +94,19 @@ public class MaterialQuantityBST {
      * Updates the quantity of an existing material in the tree.
      * If the material is not found, no changes will be made.
      *
+     * Complexity: O(n)
+     *
      * @param material    The material whose quantity needs to be updated.
      * @param newQuantity The new quantity for the material.
      */
     public void updateQuantity(ProductionNode material, double newQuantity) {
-        root = updateQuantity(root, material, newQuantity);  // O(n)
+        root = updateQuantity(root, material, newQuantity); //O(n)
     }
 
     /**
      * Helper method to recursively update the quantity of a material in the tree.
-     * The complexity of this method is: O(n).
+     *
+     * Complexity: O(n)
      *
      * @param node        The current node being examined.
      * @param material    The material whose quantity needs to be updated.
@@ -112,25 +115,25 @@ public class MaterialQuantityBST {
      */
     private Node updateQuantity(Node node, ProductionNode material, double newQuantity) {
         if (node == null) {
-            return null;  // O(1)
+            return null;
         }
 
-        int compare = material.getId().compareTo(node.materials.get(0).getId());  // O(1)
+        int compare = material.getId().compareTo(node.materials.get(0).getId());
         if (compare < 0) {
-            node.left = updateQuantity(node.left, material, newQuantity);  // O(n)
+            node.left = updateQuantity(node.left, material, newQuantity); //O(n)
         } else if (compare > 0) {
-            node.right = updateQuantity(node.right, material, newQuantity);  // O(n)
+            node.right = updateQuantity(node.right, material, newQuantity); //O(n)
         } else {
             // Update the quantity of the material in the current node
             for (ProductionNode existingMaterial : node.materials) {  // O(n)
-                if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {  // O(1)
-                    existingMaterial.setQuantity(newQuantity);  // O(1)
-                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum();  // O(1)
-                    break;  // O(1)
+                if (existingMaterial.getId().equals(material.getId()) && existingMaterial.getName().equals(material.getName())) {
+                    existingMaterial.setQuantity(newQuantity);
+                    node.quantity = node.materials.stream().mapToDouble(ProductionNode::getQuantity).sum();
+                    break;
                 }
             }
         }
-        return node;  // O(1)
+        return node;
     }
 
     /**

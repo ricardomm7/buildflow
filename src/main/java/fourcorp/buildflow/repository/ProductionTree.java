@@ -268,75 +268,79 @@ public class ProductionTree {
     }
 
     /**
-     * Updates the quantity of a given node and propagates the update to all dependent nodes.
-     * The complexity of this method is: O(n).
+     * Updates the connections and quantities for a given node in the production tree.
      *
-     * @param nodeToUpdate The node whose quantity needs to be updated.
-     * @param newQuantity  The new quantity to set for the node.
+     * Complexity: O(n²)
+     *
+     * @param nodeToUpdate The node whose connections need to be updated
+     * @param newQuantity The new quantity value
+     * @param materialQuantityBST The BST to update quantities
      */
     public void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity, MaterialQuantityBST materialQuantityBST) {
-        nodeToUpdate.setQuantity(newQuantity); // O(1)
+        nodeToUpdate.setQuantity(newQuantity);
 
-        propagateQuantityUpdate(nodeToUpdate, newQuantity, materialQuantityBST); // O(n)
+        propagateQuantityUpdate(nodeToUpdate, newQuantity, materialQuantityBST); // O(n²)
 
         deleteAndCreateNewConnections(nodeToUpdate, newQuantity); // O(n)
 
-        materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity); // O(1)
+        materialQuantityBST.updateQuantity(nodeToUpdate, newQuantity); // O(n)
 
-    } // Complexidade: O(n)
+    }
 
     /**
      * Deletes and recreates connections with updated quantities after a node's quantity is updated.
-     * The complexity of this method is: O(n).
      *
-     * @param nodeToUpdate The node whose connections need to be updated.
-     * @param newQuantity  The updated quantity.
+     * Complexity: O(n)
+     *
+     * @param nodeToUpdate The node whose connections need to be updated
+     * @param newQuantity The updated quantity
      */
     public void deleteAndCreateNewConnections(ProductionNode nodeToUpdate, double newQuantity) {
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) { // O(n)
-            Map<ProductionNode, Double> subNodes = entry.getValue(); // O(1)
-
-            if (subNodes.containsKey(nodeToUpdate)) { // O(1)
-                subNodes.remove(nodeToUpdate); // O(1)
-                subNodes.put(nodeToUpdate, newQuantity);// O(1)
+            Map<ProductionNode, Double> subNodes = entry.getValue();
+            if (subNodes.containsKey(nodeToUpdate)) {
+                subNodes.remove(nodeToUpdate);
+                subNodes.put(nodeToUpdate, newQuantity);
             }
         }
-    } // Complexidade: O(n)
+    }
 
 
     /**
-     * Propagates the quantity update from a parent node to its child nodes.
-     * The complexity of this method is: O(n^2).
+     * Propagates the quantity update from a parent node to its child nodes and their descendants.
      *
-     * @param node        The node whose quantity update needs to be propagated.
-     * @param newQuantity The new quantity of the parent node.
+     * ime Complexity: O(n²)
+     *
+     * @param node The node whose quantity update needs to be propagated
+     * @param newQuantity The new quantity of the parent node
+     * @param materialQuantityBST The BST to update quantities
      */
     private void propagateQuantityUpdate(ProductionNode node, double newQuantity, MaterialQuantityBST materialQuantityBST) {
         if (!connections.containsKey(node)) {
             return;
         }
 
-        Map<ProductionNode, Double> subNodes = connections.get(node); // O(1)
+        Map<ProductionNode, Double> subNodes = connections.get(node);
 
         List<ProductionNode> nodesToUpdate = new ArrayList<>();
 
         for (Map.Entry<ProductionNode, Double> entry : subNodes.entrySet()) { // O(n)
-            ProductionNode childNode = entry.getKey(); // O(1)
-            double connectionQuantity = entry.getValue(); // O(1)
-            double newChildQuantity = newQuantity * connectionQuantity; // O(1)
+            ProductionNode childNode = entry.getKey();
+            double connectionQuantity = entry.getValue();
+            double newChildQuantity = newQuantity * connectionQuantity;
 
-            nodesToUpdate.add(childNode); // O(1)
+            nodesToUpdate.add(childNode);
 
-            childNode.setQuantity(newChildQuantity); // O(1)
+            childNode.setQuantity(newChildQuantity);
 
-            materialQuantityBST.updateQuantity(childNode, newChildQuantity); // O(1)
+            materialQuantityBST.updateQuantity(childNode, newChildQuantity); // O(n)
         }
 
-        for (ProductionNode childNode : nodesToUpdate) { // O(n)
+        for (ProductionNode childNode : nodesToUpdate) { // O(n²)
             propagateQuantityUpdate(childNode, childNode.getQuantity(), materialQuantityBST); // O(n)
             deleteAndCreateNewConnections(childNode, childNode.getQuantity()); // O(n)
         }
-    } // Complexidade: O(n^2)
+    }
 
 
     /**
