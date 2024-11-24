@@ -11,8 +11,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class for building a Bill of Materials (BOM) tree from input files containing production and item data.
+ * The class processes a BOO (Bill of Operations) file and an items file to construct a {@link ProductionTree}.
+ */
 public class BomTreeBuilder {
 
+    /**
+     * Creates a Bill of Materials (BOM) tree from a BOO file and an items file, starting from the requested production node.
+     * <p>
+     * This method reads and parses data from the BOO and items files to create a hierarchical representation of
+     * production nodes and their dependencies in a {@link ProductionTree}.
+     * <p>
+     * **Steps**:
+     * 1. Parse the items file to map item IDs to their names.
+     * 2. Parse the BOO file to extract direct connections and operation dependencies.
+     * 3. Build the production tree recursively starting from the given requested node.
+     *
+     * @param booFilePath   the path to the BOO file (Bill of Operations).
+     * @param itemsFilePath the path to the items file, containing item IDs and names.
+     * @param requestedNode the starting node for the tree, representing the product to be built.
+     * @return a {@link ProductionTree} representing the BOM rooted at the requested node.
+     * @throws IOException if an error occurs while reading the files.
+     */
     public static ProductionTree createBOMTree(String booFilePath, String itemsFilePath, ProductionNode requestedNode) throws IOException {
         ProductionTree tree = new ProductionTree();
         Map<String, String> itemNames = new HashMap<>();
@@ -89,6 +110,24 @@ public class BomTreeBuilder {
         return tree;
     }
 
+    /**
+     * Recursively builds the BOM tree starting from a given node.
+     * <p>
+     * This method processes direct connections and operation dependencies to populate the {@link ProductionTree}
+     * with nodes and their hierarchical relationships.
+     * <p>
+     * **Steps**:
+     * 1. For direct connections, add child nodes to the tree and update their quantities.
+     * 2. For operation dependencies, resolve dependencies and their quantities to build the tree structure.
+     *
+     * @param currentNode           the current node being processed in the tree.
+     * @param tree                  the {@link ProductionTree} being built.
+     * @param itemNames             a map of item IDs to their names.
+     * @param directConnections     a map of item IDs to their direct child connections and quantities.
+     * @param operationResults      a map of operation IDs to their result item IDs.
+     * @param operationDependencies a map of operation IDs to their dependencies and quantities.
+     * @param processedOperations   a map tracking already processed operations to avoid duplication.
+     */
     private static void buildTreeRecursively(ProductionNode currentNode,
                                              ProductionTree tree,
                                              Map<String, String> itemNames,
@@ -167,19 +206,41 @@ public class BomTreeBuilder {
         }
     }
 
+    /**
+     * A simple generic class representing a pair of values.
+     *
+     * @param <T> the type of the first value.
+     * @param <U> the type of the second value.
+     */
     private static class Pair<T, U> {
         private final T first;
         private final U second;
 
+        /**
+         * Constructs a new pair with the given values.
+         *
+         * @param first  the first value.
+         * @param second the second value.
+         */
         public Pair(T first, U second) {
             this.first = first;
             this.second = second;
         }
 
+        /**
+         * Returns the first value of the pair.
+         *
+         * @return the first value.
+         */
         public T getFirst() {
             return first;
         }
 
+        /**
+         * Returns the second value of the pair.
+         *
+         * @return the second value.
+         */
         public U getSecond() {
             return second;
         }
