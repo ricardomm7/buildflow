@@ -93,7 +93,7 @@ public class MaterialQuantityBST {
     /**
      * Updates the quantity of an existing material in the tree.
      * If the material is not found, no changes will be made.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @param material    The material whose quantity needs to be updated.
@@ -105,7 +105,7 @@ public class MaterialQuantityBST {
 
     /**
      * Helper method to recursively update the quantity of a material in the tree.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @param node        The current node being examined.

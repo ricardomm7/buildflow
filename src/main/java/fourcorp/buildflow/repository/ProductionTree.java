@@ -269,11 +269,11 @@ public class ProductionTree {
 
     /**
      * Updates the connections and quantities for a given node in the production tree.
-     *
+     * <p>
      * Complexity: O(n²)
      *
-     * @param nodeToUpdate The node whose connections need to be updated
-     * @param newQuantity The new quantity value
+     * @param nodeToUpdate        The node whose connections need to be updated
+     * @param newQuantity         The new quantity value
      * @param materialQuantityBST The BST to update quantities
      */
     public void updateConnectionsQuantity(ProductionNode nodeToUpdate, double newQuantity, MaterialQuantityBST materialQuantityBST) {
@@ -289,11 +289,11 @@ public class ProductionTree {
 
     /**
      * Deletes and recreates connections with updated quantities after a node's quantity is updated.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @param nodeToUpdate The node whose connections need to be updated
-     * @param newQuantity The updated quantity
+     * @param newQuantity  The updated quantity
      */
     public void deleteAndCreateNewConnections(ProductionNode nodeToUpdate, double newQuantity) {
         for (Map.Entry<ProductionNode, Map<ProductionNode, Double>> entry : connections.entrySet()) { // O(n)
@@ -308,11 +308,11 @@ public class ProductionTree {
 
     /**
      * Propagates the quantity update from a parent node to its child nodes and their descendants.
-     *
+     * <p>
      * ime Complexity: O(n²)
      *
-     * @param node The node whose quantity update needs to be propagated
-     * @param newQuantity The new quantity of the parent node
+     * @param node                The node whose quantity update needs to be propagated
+     * @param newQuantity         The new quantity of the parent node
      * @param materialQuantityBST The BST to update quantities
      */
     private void propagateQuantityUpdate(ProductionNode node, double newQuantity, MaterialQuantityBST materialQuantityBST) {

@@ -31,9 +31,8 @@ public class ProductionTreeSearcher {
     /**
      * Handles user input to search for a production node by its name or ID.
      * It prompts the user for input and displays the result of the search.
-     *
+     * <p>
      * Complexity: O(n)
-     *
      */
     public void handleNodeSearch() {
         Scanner scanner = new Scanner(System.in);
@@ -81,7 +80,7 @@ public class ProductionTreeSearcher {
 
     /**
      * Retrieves the details of a given production node, including its ID, name, type, and related materials or operations.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @param node the production node whose details are to be retrieved.
@@ -136,9 +135,8 @@ public class ProductionTreeSearcher {
     /**
      * Calculates the total quantities of materials based on the connections in the production tree.
      * Displays the material and its total quantity.
-     *
+     * <p>
      * Complexity: O(n²)
-     *
      */
     public void calculateQuantityOfMaterials() {
         if (connections == null || connections.isEmpty()) {
@@ -177,7 +175,7 @@ public class ProductionTreeSearcher {
 
     /**
      * Recursively calculates the dependency level of a given production node based on its parent nodes.
-     *
+     * <p>
      * Complexity: O(n²)
      *
      * @param node                 the production node whose dependency level is to be calculated.

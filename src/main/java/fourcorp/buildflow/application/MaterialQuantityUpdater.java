@@ -34,9 +34,8 @@ public class MaterialQuantityUpdater {
     /**
      * Prompts the user to enter a material's name or ID, searches for matching materials, and allows
      * the user to update the quantity of the selected material.
-     *
+     * <p>
      * Complexity: O(n²)
-     *
      */
     public void updateMaterialQuantity() {
         System.out.print("Enter the name or ID of the material to update: ");
@@ -81,7 +80,7 @@ public class MaterialQuantityUpdater {
     /**
      * Prompts the user to confirm if they want to update the material's quantity.
      * Ensures valid input ("y" or "n") is provided, and asks the user to try again for invalid inputs.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @return true if the user confirms ("y"), false otherwise.
@@ -104,7 +103,7 @@ public class MaterialQuantityUpdater {
 
     /**
      * Validates and retrieves the user's choice when selecting a material from a list.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @param max The maximum number of available options.
@@ -127,7 +126,7 @@ public class MaterialQuantityUpdater {
     /**
      * Updates the quantity of the selected material node and propagates the change
      * to the relevant data structures.
-     *
+     * <p>
      * Complexity: O(n²)
      *
      * @param selectedNode The production node whose quantity is being updated.
@@ -155,7 +154,7 @@ public class MaterialQuantityUpdater {
 
     /**
      * Continuously prompts the user to input a valid non-negative numeric quantity.
-     *
+     * <p>
      * Complexity: O(n)
      *
      * @return The validated quantity entered by the user.
