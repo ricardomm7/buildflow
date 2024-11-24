@@ -14,7 +14,7 @@ public class USEI08 {
     @Test
     void testLoadItems() throws IOException {
         ProductionTree pt = new ProductionTree();
-        Reader.setAtt(pt);
+        Reader.setProdTree(pt);
 
         String filePath = "src/test/java/fourcorp/buildflow/items_test.csv"; // Substituir com o caminho correto do arquivo
         Reader.loadItems(filePath);
@@ -34,7 +34,7 @@ public class USEI08 {
     @Test
     void testLoadSimpleOperations() throws IOException {
         ProductionTree pt = new ProductionTree();
-        Reader.setAtt(pt);
+        Reader.setProdTree(pt);
 
         String filePath = "src/test/java/fourcorp/buildflow/operations_test.csv"; // Substituir com o caminho correto do arquivo
         Reader.loadSimpleOperations(filePath);
@@ -54,7 +54,7 @@ public class USEI08 {
     @Test
     void testLoadBOO() throws IOException {
         ProductionTree pt = new ProductionTree();
-        Reader.setAtt(pt);
+        Reader.setProdTree(pt);
 
         String filePath = "src/test/java/fourcorp/buildflow/boo_test.csv"; // Substituir com o caminho correto do arquivo
         Reader.loadBOO(filePath);

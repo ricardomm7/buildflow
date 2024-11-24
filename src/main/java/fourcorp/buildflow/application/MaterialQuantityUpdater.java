@@ -98,7 +98,6 @@ public class MaterialQuantityUpdater {
     }
 
 
-
     /**
      * Validates and retrieves the user's choice when selecting a material from a list.
      *

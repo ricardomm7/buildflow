@@ -9,7 +9,7 @@ public class Repositories {
     private final ProductPriorityLine productPriorityLine;
     private final WorkstationsPerOperation workstationsPerOperation;
     private static ProductionTree productionTree;
-    private static  MaterialQuantityBST materialBST;
+    private static MaterialQuantityBST materialBST;
 
     /**
      * Private constructor to initialize the repositories.

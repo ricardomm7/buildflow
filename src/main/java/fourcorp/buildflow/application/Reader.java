@@ -365,7 +365,12 @@ public abstract class Reader {
     }
 
 
-    public static void setAtt(ProductionTree p) {
+    public static void setProdTree(ProductionTree p) {
         pt = p;
     }
+
+    public static void setBST(MaterialQuantityBST p) {
+        bst = p;
+    }
+
 }

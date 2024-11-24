@@ -1,10 +1,8 @@
 package fourcorp.buildflow.application;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
-import java.util.List;
+import org.junit.jupiter.api.Test;
 
 public class USEI15 {
     @Test

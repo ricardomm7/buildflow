@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class USEI09 {
     private ProductionTreeSearcher searcher;
@@ -271,7 +270,6 @@ class USEI09 {
     }
 
 
-
     @Test
     void testSearchWithMultipleMatches_AC3() {
         productionTree = new ProductionTree();
@@ -291,7 +289,6 @@ class USEI09 {
         assertTrue(matchingNodes.contains(op1));
         assertTrue(matchingNodes.contains(duplicateOp));
     }
-
 
 
     @Test
@@ -339,7 +336,6 @@ class USEI09 {
         assertEquals("1", subOp.getId());
         assertEquals(4.0, subNodes.get(subOp));
     }
-
 
 
     @Test
@@ -444,7 +440,6 @@ class USEI09 {
         assertTrue(allNodes.stream().anyMatch(node -> node.getId().equals("2008")));
         assertTrue(allNodes.stream().anyMatch(node -> node.getId().equals("5")));
     }
-
 
 
     @Test

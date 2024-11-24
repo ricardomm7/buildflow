@@ -1,9 +1,13 @@
 package fourcorp.buildflow.repository;
 
+import fourcorp.buildflow.application.Reader;
 import fourcorp.buildflow.domain.ProductionNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -119,5 +123,18 @@ class USEI08 {
 
         List<ProductionNode> allNodes = productionTree.getAllNodes();
         assertEquals(2, allNodes.size());
+    }
+
+    @Test
+    void testLoadItemsEmptyFile() throws IOException {
+        String filePath = "empty.csv";
+        Files.writeString(Path.of(filePath), "id;name\n"); // Apenas cabeçalho
+
+        Reader.loadItems(filePath);
+
+        List<ProductionNode> allNodes = productionTree.getAllNodes();
+        assertTrue(allNodes.isEmpty());
+
+        Files.delete(Path.of(filePath));
     }
 }
