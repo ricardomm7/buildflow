@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class USEI12 {
 
@@ -250,7 +249,6 @@ class USEI12 {
         assertNotNull(tinta);
         assertEquals(0.5, tinta.getQuantity(), "A quantidade de tinta não deve ser afetada.");
     }
-
 
 
     @Test
