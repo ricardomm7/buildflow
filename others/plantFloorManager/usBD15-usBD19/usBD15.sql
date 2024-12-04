@@ -29,3 +29,28 @@ BEGIN
     RETURN result_message;
 END;
 /
+
+
+
+DECLARE
+    var_workstation_id VARCHAR2(50) := 'WS001';
+    var_name VARCHAR2(255) := 'Main Workstation';
+    var_description VARCHAR2(255) := 'Primary workstation for operations';
+    var_workstation_type VARCHAR2(50) := 'Type1';
+    result_message VARCHAR2(255);
+BEGIN
+    -- Chama a função RegisterWorkstation
+    result_message := RegisterWorkstation(
+        var_workstation_id => var_workstation_id,
+        var_name => var_name,
+        var_description => var_description,
+        var_Workstation_type => var_workstation_type
+    );
+
+    -- Exibe a mensagem de resultado
+    DBMS_OUTPUT.PUT_LINE(result_message);
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Captura e exibe qualquer erro que ocorra
+        DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
+END;

@@ -65,7 +65,6 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials.");
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
-            System.out.printf("%-5s%-75s%n", "[25]", "See a specific product material tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -80,7 +79,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 25) {
+                if (choice >= 0 && choice <= 24) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -142,7 +141,20 @@ public class Menu {
                 }
                 break;
             case 10:
-                System.out.println("Not implemented yet");
+                ProductionTree tree = Repositories.getInstance().getProductionTree();
+                System.out.println();
+                System.out.print("Enter Product Name or ID: ");
+                String rootNode = scanner.nextLine();
+
+                ProductionNode rootNodeId = tree.getNodeByNameOrId(rootNode);
+                while (rootNodeId == null) {
+                    System.out.println("Product ID not found. Please enter a valid Product ID: ");
+                    rootNode = scanner.nextLine();
+                    rootNodeId = tree.getNodeByNameOrId(rootNode);
+                }
+                ProductionTree bomTree = BomTreeBuilder.createBOMTree("textFiles/boo_v2.csv", "textFiles/items.csv", rootNodeId);
+                ptVisualizer.setProductionTree(bomTree);
+                ptVisualizer.generateGraph();
                 break;
             case 11:
                 bstVisualizer.displayMaterialsByQuantity(true);
@@ -191,23 +203,6 @@ public class Menu {
                 System.out.print("Enter Product ID: ");
                 String id = scanner.nextLine();
                 ptVisualizer.loadSubTreeFromNode(id);
-                break;
-
-            case 25:
-                ProductionTree tree = Repositories.getInstance().getProductionTree();
-                System.out.println();
-                System.out.print("Enter Product Name or ID: ");
-                String rootNode = scanner.nextLine();
-
-                ProductionNode rootNodeId = tree.getNodeByNameOrId(rootNode);
-                while (rootNodeId == null) {
-                    System.out.println("Product ID not found. Please enter a valid Product ID: ");
-                    rootNode = scanner.nextLine();
-                    rootNodeId = tree.getNodeByNameOrId(rootNode);
-                }
-                ProductionTree bomTree = BomTreeBuilder.createBOMTree("textFiles/boo_v2.csv", "textFiles/items.csv", rootNodeId);
-                ptVisualizer.setProductionTree(bomTree);
-                ptVisualizer.generateGraph();
                 break;
             case 0:
                 System.out.println("Exiting...");

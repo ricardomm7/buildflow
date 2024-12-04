@@ -207,6 +207,7 @@ public class DatabaseMenu {
                 }
 
                 db.registerWorkstation(workstationId, name, description, workstationType);
+                break;
             case 10:
                 ptService.handleNodeSearch();
                 break;

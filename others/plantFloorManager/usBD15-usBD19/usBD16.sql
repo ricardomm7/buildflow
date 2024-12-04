@@ -58,3 +58,27 @@ exception
         return 'Error: Failed to register the product: ' || sqlerrm;
 end RegisterProduct;
 /
+
+
+
+
+DECLARE
+    p_Part_ID   CHAR(50) := 'P001';
+    p_Name      VARCHAR2(255) := 'Sample Product';
+    p_Family_ID VARCHAR2(50) := 'F001';
+    result_message VARCHAR2(255);
+BEGIN
+    -- Chama a função RegisterProduct
+    result_message := RegisterProduct(
+        p_Part_ID => p_Part_ID,
+        p_Name => p_Name,
+        p_Family_ID => p_Family_ID
+    );
+
+    -- Exibe a mensagem de resultado
+    DBMS_OUTPUT.PUT_LINE(result_message);
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Captura e exibe qualquer erro que ocorra
+        DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
+END;

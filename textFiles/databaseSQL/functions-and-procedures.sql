@@ -425,11 +425,6 @@ EXCEPTION
 END;
 /
 
-BEGIN
-    DBMS_OUTPUT.PUT_LINE('Produto com a maior sequência: ' || ProductWithMostOperations());
-END;
-/
-
 -- USBD15
 CREATE OR REPLACE FUNCTION RegisterWorkstation(
     var_workstation_id IN VARCHAR2,
