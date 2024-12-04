@@ -19,7 +19,7 @@ own tree and a respective entry in the boo.csv file, instead of the materials th
 are always leafs in the production tree. The figure 6 should be used as a reference.
 For a more complex product like a bicycle, where each part (e.g., the frame,
 wheels, brakes, chain, etc.) has its own assembly or manufacturing process, you
-could have multiple sub-trees within the main production tree.
+could have multiple subtrees within the main production tree.
 
 **From the client clarifications:**
 
