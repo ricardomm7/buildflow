@@ -5,9 +5,13 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
-'left to right direction
+left to right direction
 
 title Project Domain Model
+
+class IntermediateProduct {
+    name
+}
 
 class ProductionLine{
 
@@ -31,7 +35,6 @@ class ProductionManager{
 
 class RawMaterial {
     name
-    description
 }
 
 class Product {
@@ -43,12 +46,12 @@ class Product {
 
 class Component {
     name
-    description
 }
 
 class Machine {
     id
     executionTime
+    setupTime
 }
 
 class Employee {
@@ -60,9 +63,10 @@ class Employee {
 }
 
 class Operation {
-    name
-    status
-    type
+    id
+    designation
+    ExpectedDuration
+
 }
 
 class Workstation {
@@ -71,11 +75,6 @@ class Workstation {
     status
     type
 }
-
-'class Factory {
-   ' name
-   ' specialty
-'}
 
 class Order {
     product(s)
@@ -97,8 +96,33 @@ class Address {
 }
 
 class ProductFamily {
-
+    id
 }
+
+class Supplier{
+    id
+}
+
+class Activities {
+    id
+    description
+    duration
+    durationUnit
+    cost
+    costUnit
+}
+
+Supplier "1..*" -- "1..*" RawMaterial : provides >
+Supplier "1..*" -- "1..*" Component : provides >
+
+
+Operation "1..*" -- "0..*" RawMaterial : needs >
+Operation "1..*" -- "0..*" Component : needs >
+Operation "1..*" -- "0..*" IntermediateProduct : needs >
+
+Operation "1..*" -- "1..*" IntermediateProduct : creates >
+
+
 
 Administrator"1" -- "1" SystemUsers: is a >
 ProductionManager"1" -- "1" SystemUsers: is a >
@@ -107,25 +131,17 @@ Administrator"1..*" -- "1..*" SystemUsers: manages >
 PlantFloorManager"1..*" -- "1..*" ProductionLine: specifies >
 Workstation "1" -- "0..*" Machine: has >
 ProductionManager "1..*" -- "1..*" Product: manages >
-Component "1..*" -- "1..*" RawMaterial: is made of >
-Product "1" -- "1..*" Component : is made of >
-'Component "1" -- "1..*" Operation : is related to >
-'RawMaterial "1" -- "1..*" Operation : is related to >
-Operation "1..*" -- "1..*" Component : creates >
+Operation "1..*" -- "1..*" IntermediateProduct : creates >
+Operation "1..*" -- "1..*" Product : creates >
 Order "1" -- "1..*" Operation : has >
-'assumindo que não existem encomendas iguais
 Client "1" -- "1..*" Order : places >
 Machine "1..*" -- "1" Operation : processes >
 Employee "0..*" -- "0..*" Workstation : operates >
 Workstation "1" -- "1..*" ProductionLine : part of >
-'Factory "1" -- "1..*" Workstation : has >
-
 Client "1..*" -- "1" Address : has >
-'Factory "1" -- "1" Address : has >
 Order "0..*" -- "1" Address : to be delivered >
 Employee "1..*" -- "1" Address : has >
 SystemUsers "1..*" -- "1" Address : has >
-
 Product "1..*" -- "1" ProductFamily : is part of >
 ProductionLine "1" -- "1..*" Operation : consists of >
 @enduml
