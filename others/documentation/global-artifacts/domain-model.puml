@@ -5,20 +5,19 @@ skinparam shadowing false
 skinparam classAttributeIconSize 0
 hide circle
 hide methods
-left to right direction
+'left to right direction
+
 
 title Project Domain Model
-
-class IntermediateProduct {
-    name
-}
 
 class ProductionLine{
 
 }
+
 class Administrator{
 
 }
+
 class SystemUsers{
     mail
     password
@@ -26,6 +25,7 @@ class SystemUsers{
     NIF
     phoneNumber
 }
+
 class PlantFloorManager{
 
 }
@@ -39,9 +39,7 @@ class RawMaterial {
 
 class Product {
     name
-    manufacturingDate
-    size
-    colour
+    description
 }
 
 class Component {
@@ -65,8 +63,7 @@ class Employee {
 class Operation {
     id
     designation
-    ExpectedDuration
-
+    expectedDuration
 }
 
 class Workstation {
@@ -96,11 +93,13 @@ class Address {
 }
 
 class ProductFamily {
-    id
+    name
 }
 
 class Supplier{
-    id
+    name
+    phoneNumber
+    mail
 }
 
 class Activities {
@@ -118,11 +117,6 @@ Supplier "1..*" -- "1..*" Component : provides >
 
 Operation "1..*" -- "0..*" RawMaterial : needs >
 Operation "1..*" -- "0..*" Component : needs >
-Operation "1..*" -- "0..*" IntermediateProduct : needs >
-
-Operation "1..*" -- "1..*" IntermediateProduct : creates >
-
-
 
 Administrator"1" -- "1" SystemUsers: is a >
 ProductionManager"1" -- "1" SystemUsers: is a >
@@ -131,8 +125,7 @@ Administrator"1..*" -- "1..*" SystemUsers: manages >
 PlantFloorManager"1..*" -- "1..*" ProductionLine: specifies >
 Workstation "1" -- "0..*" Machine: has >
 ProductionManager "1..*" -- "1..*" Product: manages >
-Operation "1..*" -- "1..*" IntermediateProduct : creates >
-Operation "1..*" -- "1..*" Product : creates >
+Operation "1..*" -- "1..*" Product : is made of <
 Order "1" -- "1..*" Operation : has >
 Client "1" -- "1..*" Order : places >
 Machine "1..*" -- "1" Operation : processes >
