@@ -33,14 +33,14 @@ void setup() {
 String wait_for_command_from_mach_manager() {
     String command = "";
 
-    Serial.println("Waiting for command...");
+    //Serial.println("Waiting for command...");
     while (command.length() == 0) {
         if (Serial.available() > 0) {
             command = Serial.readStringUntil('\n');
         }
     }
 
-    Serial.print("Received command: ");
+    //Serial.print("Received command: ");
     Serial.println(command);
     return command;
 }
@@ -69,7 +69,7 @@ void turn_off_leds() {
 float read_temp_from_sensor() {
     float temperature = dht.readTemperature();
     if (isnan(temperature)) {
-        Serial.println("Failed to read temperature!");
+        //Serial.println("Failed to read temperature!");
         return -1;
     }
     //Serial.print("Temperature: ");
@@ -81,7 +81,7 @@ float read_temp_from_sensor() {
 float read_hum_from_sensor() {
     float humidity = dht.readHumidity();
     if (isnan(humidity)) {
-        Serial.println("Failed to read humidity!");
+        //Serial.println("Failed to read humidity!");
         return -1;
     }
     //Serial.print("Humidity: ");
@@ -95,18 +95,12 @@ void send_data(String data) {
 }
 
 void loop() {
-    String cmd = wait_for_command_from_mach_manager();
-
-    temp = read_temp_from_sensor();
-    hum = read_hum_from_sensor();
-
-    if (temp != -1 && hum != -1) {
-        String str = "TEMP&unit:celsius&value:" + String(temp) + "#HUM&unit:percentage&value:" + String(hum);
-        send_data(str);
-    }
-
-    turn_on_leds(cmd);
-    delay(2000);
-
-    turn_off_leds();
+  String cmd = wait_for_command_from_mach_manager();
+  temp = read_temp_from_sensor();
+  hum = read_hum_from_sensor();
+  String str = "TEMP&unit:celsius&value:" + String(temp) + "#HUM&unit:percentage&value:" + String(hum);
+  send_data(str);
+  turn_on_leds(cmd);
+  delay(2000);
+  turn_off_leds();
 }
