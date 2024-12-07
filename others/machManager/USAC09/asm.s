@@ -73,5 +73,7 @@ end_function:
 	popq %r13            # Restaura %r13
 	popq %r12            # Restaura %r12
 	popq %rbx            # Restaura %rbx
+
+    movq %rbp %rsp
 	popq %rbp            # Restaura o pointer base
 	ret                  # Retorna para o caller

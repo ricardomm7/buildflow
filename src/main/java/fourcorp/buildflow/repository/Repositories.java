@@ -1,5 +1,11 @@
 package fourcorp.buildflow.repository;
 
+import fourcorp.buildflow.domain.Activity;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Singleton class that provides centralized access to various repositories used in the application.
  * It manages instances of repositories for product priority lines and workstations per operation.
@@ -10,6 +16,8 @@ public class Repositories {
     private final WorkstationsPerOperation workstationsPerOperation;
     private static ProductionTree productionTree;
     private static MaterialQuantityBST materialBST;
+    private static ActivitiesGraph activitiesGraph;
+
 
     /**
      * Private constructor to initialize the repositories.
@@ -20,6 +28,7 @@ public class Repositories {
         workstationsPerOperation = new WorkstationsPerOperation();
         productionTree = new ProductionTree();
         materialBST = new MaterialQuantityBST();
+        activitiesGraph = new ActivitiesGraph();
     }
 
     /**
@@ -89,6 +98,10 @@ public class Repositories {
      */
     public MaterialQuantityBST getMaterialBST() {
         return materialBST;
+    }
+
+    public ActivitiesGraph getActivitiesGraph(){
+        return activitiesGraph;
     }
 
     /**

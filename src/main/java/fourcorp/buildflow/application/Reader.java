@@ -6,7 +6,9 @@ import fourcorp.buildflow.repository.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Reader is an abstract utility class responsible for loading data from external files
@@ -18,7 +20,7 @@ public abstract class Reader {
     private static WorkstationsPerOperation w = Repositories.getInstance().getWorkstationsPerOperation();
     private static ProductionTree pt = Repositories.getInstance().getProductionTree();
     private static MaterialQuantityBST bst = Repositories.getInstance().getMaterialBST();
-
+    private static ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
     /**
      * Loads product data from a specified file and populates the product priority repository.
      * Each line in the file should represent a product, including its ID, priority, and a list of operations.
@@ -373,4 +375,55 @@ public abstract class Reader {
         bst = p;
     }
 
+    public static void loadActivities(String filePath) throws IOException {
+        List<Activity> allActivities = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line = br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                Activity activity = getActivity(line);
+                allActivities.add(activity);
+                graph.addActivity(activity);
+
+            }
+        }
+
+        // Add edges based on dependencies
+        for (int i = 0; i < allActivities.size(); i++) {
+            Activity activity = allActivities.get(i);
+            for (String depId : activity.getDependencies()) {
+                for (int j = 0; j < allActivities.size(); j++) {
+                    if (allActivities.get(j).getId().equals(depId)) {
+                        graph.addDependency(j, i);
+                    }
+                }
+            }
+        }
+    }
+
+    private static Activity getActivity(String line) {
+        String[] parts = line.split(",");
+        if (parts.length < 6) {
+            throw new IllegalArgumentException("Invalid activity format in CSV");
+        }
+// Parse fields
+        String id = parts[0].trim();
+        String name = parts[1].trim();
+        int duration = Integer.parseInt(parts[2].trim());
+        String durationUnit = parts[3].trim();
+        double cost = Double.parseDouble(parts[4].trim());
+        String costUnit = parts[5].trim();
+
+        List<String> dependencies = new ArrayList<>();
+        if (parts.length > 6) {
+            for (int i = 6; i < parts.length; i++) {
+                String dep = parts[i].trim();
+                if (!dep.isEmpty()) {
+                    dependencies.add(dep);
+                }
+            }
+        }
+
+        Activity activity = new Activity(id, name, duration, durationUnit, cost, costUnit, dependencies);
+        return activity;
+    }
 }
