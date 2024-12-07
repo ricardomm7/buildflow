@@ -21,6 +21,7 @@ public class Menu {
     private final QualityCheckManager manager;
     private final CriticalPathCalculator calculator;
     private final MaterialQuantityUpdater materialUpdater;
+    private final PERT_CPM pert;
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -34,6 +35,7 @@ public class Menu {
         ProductionTree productionTree = Repositories.getInstance().getProductionTree();
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
+        pert = new PERT_CPM();
     }
 
     public void displayMenu() throws IOException {
@@ -65,6 +67,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[22]", "See the total quantity of materials.");
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
+            System.out.printf("%-5s%-75s%n", "[25]", "See the PERT-CPM graph (console).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -79,7 +82,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 24) {
+                if (choice >= 0 && choice <= 25) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -203,6 +206,9 @@ public class Menu {
                 System.out.print("Enter Product ID: ");
                 String id = scanner.nextLine();
                 ptVisualizer.loadSubTreeFromNode(id);
+                break;
+            case 25:
+                pert.printGraph();
                 break;
             case 0:
                 System.out.println("Exiting...");

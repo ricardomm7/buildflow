@@ -3,10 +3,7 @@ package fourcorp.buildflow.repository;
 import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.domain.Graph;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ActivitiesGraph {
     private final Graph graph;
@@ -27,15 +24,6 @@ public class ActivitiesGraph {
         graph.addEdge(src, dst);
     }
 
-    public void printGraph() {
-    }
-
-    /**
-     * Retrieves the neighbors (outgoing connections) of a given activity.
-     *
-     * @param activity The activity whose neighbors are to be retrieved.
-     * @return An array of neighboring activities.
-     */
     public Activity[] getNeighbors(Activity activity) {
         LinkedList<Activity> adjacencyList = graph.getAdjacencyList()
                 .stream()
@@ -46,21 +34,10 @@ public class ActivitiesGraph {
         return adjacencyList.subList(1, adjacencyList.size()).toArray(new Activity[0]);
     }
 
-
-    /**
-     * Returns the total number of vertices (activities) in the graph.
-     *
-     * @return The number of vertices in the graph.
-     */
     public int numVertices() {
         return graph.getAdjacencyList().size();
     }
 
-    /**
-     * Calculates the in-degrees for all activities in the graph.
-     *
-     * @return A map where keys are activities and values are the in-degree counts.
-     */
     public Map<Activity, Integer> getInDegrees() {
         Map<Activity, Integer> inDegrees = new HashMap<>();
         for (LinkedList<Activity> linkedList : graph.getAdjacencyList()) {
@@ -74,6 +51,50 @@ public class ActivitiesGraph {
         return inDegrees;
     }
 
+    public String detectCircularDependencies() {
+        Set<Activity> visited = new HashSet<>();
+        Set<Activity> recursionStack = new HashSet<>();
+
+        StringBuilder ciclesIds = new StringBuilder();
+        for (LinkedList<Activity> list : graph.getAdjacencyList()) {
+            Activity activity = list.getFirst();
+            String cycleActivityId = dfsCycleCheck(activity, visited, recursionStack);
+            if (cycleActivityId != null) {
+                ciclesIds.append(" - ").append(cycleActivityId);
+            }
+        }
+        return ciclesIds.toString();
+    }
+
+    private String dfsCycleCheck(Activity activity, Set<Activity> visited, Set<Activity> recursionStack) {
+        // If the activity is already in the recursion stack, we've found a cycle
+        if (recursionStack.contains(activity)) {
+            return activity.getId();
+        }
+
+        // If already fully explored, no cycle through this node
+        if (visited.contains(activity)) {
+            return null;
+        }
+
+        // Mark as visited and add to recursion stack
+        visited.add(activity);
+        recursionStack.add(activity);
+
+        // Check neighbors
+        for (Activity neighbor : getNeighbors(activity)) {
+            String cycleActivityId = dfsCycleCheck(neighbor, visited, recursionStack);
+            if (cycleActivityId != null) {
+                return cycleActivityId;
+            }
+        }
+
+        // Remove from recursion stack after exploring all neighbors
+        recursionStack.remove(activity);
+        return null;
+    }
+/*
+ESTE MÉTODOS NÃO FAZEM SENTIDO AQUI, NÃO SE CLONA UM REPOSITÓRIO, É ERRADO! E QUAL A NECESSIDADE DE CLONAR O GRAFO?
     public ActivitiesGraph clone() {
         ActivitiesGraph clonedGraph = new ActivitiesGraph();
 
@@ -136,4 +157,5 @@ public class ActivitiesGraph {
         clonedActivity.setLateFinish(originalActivity.getLateFinish());
         return clonedActivity;
     }
+ */
 }

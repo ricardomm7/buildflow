@@ -21,6 +21,7 @@ public abstract class Reader {
     private static ProductionTree pt = Repositories.getInstance().getProductionTree();
     private static MaterialQuantityBST bst = Repositories.getInstance().getMaterialBST();
     private static ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
+
     /**
      * Loads product data from a specified file and populates the product priority repository.
      * Each line in the file should represent a product, including its ID, priority, and a list of operations.
@@ -383,7 +384,6 @@ public abstract class Reader {
                 Activity activity = getActivity(line);
                 allActivities.add(activity);
                 graph.addActivity(activity);
-
             }
         }
 
@@ -398,6 +398,13 @@ public abstract class Reader {
                 }
             }
         }
+
+        String cycleActivityId = graph.detectCircularDependencies();
+        if (!cycleActivityId.isEmpty()) {
+            System.err.println("Circular dependency detected in Activity(ies) ID('s): " + cycleActivityId);
+            System.err.println("Graph creation aborted.");
+            throw new RuntimeException("Program aborted due to the circular dependency(ies) found.");
+        }
     }
 
     private static Activity getActivity(String line) {
@@ -405,7 +412,7 @@ public abstract class Reader {
         if (parts.length < 6) {
             throw new IllegalArgumentException("Invalid activity format in CSV");
         }
-// Parse fields
+
         String id = parts[0].trim();
         String name = parts[1].trim();
         int duration = Integer.parseInt(parts[2].trim());
