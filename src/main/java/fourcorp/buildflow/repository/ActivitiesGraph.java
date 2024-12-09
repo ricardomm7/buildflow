@@ -6,7 +6,7 @@ import fourcorp.buildflow.domain.Graph;
 import java.util.*;
 
 public class ActivitiesGraph {
-    private final Graph graph;
+    private Graph graph;
 
     public ActivitiesGraph() {
         this.graph = new Graph();
@@ -93,69 +93,8 @@ public class ActivitiesGraph {
         recursionStack.remove(activity);
         return null;
     }
-/*
-ESTE MÉTODOS NÃO FAZEM SENTIDO AQUI, NÃO SE CLONA UM REPOSITÓRIO, É ERRADO! E QUAL A NECESSIDADE DE CLONAR O GRAFO?
-    public ActivitiesGraph clone() {
-        ActivitiesGraph clonedGraph = new ActivitiesGraph();
 
-        // Clone each activity in the graph
-        Map<Activity, Activity> activityMapping = new HashMap<>();
-
-        // First pass: create cloned activities
-        for (LinkedList<Activity> linkedList : graph.getAdjacencyList()) {
-            Activity originalActivity = linkedList.getFirst();
-            Activity clonedActivity = getActivity(originalActivity);
-
-            clonedGraph.addActivity(clonedActivity);
-            activityMapping.put(originalActivity, clonedActivity);
-        }
-
-        // Second pass: recreate dependencies
-        for (LinkedList<Activity> linkedList : graph.getAdjacencyList()) {
-            Activity originalSourceActivity = linkedList.getFirst();
-            Activity clonedSourceActivity = activityMapping.get(originalSourceActivity);
-
-            // Skip first element (source activity itself) and add dependencies
-            for (int i = 1; i < linkedList.size(); i++) {
-                Activity originalDependentActivity = linkedList.get(i);
-                Activity clonedDependentActivity = activityMapping.get(originalDependentActivity);
-
-                // Find the index of source and dependent activities in the graph
-                int sourceIndex = graph.getAdjacencyList().stream()
-                        .map(LinkedList::getFirst)
-                        .toList()
-                        .indexOf(originalSourceActivity);
-
-                int dependentIndex = graph.getAdjacencyList().stream()
-                        .map(LinkedList::getFirst)
-                        .toList()
-                        .indexOf(originalDependentActivity);
-
-                // Add the edge in the cloned graph
-                clonedGraph.addDependency(sourceIndex, dependentIndex);
-            }
-        }
-
-        return clonedGraph;
+    public void setGraph(Graph g){
+        this.graph = g;
     }
-
-    private static Activity getActivity(Activity originalActivity) {
-        Activity clonedActivity = new Activity(
-                originalActivity.getId(),
-                originalActivity.getName(),
-                originalActivity.getDuration(),
-                originalActivity.getDurationUnit(),
-                originalActivity.getCost(),
-                originalActivity.getCostUnit(),
-                originalActivity.getDependencies()
-        );
-
-        // Copy additional properties if needed
-        clonedActivity.setEarlyStart(originalActivity.getEarlyStart());
-        clonedActivity.setEarlyFinish(originalActivity.getEarlyFinish());
-        clonedActivity.setLateStart(originalActivity.getLateStart());
-        clonedActivity.setLateFinish(originalActivity.getLateFinish());
-        return clonedActivity;
-    }
- */
 }
