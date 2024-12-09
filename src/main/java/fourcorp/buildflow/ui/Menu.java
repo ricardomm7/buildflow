@@ -39,8 +39,7 @@ public class Menu {
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
         pert = new PERT_CPM();
-        ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-        topologicalSort = new ActivityTopologicalSort(graph);
+        topologicalSort = new ActivityTopologicalSort();
     }
 
     public void displayMenu() throws IOException {
@@ -73,7 +72,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[25]", "See the PERT-CPM graph (console).");
-            System.out.printf("%-5s%-75s%n", "[26]", "Topological sort of project activities");
+            System.out.printf("%-5s%-75s%n", "[26]", "Topological sort of project activities.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -217,6 +216,7 @@ public class Menu {
                 pert.printGraph();
                 break;
             case 26:
+                System.out.println();
                 topologicalSort.handleTopologicalSort();
                 break;
             case 0:

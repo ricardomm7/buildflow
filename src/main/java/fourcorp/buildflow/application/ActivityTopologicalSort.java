@@ -10,8 +10,8 @@ public class ActivityTopologicalSort {
 
     private final ActivitiesGraph graph;
 
-    public ActivityTopologicalSort(ActivitiesGraph graph) {
-        this.graph = graph;
+    public ActivityTopologicalSort() {
+        this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
     /**
