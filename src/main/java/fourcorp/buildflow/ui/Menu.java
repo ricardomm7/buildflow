@@ -4,6 +4,7 @@ import fourcorp.buildflow.application.*;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.ProductionNode;
+import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
@@ -22,6 +23,8 @@ public class Menu {
     private final CriticalPathCalculator calculator;
     private final MaterialQuantityUpdater materialUpdater;
     private final PERT_CPM pert;
+    private final ActivityTopologicalSort topologicalSort;
+
 
     public Menu() {
         scanner = new Scanner(System.in);
@@ -36,6 +39,8 @@ public class Menu {
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
         pert = new PERT_CPM();
+        ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
+        topologicalSort = new ActivityTopologicalSort(graph);
     }
 
     public void displayMenu() throws IOException {
@@ -68,6 +73,7 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[23]", "Put the components into production.");
             System.out.printf("%-5s%-75s%n", "[24]", "See a specific product production tree (graphical).");
             System.out.printf("%-5s%-75s%n", "[25]", "See the PERT-CPM graph (console).");
+            System.out.printf("%-5s%-75s%n", "[26]", "Topological sort of project activities");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -82,7 +88,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 25) {
+                if (choice >= 0 && choice <= 26) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -209,6 +215,9 @@ public class Menu {
                 break;
             case 25:
                 pert.printGraph();
+                break;
+            case 26:
+                topologicalSort.handleTopologicalSort();
                 break;
             case 0:
                 System.out.println("Exiting...");
