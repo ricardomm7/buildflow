@@ -16,9 +16,9 @@ public class ProjectDelaySimulator {
     private int originalProjectDuration;
     private List<Activity> originalCriticalPath;
 
-    public ProjectDelaySimulator(ActivitiesGraph graph) {
-        this.originalGraph = graph;
-        this.workingGraph = cloneGraph(graph);
+    public ProjectDelaySimulator() {
+        this.originalGraph = Repositories.getInstance().getActivitiesGraph();
+        this.workingGraph = cloneGraph(Repositories.getInstance().getActivitiesGraph());
     }
 
     /**
@@ -37,7 +37,8 @@ public class ProjectDelaySimulator {
         applyDelays(delayMap);
 
         // Recalculate project schedule
-        timeCalculator = new ActivityTimeCalculator(workingGraph);
+        timeCalculator = new ActivityTimeCalculator();
+        timeCalculator.setGraph(workingGraph);
         timeCalculator.calculateTimes();
 
         // Display comprehensive delay analysis
@@ -63,7 +64,8 @@ public class ProjectDelaySimulator {
      * Calculates original project metrics before delay simulation
      */
     private void calculateOriginalProjectMetrics() {
-        ActivityTimeCalculator originalCalculator = new ActivityTimeCalculator(originalGraph);
+        ActivityTimeCalculator originalCalculator = new ActivityTimeCalculator();
+        originalCalculator.setGraph(originalGraph);
         originalCalculator.calculateTimes();
 
         // Determine original project duration
@@ -155,23 +157,19 @@ public class ProjectDelaySimulator {
         return clone;
     }
 
-    public static void main(String[] args) {
-        try {
-            // Load activities
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            // Create delay map
-            Map<String, Integer> delays = new HashMap<>();
-            delays.put("A3", 5);  // Example: Delay Technical Feasibility Analysis by 5 time units
-            delays.put("A7", 3);  // Example: Delay Requirements Refinement by 3 time units
-
-            // Simulate project delays
-            ProjectDelaySimulator simulator = new ProjectDelaySimulator(graph);
-            simulator.simulateProjectDelays(delays);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    /**
+     * Finds an activity by ID in the original graph.
+     *
+     * @param id Activity ID to find.
+     * @return The activity with the specified ID, or null if not found.
+     */
+    public Activity findActivityById(String id) {
+        for (var linkedList : originalGraph.getGraph().getAdjacencyList()) {
+            Activity activity = linkedList.getFirst();
+            if (activity.getId().equals(id)) {
+                return activity;
+            }
         }
+        return null;
     }
 }

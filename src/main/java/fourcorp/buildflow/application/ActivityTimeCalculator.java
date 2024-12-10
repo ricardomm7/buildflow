@@ -12,11 +12,11 @@ import java.util.List;
  * in a PERT/CPM graph, using the correct dependency relationships and project duration logic.
  */
 public class ActivityTimeCalculator {
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
     private int projectDuration;
 
-    public ActivityTimeCalculator(ActivitiesGraph graph) {
-        this.graph = graph;
+    public ActivityTimeCalculator() {
+        this.graph = Repositories.getInstance().getActivitiesGraph();
         this.projectDuration = 0;
     }
 
@@ -182,18 +182,9 @@ public class ActivityTimeCalculator {
         return projectDuration;
     }
 
-
-    public static void main(String[] args) {
-        try {
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            ActivityTimeCalculator calculator = new ActivityTimeCalculator(graph);
-            calculator.calculateTimes();
-            calculator.displayTimes();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void setGraph(ActivitiesGraph originalGraph) {
+        this.graph = originalGraph;
     }
+
 }
 

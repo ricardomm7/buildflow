@@ -1,15 +1,17 @@
 package fourcorp.buildflow.ui;
 
 import fourcorp.buildflow.application.*;
+import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.domain.PriorityOrder;
 import fourcorp.buildflow.domain.Product;
 import fourcorp.buildflow.domain.ProductionNode;
-import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.MaterialQuantityBST;
 import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
@@ -25,6 +27,8 @@ public class Menu {
     private final PERT_CPM pert;
     private final ActivityTopologicalSort topologicalSort;
     private final BottleneckIdentifier bottleneckIdentifier;
+    private final ActivityTimeCalculator calculatorGraph;
+    private final ProjectDelaySimulator delaySimulator;
 
 
     public Menu() {
@@ -41,7 +45,9 @@ public class Menu {
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
         pert = new PERT_CPM();
         topologicalSort = new ActivityTopologicalSort();
-        bottleneckIdentifier=new BottleneckIdentifier();
+        bottleneckIdentifier = new BottleneckIdentifier();
+        calculatorGraph = new ActivityTimeCalculator();
+        delaySimulator = new ProjectDelaySimulator();
     }
 
     public void displayMenu() throws IOException {
@@ -76,6 +82,8 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[25]", "See the PERT-CPM graph (console).");
             System.out.printf("%-5s%-75s%n", "[26]", "Topological sort of project activities.");
             System.out.printf("%-5s%-75s%n", "[27]", "Identify bottleneck activities.");
+            System.out.printf("%-5s%-75s%n", "[28]", "Calculate Earliest and Latest Time.");
+            System.out.printf("%-5s%-75s%n", "[29]", "Simulate project delay.");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -90,7 +98,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 27) {
+                if (choice >= 0 && choice <= 29) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -225,6 +233,45 @@ public class Menu {
             case 27:
                 bottleneckIdentifier.identifyBottleneckActivities();
                 break;
+            case 28:
+                calculatorGraph.calculateTimes();
+                calculatorGraph.displayTimes();
+                break;
+            case 29:
+
+                Map<String, Integer> delays = new HashMap<>();
+
+                while (true) {
+                    // Display all activities
+                    System.out.println("\nAvailable Activities:");
+                    for (var linkedList : Repositories.getInstance().getActivitiesGraph().getGraph().getAdjacencyList()) {
+                        Activity activity = linkedList.getFirst();
+                        System.out.printf("• ID: %s | Name: %s | Duration: %d%n",
+                                activity.getId(), activity.getName(), activity.getDuration());
+                    }
+
+                    System.out.println("\nEnter the ID of the activity to delay (or type '-1'/'exit' to finish): ");
+                    String input = scanner.nextLine();
+
+                    if (input.equals("-1") || input.equalsIgnoreCase("exit")) {
+                        break;
+                    }
+
+                    Activity activity = delaySimulator.findActivityById(input);
+                    if (activity == null) {
+                        System.out.println("Invalid Activity ID. Please try again.");
+                        continue;
+                    }
+
+                    System.out.printf("Enter delay time (in time units) for activity %s: ", activity.getId());
+                    int delay = scanner.nextInt();
+                    scanner.nextLine(); // Consume the newline character
+                    delays.put(activity.getId(), delay);
+                }
+
+                delaySimulator.simulateProjectDelays(delays);
+                break;
+
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();
