@@ -4,7 +4,10 @@ import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProjectDelaySimulator {
@@ -37,8 +40,7 @@ public class ProjectDelaySimulator {
         applyDelays(delayMap);
 
         // Recalculate project schedule
-        timeCalculator = new ActivityTimeCalculator();
-        timeCalculator.setGraph(workingGraph);
+        this.timeCalculator = new ActivityTimeCalculator();
         timeCalculator.calculateTimes();
 
         // Display comprehensive delay analysis
@@ -65,7 +67,6 @@ public class ProjectDelaySimulator {
      */
     private void calculateOriginalProjectMetrics() {
         ActivityTimeCalculator originalCalculator = new ActivityTimeCalculator();
-        originalCalculator.setGraph(originalGraph);
         originalCalculator.calculateTimes();
 
         // Determine original project duration

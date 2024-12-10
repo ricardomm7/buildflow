@@ -14,7 +14,7 @@ public class ExportSchedule {
 
     public ExportSchedule(ActivitiesGraph graph) {
         this.graph = graph;
-        this.timeCalculator = new ActivityTimeCalculator(graph);
+        this.timeCalculator = new ActivityTimeCalculator();
     }
 
     public void exportToCsv(String outputPath) throws IOException {

@@ -94,7 +94,7 @@ public class ActivitiesGraph {
         return null;
     }
 
-    public void setGraph(Graph g){
+    public void setGraph(Graph g) {
         this.graph = g;
     }
 }

@@ -20,7 +20,7 @@ public class CriticalPathIdentifierGraph {
      */
     public void identifyCriticalPath() {
         // Calculate earliest and latest start/finish times
-        ActivityTimeCalculator timeCalculator = new ActivityTimeCalculator(graph);
+        ActivityTimeCalculator timeCalculator = new ActivityTimeCalculator();
         timeCalculator.calculateTimes();
 
         // Collect critical path activities

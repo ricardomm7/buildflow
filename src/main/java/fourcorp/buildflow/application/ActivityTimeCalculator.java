@@ -12,11 +12,11 @@ import java.util.List;
  * in a PERT/CPM graph, using the correct dependency relationships and project duration logic.
  */
 public class ActivityTimeCalculator {
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
     private int projectDuration;
 
-    public ActivityTimeCalculator(ActivitiesGraph graph) {
-        this.graph = graph;
+    public ActivityTimeCalculator() {
+        graph = Repositories.getInstance().getActivitiesGraph();
         this.projectDuration = 0;
     }
 
@@ -93,7 +93,6 @@ public class ActivityTimeCalculator {
      * Detalhes:
      * - A passagem para trás é feita em ordem inversa da topológica, garantindo que todos os sucessores sejam processados
      * antes de uma atividade.
-     *
      */
 
     private void calculateLatestTimes(List<Activity> topOrder) {
@@ -180,20 +179,6 @@ public class ActivityTimeCalculator {
      */
     public int getProjectDuration() {
         return projectDuration;
-    }
-
-
-    public static void main(String[] args) {
-        try {
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            ActivityTimeCalculator calculator = new ActivityTimeCalculator(graph);
-            calculator.calculateTimes();
-            calculator.displayTimes();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
 
