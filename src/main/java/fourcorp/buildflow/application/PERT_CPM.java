@@ -14,28 +14,36 @@ public class PERT_CPM {
     }
 
     public void printGraph() {
-        System.out.println("\n╔═══════════════════════════════════════════════════════════════════════════════════");
-        System.out.println("║ PERT/CPM GRAPH STRUCTURE");
-        System.out.println("╠═══════════════════════════════════════════════════════════════════════════════════");
+        System.out.println();
+        System.out.println("PERT/CPM GRAPH STRUCTURE");
+        String activityFormat = "| Activity %-4s | %-30s | Duration: %-5d %n";
+        String dependencyFormat = "|     • Activity %-4s | %-30s %n";
+        String separator = "+------------------+--------------------------------+-------------------+";
 
         for (LinkedList<Activity> list : graph.getGraph().getAdjacencyList()) {
             Activity activity = list.getFirst();
-            System.out.printf("║ Activity %s: %s (Duration: %d)%n",
-                    activity.getId(), activity.getName(), activity.getDuration());
+            System.out.println(separator);
+            System.out.format(activityFormat, activity.getId(), truncate(activity.getName(), 40), activity.getDuration());
 
             if (list.size() > 1) {
-                System.out.println("║   Dependencies:");
+                System.out.println("|   Dependencies:");
                 for (int i = 1; i < list.size(); i++) {
                     Activity dependency = list.get(i);
-                    System.out.printf("║     • Activity %s: %s%n",
-                            dependency.getId(), dependency.getName());
+                    System.out.format(dependencyFormat, dependency.getId(), truncate(dependency.getName(), 40));
                 }
             } else {
-                System.out.println("║   No dependencies.");
+                System.out.println("|   No dependencies.");
             }
-            System.out.println("║");
+            System.out.println(separator);
         }
-
-        System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════\n");
+        System.out.println();
     }
+
+    private String truncate(String text, int maxLength) {
+        if (text.length() > maxLength) {
+            return text.substring(0, maxLength - 3) + "...";
+        }
+        return text;
+    }
+
 }
