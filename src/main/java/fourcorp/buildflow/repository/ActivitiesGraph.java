@@ -55,15 +55,15 @@ public class ActivitiesGraph {
         Set<Activity> visited = new HashSet<>();
         Set<Activity> recursionStack = new HashSet<>();
 
-        StringBuilder ciclesIds = new StringBuilder();
+        StringBuilder cicleIds = new StringBuilder();
         for (LinkedList<Activity> list : graph.getAdjacencyList()) {
             Activity activity = list.getFirst();
             String cycleActivityId = dfsCycleCheck(activity, visited, recursionStack);
             if (cycleActivityId != null) {
-                ciclesIds.append(" - ").append(cycleActivityId);
+                cicleIds.append(" - ").append(cycleActivityId);
             }
         }
-        return ciclesIds.toString();
+        return cicleIds.toString();
     }
 
     private String dfsCycleCheck(Activity activity, Set<Activity> visited, Set<Activity> recursionStack) {

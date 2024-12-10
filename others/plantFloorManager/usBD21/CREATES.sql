@@ -12,7 +12,7 @@ CREATE TABLE Product_Family (Family_ID varchar2(60) NOT NULL, Name varchar2(100)
 CREATE TABLE Product_Type (Part_ID char(10) NOT NULL, Description varchar2(100) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Production_Line (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID));
 CREATE TABLE Raw_Material (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
-CREATE TABLE Supplier (ID number(10) GENERATED AS IDENTITY, Name varchar2(255) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (ID));
+CREATE TABLE Supplier (ID number(10) NOT NULL, Name varchar2(255) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (ID));
 CREATE TABLE Type_Workstation (WorkstationType_ID char(5) NOT NULL, Designation varchar2(100) NOT NULL, PRIMARY KEY (WorkstationType_ID));
 CREATE TABLE Workstation (Workstation_ID number(4) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, WorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Workstation_ID));
 ALTER TABLE Production_Line ADD CONSTRAINT FKProduction984405 FOREIGN KEY (Product_ID) REFERENCES Product (Part_ID);
