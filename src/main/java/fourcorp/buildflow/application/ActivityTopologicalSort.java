@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ActivityTopologicalSort {
 
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
 
     public ActivityTopologicalSort() {
         this.graph = Repositories.getInstance().getActivitiesGraph();
@@ -73,5 +73,9 @@ public class ActivityTopologicalSort {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setGraph(ActivitiesGraph graph) {
+        this.graph = graph;
     }
 }

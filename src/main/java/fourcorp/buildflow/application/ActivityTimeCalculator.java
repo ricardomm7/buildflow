@@ -32,7 +32,8 @@ public class ActivityTimeCalculator {
     public void calculateTimes() {
 
         // Perform topological sort
-        ActivityTopologicalSort sorter = new ActivityTopologicalSort(graph);
+        ActivityTopologicalSort sorter = new ActivityTopologicalSort();
+        sorter.setGraph(graph);
         List<Activity> topOrder = sorter.performTopologicalSort();
 
         // Forward Pass (Earliest Times)
