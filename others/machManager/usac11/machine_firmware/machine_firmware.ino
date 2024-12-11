@@ -41,7 +41,7 @@ String wait_for_command_from_mach_manager() {
     }
 
     //Serial.print("Received command: ");
-    Serial.println(command);
+    //Serial.println(command);
     return command;
 }
 
