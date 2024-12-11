@@ -1,6 +1,8 @@
 #ifndef FUNC_H
 #define FUNC_H
 
+void check_for_alerts();
+
 // assembly functions
 int move_n_to_array(int* buffer, int length, int *tail, int *head, int n, int* array);
 int sort_array(int* vec, int length, char order);

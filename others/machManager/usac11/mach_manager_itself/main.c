@@ -94,6 +94,9 @@ int main() {
     }
 
     send_command(fd, command);
+    
+    //FOR USAC18
+    check_for_alerts();
 
     printf("Waiting for response...\n");
     read_response(fd, response, BUFFER_SIZE);
