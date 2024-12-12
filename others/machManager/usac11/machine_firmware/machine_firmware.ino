@@ -6,6 +6,9 @@
 #define LED_PIN_HUM 18       // Pino do LED para humidade
 #define LED_PIN_CMD1 17      // Pino para LED 1 (controlado por comando)
 #define LED_PIN_CMD2 18      // Pino para LED 2 (controlado por comando)
+#define LED_PIN_CMD3 21      // Pino para LED 3 (controlado por comando)
+#define LED_PIN_CMD4 22      // Pino para LED 4 (controlado por comando)
+#define LED_PIN_CMD5 27      // Pino para LED 5 (controlado por comando)
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -20,11 +23,20 @@ void setup() {
     pinMode(LED_PIN_HUM, OUTPUT);
     pinMode(LED_PIN_CMD1, OUTPUT);
     pinMode(LED_PIN_CMD2, OUTPUT);
+    pinMode(LED_PIN_CMD3, OUTPUT);
+    pinMode(LED_PIN_CMD4, OUTPUT);
+    pinMode(LED_PIN_CMD5, OUTPUT);
     digitalWrite(LED_PIN_CMD1, HIGH); // Liga o LED1
     digitalWrite(LED_PIN_CMD2, HIGH); // Liga o LED2
+    digitalWrite(LED_PIN_CMD3, HIGH); // Liga o LED3
+    digitalWrite(LED_PIN_CMD4, HIGH); // Liga o LED4
+    digitalWrite(LED_PIN_CMD5, HIGH); // Liga o LED5
     delay(1000);
     digitalWrite(LED_PIN_CMD1, LOW);  // Desliga o LED1
     digitalWrite(LED_PIN_CMD2, LOW);  // Desliga o LED2
+    digitalWrite(LED_PIN_CMD3, LOW); // desLiga o LED3
+    digitalWrite(LED_PIN_CMD4, LOW); // desLiga o LED4
+    digitalWrite(LED_PIN_CMD5, LOW); // desLiga o LED5
     delay(1000);
 
     Serial.println("Setup complete. Waiting for commands and sensor data...");
@@ -47,11 +59,17 @@ String wait_for_command_from_mach_manager() {
 
 void turn_on_leds(String cmd) {
     if (cmd.startsWith("ON")) {
-        int state1 = cmd.charAt(3) - '0';
-        int state2 = cmd.charAt(5) - '0';
+        int state1 = cmd.charAt(3) - '0'; // Primeiro estado após "ON,"
+        int state2 = cmd.charAt(5) - '0'; // Segundo estado
+        int state3 = cmd.charAt(7) - '0'; // Terceiro estado
+        int state4 = cmd.charAt(9) - '0'; // Quarto estado
+        int state5 = cmd.charAt(11) - '0'; // Quinto estado
 
         digitalWrite(LED_PIN_CMD1, state1);
         digitalWrite(LED_PIN_CMD2, state2);
+        digitalWrite(LED_PIN_CMD3, state3);
+        digitalWrite(LED_PIN_CMD4, state4);
+        digitalWrite(LED_PIN_CMD5, state5);
 
         //Serial.print("LED_CMD1: ");
         //Serial.println(state1 ? "ON" : "OFF");
@@ -63,6 +81,9 @@ void turn_on_leds(String cmd) {
 void turn_off_leds() {
     digitalWrite(LED_PIN_CMD1, LOW);
     digitalWrite(LED_PIN_CMD2, LOW);
+    digitalWrite(LED_PIN_CMD3, LOW);
+    digitalWrite(LED_PIN_CMD4, LOW);
+    digitalWrite(LED_PIN_CMD5, LOW);
     //Serial.println("All LEDs turned off.");
 }
 
