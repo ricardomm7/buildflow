@@ -9,10 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CriticalPathIdentifierGraph {
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
 
-    public CriticalPathIdentifierGraph(ActivitiesGraph graph) {
-        this.graph = graph;
+    public CriticalPathIdentifierGraph() {
+        this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
     /**
@@ -27,8 +27,7 @@ public class CriticalPathIdentifierGraph {
         List<Activity> criticalPath = new ArrayList<>();
         int totalProjectDuration = 0;
 
-        for (var linkedList : graph.getGraph().getAdjacencyList()) {
-            Activity activity = linkedList.getFirst();
+        for (Activity activity : graph.getGraph().vertices()) {
             int slack = activity.getLateStart() - activity.getEarlyStart();
 
             if (slack == 0) {
@@ -68,15 +67,7 @@ public class CriticalPathIdentifierGraph {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
     }
 
-    public static void main(String[] args) {
-        try {
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            CriticalPathIdentifierGraph criticalPathIdentifier = new CriticalPathIdentifierGraph(graph);
-            criticalPathIdentifier.identifyCriticalPath();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void setGraph(ActivitiesGraph graph) {
+        this.graph = graph;
     }
 }

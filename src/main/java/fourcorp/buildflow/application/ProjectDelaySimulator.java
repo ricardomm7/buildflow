@@ -4,10 +4,7 @@ import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProjectDelaySimulator {
@@ -40,7 +37,7 @@ public class ProjectDelaySimulator {
         applyDelays(delayMap);
 
         // Recalculate project schedule
-        this.timeCalculator = new ActivityTimeCalculator();
+        timeCalculator = new ActivityTimeCalculator();
         timeCalculator.calculateTimes();
 
         // Display comprehensive delay analysis
@@ -53,8 +50,7 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of activity IDs to their delay durations
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (var linkedList : workingGraph.getGraph().getAdjacencyList()) {
-            Activity activity = linkedList.getFirst();
+        for (Activity activity : workingGraph.getGraph().vertices()) {
             if (delayMap.containsKey(activity.getId())) {
                 int delayAmount = delayMap.get(activity.getId());
                 activity.setDuration(activity.getDuration() + delayAmount);
@@ -84,8 +80,8 @@ public class ProjectDelaySimulator {
      */
     private List<Activity> findCriticalPath(ActivitiesGraph graph) {
         List<Activity> criticalPath = new ArrayList<>();
-        for (var linkedList : graph.getGraph().getAdjacencyList()) {
-            Activity activity = linkedList.getFirst();
+
+        for (Activity activity : graph.getGraph().vertices()) {
             int slack = activity.getLateStart() - activity.getEarlyStart();
             if (slack == 0) {
                 criticalPath.add(activity);
@@ -165,8 +161,7 @@ public class ProjectDelaySimulator {
      * @return The activity with the specified ID, or null if not found.
      */
     public Activity findActivityById(String id) {
-        for (var linkedList : originalGraph.getGraph().getAdjacencyList()) {
-            Activity activity = linkedList.getFirst();
+        for (Activity activity : originalGraph.getGraph().vertices()) {
             if (activity.getId().equals(id)) {
                 return activity;
             }

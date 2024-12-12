@@ -7,13 +7,15 @@ import fourcorp.buildflow.repository.Repositories;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 public class DisplayGraph {
 
     private ActivitiesGraph graph;
 
-    public DisplayGraph(ActivitiesGraph graph) {
-        this.graph = graph;
+    public DisplayGraph() {
+        this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
     public void generateDotFile(String dotFilePath) {
@@ -33,18 +35,14 @@ public class DisplayGraph {
         dotContent.append("  node [fontname=\"Arial Bold\" fontsize=18];\n");
         dotContent.append("  edge [fontname=\"Arial\" fontsize=14];\n");
 
-        // Add nodes com mais detalhes
-        for (var linkedList : graph.getGraph().getAdjacencyList()) {
-            Activity activity = linkedList.getFirst();
-
+        // Adicionar nós (atividades)
+        for (Activity activity : graph.getGraph().vertices()) {
             // Determinar a forma e cor do nó
             String shape = activity.getEarlyStart() == activity.getLateStart() ? "doubleoctagon" : "ellipse";
             String fillColor = activity.getEarlyStart() == activity.getLateStart() ? "lightcoral" : "lightblue";
 
             // Criar um label mais informativo
-            String label = String.format("%s",
-                    activity.getId()
-            );
+            String label = String.format("%s", activity.getId());
 
             // Adicionar nó com mais detalhes
             dotContent.append(String.format(
@@ -61,12 +59,11 @@ public class DisplayGraph {
             ));
         }
 
-        // Add edges com pesos e informações de dependência
-        for (var linkedList : graph.getGraph().getAdjacencyList()) {
-            Activity fromActivity = linkedList.getFirst();
-            for (int i = 1; i < linkedList.size(); i++) {
-                Activity toActivity = linkedList.get(i);
-
+        // Adicionar arestas (dependências) com pesos e informações
+        for (Activity fromActivity : graph.getGraph().vertices()) {
+            // Obter as atividades adjacentes
+            Collection<Activity> adjacencies = graph.getGraph().adjVertices(fromActivity);
+            for (Activity toActivity : adjacencies) {
                 // Definir o peso como a duração da atividade anterior
                 int edgeWeight = fromActivity.getDuration();
 
@@ -88,6 +85,7 @@ public class DisplayGraph {
 
         dotContent.append("}\n");
 
+        // Escrever o conteúdo no arquivo DOT
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dotFilePath))) {
             writer.write(dotContent.toString());
             System.out.println("DOT file generated: " + dotFilePath);
@@ -95,6 +93,7 @@ public class DisplayGraph {
             System.err.println("Error writing DOT file: " + e.getMessage());
         }
     }
+
 
     public void generateSVG(String dotFilePath, String svgFilePath) {
         try {
@@ -116,20 +115,7 @@ public class DisplayGraph {
         }
     }
 
-    // Método main permanece o mesmo
-    public static void main(String[] args) {
-        try {
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            DisplayGraph displayGraph = new DisplayGraph(graph);
-            String dotFilePath = "outFiles/Graph3.dot";
-            String svgFilePath = "outFiles/Graph3.svg";
-
-            displayGraph.generateDotFile(dotFilePath);
-            displayGraph.generateSVG(dotFilePath, svgFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setGraph(ActivitiesGraph graph) {
+        this.graph = graph;
     }
 }

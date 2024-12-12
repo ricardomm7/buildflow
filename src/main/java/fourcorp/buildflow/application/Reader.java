@@ -6,9 +6,7 @@ import fourcorp.buildflow.repository.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Reader is an abstract utility class responsible for loading data from external files
@@ -378,27 +376,30 @@ public abstract class Reader {
 
     public static void loadActivities(String filePath) throws IOException {
         List<Activity> allActivities = new ArrayList<>();
+        Map<String, Activity> activityMap = new HashMap<>();
+
+        // Primeiro, ler e criar todas as atividades
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line = br.readLine(); // Skip header
             while ((line = br.readLine()) != null) {
                 Activity activity = getActivity(line);
                 allActivities.add(activity);
-                graph.addActivity(activity);
+                activityMap.put(activity.getId(), activity);
+                graph.addActivity(activity);  // Adicionar vértice ao grafo
             }
         }
 
-        // Add edges based on dependencies
-        for (int i = 0; i < allActivities.size(); i++) {
-            Activity activity = allActivities.get(i);
+        // Depois, adicionar dependências
+        for (Activity activity : allActivities) {
             for (String depId : activity.getDependencies()) {
-                for (int j = 0; j < allActivities.size(); j++) {
-                    if (allActivities.get(j).getId().equals(depId)) {
-                        graph.addDependency(j, i);
-                    }
+                Activity dependencyActivity = activityMap.get(depId);
+                if (dependencyActivity != null) {
+                    graph.addDependency(dependencyActivity, activity);
                 }
             }
         }
 
+        // Verificar dependências circulares
         String cycleActivityId = graph.detectCircularDependencies();
         if (!cycleActivityId.isEmpty()) {
             System.err.println("Circular dependency detected in Activity(ies) ID('s): " + cycleActivityId);
@@ -430,7 +431,6 @@ public abstract class Reader {
             }
         }
 
-        Activity activity = new Activity(id, name, duration, durationUnit, cost, costUnit, dependencies);
-        return activity;
+        return new Activity(id, name, duration, durationUnit, cost, costUnit, dependencies);
     }
 }

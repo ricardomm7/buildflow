@@ -21,11 +21,15 @@ public class ActivityTopologicalSort {
      * @throws IllegalStateException If the graph contains a cycle.
      */
     public List<Activity> performTopologicalSort() {
-        Map<Activity, Integer> inDegree = graph.getInDegrees();
+        Map<Activity, Integer> inDegree = new HashMap<>(graph.getInDegrees());
         Queue<Activity> zeroInDegreeQueue = new LinkedList<>();
-        for (var entry : inDegree.entrySet()) {
-            if (entry.getValue() == 0) {
-                zeroInDegreeQueue.add(entry.getKey());
+
+        for (Activity activity : graph.getGraph().vertices()) {
+            if (!inDegree.containsKey(activity)) {
+                inDegree.put(activity, 0);
+            }
+            if (inDegree.get(activity) == 0) {
+                zeroInDegreeQueue.add(activity);
             }
         }
 
@@ -35,15 +39,19 @@ public class ActivityTopologicalSort {
             sortedOrder.add(current);
 
             for (Activity neighbor : graph.getNeighbors(current)) {
-                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
-                if (inDegree.get(neighbor) == 0) {
+                int newInDegree = inDegree.get(neighbor) - 1;
+                inDegree.put(neighbor, newInDegree);
+                if (newInDegree == 0) {
                     zeroInDegreeQueue.add(neighbor);
                 }
             }
         }
 
         if (sortedOrder.size() != graph.numVertices()) {
-            throw new IllegalStateException("Graph contains a cycle. Topological sort is not possible.");
+            String cycles = graph.detectCircularDependencies();
+            throw new IllegalStateException(
+                    "Graph contains a cycle. Topological sort is not possible. Cycles found: " + cycles
+            );
         }
         return sortedOrder;
     }

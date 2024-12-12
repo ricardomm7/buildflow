@@ -84,6 +84,9 @@ public class Menu {
             System.out.printf("%-5s%-75s%n", "[27]", "Identify bottleneck activities.");
             System.out.printf("%-5s%-75s%n", "[28]", "Calculate Earliest and Latest Time.");
             System.out.printf("%-5s%-75s%n", "[29]", "Simulate project delay.");
+            System.out.printf("%-5s%-75s%n", "[30]", "See the critical path.");
+            System.out.printf("%-5s%-75s%n", "[31]", "Export Schedule.");
+            System.out.printf("%-5s%-75s%n", "[32]", "Display graph (graphical).");
             System.out.printf("%-5s%-75s%n", "[0]", "Exit");
             System.out.println("================================================================================");
 
@@ -98,7 +101,7 @@ public class Menu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 29) {
+                if (choice >= 0 && choice <= 32) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -244,8 +247,8 @@ public class Menu {
                 while (true) {
                     // Display all activities
                     System.out.println("\nAvailable Activities:");
-                    for (var linkedList : Repositories.getInstance().getActivitiesGraph().getGraph().getAdjacencyList()) {
-                        Activity activity = linkedList.getFirst();
+                    ActivityTopologicalSort sort = new ActivityTopologicalSort();
+                    for (Activity activity : sort.performTopologicalSort()) {
                         System.out.printf("• ID: %s | Name: %s | Duration: %d%n",
                                 activity.getId(), activity.getName(), activity.getDuration());
                     }
@@ -272,6 +275,23 @@ public class Menu {
                 delaySimulator.simulateProjectDelays(delays);
                 break;
 
+            case 30:
+                CriticalPathIdentifierGraph criticalPathIdentifier = new CriticalPathIdentifierGraph();
+                criticalPathIdentifier.identifyCriticalPath();
+                break;
+            case 31:
+                ExportSchedule exporter = new ExportSchedule();
+                exporter.exportToCsv("outFiles/schedule.csv");
+                break;
+            case 32:
+
+                DisplayGraph displayGraph = new DisplayGraph();
+                String dotFilePath = "outFiles/Graph3.dot";
+                String svgFilePath = "outFiles/Graph3.svg";
+
+                displayGraph.generateDotFile(dotFilePath);
+                displayGraph.generateSVG(dotFilePath, svgFilePath);
+                break;
             case 0:
                 System.out.println("Exiting...");
                 scanner.close();

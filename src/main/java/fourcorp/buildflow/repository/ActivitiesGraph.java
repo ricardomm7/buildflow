@@ -1,100 +1,114 @@
 package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.Activity;
-import fourcorp.buildflow.domain.Graph;
+import fourcorp.buildflow.domain.PertCpmGraph;
+import fourcorp.buildflow.external.Edge;
 
 import java.util.*;
 
 public class ActivitiesGraph {
-    private Graph graph;
+    private PertCpmGraph graph;
 
     public ActivitiesGraph() {
-        this.graph = new Graph();
+        this.graph = new PertCpmGraph();
     }
 
-    public Graph getGraph() {
+    public PertCpmGraph getGraph() {
         return graph;
     }
 
     public void addActivity(Activity activity) {
-        graph.addNode(activity);
+        graph.addVertex(activity);
     }
 
-    public void addDependency(int src, int dst) {
+    public void addDependency(Activity src, Activity dst) {
         graph.addEdge(src, dst);
     }
 
     public Activity[] getNeighbors(Activity activity) {
-        LinkedList<Activity> adjacencyList = graph.getAdjacencyList()
-                .stream()
-                .filter(list -> list.getFirst().equals(activity))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Activity not found in the graph"));
-
-        return adjacencyList.subList(1, adjacencyList.size()).toArray(new Activity[0]);
+        Collection<Edge<Activity>> edges = graph.outgoingEdges(activity);
+        List<Activity> neighbors = new ArrayList<>();
+        for (Edge<Activity> edge : edges) {
+            neighbors.add(edge.getVDest());
+        }
+        return neighbors.toArray(new Activity[0]);
     }
 
     public int numVertices() {
-        return graph.getAdjacencyList().size();
+        return graph.numVertices();
     }
 
     public Map<Activity, Integer> getInDegrees() {
         Map<Activity, Integer> inDegrees = new HashMap<>();
-        for (LinkedList<Activity> linkedList : graph.getAdjacencyList()) {
-            Activity current = linkedList.getFirst();
-            inDegrees.putIfAbsent(current, 0);
-            for (int i = 1; i < linkedList.size(); i++) {
-                Activity neighbor = linkedList.get(i);
-                inDegrees.put(neighbor, inDegrees.getOrDefault(neighbor, 0) + 1);
-            }
+
+        for (Activity vertex : graph.vertices()) {
+            inDegrees.put(vertex, 0);
         }
+
+        for (Edge<Activity> edge : graph.edges()) {
+            Activity destination = edge.getVDest();
+            inDegrees.put(destination, inDegrees.get(destination) + 1);
+        }
+
         return inDegrees;
     }
 
     public String detectCircularDependencies() {
         Set<Activity> visited = new HashSet<>();
         Set<Activity> recursionStack = new HashSet<>();
+        Set<String> uniqueCycles = new HashSet<>();
+        List<Activity> currentPath = new ArrayList<>();
 
-        StringBuilder cicleIds = new StringBuilder();
-        for (LinkedList<Activity> list : graph.getAdjacencyList()) {
-            Activity activity = list.getFirst();
-            String cycleActivityId = dfsCycleCheck(activity, visited, recursionStack);
-            if (cycleActivityId != null) {
-                cicleIds.append(" - ").append(cycleActivityId);
+        for (Activity activity : graph.vertices()) {
+            if (!visited.contains(activity)) {
+                dfsCycleCheck(activity, visited, recursionStack, currentPath, uniqueCycles);
             }
         }
-        return cicleIds.toString();
+
+        return String.join(" - ", uniqueCycles);
     }
 
-    private String dfsCycleCheck(Activity activity, Set<Activity> visited, Set<Activity> recursionStack) {
-        // If the activity is already in the recursion stack, we've found a cycle
+    private void dfsCycleCheck(Activity activity, Set<Activity> visited, Set<Activity> recursionStack, List<Activity> currentPath, Set<String> uniqueCycles) {
         if (recursionStack.contains(activity)) {
-            return activity.getId();
+            int startIndex = -1;
+            for (int i = 0; i < currentPath.size(); i++) {
+                if (currentPath.get(i).equals(activity)) {
+                    startIndex = i;
+                    break;
+                }
+            }
+
+            if (startIndex != -1) {
+                StringBuilder cycleStr = new StringBuilder();
+                for (int i = startIndex; i < currentPath.size(); i++) {
+                    if (i > startIndex) {
+                        cycleStr.append("->");
+                    }
+                    cycleStr.append(currentPath.get(i).getId());
+                }
+                cycleStr.append("->").append(activity.getId());
+                uniqueCycles.add(cycleStr.toString());
+            }
+            return;
         }
 
-        // If already fully explored, no cycle through this node
         if (visited.contains(activity)) {
-            return null;
+            return;
         }
 
-        // Mark as visited and add to recursion stack
         visited.add(activity);
         recursionStack.add(activity);
+        currentPath.add(activity);
 
-        // Check neighbors
         for (Activity neighbor : getNeighbors(activity)) {
-            String cycleActivityId = dfsCycleCheck(neighbor, visited, recursionStack);
-            if (cycleActivityId != null) {
-                return cycleActivityId;
-            }
+            dfsCycleCheck(neighbor, visited, recursionStack, currentPath, uniqueCycles);
         }
 
-        // Remove from recursion stack after exploring all neighbors
         recursionStack.remove(activity);
-        return null;
+        currentPath.remove(currentPath.size() - 1);
     }
 
-    public void setGraph(Graph g) {
+    public void setGraph(PertCpmGraph g) {
         this.graph = g;
     }
 }

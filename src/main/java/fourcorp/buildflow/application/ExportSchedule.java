@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
 
 public class ExportSchedule {
     private final ActivityTimeCalculator timeCalculator;
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
 
-    public ExportSchedule(ActivitiesGraph graph) {
-        this.graph = graph;
+    public ExportSchedule() {
+        this.graph = Repositories.getInstance().getActivitiesGraph();
         this.timeCalculator = new ActivityTimeCalculator();
     }
 
@@ -26,9 +26,9 @@ public class ExportSchedule {
             writer.write("act_id,cost,duration,es,ls,ef,lf,prev_act_id1,...,prev_act_idN\n");
 
             // Write each activity
-            for (var linkedList : graph.getGraph().getAdjacencyList()) {
-                Activity activity = linkedList.getFirst();
-
+            ActivityTopologicalSort topologicalSort = new ActivityTopologicalSort();
+            // Iterate over all vertices (activities)
+            for (Activity activity : topologicalSort.performTopologicalSort()) {
                 // Prepare dependencies
                 String dependencies = activity.getDependencies().isEmpty()
                         ? ""
@@ -57,17 +57,7 @@ public class ExportSchedule {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            // Load activities from CSV
-            ActivitiesGraph graph = Repositories.getInstance().getActivitiesGraph();
-            Reader.loadActivities("textFiles/activities.csv");
-
-            // Create and export schedule
-            ExportSchedule exporter = new ExportSchedule(graph);
-            exporter.exportToCsv("outFiles/schedule.csv");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void setGraph(ActivitiesGraph graph) {
+        this.graph = graph;
     }
 }

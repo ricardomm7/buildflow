@@ -1,21 +1,17 @@
 act_id,act_descr,duration,duration_unit,cost,cost_unit,prev_act_id1,...,prev_act_idN
-A1,Iniciação do Projeto,3,dias,1500,EUR,
-A2,Levantamento de Requisitos,7,dias,3000,EUR,A1
-A3,Análise de Viabilidade Técnica,5,dias,2500,EUR,A2
-A4,Definição da Arquitetura Inicial,6,dias,4000,EUR,A2,A3
-A5,Prototipagem de Interface,4,dias,2000,EUR,A4
-A6,Validação do Protótipo com Stakeholders,3,dias,1800,EUR,A5
-A7,Refinamento de Requisitos,4,dias,2200,EUR,A2,A6
-A8,Modelagem de Dados,5,dias,3500,EUR,A4,A7
-A9,Desenvolvimento do Núcleo do Sistema,12,dias,7000,EUR,A8
-A10,Desenvolvimento de Módulos Específicos,10,dias,6000,EUR,A8,A9
-A11,Integração de Sistemas Externos,6,dias,4500,EUR,A9,A10
-A12,Testes de Integração,7,dias,3800,EUR,A10,A11
-A13,Testes de Segurança,5,dias,5000,EUR,A12
-A14,Testes de Desempenho,4,dias,3200,EUR,A12
-A15,Testes de Aceitação do Usuário,6,dias,4000,EUR,A13,A14
-A16,Preparação para Implantação,4,dias,2500,EUR,A15
-A17,Implantação em Ambiente de Produção,3,dias,3000,EUR,A16
-A18,Monitoramento Pós-Implantação,5,dias,2800,EUR,A17
-A19,Suporte e Ajustes Iniciais,7,dias,4500,EUR,A18
-A20,Documentação Final e Encerramento do Projeto,4,dias,2000,EUR,A19
+A1,Iniciação do Projeto,5,dias,2000,EUR,
+A2,Planeamento Inicial,6,dias,3000,EUR,A1
+A3,Estudo de Viabilidade,4,dias,2500,EUR,A1
+A4,Definição de Requisitos,7,dias,4000,EUR,A2,A3
+A5,Design Arquitetural,8,dias,5000,EUR,A4
+A6,Prototipagem,5,dias,2200,EUR,A4
+A7,Desenvolvimento Módulo A,10,dias,6000,EUR,A5
+A8,Desenvolvimento Módulo B,7,dias,4500,EUR,A5,A6
+A9,Desenvolvimento Módulo C,6,dias,4000,EUR,A6
+A10,Testes de Módulo A,5,dias,3000,EUR,A7
+A11,Testes de Módulo B,4,dias,2800,EUR,A8
+A12,Integração de Módulos,8,dias,5000,EUR,A10,A11
+A13,Testes de Sistema,9,dias,6000,EUR,A12,A9
+A14,Documentação Técnica,6,dias,2000,EUR,A13
+A15,Revisão Final,5,dias,3000,EUR,A13
+A16,Entrega do Sistema,4,dias,4500,EUR,A14,A15

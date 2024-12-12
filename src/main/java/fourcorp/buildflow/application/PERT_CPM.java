@@ -4,7 +4,9 @@ import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PERT_CPM {
     private final ActivitiesGraph graph;
@@ -20,20 +22,26 @@ public class PERT_CPM {
         String dependencyFormat = "|     • Activity %-4s | %-30s %n";
         String separator = "+------------------+--------------------------------+-------------------+";
 
-        for (LinkedList<Activity> list : graph.getGraph().getAdjacencyList()) {
-            Activity activity = list.getFirst();
+        ActivityTopologicalSort topologicalSort = new ActivityTopologicalSort();
+        // Iterate over all vertices (activities)
+        for (Activity activity : topologicalSort.performTopologicalSort()) {
+            // Print the activity details
             System.out.println(separator);
             System.out.format(activityFormat, activity.getId(), truncate(activity.getName(), 40), activity.getDuration());
 
-            if (list.size() > 1) {
+            // Get the dependencies (adjacent activities)
+            Collection<Activity> adjacencies = graph.getGraph().adjVertices(activity);
+
+            if (!adjacencies.isEmpty()) {
                 System.out.println("|   Dependencies:");
-                for (int i = 1; i < list.size(); i++) {
-                    Activity dependency = list.get(i);
+                // Print each dependency
+                for (Activity dependency : adjacencies) {
                     System.out.format(dependencyFormat, dependency.getId(), truncate(dependency.getName(), 40));
                 }
             } else {
                 System.out.println("|   No dependencies.");
             }
+
             System.out.println(separator);
         }
         System.out.println();
