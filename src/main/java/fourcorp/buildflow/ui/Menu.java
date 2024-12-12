@@ -24,7 +24,7 @@ public class Menu {
     private final QualityCheckManager manager;
     private final CriticalPathCalculator calculator;
     private final MaterialQuantityUpdater materialUpdater;
-    private final PERT_CPM pert;
+    private final PertCpmVisualizer pert;
     private final ActivityTopologicalSort topologicalSort;
     private final BottleneckIdentifier bottleneckIdentifier;
     private final ActivityTimeCalculator calculatorGraph;
@@ -43,7 +43,7 @@ public class Menu {
         ProductionTree productionTree = Repositories.getInstance().getProductionTree();
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
-        pert = new PERT_CPM();
+        pert = new PertCpmVisualizer();
         topologicalSort = new ActivityTopologicalSort();
         bottleneckIdentifier = new BottleneckIdentifier();
         calculatorGraph = new ActivityTimeCalculator();

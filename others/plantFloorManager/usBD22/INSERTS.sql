@@ -83,5 +83,5 @@ INSERT INTO Procurement (SupplierID, External_PartPart_ID, Unit_Cost, Minimum_Qu
 VALUES (18143562, 'EPART002', 12.0, 50, TO_DATE('2023-11-15', 'YYYY-MM-DD'), TO_DATE('2023-12-31', 'YYYY-MM-DD'));
 
 -- Inserts para Production_Line
-INSERT INTO Production_Line (Product_ID, Order_ID, quantity) VALUES ('PROD01', 'ORD001', 10);
-INSERT INTO Production_Line (Product_ID, Order_ID, quantity) VALUES ('PROD02', 'ORD002', 20);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('PROD01', 'ORD001', 10);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('PROD02', 'ORD002', 20);

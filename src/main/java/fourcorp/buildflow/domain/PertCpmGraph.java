@@ -52,9 +52,9 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
     @Override
     public Activity vertex(Predicate<Activity> p) {
         return adjacencyList.keySet().stream()
-            .filter(p)
-            .findFirst()
-            .orElse(null);
+                .filter(p)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -63,8 +63,8 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
             return new ArrayList<>();
         }
         return adjacencyList.get(vert).stream()
-            .map(Edge::getVDest)
-            .toList();
+                .map(Edge::getVDest)
+                .toList();
     }
 
     @Override
@@ -87,9 +87,9 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
             return null;
         }
         return adjacencyList.get(vOrig).stream()
-            .filter(edge -> edge.getVDest().equals(vDest))
-            .findFirst()
-            .orElse(null);
+                .filter(edge -> edge.getVDest().equals(vDest))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -111,24 +111,24 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
     @Override
     public int inDegree(Activity vert) {
         return (int) adjacencyList.values().stream()
-            .flatMap(List::stream)
-            .filter(edge -> edge.getVDest().equals(vert))
-            .count();
+                .flatMap(List::stream)
+                .filter(edge -> edge.getVDest().equals(vert))
+                .count();
     }
 
     @Override
     public Collection<Edge<Activity>> outgoingEdges(Activity vert) {
         return adjacencyList.containsKey(vert) ?
-            adjacencyList.get(vert) :
-            new ArrayList<>();
+                adjacencyList.get(vert) :
+                new ArrayList<>();
     }
 
     @Override
     public Collection<Edge<Activity>> incomingEdges(Activity vert) {
         return adjacencyList.values().stream()
-            .flatMap(List::stream)
-            .filter(edge -> edge.getVDest().equals(vert))
-            .toList();
+                .flatMap(List::stream)
+                .filter(edge -> edge.getVDest().equals(vert))
+                .toList();
     }
 
     @Override
@@ -176,7 +176,7 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
 
         // Remove edges pointing to this vertex from other vertices
         adjacencyList.values().forEach(
-            edges -> edges.removeIf(edge -> edge.getVDest().equals(vert))
+                edges -> edges.removeIf(edge -> edge.getVDest().equals(vert))
         );
 
         return true;

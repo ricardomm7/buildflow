@@ -6,17 +6,18 @@ CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Designation varchar2(1
 CREATE TABLE Operation_Input (Part_ID char(10) NOT NULL, Operation_ID number(10) NOT NULL, Quantity double precision NOT NULL, PRIMARY KEY (Part_ID, Operation_ID));
 CREATE TABLE Operation_Type_Workstation (OperationOperation_ID number(10) NOT NULL, WorkstationType_ID char(5) NOT NULL, Max_Exec_Time double precision NOT NULL, Setup_Time double precision NOT NULL, PRIMARY KEY (OperationOperation_ID, WorkstationType_ID));
 CREATE TABLE "Order" (Order_ID varchar2(255) NOT NULL, OrderDate date NOT NULL, DeliveryDate date NOT NULL, CostumerVAT varchar2(20) NOT NULL, PRIMARY KEY (Order_ID));
+CREATE TABLE Order_Line (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID));
 CREATE TABLE Procurement (SupplierID number(10) NOT NULL, External_PartPart_ID char(10) NOT NULL, Unit_Cost double precision NOT NULL, Minimum_Quantity number(10) NOT NULL, Offer_Start date NOT NULL, Offer_End date, PRIMARY KEY (SupplierID, External_PartPart_ID));
 CREATE TABLE Product (Part_ID char(10) NOT NULL, Name varchar2(100) NOT NULL, Product_FamilyFamily_ID varchar2(60) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Product_Family (Family_ID varchar2(60) NOT NULL, Name varchar2(100) NOT NULL, PRIMARY KEY (Family_ID));
 CREATE TABLE Product_Type (Part_ID char(10) NOT NULL, Description varchar2(100) NOT NULL, PRIMARY KEY (Part_ID));
-CREATE TABLE Production_Line (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID));
 CREATE TABLE Raw_Material (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
+CREATE TABLE Reservation (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, Part_ID char(10) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID, Part_ID));
 CREATE TABLE Supplier (ID number(10) NOT NULL, Name varchar2(255) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (ID));
 CREATE TABLE Type_Workstation (WorkstationType_ID char(5) NOT NULL, Designation varchar2(100) NOT NULL, PRIMARY KEY (WorkstationType_ID));
 CREATE TABLE Workstation (Workstation_ID number(4) NOT NULL, Name varchar2(60) NOT NULL, Description varchar2(100) NOT NULL, WorkstationType_ID char(5) NOT NULL, PRIMARY KEY (Workstation_ID));
-ALTER TABLE Production_Line ADD CONSTRAINT FKProduction984405 FOREIGN KEY (Product_ID) REFERENCES Product (Part_ID);
-ALTER TABLE Production_Line ADD CONSTRAINT FKProduction29800 FOREIGN KEY (Order_ID) REFERENCES "Order" (Order_ID);
+ALTER TABLE Order_Line ADD CONSTRAINT FKOrder_Line109098 FOREIGN KEY (Product_ID) REFERENCES Product (Part_ID);
+ALTER TABLE Order_Line ADD CONSTRAINT FKOrder_Line66483 FOREIGN KEY (Order_ID) REFERENCES "Order" (Order_ID);
 ALTER TABLE "Order" ADD CONSTRAINT FKOrder416670 FOREIGN KEY (CostumerVAT) REFERENCES Costumer (VAT);
 ALTER TABLE Workstation ADD CONSTRAINT FKWorkstatio115580 FOREIGN KEY (WorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
 ALTER TABLE Operation_Type_Workstation ADD CONSTRAINT FKOperation_470077 FOREIGN KEY (OperationOperation_ID) REFERENCES Operation (Operation_ID);
@@ -34,3 +35,5 @@ ALTER TABLE Raw_Material ADD CONSTRAINT FKRaw_Materi669901 FOREIGN KEY (Part_ID)
 ALTER TABLE Procurement ADD CONSTRAINT FKProcuremen968793 FOREIGN KEY (SupplierID) REFERENCES Supplier (ID);
 ALTER TABLE Procurement ADD CONSTRAINT FKProcuremen19983 FOREIGN KEY (External_PartPart_ID) REFERENCES External_Part (Part_ID);
 ALTER TABLE Operation ADD CONSTRAINT FKOperation525229 FOREIGN KEY (Output_Part_ID) REFERENCES Product_Type (Part_ID);
+ALTER TABLE Reservation ADD CONSTRAINT FKReservatio409178 FOREIGN KEY (Product_ID, Order_ID) REFERENCES Order_Line (Product_ID, Order_ID);
+ALTER TABLE Reservation ADD CONSTRAINT FKReservatio729171 FOREIGN KEY (Part_ID) REFERENCES External_Part (Part_ID);

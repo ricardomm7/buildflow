@@ -36,7 +36,7 @@ public class Edge<V> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         @SuppressWarnings("unchecked") Edge<V> edge = (Edge<V>) o;
-        return  vOrig.equals(edge.vOrig) &&
+        return vOrig.equals(edge.vOrig) &&
                 vDest.equals(edge.vDest);
     }
 

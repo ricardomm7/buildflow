@@ -5,13 +5,11 @@ import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
-public class PERT_CPM {
+public class PertCpmVisualizer {
     private final ActivitiesGraph graph;
 
-    public PERT_CPM() {
+    public PertCpmVisualizer() {
         this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
