@@ -56,11 +56,11 @@ void send_command(int fd, const char *command) {
         return;
     }
 
-    printf("Command sent: %s\n", command);
+    //printf("Command sent: %s\n", command);
 }
 
 void read_response(int fd, char *buffer, size_t buffer_size) {
-    memset(buffer, 0, buffer_size); // Limpa o buffer
+    memset(buffer, 0, buffer_size);
     int total_bytes_read = 0;
 
     while (1) {
@@ -70,12 +70,11 @@ void read_response(int fd, char *buffer, size_t buffer_size) {
             break;
         }
         if (bytes_read == 0) {
-            break; // Nenhum dado recebido (timeout ou fim)
+            break; 
         }
 
         total_bytes_read += bytes_read;
 
-        // Parar leitura ao encontrar nova linha ou encher buffer
         if (strchr(buffer, '\n') != NULL || total_bytes_read >= buffer_size - 1) {
             break;
         }
@@ -85,29 +84,37 @@ void read_response(int fd, char *buffer, size_t buffer_size) {
     //printf("Bytes read: %d\n", total_bytes_read); // Log de depuração
 }
 
-int main() {
-    const char *portname = "/dev/ttyACM0"; // Certifique-se de que esta é a porta correta
-    const char *command = "ON,0,0,0,0,1\n";
+int send_and_read_from_machine(const char *command, char *response) {
+    const char *portname = "/dev/ttyACM0";
     int baudrate = B115200;
-    char response[BUFFER_SIZE];
 
     int fd = configure_serial(portname, baudrate);
     if (fd == -1) {
-        return EXIT_FAILURE;
+        fprintf(stderr, "Failed to configure serial port.\n");
+        return -1; // Retorna erro em caso de falha
     }
 
-    printf("Sending command...\n");
     send_command(fd, command);
 
-    printf("Waiting for response...\n");
-    sleep(1);
     read_response(fd, response, BUFFER_SIZE);
 
-    printf("Response received: %s\n", response);
-    
-    //for usac18
+	// FOR USAC18 N SEI SE É AQUI
     check_for_alerts();
 
     close(fd);
-    return EXIT_SUCCESS;
+    return 0;
+}
+
+// CÓDIGO DE EXEMPLO
+int main() {
+    const char *command = "OP,0,0,0,0,1\n";
+    char response[256];
+
+    if (send_and_read_from_machine(command, response) == 0) {
+        printf("Command executed successfully. Response: %s\n", response);
+    } else {
+        fprintf(stderr, "Failed to execute command.\n");
+    }
+
+    return 0;
 }
