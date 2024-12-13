@@ -2,7 +2,7 @@
 TARGET = program
 
 # Arquivos fonte
-SRC_C = main.c alertAnalysis.c
+SRC_C = communication.c alertAnalysis.c
 SRC_ASM = asseFunctions/usac8.s asseFunctions/usac9.s asseFunctions/usac10.s \
           asseFunctions/usac1.s asseFunctions/usac2.s asseFunctions/usac4.s \
           asseFunctions/usac6.s asseFunctions/usac5.s asseFunctions/usac3.s \
