@@ -4,56 +4,84 @@ import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class ProjectDelaySimulator {
-    private final ActivitiesGraph originalGraph;
-    private ActivitiesGraph workingGraph;
+    private final ActivitiesGraph graph;
     private ActivityTimeCalculator timeCalculator;
 
-    // Original project metrics
+    // Project metrics
     private int originalProjectDuration;
+    private int newProjectDuration;
     private List<Activity> originalCriticalPath;
+    private List<Activity> newCriticalPath;
+
+    // Map to store original durations
+    private final Map<String, Integer> originalDurations = new HashMap<>();
 
     public ProjectDelaySimulator() {
-        this.originalGraph = Repositories.getInstance().getActivitiesGraph();
-        this.workingGraph = cloneGraph(Repositories.getInstance().getActivitiesGraph());
+        this.graph = Repositories.getInstance().getActivitiesGraph();
+        this.timeCalculator = new ActivityTimeCalculator();
+        timeCalculator.setGraph(graph);
     }
 
     /**
-     * Simulates delays for specified activities and analyzes project impact
+     * Simulates delays for specified activities and analyzes project impact.
      *
-     * @param delayMap Map of activity IDs to their delay durations
+     * @param delayMap Map of activity IDs to their delay durations.
      */
     public void simulateProjectDelays(Map<String, Integer> delayMap) {
-        // Reset working graph to original state
-        workingGraph = cloneGraph(originalGraph);
+        // Save the original durations
+        saveOriginalDurations();
 
         // Calculate original project metrics
-        calculateOriginalProjectMetrics();
+        calculateOriginalMetrics();
 
         // Apply delays
         applyDelays(delayMap);
 
-        // Recalculate project schedule
-        timeCalculator = new ActivityTimeCalculator();
-        timeCalculator.calculateTimes();
+        // Recalculate project metrics after delays
+        calculateNewMetrics();
 
-        // Display comprehensive delay analysis
-        displayDelayImpactAnalysis(delayMap);
+        // Display analysis
+        displayImpactAnalysis(delayMap);
     }
 
     /**
-     * Applies delays to specified activities
+     * Saves the original durations of activities.
+     */
+    private void saveOriginalDurations() {
+        for (Activity activity : graph.getGraph().vertices()) {
+            originalDurations.put(activity.getId(), activity.getDuration());
+        }
+    }
+
+    /**
+     * Restores the original durations of activities.
+     */
+    private void restoreOriginalDurations() {
+        for (Activity activity : graph.getGraph().vertices()) {
+            activity.setDuration(originalDurations.get(activity.getId()));
+        }
+    }
+
+    /**
+     * Calculates the project metrics before applying delays.
+     */
+    private void calculateOriginalMetrics() {
+        restoreOriginalDurations(); // Ensure calculations are based on original durations
+        timeCalculator.calculateTimes();
+        originalProjectDuration = timeCalculator.getProjectDuration();
+        originalCriticalPath = findCriticalPath();
+    }
+
+    /**
+     * Applies delays to the graph.
      *
-     * @param delayMap Map of activity IDs to their delay durations
+     * @param delayMap Map of activity IDs to their delay durations.
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (Activity activity : workingGraph.getGraph().vertices()) {
+        for (Activity activity : graph.getGraph().vertices()) {
             if (delayMap.containsKey(activity.getId())) {
                 int delayAmount = delayMap.get(activity.getId());
                 activity.setDuration(activity.getDuration() + delayAmount);
@@ -62,48 +90,39 @@ public class ProjectDelaySimulator {
     }
 
     /**
-     * Calculates original project metrics before delay simulation
+     * Calculates the project metrics after applying delays.
      */
-    private void calculateOriginalProjectMetrics() {
-        ActivityTimeCalculator originalCalculator = new ActivityTimeCalculator();
-        originalCalculator.calculateTimes();
-
-        // Determine original project duration
-        originalProjectDuration = originalCalculator.getProjectDuration();
-
-        // Identify original critical path
-        originalCriticalPath = findCriticalPath(originalGraph);
+    private void calculateNewMetrics() {
+        timeCalculator.calculateTimes(); // Recalculate times after delays
+        newProjectDuration = timeCalculator.getProjectDuration();
+        newCriticalPath = findCriticalPath();
     }
 
     /**
-     * Finds critical path activities
+     * Finds the critical path in the current graph.
      *
-     * @param graph ActivitiesGraph to analyze
-     * @return List of critical path activities
+     * @return List of activities in the critical path.
      */
-    private List<Activity> findCriticalPath(ActivitiesGraph graph) {
+    private List<Activity> findCriticalPath() {
         List<Activity> criticalPath = new ArrayList<>();
 
         for (Activity activity : graph.getGraph().vertices()) {
             int slack = activity.getLateStart() - activity.getEarlyStart();
-            if (slack == 0) {
+            if (slack == 0) { // Critical activities have zero slack
                 criticalPath.add(activity);
             }
         }
-        return criticalPath.stream()
-                .sorted(Comparator.comparingInt(Activity::getEarlyStart))
-                .collect(Collectors.toList());
+
+        criticalPath.sort(Comparator.comparingInt(Activity::getEarlyStart));
+        return criticalPath;
     }
 
     /**
-     * Displays comprehensive delay impact analysis
+     * Displays the delay impact analysis.
      *
-     * @param delayMap Map of delayed activities
+     * @param delayMap Map of delayed activities.
      */
-    private void displayDelayImpactAnalysis(Map<String, Integer> delayMap) {
-        int newProjectDuration = timeCalculator.getProjectDuration();
-        List<Activity> newCriticalPath = findCriticalPath(workingGraph);
-
+    private void displayImpactAnalysis(Map<String, Integer> delayMap) {
         System.out.println("\n╔══════════════════════════════════════════════════════");
         System.out.println("║ PROJECT DELAY IMPACT ANALYSIS");
         System.out.println("╠══════════════════════════════════════════════════════");
@@ -123,49 +142,47 @@ public class ProjectDelaySimulator {
 
         System.out.println("╠══════════════════════════════════════════════════════");
 
-        // Critical Path Changes
-        System.out.println("║ CRITICAL PATH ANALYSIS:");
-        System.out.println("║ Original Critical Path Activities:");
-        originalCriticalPath.forEach(activity ->
-                System.out.printf("║   • %s: %s (Duration: %d, Slack: %d)%n",
-                        activity.getId(), activity.getName(), activity.getDuration(),
-                        activity.getLateStart() - activity.getEarlyStart())
-        );
+        // Critical Path Analysis
+        System.out.println("║ ORIGINAL CRITICAL PATH:");
+        printCriticalPath(originalCriticalPath);
 
-        System.out.println("║");  // Space between original and new critical paths
-
-        System.out.println("║ New Critical Path Activities:");
-        newCriticalPath.forEach(activity ->
-                System.out.printf("║   • %s: %s (Duration: %d, Slack: %d)%n",
-                        activity.getId(), activity.getName(), activity.getDuration(),
-                        activity.getLateStart() - activity.getEarlyStart())
-        );
+        System.out.println("║"); // Spacer
+        System.out.println("║ NEW CRITICAL PATH:");
+        printCriticalPath(newCriticalPath);
 
         System.out.println("╚══════════════════════════════════════════════════════\n");
     }
 
     /**
-     * Creates a deep clone of the Activities Graph
+     * Prints the critical path in a structured format.
      *
-     * @param originalGraph Original graph to clone
-     * @return Cloned ActivitiesGraph
+     * @param criticalPath List of activities in the critical path.
      */
-    private ActivitiesGraph cloneGraph(ActivitiesGraph originalGraph) {
-        ActivitiesGraph clone = new ActivitiesGraph();
-        clone.setGraph(originalGraph.getGraph());
-
-        return clone;
+    private void printCriticalPath(List<Activity> criticalPath) {
+        String format = "║   • %-6s %-30s | Duration: %-4d | ES: %-3d | EF: %-3d | LS: %-3d | LF: %-3d | Slack: %-3d%n";
+        for (Activity activity : criticalPath) {
+            System.out.printf(format,
+                    activity.getId(),
+                    truncate(activity.getName(), 30),
+                    activity.getDuration(),
+                    activity.getEarlyStart(),
+                    activity.getEarlyFinish(),
+                    activity.getLateStart(),
+                    activity.getLateFinish(),
+                    activity.getLateStart() - activity.getEarlyStart());
+        }
     }
 
     /**
-     * Finds an activity by ID in the original graph.
-     *
-     * @param id Activity ID to find.
-     * @return The activity with the specified ID, or null if not found.
+     * Truncates text for better formatting in outputs.
      */
-    public Activity findActivityById(String id) {
-        for (Activity activity : originalGraph.getGraph().vertices()) {
-            if (activity.getId().equals(id)) {
+    private String truncate(String text, int maxLength) {
+        return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+    }
+
+    public Activity findActivityById(String input) {
+        for (Activity activity : Repositories.getInstance().getActivitiesGraph().getGraph().vertices()) {
+            if (activity.getId().equals(input)) {
                 return activity;
             }
         }

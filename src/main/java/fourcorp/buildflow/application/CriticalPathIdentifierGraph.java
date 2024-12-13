@@ -27,7 +27,8 @@ public class CriticalPathIdentifierGraph {
         List<Activity> criticalPath = new ArrayList<>();
         int totalProjectDuration = 0;
 
-        for (Activity activity : graph.getGraph().vertices()) {
+        ActivityTopologicalSort sort = new ActivityTopologicalSort();
+        for (Activity activity : sort.performTopologicalSort()){
             int slack = activity.getLateStart() - activity.getEarlyStart();
 
             if (slack == 0) {
