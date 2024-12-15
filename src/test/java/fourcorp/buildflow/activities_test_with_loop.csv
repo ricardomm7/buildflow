@@ -1,0 +1,4 @@
+act_id,act_descr,duration,duration_unit,cost,cost_unit,prev_act_id1,prev_act_id2
+B1,Inicio do Projeto,3,dias,1500,USD,B2,B3,
+B2,Planejamento,4,dias,2000,USD,B1,
+B3,Análise de Riscos,5,dias,1800,USD,B1,

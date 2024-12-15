@@ -374,6 +374,13 @@ public abstract class Reader {
         bst = p;
     }
 
+    /**
+     * Load activities.
+     * The complexity of this method is: O(n).
+     *
+     * @param filePath the file path
+     * @throws IOException the io exception
+     */
     public static void loadActivities(String filePath) throws IOException {
         List<Activity> allActivities = new ArrayList<>();
         Map<String, Activity> activityMap = new HashMap<>();
@@ -390,8 +397,8 @@ public abstract class Reader {
         }
 
         // Depois, adicionar dependências
-        for (Activity activity : allActivities) {
-            for (String depId : activity.getDependencies()) {
+        for (Activity activity : allActivities) { // O(n)
+            for (String depId : activity.getDependencies()) { // O(n^2)
                 Activity dependencyActivity = activityMap.get(depId);
                 if (dependencyActivity != null) {
                     graph.addDependency(dependencyActivity, activity);
@@ -400,7 +407,7 @@ public abstract class Reader {
         }
 
         // Verificar dependências circulares
-        boolean cycleActivityId = graph.detectCircularDependencies();
+        boolean cycleActivityId = graph.detectCircularDependencies(); // O(n)
         if (cycleActivityId) {
             //System.err.println("Graph creation aborted due to circular dependency detected.");
             throw new RuntimeException("Program aborted due to the circular dependency(ies) found.");

@@ -27,6 +27,8 @@ graph G {
   "2006" [shape=ellipse style=filled fillcolor=lightgreen label="caixa pintada"];
   "2006" -- "5" [label="1.0"];
   "5" [shape=rect style=filled fillcolor=lightblue label="pintar caixa"];
+  "5" -- "2008" [label="0.5"];
+  "2008" [shape=hexagon style=filled fillcolor=orange label="tinta"];
   "5" -- "4" [label="1.0"];
   "4" [shape=rect style=filled fillcolor=lightblue label="lixar caixa de madeira"];
   "4" -- "3" [label="1.0"];
@@ -35,8 +37,6 @@ graph G {
   "2" [shape=rect style=filled fillcolor=lightblue label="montar caixa"];
   "1" [shape=rect style=filled fillcolor=lightblue label="cortar tábua de madeira"];
   "2001" [shape=hexagon style=filled fillcolor=orange label="tábua de madeira"];
-  "5" -- "2008" [label="0.5"];
-  "2008" [shape=hexagon style=filled fillcolor=orange label="tinta"];
   "2007" [shape=ellipse style=filled fillcolor=lightgreen label="caixa lixada"];
   "2007" -- "4" [label="1.0"];
   "4" [shape=rect style=filled fillcolor=lightblue label="lixar caixa de madeira"];
