@@ -400,10 +400,9 @@ public abstract class Reader {
         }
 
         // Verificar dependências circulares
-        String cycleActivityId = graph.detectCircularDependencies();
-        if (!cycleActivityId.isEmpty()) {
-            System.err.println("Circular dependency detected in Activity(ies) ID('s): " + cycleActivityId);
-            System.err.println("Graph creation aborted.");
+        boolean cycleActivityId = graph.detectCircularDependencies();
+        if (cycleActivityId) {
+            //System.err.println("Graph creation aborted due to circular dependency detected.");
             throw new RuntimeException("Program aborted due to the circular dependency(ies) found.");
         }
     }

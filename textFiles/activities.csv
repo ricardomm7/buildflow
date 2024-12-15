@@ -1,5 +1,5 @@
 act_id,act_descr,duration,duration_unit,cost,cost_unit,prev_act_id1,...,prev_act_idN
-A1,Iniciação do Projeto,5,dias,2000,EUR,
+A1,Iniciação do Projeto,5,dias,2000,EUR
 A2,Planeamento Inicial,6,dias,3000,EUR,A1
 A3,Estudo de Viabilidade,4,dias,2500,EUR,A1
 A4,Definição de Requisitos,7,dias,4000,EUR,A2,A3

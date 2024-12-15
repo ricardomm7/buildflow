@@ -47,8 +47,10 @@ public class ActivityTopologicalSort {
             }
         }
 
+
+        //modificar este método pois não faz sentido, visto que as dependências circulares são verificadas no início do programa.
         if (sortedOrder.size() != graph.numVertices()) {
-            String cycles = graph.detectCircularDependencies();
+            boolean cycles = graph.detectCircularDependencies();
             throw new IllegalStateException(
                     "Graph contains a cycle. Topological sort is not possible. Cycles found: " + cycles
             );

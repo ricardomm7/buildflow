@@ -53,59 +53,43 @@ public class ActivitiesGraph {
         return inDegrees;
     }
 
-    public String detectCircularDependencies() {
-        Set<Activity> visited = new HashSet<>();
-        Set<Activity> recursionStack = new HashSet<>();
-        Set<String> uniqueCycles = new HashSet<>();
-        List<Activity> currentPath = new ArrayList<>();
+    public boolean detectCircularDependencies() {
+        Map<Activity, Integer> color = new HashMap<>();
 
+        // Inicializar todos os nós como "White" (0)
         for (Activity activity : graph.vertices()) {
-            if (!visited.contains(activity)) {
-                dfsCycleCheck(activity, visited, recursionStack, currentPath, uniqueCycles);
+            color.put(activity, 0);
+        }
+
+        // Executar o DFS
+        for (Activity activity : graph.vertices()) {
+            if (color.get(activity) == 0) { // White
+                if (colorDFS(activity, color)) {
+                    return true; // Ciclo detectado
+                }
             }
         }
 
-        return String.join(" - ", uniqueCycles);
+        return false; // Nenhum ciclo detectado
     }
 
-    private void dfsCycleCheck(Activity activity, Set<Activity> visited, Set<Activity> recursionStack, List<Activity> currentPath, Set<String> uniqueCycles) {
-        if (recursionStack.contains(activity)) {
-            int startIndex = -1;
-            for (int i = 0; i < currentPath.size(); i++) {
-                if (currentPath.get(i).equals(activity)) {
-                    startIndex = i;
-                    break;
-                }
-            }
-
-            if (startIndex != -1) {
-                StringBuilder cycleStr = new StringBuilder();
-                for (int i = startIndex; i < currentPath.size(); i++) {
-                    if (i > startIndex) {
-                        cycleStr.append("->");
-                    }
-                    cycleStr.append(currentPath.get(i).getId());
-                }
-                cycleStr.append("->").append(activity.getId());
-                uniqueCycles.add(cycleStr.toString());
-            }
-            return;
-        }
-
-        if (visited.contains(activity)) {
-            return;
-        }
-
-        visited.add(activity);
-        recursionStack.add(activity);
-        currentPath.add(activity);
+    private boolean colorDFS(Activity activity, Map<Activity, Integer> color) {
+        color.put(activity, 1); // Marcar como "Gray" (1)
 
         for (Activity neighbor : getNeighbors(activity)) {
-            dfsCycleCheck(neighbor, visited, recursionStack, currentPath, uniqueCycles);
+            if (color.get(neighbor) == 1) {
+                // Encontrou um nó cinza -> ciclo detectado
+                return true;
+            }
+            if (color.get(neighbor) == 0) { // White
+                if (colorDFS(neighbor, color)) {
+                    return true;
+                }
+            }
         }
 
-        recursionStack.remove(activity);
-        currentPath.remove(currentPath.size() - 1);
+        color.put(activity, 2); // Marcar como "Black" (2)
+        return false; // Nenhum ciclo encontrado a partir deste nó
     }
 
     public void setGraph(PertCpmGraph g) {
