@@ -213,6 +213,14 @@ VALUES (115, 'S3271', 10.0, 2.0);
 
 
 -- orders missing
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD001', TO_DATE('2023-11-20', 'YYYY-MM-DD'), TO_DATE('2023-11-30', 'YYYY-MM-DD'), 'PT501245987');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD002', TO_DATE('2023-11-25', 'YYYY-MM-DD'), TO_DATE('2023-12-05', 'YYYY-MM-DD'), 'PT501245488');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD003', TO_DATE('2023-12-01', 'YYYY-MM-DD'), TO_DATE('2023-12-10', 'YYYY-MM-DD'), 'PT501242417');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD004', TO_DATE('2023-11-15', 'YYYY-MM-DD'), TO_DATE('2023-11-25', 'YYYY-MM-DD'), 'CZ6451237810');
 
 
 INSERT INTO Supplier (ID, Name, Email, Phone) VALUES (12345, 'Supplier 12345', NULL, NULL);
@@ -242,6 +250,18 @@ VALUES (12298, 'PN12344A21', 0.65, 200, TO_DATE('2023-07-01', 'YYYY-MM-DD'), NUL
 
 
 --order-line missing
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S22', 'ORD001', 5);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S17', 'ORD001', 10);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945P17', 'ORD002', 8);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12946S20', 'ORD002', 12);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S20', 'ORD003', 15);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12947S22', 'ORD003', 7);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12947S20', 'ORD004', 10);
+INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S48', 'ORD004', 5);
 
 
 --reservation missing
+INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
+VALUES ('AS12945S22', 'ORD001', 'PN18544C21', 10);
+INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
+VALUES ('AS12946S20', 'ORD002', 'PN18324C54', 5);
