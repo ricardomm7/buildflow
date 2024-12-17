@@ -408,9 +408,42 @@ public abstract class Reader {
 
         // Verificar dependências circulares
         boolean cycleActivityId = graph.detectCircularDependencies(); // O(n)
+        validateStartEndVertices(graph.getGraph()); //O(n)
         if (cycleActivityId) {
             //System.err.println("Graph creation aborted due to circular dependency detected.");
             throw new RuntimeException("Program aborted due to the circular dependency(ies) found.");
+        }
+    }
+
+    private static void validateStartEndVertices(PertCpmGraph graph) {
+        List<Activity> startVertices = new ArrayList<>();
+        List<Activity> endVertices = new ArrayList<>();
+
+        for (Activity activity : graph.getActivities()) { // O(n)
+            if (graph.getIncomingEdges(activity).isEmpty()) {
+                startVertices.add(activity);
+            }
+            if (graph.getOutgoingEdges(activity).isEmpty()) {
+                endVertices.add(activity);
+            }
+        }
+
+        // If multiple start vertices found, create virtual start
+        if (startVertices.size() > 1) {
+            Activity virtualStart = new Activity("START", "Virtual Start", 0, "days", 0.0, "EUR", new ArrayList<>());
+            graph.addActivity(virtualStart);
+            for (Activity start : startVertices) { // O(n)
+                graph.addDependency(virtualStart, start);
+            }
+        }
+
+        // If multiple end vertices found, create virtual end
+        if (endVertices.size() > 1) {
+            Activity virtualEnd = new Activity("END", "Virtual End", 0, "days", 0.0, "EUR", new ArrayList<>());
+            graph.addActivity(virtualEnd);
+            for (Activity end : endVertices) { // O(n)
+                graph.addDependency(end, virtualEnd);
+            }
         }
     }
 

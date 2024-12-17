@@ -217,4 +217,47 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
 
         return clonedGraph;
     }
+
+
+    public Iterable<? extends Activity> getActivities() {
+        return adjacencyList.keySet();
+    }
+
+    public Map<Activity, Edge<Activity>> getIncomingEdges(Activity activity) {
+        Map<Activity, Edge<Activity>> incomingEdges = new HashMap<>();
+
+        for (Map.Entry<Activity, LinkedList<Edge<Activity>>> entry : adjacencyList.entrySet()) {
+            Activity source = entry.getKey();
+            for (Edge<Activity> edge : entry.getValue()) {
+                if (edge.getVDest().equals(activity)) {
+                    incomingEdges.put(source, edge);
+                }
+            }
+        }
+
+        return incomingEdges;
+    }
+
+    public Map<Object, Object> getOutgoingEdges(Activity activity) {
+        Map<Object, Object> outgoingEdges = new HashMap<>();
+
+        for (Map.Entry<Activity, LinkedList<Edge<Activity>>> entry : adjacencyList.entrySet()) {
+            Activity source = entry.getKey();
+            for (Edge<Activity> edge : entry.getValue()) {
+                if (edge.getVOrig().equals(activity)) {
+                    outgoingEdges.put(source, edge);
+                }
+            }
+        }
+
+        return outgoingEdges;
+    }
+
+    public void addActivity(Activity virtualStart) {
+        addVertex(virtualStart);
+    }
+
+    public void addDependency(Activity virtualStart, Activity start) {
+        addEdge(virtualStart, start);
+    }
 }

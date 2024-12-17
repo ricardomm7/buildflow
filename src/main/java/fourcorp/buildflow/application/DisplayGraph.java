@@ -21,63 +21,63 @@ public class DisplayGraph {
         StringBuilder dotContent = new StringBuilder();
         dotContent.append("digraph PERT_CPM {\n");
 
-        // Configurações importantes para evitar corte
-        dotContent.append("  size=\"20,20\";\n");  // Aumentar o tamanho total da página
-        dotContent.append("  margin=0.5;\n");     // Margem pequena
-        dotContent.append("  rankdir=TB;\n");
+        // Configurações globais do grafo
+        dotContent.append("  rankdir=LR;\n"); // Layout horizontal
         dotContent.append("  compound=true;\n");
-        dotContent.append("  splines=ortho;\n");
-        dotContent.append("  nodesep=1.0;\n");
-        dotContent.append("  ranksep=1.5;\n");
+        dotContent.append("  splines=true;\n");
+        dotContent.append("  nodesep=1.5;\n"); // Espaçamento entre nós
+        dotContent.append("  ranksep=1.5;\n"); // Espaçamento entre camadas
 
-        // Configurações de fonte e estilo global
-        dotContent.append("  node [fontname=\"Arial Bold\" fontsize=18];\n");
-        dotContent.append("  edge [fontname=\"Arial\" fontsize=14];\n");
+        // Estilo geral dos nós e arestas
+        dotContent.append("  node [fontname=\"Arial\" fontsize=14 style=\"rounded,filled\"];\n");
+        dotContent.append("  edge [fontname=\"Arial\" fontsize=12 color=gray50 penwidth=2.0];\n");
 
-        // Adicionar nós (atividades)
+        // Adicionar nós (atividades) com estilos e cores diferenciados
         for (Activity activity : graph.getGraph().vertices()) {
-            // Determinar a forma e cor do nó
-            String shape = activity.getEarlyStart() == activity.getLateStart() ? "doubleoctagon" : "ellipse";
+            // Formas e cores para distinguir atividades críticas
+            String shape = activity.getEarlyStart() == activity.getLateStart() ? "hexagon" : "ellipse";
             String fillColor = activity.getEarlyStart() == activity.getLateStart() ? "lightcoral" : "lightblue";
+            String fontColor = activity.getEarlyStart() == activity.getLateStart() ? "black" : "darkblue";
 
-            // Criar um label mais informativo
-            String label = String.format("%s", activity.getId());
+            // Identificar o nó apenas pelo ID
+            String label = activity.getId();
 
-            // Adicionar nó com mais detalhes
+            // Adicionar nó ao DOT
             dotContent.append(String.format(
-                    "  \"%s\" [\n" +
-                            "    shape=%s,\n" +
-                            "    style=\"filled,rounded\",\n" +
-                            "    fillcolor=%s,\n" +
-                            "    width=2,\n" +
-                            "    height=1,\n" +
-                            "    label=\"%s\",\n" +
-                            "    fontsize=18\n" +
-                            "  ];\n",
-                    activity.getId(), shape, fillColor, label
+                "  \"%s\" [\n" +
+                    "    shape=%s,\n" +
+                    "    width=2.5,\n" +
+                    "    height=1.2,\n" +
+                    "    fillcolor=\"%s\",\n" +
+                    "    fontcolor=\"%s\",\n" +
+                    "    label=\"%s\"\n" +
+                    "  ];\n",
+                activity.getId(),
+                shape,
+                fillColor,
+                fontColor,
+                label
             ));
         }
 
-        // Adicionar arestas (dependências) com pesos e informações
+        // Adicionar arestas (dependências)
         for (Activity fromActivity : graph.getGraph().vertices()) {
-            // Obter as atividades adjacentes
             Collection<Activity> adjacencies = graph.getGraph().adjVertices(fromActivity);
             for (Activity toActivity : adjacencies) {
-                // Definir o peso como a duração da atividade anterior
+                // Duração como peso da aresta
                 int edgeWeight = fromActivity.getDuration();
 
+                // Adicionar a aresta com a duração como label
                 dotContent.append(String.format(
-                        "  \"%s\" -> \"%s\" [\n" +
-                                "    style=solid,\n" +
-                                "    color=gray,\n" +
-                                "    penwidth=2,\n" +
-                                "    label=\"%d " + fromActivity.getDurationUnit() + "\",\n" +  // Adicionar duração na aresta
-                                "    weight=%d\n" +           // Peso para layout e algoritmos de grafo
-                                "  ];\n",
-                        fromActivity.getId(),
-                        toActivity.getId(),
-                        edgeWeight,
-                        edgeWeight
+                    "  \"%s\" -> \"%s\" [\n" +
+                        "    label=\"%d %s\",\n" +
+                        "    color=\"gray\",\n" +
+                        "    fontsize=12\n" +
+                        "  ];\n",
+                    fromActivity.getId(),
+                    toActivity.getId(),
+                    edgeWeight,
+                    fromActivity.getDurationUnit()
                 ));
             }
         }
@@ -93,13 +93,13 @@ public class DisplayGraph {
         }
     }
 
-
     public void generateSVG(String dotFilePath, String svgFilePath) {
         try {
-            // Opções para garantir todo o conteúdo seja visível
+            // Gerar o SVG utilizando `dot`
             String command = String.format(
-                    "dot -Tsvg -Gpage=\"20,20\" -Gmargin=0.5 -Gsize=\"20,20\" %s -o %s",
-                    dotFilePath, svgFilePath
+                "dot -Tsvg %s -o %s",
+                dotFilePath,
+                svgFilePath
             );
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();
