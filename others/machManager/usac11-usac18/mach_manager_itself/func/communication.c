@@ -104,17 +104,3 @@ int send_and_read_from_machine(const char *command, char *response) {
     close(fd);
     return 0;
 }
-
-// CÓDIGO DE EXEMPLO
-int main() {
-    const char *command = "OP,0,0,0,0,1\n";
-    char response[256];
-
-    if (send_and_read_from_machine(command, response) == 0) {
-        printf("Command executed successfully. Response: %s\n", response);
-    } else {
-        fprintf(stderr, "Failed to execute command.\n");
-    }
-
-    return 0;
-}
