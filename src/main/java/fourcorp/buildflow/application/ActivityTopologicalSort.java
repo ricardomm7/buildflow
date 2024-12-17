@@ -24,7 +24,7 @@ public class ActivityTopologicalSort {
         Map<Activity, Integer> inDegree = new HashMap<>(graph.getInDegrees());
         Queue<Activity> zeroInDegreeQueue = new LinkedList<>();
 
-        for (Activity activity : graph.getGraph().vertices()) {
+        for (Activity activity : graph.getGraph().vertices()) { // O(n)
             if (!inDegree.containsKey(activity)) {
                 inDegree.put(activity, 0);
             }
@@ -34,11 +34,11 @@ public class ActivityTopologicalSort {
         }
 
         List<Activity> sortedOrder = new ArrayList<>();
-        while (!zeroInDegreeQueue.isEmpty()) {
+        while (!zeroInDegreeQueue.isEmpty()) { // O(n)
             Activity current = zeroInDegreeQueue.poll();
             sortedOrder.add(current);
 
-            for (Activity neighbor : graph.getNeighbors(current)) {
+            for (Activity neighbor : graph.getNeighbors(current)) { // O(n)
                 int newInDegree = inDegree.get(neighbor) - 1;
                 inDegree.put(neighbor, newInDegree);
                 if (newInDegree == 0) {

@@ -15,3 +15,18 @@
 
 ---------------------------
 
+## USEI23 - Identify Bottleneck Activities
+
+### Methods Used
+
+- `countDirectDependencies()` - O(n^2)
+- `analyzePathComplexity()` - O(n)
+- `combineMetrics(dependencyCounts, pathComplexity)` - O(n)
+- `sortBottlenecksTopologically(bottlenecks)` - O(nlog(n))
+
+### Total Complexity
+
+- **Overall Complexity:** O(n^2)
+
+---------------------------
+
