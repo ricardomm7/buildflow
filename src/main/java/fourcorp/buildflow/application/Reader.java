@@ -415,8 +415,8 @@ public abstract class Reader {
     }
 
     private static Activity getActivity(String line) {
-        String[] parts = line.split(",");
-        if (parts.length < 6) {
+        String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // Split ignorando vírgulas dentro de aspas
+        if (parts.length < 5) {
             throw new IllegalArgumentException("Invalid activity format in CSV");
         }
 
@@ -425,15 +425,14 @@ public abstract class Reader {
         int duration = Integer.parseInt(parts[2].trim());
         String durationUnit = parts[3].trim();
         double cost = Double.parseDouble(parts[4].trim());
-        String costUnit = parts[5].trim();
+        String costUnit = "n/a"; // Definido como n/a pois não existe no CSV fornecido
 
         List<String> dependencies = new ArrayList<>();
-        if (parts.length > 6) {
-            for (int i = 6; i < parts.length; i++) {
-                String dep = parts[i].trim();
-                if (!dep.isEmpty()) {
-                    dependencies.add(dep);
-                }
+        if (parts.length > 5) {
+            String depString = parts[5].trim();
+            if (!depString.isEmpty()) {
+                depString = depString.replaceAll("\"", "");
+                dependencies.addAll(Arrays.asList(depString.split(",")));
             }
         }
 

@@ -71,7 +71,7 @@ public class DisplayGraph {
                                 "    style=solid,\n" +
                                 "    color=gray,\n" +
                                 "    penwidth=2,\n" +
-                                "    label=\"%d days\",\n" +  // Adicionar duração na aresta
+                                "    label=\"%d " + fromActivity.getDurationUnit() + "\",\n" +  // Adicionar duração na aresta
                                 "    weight=%d\n" +           // Peso para layout e algoritmos de grafo
                                 "  ];\n",
                         fromActivity.getId(),

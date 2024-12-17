@@ -1,0 +1,217 @@
+digraph PERT_CPM {
+  size="20,20";
+  margin=0.5;
+  rankdir=TB;
+  compound=true;
+  splines=ortho;
+  nodesep=1.0;
+  ranksep=1.5;
+  node [fontname="Arial Bold" fontsize=18];
+  edge [fontname="Arial" fontsize=14];
+  "I" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="I",
+    fontsize=18
+  ];
+  "G" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="G",
+    fontsize=18
+  ];
+  "D" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="D",
+    fontsize=18
+  ];
+  "J" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="J",
+    fontsize=18
+  ];
+  "L" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="L",
+    fontsize=18
+  ];
+  "K" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="K",
+    fontsize=18
+  ];
+  "A" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="A",
+    fontsize=18
+  ];
+  "B" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="B",
+    fontsize=18
+  ];
+  "E" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="E",
+    fontsize=18
+  ];
+  "F" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="F",
+    fontsize=18
+  ];
+  "C" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="C",
+    fontsize=18
+  ];
+  "H" [
+    shape=ellipse,
+    style="filled,rounded",
+    fillcolor=lightblue,
+    width=2,
+    height=1,
+    label="H",
+    fontsize=18
+  ];
+  "I" -> "L" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="1 week",
+    weight=1
+  ];
+  "G" -> "I" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="3 week",
+    weight=3
+  ];
+  "G" -> "J" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="3 week",
+    weight=3
+  ];
+  "G" -> "K" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="3 week",
+    weight=3
+  ];
+  "D" -> "E" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="3 week",
+    weight=3
+  ];
+  "D" -> "F" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="3 week",
+    weight=3
+  ];
+  "K" -> "L" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="1 week",
+    weight=1
+  ];
+  "A" -> "D" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="1 week",
+    weight=1
+  ];
+  "B" -> "C" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="4 week",
+    weight=4
+  ];
+  "E" -> "G" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="2 week",
+    weight=2
+  ];
+  "F" -> "G" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="4 week",
+    weight=4
+  ];
+  "F" -> "H" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="4 week",
+    weight=4
+  ];
+  "C" -> "F" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="2 week",
+    weight=2
+  ];
+  "H" -> "L" [
+    style=solid,
+    color=gray,
+    penwidth=2,
+    label="2 week",
+    weight=2
+  ];
+}

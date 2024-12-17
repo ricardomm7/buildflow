@@ -284,7 +284,6 @@ public class Menu {
                 exporter.exportToCsv("outFiles/schedule.csv");
                 break;
             case 32:
-
                 DisplayGraph displayGraph = new DisplayGraph();
                 String dotFilePath = "outFiles/Graph3.dot";
                 String svgFilePath = "outFiles/Graph3.svg";
