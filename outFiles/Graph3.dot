@@ -1,217 +1,211 @@
 digraph PERT_CPM {
-  size="20,20";
-  margin=0.5;
-  rankdir=TB;
+  rankdir=LR;
   compound=true;
-  splines=ortho;
-  nodesep=1.0;
+  splines=true;
+  nodesep=1.5;
   ranksep=1.5;
-  node [fontname="Arial Bold" fontsize=18];
-  edge [fontname="Arial" fontsize=14];
+  node [fontname="Arial" fontsize=14 style="rounded,filled"];
+  edge [fontname="Arial" fontsize=12 color=gray50 penwidth=2.0];
   "I" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="I",
-    fontsize=18
-  ];
-  "G" [
-    shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="G",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="I"
   ];
   "D" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="D",
-    fontsize=18
-  ];
-  "J" [
-    shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="J",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="D"
   ];
   "L" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="L",
-    fontsize=18
-  ];
-  "K" [
-    shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="K",
-    fontsize=18
-  ];
-  "A" [
-    shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="A",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="L"
   ];
   "B" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="B",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="B"
+  ];
+  "START" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="START"
+  ];
+  "G" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="G"
+  ];
+  "J" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="J"
+  ];
+  "K" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="K"
+  ];
+  "A" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="A"
+  ];
+  "END" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="END"
   ];
   "E" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="E",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="E"
   ];
   "F" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="F",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="F"
   ];
   "C" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="C",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="C"
   ];
   "H" [
     shape=ellipse,
-    style="filled,rounded",
-    fillcolor=lightblue,
-    width=2,
-    height=1,
-    label="H",
-    fontsize=18
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="H"
   ];
   "I" -> "L" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="1 week",
-    weight=1
-  ];
-  "G" -> "I" [
-    style=solid,
-    color=gray,
-    penwidth=2,
-    label="3 week",
-    weight=3
-  ];
-  "G" -> "J" [
-    style=solid,
-    color=gray,
-    penwidth=2,
-    label="3 week",
-    weight=3
-  ];
-  "G" -> "K" [
-    style=solid,
-    color=gray,
-    penwidth=2,
-    label="3 week",
-    weight=3
+    color="gray",
+    fontsize=12
   ];
   "D" -> "E" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="3 week",
-    weight=3
+    color="gray",
+    fontsize=12
   ];
   "D" -> "F" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="3 week",
-    weight=3
+    color="gray",
+    fontsize=12
   ];
-  "K" -> "L" [
-    style=solid,
-    color=gray,
-    penwidth=2,
-    label="1 week",
-    weight=1
-  ];
-  "A" -> "D" [
-    style=solid,
-    color=gray,
-    penwidth=2,
-    label="1 week",
-    weight=1
+  "L" -> "END" [
+    label="2 week",
+    color="gray",
+    fontsize=12
   ];
   "B" -> "C" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="4 week",
-    weight=4
+    color="gray",
+    fontsize=12
+  ];
+  "START" -> "A" [
+    label="0 days",
+    color="gray",
+    fontsize=12
+  ];
+  "START" -> "B" [
+    label="0 days",
+    color="gray",
+    fontsize=12
+  ];
+  "G" -> "I" [
+    label="3 week",
+    color="gray",
+    fontsize=12
+  ];
+  "G" -> "J" [
+    label="3 week",
+    color="gray",
+    fontsize=12
+  ];
+  "G" -> "K" [
+    label="3 week",
+    color="gray",
+    fontsize=12
+  ];
+  "J" -> "END" [
+    label="1 week",
+    color="gray",
+    fontsize=12
+  ];
+  "K" -> "L" [
+    label="1 week",
+    color="gray",
+    fontsize=12
+  ];
+  "A" -> "D" [
+    label="1 week",
+    color="gray",
+    fontsize=12
   ];
   "E" -> "G" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="2 week",
-    weight=2
+    color="gray",
+    fontsize=12
   ];
   "F" -> "G" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="4 week",
-    weight=4
+    color="gray",
+    fontsize=12
   ];
   "F" -> "H" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="4 week",
-    weight=4
+    color="gray",
+    fontsize=12
   ];
   "C" -> "F" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="2 week",
-    weight=2
+    color="gray",
+    fontsize=12
   ];
   "H" -> "L" [
-    style=solid,
-    color=gray,
-    penwidth=2,
     label="2 week",
-    weight=2
+    color="gray",
+    fontsize=12
   ];
 }

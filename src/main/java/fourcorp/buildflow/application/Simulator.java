@@ -30,6 +30,7 @@ public class Simulator {
     private final Map<Product, Double> waitingTimes; // Tempo de espera para produtos
     private HashMap<String, Double> operationWaitingTimes;
     private HashMap<String, Integer> countWaiting;
+    private DefineInDB db;
 
     public Simulator() {
         this.productLine = Repositories.getInstance().getProductPriorityRepository();
@@ -44,6 +45,7 @@ public class Simulator {
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
         this.operationWaitingTimes = new HashMap<>();
         this.countWaiting = new HashMap<>();
+        this.db = new DefineInDB();
     }
 
     /**
@@ -95,6 +97,7 @@ public class Simulator {
             System.out.println("\n\n>>> NOW IT'S PROCESSING THE LOW PRIORITY PRODUCTS\n\n");
             runSimulation(productLine.getProductsByPriority(PriorityOrder.LOW), b);
         }
+        registerInDB();
     }
 
     /**
@@ -107,6 +110,7 @@ public class Simulator {
         resetSimulation();
         returnToFirstOp(productLine.getAllProducts());
         runSimulation(productLine.getAllProducts(), b);
+        registerInDB();
     }
 
     /**
@@ -396,6 +400,18 @@ public class Simulator {
         countWaiting.put(name, counter);
     }
 
+    public void registerInDB() {
+        if (operationWaitingTimes.isEmpty() || countWaiting.isEmpty() || operationTimes.isEmpty() || operationCounts.isEmpty()) {
+            System.out.println("--- Error defining in database.");
+        } else {
+            for (String name : operationWaitingTimes.keySet()) {
+                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1);
+                db.defineAverageOperationTime(avgOperationTime, name);
+
+            }
+        }
+    }
+
     /**
      * Prints a report on average operating times, waiting times, and total waiting times for operations.
      * The complexity of the USEI06 is O(n).
@@ -428,7 +444,6 @@ public class Simulator {
 
                 double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1); // O(n) * O(1) = O(n)
                 BigDecimal roundedOperationTime = new BigDecimal(avgOperationTime).setScale(2, RoundingMode.UP); // O(n) * O(1) = O(n)
-// adicionar aqui uslp7
 
                 System.out.printf(lineFormat, name, roundedOperationTime, roundedWaitingTime, totalWaiting, operationCounts.getOrDefault(name, 1)); // O(n) * O(1) = O(n)
             }

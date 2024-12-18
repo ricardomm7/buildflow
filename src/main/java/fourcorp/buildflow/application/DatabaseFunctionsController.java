@@ -43,6 +43,8 @@ public class DatabaseFunctionsController {
         }
     }
 
+
+
     /**
      * Executes all database setup tasks, including running SQL scripts for creating tables,
      * inserting data, and defining stored procedures.
