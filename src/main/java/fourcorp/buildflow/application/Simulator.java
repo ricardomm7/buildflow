@@ -405,9 +405,11 @@ public class Simulator {
             System.out.println("--- Error defining in database.");
         } else {
             for (String name : operationWaitingTimes.keySet()) {
-                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1);
-                db.defineAverageOperationTime(avgOperationTime, name);
+                double avgWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name, 1);
+                avgWaitingTime = avgWaitingTime * 0.001;
 
+                double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1);
+                db.defineAverageOperationTime(avgOperationTime + avgWaitingTime, name);
             }
         }
     }
