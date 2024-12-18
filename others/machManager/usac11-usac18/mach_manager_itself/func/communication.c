@@ -5,7 +5,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "func.h"
+#include "../include/func.h"
 
 #define BUFFER_SIZE 256
 

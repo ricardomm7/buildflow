@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "func.h"
+#include "../include/func.h"
 
 // Constantes e variáveis globais
 #define BUFFER_LENGTH 5
@@ -11,7 +11,7 @@ int tail = 0;
 int head = 4;
 
 float maxTemp = 25.0;
-float minTemp = 6;
+float minTemp = 4;
 float maxHum = 60.0;
 float minHum = 0.4;
 
