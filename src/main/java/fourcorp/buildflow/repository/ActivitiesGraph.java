@@ -135,4 +135,13 @@ public class ActivitiesGraph {
     public void setGraph(PertCpmGraph g) {
         this.graph = g;
     }
+
+    public Activity findActivityById(String a) {
+        for (Activity activity: graph.vertices()){
+            if (activity.getId().equals(a)) {
+                return activity;
+            }
+        }
+        return null;
+    }
 }

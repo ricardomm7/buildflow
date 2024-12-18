@@ -23,6 +23,7 @@ public class ActivityTimeCalculator {
 
     public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
+        this.projectDuration = 0;
     }
 
     public int getProjectDuration() {
@@ -49,6 +50,7 @@ public class ActivityTimeCalculator {
      */
     private void calculateEarliestTimes(List<Activity> topOrder) {
         for (Activity activity : topOrder) {
+            // Calcular ES como o maior EF das dependências
             int earlyStart = activity.getDependencies().stream()
                     .mapToInt(depId -> findActivityById(depId).getEarlyFinish())
                     .max()
@@ -58,11 +60,13 @@ public class ActivityTimeCalculator {
             activity.setEarlyFinish(earlyStart + activity.getDuration());
         }
 
+        // Atualizar a duração total do projeto
         projectDuration = topOrder.stream()
                 .mapToInt(Activity::getEarlyFinish)
                 .max()
                 .orElse(0);
     }
+
 
     /**
      * Performs the backward pass to calculate LS and LF.
@@ -91,8 +95,13 @@ public class ActivityTimeCalculator {
      * Finds an activity by its ID.
      */
     private Activity findActivityById(String id) {
-        return graph.getGraph().vertex(activity -> activity.getId().equals(id));
+    Activity found = graph.getGraph().vertex(activity -> activity.getId().equals(id));
+    if (found == null) {
+        System.err.printf("Activity Id %s not found.%n", id);
     }
+    return found;
+}
+
 
 
     /**

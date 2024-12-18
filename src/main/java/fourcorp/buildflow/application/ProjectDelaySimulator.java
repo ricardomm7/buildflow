@@ -7,7 +7,7 @@ import fourcorp.buildflow.repository.Repositories;
 import java.util.*;
 
 public class ProjectDelaySimulator {
-    private final ActivitiesGraph graph;
+    private ActivitiesGraph graph;
     private ActivityTimeCalculator timeCalculator;
 
     // Project metrics
@@ -81,13 +81,26 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of activity IDs to their delay durations.
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (Activity activity : graph.getGraph().vertices()) {
-            if (delayMap.containsKey(activity.getId())) {
-                int delayAmount = delayMap.get(activity.getId());
-                activity.setDuration(activity.getDuration() + delayAmount);
+        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
+            String activityId = entry.getKey();
+            int delayAmount = entry.getValue();
+
+            // Verifica se o delay é negativo
+            if (delayAmount < 0) {
+                System.err.printf("Erro: A atividade %s possui um delay negativo (%d).%n", activityId, delayAmount);
+                continue; // Ignora a aplicação desse delay
+            }
+
+            // Procura a atividade no grafo e aplica o delay
+            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
+            if (activity != null) {
+                activity.setDuration(originalDurations.get(activityId) + delayAmount);
+            } else {
+                System.err.printf("Erro: A atividade %s não foi encontrada no grafo.%n", activityId);
             }
         }
     }
+
 
     /**
      * Calculates the project metrics after applying delays.
@@ -103,7 +116,7 @@ public class ProjectDelaySimulator {
      *
      * @return List of activities in the critical path.
      */
-    private List<Activity> findCriticalPath() {
+    List<Activity> findCriticalPath() {
         List<Activity> criticalPath = new ArrayList<>();
 
         for (Activity activity : graph.getGraph().vertices()) {
@@ -187,5 +200,26 @@ public class ProjectDelaySimulator {
             }
         }
         return null;
+    }
+
+    public void setGraph(ActivitiesGraph customGraph) {
+        this.graph.setGraph(customGraph.getGraph());
+        this.timeCalculator.setGraph(this.graph);
+    }
+
+    public List<Activity> getNewCriticalPath() {
+        return newCriticalPath;
+    }
+
+    public int getNewProjectDuration() {
+        return newProjectDuration;
+    }
+
+    public int getOriginalProjectDuration() {
+        return originalProjectDuration;
+    }
+
+    public List<Activity> getOriginalCriticalPath() {
+        return originalCriticalPath;
     }
 }

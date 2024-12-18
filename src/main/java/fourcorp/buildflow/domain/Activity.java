@@ -118,4 +118,7 @@ public class Activity {
         this.lateFinish = lateFinish;
     }
 
+    public int getSlack() {
+        return lateStart - earlyStart;
+    }
 }
