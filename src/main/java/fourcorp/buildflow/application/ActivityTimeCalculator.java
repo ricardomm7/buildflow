@@ -14,15 +14,18 @@ import java.util.List;
  */
 public class ActivityTimeCalculator {
     private ActivitiesGraph graph;
+    private final ActivityTopologicalSort topologicalSort;
     private int projectDuration;
 
     public ActivityTimeCalculator() {
         this.graph = Repositories.getInstance().getActivitiesGraph();
+        topologicalSort = new ActivityTopologicalSort();
         this.projectDuration = 0;
     }
 
     public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
+        this.topologicalSort.setGraph(graph);
         this.projectDuration = 0;
     }
 
@@ -38,8 +41,6 @@ public class ActivityTimeCalculator {
         if (graph == null) {
             throw new IllegalStateException("Graph not initialized.");
         }
-
-        ActivityTopologicalSort topologicalSort = new ActivityTopologicalSort();
         List<Activity> topOrder = topologicalSort.performTopologicalSort();
         calculateEarliestTimes(topOrder);
         calculateLatestTimes(topOrder);
