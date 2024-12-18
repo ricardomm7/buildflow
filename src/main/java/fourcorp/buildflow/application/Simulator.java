@@ -118,6 +118,7 @@ public class Simulator {
      */
     public void runSimulation(List<Product> products, boolean boo) {
         boolean itemsProcessed;
+
         try {
             do { // O(n)
                 itemsProcessed = false;
@@ -132,8 +133,8 @@ public class Simulator {
 
                     if (currentOperation != null) {
                         List<Workstation> availableWorkstations = workstationsPerOperation.getWorkstationsByOperation(currentOperation, boo); // O(n^2) * O(n^2) = O(n^4)
-
                         boolean operationStarted = false;
+
                         for (Workstation workstation : availableWorkstations) { // O(n^4) * O(n) = O(n^5)
                             if (workstation.isAvailable()) {
                                 operationStarted = true;
@@ -160,6 +161,7 @@ public class Simulator {
                                 break; // Sai do ‘loop’ de estações assim que o produto é processado
                             }
                         }
+
                         // Caso nenhuma estação esteja disponível, adiciona à fila de espera
                         if (!operationStarted) {
                             addToWaitingQueue(product, currentOperation);
@@ -167,8 +169,26 @@ public class Simulator {
                         }
                     }
                 }
+
+                if (waitingQueue.isEmpty()) {
+                    System.out.println("The waiting queue is empty.");
+                    return;
+                }
+
+                /*metodo para ver a waiting queue
+                System.out.println("Waiting queue contents:");
+                for (Map.Entry<String, Queue<Product>> entry : waitingQueue.entrySet()) {
+                    String operation = entry.getKey();
+                    Queue<Product> products2 = entry.getValue();
+
+                    for (Product prd2 : products2) {
+                        System.out.println("Product: " + prd2.getIdItem());
+                        System.out.println("Operation ID: " + operation);
+                    }
+                }*/
+
                 // Processa a fila de espera, se houver máquinas disponíveis para as operações pendentes
-                processWaitingQueue(); // O(n) * O(n^5) = O(n^6)
+                processWaitingQueue(); // O(n) * O(n^5) = O(n^)
 
                 for (Product product : articlesToMove) {
                     Operation nextOperation = product.getCurrentOperation();
@@ -177,12 +197,13 @@ public class Simulator {
                     }
                 }
 
+                // erro ele não sai do ciclo while
             } while (itemsProcessed || !areProductsQueueEmpty() && processedProducts.isEmpty());
-
         } catch (Exception e) {
             System.out.println("Error during simulation: " + e.getMessage());
         }
     }
+
 
     /**
      * Adds a product to the waiting queue for a specified operation.
