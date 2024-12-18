@@ -14,17 +14,6 @@ public class Operation implements Identifiable<String> {
     private boolean execute;
     private Double time;
     private List<Operation> children; // Lista de operações filhas
-    private double price;
-
-    public Operation(String id, String name, double price) {
-        this.id = id;
-        this.name = name;
-        this.execute = false;
-        this.time = 0.0;
-        this.children = new ArrayList<>(); // Inicializa a lista de filhos
-        this.price = price;
-
-    }
 
     public Operation(String id, String name) {
         this.id = id;
@@ -93,14 +82,6 @@ public class Operation implements Identifiable<String> {
 
     public String getName() {
         return name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public void setName(String name) {

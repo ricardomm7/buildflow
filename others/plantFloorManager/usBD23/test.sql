@@ -17,10 +17,14 @@ INSERT INTO Type_Workstation (WorkstationType_ID, Designation) VALUES ('WS1', 'A
 INSERT INTO Workstation (Workstation_ID, Name, Description, WorkstationType_ID)
 VALUES (1001, 'Workstation 1', 'High precision assembly workstation', 'WS1');
 
+-- Operation Type
+INSERT INTO Operation_Type (ID, Description, Expec_Time)
+VALUES (324, 'Base Press', 10.5);
+
 -- Operation
-INSERT INTO Operation (Operation_ID, Designation, NextOperation_ID, Product_ID, Expected_Time, Output_Part_ID)
-VALUES (1, 'Assemble Product A', NULL, 'PROD001', 10.5, 'PROD002');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (1, 324, NULL, 'PROD001', 'PROD002');
 
 -- Operation-Type Workstation Relationship
-INSERT INTO Operation_Type_Workstation (OperationOperation_ID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (1, 'WS1', 8.0, 1.5);
+INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
+VALUES (324, 'WS1', 8.0, 1.5);

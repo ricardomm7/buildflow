@@ -6,10 +6,10 @@ declare
     v_expected_time number;
 begin
     -- The complexity is O(1).
-    select Expected_Time
+    select Expec_Time
     into v_expected_time
-    from Operation
-    where Operation_ID = :new.OperationOperation_ID;
+    from Operation_Type
+    where ID = :new.Operation_TypeID;
 
     if v_expected_time > :new.Max_Exec_Time then
         raise max_exec_time_exceeded;

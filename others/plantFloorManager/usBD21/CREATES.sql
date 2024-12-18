@@ -1,11 +1,12 @@
-CREATE TABLE Average_Production_Operation (OperationOperation_ID number(10) NOT NULL, time double precision NOT NULL, PRIMARY KEY (OperationOperation_ID), CONSTRAINT timeGreaterThan0 CHECK (time >= 0));
+CREATE TABLE Average_Production_Operation (Operation_TypeID number(10) NOT NULL, time double precision NOT NULL, PRIMARY KEY (Operation_TypeID), CONSTRAINT timeGreaterThan0 CHECK (time >= 0));
 CREATE TABLE Component (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Costumer (VAT varchar2(20) NOT NULL, Name varchar2(255) NOT NULL, Address varchar2(60) NOT NULL, "Zip-Code" varchar2(10) NOT NULL, City varchar2(60) NOT NULL, Country varchar2(60) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (VAT));
 CREATE TABLE External_Part (Part_ID char(10) NOT NULL, Minimum_Stock number(10) NOT NULL, PRIMARY KEY (Part_ID), CONSTRAINT StockQuantity CHECK (Minimum_Stock >= 0));
 CREATE TABLE Intermediate_Product (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
-CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Designation varchar2(100) NOT NULL, NextOperation_ID number(10), Product_ID char(10) NOT NULL, Expected_Time double precision NOT NULL, Output_Part_ID char(10) NOT NULL, PRIMARY KEY (Operation_ID), CONSTRAINT ExpectedTime CHECK (Expected_Time > 0));
+CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Operation_TypeID number(10) NOT NULL, NextOperation_ID number(10), Product_ID char(10) NOT NULL, Output_Part_ID char(10) NOT NULL, PRIMARY KEY (Operation_ID));
 CREATE TABLE Operation_Input (Part_ID char(10) NOT NULL, Operation_ID number(10) NOT NULL, Quantity double precision NOT NULL, PRIMARY KEY (Part_ID, Operation_ID), CONSTRAINT InputQuantity CHECK (Quantity > 0));
-CREATE TABLE Operation_Type_Workstation (OperationOperation_ID number(10) NOT NULL, WorkstationType_ID char(5) NOT NULL, Max_Exec_Time double precision NOT NULL, Setup_Time double precision NOT NULL, PRIMARY KEY (OperationOperation_ID, WorkstationType_ID), CONSTRAINT MaxTime CHECK (Max_Exec_Time > 0), CONSTRAINT Setup CHECK (Setup_Time > 0));
+CREATE TABLE Operation_Type (ID number(10) NOT NULL, Description varchar2(100) NOT NULL, Expec_Time double precision NOT NULL, PRIMARY KEY (ID), CONSTRAINT TimeCheck8677 CHECK (Expec_Time >= 0));
+CREATE TABLE Operation_Type_Workstation (Operation_TypeID number(10) NOT NULL, WorkstationType_ID char(5) NOT NULL, Max_Exec_Time double precision NOT NULL, Setup_Time double precision NOT NULL, PRIMARY KEY (Operation_TypeID, WorkstationType_ID), CONSTRAINT MaxTime CHECK (Max_Exec_Time > 0), CONSTRAINT Setup CHECK (Setup_Time > 0));
 CREATE TABLE "Order" (Order_ID varchar2(255) NOT NULL, OrderDate date NOT NULL, DeliveryDate date NOT NULL, CostumerVAT varchar2(20) NOT NULL, PRIMARY KEY (Order_ID));
 CREATE TABLE Order_Line (Product_ID char(10) NOT NULL, Order_ID varchar2(255) NOT NULL, quantity number(10) NOT NULL, PRIMARY KEY (Product_ID, Order_ID), CONSTRAINT ProductOrderQuantity CHECK (quantity > 0));
 CREATE TABLE Procurement (SupplierID number(10) NOT NULL, External_PartPart_ID char(10) NOT NULL, Unit_Cost double precision NOT NULL, Minimum_Quantity number(10) NOT NULL, Offer_Start date NOT NULL, Offer_End date, PRIMARY KEY (SupplierID, External_PartPart_ID, Offer_Start), CONSTRAINT MinimumOrderQuantity CHECK (Minimum_Quantity >= 0), CONSTRAINT UnitCost CHECK (Unit_Cost >= 0));
@@ -21,7 +22,7 @@ ALTER TABLE Order_Line ADD CONSTRAINT FKOrder_Line109098 FOREIGN KEY (Product_ID
 ALTER TABLE Order_Line ADD CONSTRAINT FKOrder_Line66483 FOREIGN KEY (Order_ID) REFERENCES "Order" (Order_ID);
 ALTER TABLE "Order" ADD CONSTRAINT FKOrder416670 FOREIGN KEY (CostumerVAT) REFERENCES Costumer (VAT);
 ALTER TABLE Workstation ADD CONSTRAINT FKWorkstatio115580 FOREIGN KEY (WorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
-ALTER TABLE Operation_Type_Workstation ADD CONSTRAINT FKOperation_470077 FOREIGN KEY (OperationOperation_ID) REFERENCES Operation (Operation_ID);
+ALTER TABLE Operation_Type_Workstation ADD CONSTRAINT FKOperation_798763 FOREIGN KEY (Operation_TypeID) REFERENCES Operation_Type (ID);
 ALTER TABLE Operation_Type_Workstation ADD CONSTRAINT FKOperation_446474 FOREIGN KEY (WorkstationType_ID) REFERENCES Type_Workstation (WorkstationType_ID);
 ALTER TABLE Operation_Input ADD CONSTRAINT FKOperation_148390 FOREIGN KEY (Part_ID) REFERENCES Product_Type (Part_ID);
 ALTER TABLE Operation_Input ADD CONSTRAINT FKOperation_862600 FOREIGN KEY (Operation_ID) REFERENCES Operation (Operation_ID);
@@ -38,4 +39,5 @@ ALTER TABLE Procurement ADD CONSTRAINT FKProcuremen19983 FOREIGN KEY (External_P
 ALTER TABLE Operation ADD CONSTRAINT FKOperation525229 FOREIGN KEY (Output_Part_ID) REFERENCES Product_Type (Part_ID);
 ALTER TABLE Reservation ADD CONSTRAINT FKReservatio409178 FOREIGN KEY (Product_ID, Order_ID) REFERENCES Order_Line (Product_ID, Order_ID);
 ALTER TABLE Reservation ADD CONSTRAINT FKReservatio729171 FOREIGN KEY (Part_ID) REFERENCES External_Part (Part_ID);
-ALTER TABLE Average_Production_Operation ADD CONSTRAINT FKAverage_Pr100735 FOREIGN KEY (OperationOperation_ID) REFERENCES Operation (Operation_ID);
+ALTER TABLE Average_Production_Operation ADD CONSTRAINT FKAverage_Pr168106 FOREIGN KEY (Operation_TypeID) REFERENCES Operation_Type (ID);
+ALTER TABLE Operation ADD CONSTRAINT FKOperation604696 FOREIGN KEY (Operation_TypeID) REFERENCES Operation_Type (ID);

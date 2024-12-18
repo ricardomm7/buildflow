@@ -407,6 +407,7 @@ public class Simulator {
 
                 double avgOperationTime = operationTimes.getOrDefault(name, 0.0) / operationCounts.getOrDefault(name, 1); // O(n) * O(1) = O(n)
                 BigDecimal roundedOperationTime = new BigDecimal(avgOperationTime).setScale(2, RoundingMode.UP); // O(n) * O(1) = O(n)
+// adicionar aqui uslp7
 
                 System.out.printf(lineFormat, name, roundedOperationTime, roundedWaitingTime, totalWaiting, operationCounts.getOrDefault(name, 1)); // O(n) * O(1) = O(n)
             }
