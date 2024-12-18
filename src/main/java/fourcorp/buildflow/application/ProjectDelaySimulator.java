@@ -5,7 +5,10 @@ import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.util.*;
-
+ /**
+ * Simulates project delays, calculates the impact on project metrics,
+ * and identifies critical paths before and after delays.
+ */
 public class ProjectDelaySimulator {
     private ActivitiesGraph graph;
     private ActivityTimeCalculator timeCalculator;
@@ -19,6 +22,9 @@ public class ProjectDelaySimulator {
     // Map to store original durations
     private final Map<String, Integer> originalDurations = new HashMap<>();
 
+    /**
+     * Constructor: Initializes the simulator with a default activities graph and calculator.
+     */
     public ProjectDelaySimulator() {
         this.graph = Repositories.getInstance().getActivitiesGraph();
         this.timeCalculator = new ActivityTimeCalculator();
@@ -27,111 +33,101 @@ public class ProjectDelaySimulator {
 
     /**
      * Simulates delays for specified activities and analyzes project impact.
+     * Complexity: O(n^2), where n is the number of activities and e is the number of dependencies.
      *
      * @param delayMap Map of activity IDs to their delay durations.
      */
     public void simulateProjectDelays(Map<String, Integer> delayMap) {
-        // Save the original durations
-        saveOriginalDurations();
-
-        // Calculate original project metrics
-        calculateOriginalMetrics();
-
-        // Apply delays
-        applyDelays(delayMap);
-
-        // Recalculate project metrics after delays
-        calculateNewMetrics();
-
-        // Display analysis
-        displayImpactAnalysis(delayMap);
+        saveOriginalDurations(); // O(n)
+        calculateOriginalMetrics(); // O(n^2)
+        applyDelays(delayMap); // O(n)
+        calculateNewMetrics(); // O(n^2)
+        displayImpactAnalysis(delayMap); // O(n)
     }
 
     /**
-     * Saves the original durations of activities.
+     * Saves the original durations of all activities.
+     * Complexity: O(n), where n is the number of activities.
      */
     private void saveOriginalDurations() {
-        for (Activity activity : graph.getGraph().vertices()) {
-            originalDurations.put(activity.getId(), activity.getDuration());
+        for (Activity activity : graph.getGraph().vertices()) { // O(n)
+            originalDurations.put(activity.getId(), activity.getDuration()); // O(1) * O(n) = O(n)
         }
     }
 
     /**
-     * Restores the original durations of activities.
+     * Restores the original durations of all activities.
+     * Complexity: O(n), where n is the number of activities.
      */
     private void restoreOriginalDurations() {
-        for (Activity activity : graph.getGraph().vertices()) {
-            activity.setDuration(originalDurations.get(activity.getId()));
+        for (Activity activity : graph.getGraph().vertices()) { // O(n)
+            activity.setDuration(originalDurations.get(activity.getId())); // O(1) * O(n) = O(n)
         }
     }
 
     /**
-     * Calculates the project metrics before applying delays.
+     * Calculates the original project metrics before applying delays.
+     * Complexity: O(n^2), where n is the number of activities.
      */
     private void calculateOriginalMetrics() {
-        restoreOriginalDurations(); // Ensure calculations are based on original durations
-        timeCalculator.calculateTimes();
-        originalProjectDuration = timeCalculator.getProjectDuration();
-        originalCriticalPath = findCriticalPath();
+        restoreOriginalDurations(); // O(n)
+        timeCalculator.calculateTimes(); // O(n^2)
+        originalProjectDuration = timeCalculator.getProjectDuration(); // O(1)
+        originalCriticalPath = findCriticalPath(); // O(n^2)
     }
 
     /**
-     * Applies delays to the graph.
+     * Applies delays to specified activities in the graph.
+     * Complexity: O(n), where n is the number of activities in the delay map.
      *
      * @param delayMap Map of activity IDs to their delay durations.
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) { // O(n)
             String activityId = entry.getKey();
             int delayAmount = entry.getValue();
 
-            // Verifica se o delay é negativo
-            if (delayAmount < 0) {
-                System.err.printf("Erro: A atividade %s possui um delay negativo (%d).%n", activityId, delayAmount);
-                continue; // Ignora a aplicação desse delay
+            if (delayAmount < 0) { // O(1) * O(n) = O(n)
+                System.err.printf("Erro: A atividade %s possui um delay negativo (%d).%n", activityId, delayAmount); // O(1) * O(n) = O(n)
+                continue;
             }
 
-            // Procura a atividade no grafo e aplica o delay
-            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
+            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId)); // O(1) * O(n) = O(n)
             if (activity != null) {
-                activity.setDuration(originalDurations.get(activityId) + delayAmount);
+                activity.setDuration(originalDurations.get(activityId) + delayAmount); // O(1) * O(n) = O(n)
             } else {
-                System.err.printf("Erro: A atividade %s não foi encontrada no grafo.%n", activityId);
+                System.err.printf("Erro: A atividade %s não foi encontrada no grafo.%n", activityId); // O(1) * O(n) = O(n)
             }
         }
     }
 
-
     /**
      * Calculates the project metrics after applying delays.
+     * Complexity: O(n^2), where n is the number of activities and e is the number of dependencies.
      */
     private void calculateNewMetrics() {
-        timeCalculator.calculateTimes(); // Recalculate times after delays
-        newProjectDuration = timeCalculator.getProjectDuration();
-        newCriticalPath = findCriticalPath();
+        timeCalculator.calculateTimes(); // O(n^2)
+        newProjectDuration = timeCalculator.getProjectDuration(); // O(1)
+        newCriticalPath = findCriticalPath(); // O(n^2)
     }
 
     /**
-     * Finds the critical path in the current graph.
+     * Finds the critical path based on activities with zero slack.
+     * Complexity: O(n^2), where n is the number of activities.
      *
      * @return List of activities in the critical path.
      */
     List<Activity> findCriticalPath() {
-        List<Activity> criticalPath = new ArrayList<>();
+        CriticalPathIdentifierGraph calculator = new CriticalPathIdentifierGraph();
+        calculator.setGraph(graph);
+        calculator.identifyCriticalPath(); // O(n^2)
 
-        for (Activity activity : graph.getGraph().vertices()) {
-            int slack = activity.getLateStart() - activity.getEarlyStart();
-            if (slack == 0) { // Critical activities have zero slack
-                criticalPath.add(activity);
-            }
-        }
-
-        criticalPath.sort(Comparator.comparingInt(Activity::getEarlyStart));
-        return criticalPath;
+        return calculator.getCriticalPath();
     }
 
     /**
-     * Displays the delay impact analysis.
+     * Displays the delay impact analysis, including durations and critical paths.
+     * Complexity: O(n), where n is the number of activities.
      *
      * @param delayMap Map of delayed activities.
      */
@@ -141,85 +137,121 @@ public class ProjectDelaySimulator {
         System.out.println("╠══════════════════════════════════════════════════════");
 
         // Delayed Activities
-        System.out.println("║ DELAYED ACTIVITIES:");
-        delayMap.forEach((id, delay) ->
+        delayMap.forEach((id, delay) -> // O(n)
                 System.out.printf("║   • Activity %s: +%d time units%n", id, delay)
         );
 
         System.out.println("╠══════════════════════════════════════════════════════");
 
-        // Project Duration Impact
-        System.out.printf("║ Original Project Duration: %d time units%n", originalProjectDuration);
-        System.out.printf("║ New Project Duration:      %d time units%n", newProjectDuration);
-        System.out.printf("║ Total Delay:               %d time units%n", newProjectDuration - originalProjectDuration);
+        // Display project duration impact
+        System.out.printf("║ Original Project Duration: %d time units%n", originalProjectDuration); // O(1)
+        System.out.printf("║ New Project Duration:      %d time units%n", newProjectDuration); // O(1)
+        System.out.printf("║ Total Delay:               %d time units%n", newProjectDuration - originalProjectDuration); // O(1)
 
         System.out.println("╠══════════════════════════════════════════════════════");
 
-        // Critical Path Analysis
+        // Display critical paths
         System.out.println("║ ORIGINAL CRITICAL PATH:");
-        printCriticalPath(originalCriticalPath);
+        printCriticalPath(originalCriticalPath); // O(n)
 
-        System.out.println("║"); // Spacer
         System.out.println("║ NEW CRITICAL PATH:");
-        printCriticalPath(newCriticalPath);
+        printCriticalPath(newCriticalPath); // O(n)
 
         System.out.println("╚══════════════════════════════════════════════════════\n");
     }
 
     /**
      * Prints the critical path in a structured format.
+     * Complexity: O(n), where n is the number of activities in the critical path.
      *
      * @param criticalPath List of activities in the critical path.
      */
     private void printCriticalPath(List<Activity> criticalPath) {
         String format = "║   • %-6s %-30s | Duration: %-4d | ES: %-3d | EF: %-3d | LS: %-3d | LF: %-3d | Slack: %-3d%n";
-        for (Activity activity : criticalPath) {
+        for (Activity activity : criticalPath) { // O(n)
             System.out.printf(format,
-                    activity.getId(),
-                    truncate(activity.getName(), 30),
-                    activity.getDuration(),
-                    activity.getEarlyStart(),
-                    activity.getEarlyFinish(),
-                    activity.getLateStart(),
-                    activity.getLateFinish(),
-                    activity.getLateStart() - activity.getEarlyStart());
+                    activity.getId(), // O(1) * O(n) = O(n)
+                    truncate(activity.getName(), 30), // O(1) * O(n) = O(n)
+                    activity.getDuration(), // O(1) * O(n) = O(n)
+                    activity.getEarlyStart(), // O(1) * O(n) = O(n)
+                    activity.getEarlyFinish(), // O(1) * O(n) = O(n)
+                    activity.getLateStart(), // O(1) * O(n) = O(n)
+                    activity.getLateFinish(), // O(1) * O(n) = O(n)
+                    activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n) = O(n)
         }
     }
 
     /**
      * Truncates text for better formatting in outputs.
+     * Complexity: O(1).
+     *
+     * @param text The text to truncate.
+     * @param maxLength The maximum length allowed.
+     * @return The truncated text.
      */
     private String truncate(String text, int maxLength) {
-        return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+        return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text; // O(1)
     }
 
-    public Activity findActivityById(String input) {
-        for (Activity activity : Repositories.getInstance().getActivitiesGraph().getGraph().vertices()) {
-            if (activity.getId().equals(input)) {
+     /**
+      * Gets new project duration.
+      *
+      * @return the new project duration
+      */
+     public int getNewProjectDuration() {
+        return newProjectDuration;
+     }
+
+     /**
+      * Gets original critical path.
+      *
+      * @return the original critical path
+      */
+     public List<Activity> getOriginalCriticalPath() {
+        return originalCriticalPath;
+     }
+
+     /**
+      * Gets new critical path.
+      *
+      * @return the new critical path
+      */
+     public List<Activity> getNewCriticalPath() {
+        return newCriticalPath;
+     }
+
+     /**
+      * Gets original project duration.
+      *
+      * @return the original project duration
+      */
+     public int getOriginalProjectDuration() {
+        return originalProjectDuration;
+     }
+
+     /**
+      * Sets graph.
+      *
+      * @param graph the graph
+      */
+     public void setGraph(ActivitiesGraph graph) {
+        this.graph = graph;
+        this.timeCalculator.setGraph(graph);
+     }
+
+     /**
+      * Find activity by id activity.
+      *
+      * @param a1 the ID of the activity to find
+      * @return the activity
+      */
+     public Activity findActivityById(String a1) {
+        for (Activity activity: graph.getGraph().vertices()){
+            if (activity.getId().equals(a1)){
                 return activity;
             }
         }
-        return null;
-    }
+         return null;
+     }
+ }
 
-    public void setGraph(ActivitiesGraph customGraph) {
-        this.graph.setGraph(customGraph.getGraph());
-        this.timeCalculator.setGraph(this.graph);
-    }
-
-    public List<Activity> getNewCriticalPath() {
-        return newCriticalPath;
-    }
-
-    public int getNewProjectDuration() {
-        return newProjectDuration;
-    }
-
-    public int getOriginalProjectDuration() {
-        return originalProjectDuration;
-    }
-
-    public List<Activity> getOriginalCriticalPath() {
-        return originalCriticalPath;
-    }
-}

@@ -10,35 +10,25 @@ import java.util.List;
 
 public class CriticalPathIdentifierGraph {
     private ActivitiesGraph graph;
+    private ActivityTimeCalculator timeCalculator;
+    private ActivityTopologicalSort sort;
+
+    private List<Activity> criticalPath;
+    private int totalProjectDuration;
 
     public CriticalPathIdentifierGraph() {
         this.graph = Repositories.getInstance().getActivitiesGraph();
+        timeCalculator = new ActivityTimeCalculator();
+        sort = new ActivityTopologicalSort();
+        criticalPath = new ArrayList<>();
+        totalProjectDuration = 0;
     }
 
     /**
      * Calculate the critical path(s) and total project duration.
      */
     public void identifyCriticalPath() {
-        // Calculate earliest and latest start/finish times
-        ActivityTimeCalculator timeCalculator = new ActivityTimeCalculator();
-        timeCalculator.calculateTimes();
-
-        // Collect critical path activities
-        List<Activity> criticalPath = new ArrayList<>();
-        int totalProjectDuration = 0;
-
-        ActivityTopologicalSort sort = new ActivityTopologicalSort();
-        for (Activity activity : sort.performTopologicalSort()) {
-            int slack = activity.getLateStart() - activity.getEarlyStart();
-
-            if (slack == 0) {
-                criticalPath.add(activity);
-            }
-            totalProjectDuration = Math.max(totalProjectDuration, activity.getEarlyFinish());
-        }
-
-        // Sort critical path activities by early start time
-        criticalPath.sort(Comparator.comparingInt(Activity::getEarlyStart));
+        calculateCriticalPath(); // O(n^2)
 
         // Professional and clear output
         System.out.println("\n╔══════════════════════════════════════════════════════");
@@ -63,6 +53,23 @@ public class CriticalPathIdentifierGraph {
         System.out.println("╚══════════════════════════════════════════════════════\n");
     }
 
+    private void calculateCriticalPath() {
+        // Calculate earliest and latest start/finish times
+        timeCalculator.calculateTimes(); // O(n^2)
+
+        for (Activity activity : sort.performTopologicalSort()) { // O(n) * O(n)
+            int slack = activity.getLateStart() - activity.getEarlyStart();
+
+            if (slack == 0) {
+                criticalPath.add(activity);
+            }
+            totalProjectDuration = Math.max(totalProjectDuration, activity.getEarlyFinish());
+        }
+
+        // Sort critical path activities by early start time
+        criticalPath.sort(Comparator.comparingInt(Activity::getEarlyStart)); // O(n log n)
+    }
+
     // Utility method to truncate long names
     private String truncate(String text, int maxLength) {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
@@ -70,5 +77,17 @@ public class CriticalPathIdentifierGraph {
 
     public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
+        this.timeCalculator.setGraph(graph);
+        this.sort.setGraph(graph);
+        this.criticalPath.clear();
+        this.totalProjectDuration = 0;
+    }
+
+    public List<Activity> getCriticalPath() {
+        return criticalPath;
+    }
+
+    public int getTotalProjectDuration() {
+        return totalProjectDuration;
     }
 }
