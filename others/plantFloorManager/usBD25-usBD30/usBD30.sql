@@ -96,7 +96,7 @@ BEGIN
 END;
 /
 
--- Inválido, consome maior que o stock
+-- Inválido, consome maior que o reservado
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
@@ -110,12 +110,12 @@ BEGIN
 END;
 /
 
--- Inválido, consome maior que o reservado
+-- Inválido, consome maior que o stock
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
 BEGIN
-    consume_material('PN18324C54', 12, v_success, v_message);
+    consume_material('PN18324C54', 155, v_success, v_message);
     IF v_success THEN
         DBMS_OUTPUT.PUT_LINE('Success: ' || v_message);
     ELSE
@@ -123,4 +123,3 @@ BEGIN
     END IF;
 END;
 /
-

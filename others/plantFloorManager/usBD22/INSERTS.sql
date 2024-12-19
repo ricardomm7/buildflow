@@ -66,17 +66,17 @@ INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945S48
 INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID) VALUES ('AS12945G48', 'Pro Clear 17 lid', '146');
 
 
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN12344A21', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R50', 30);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R10', 30);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544A21', 20);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544C21', 15);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C54', 15);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN94561L67', 40);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R12', 30);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R45', 30);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C91', 10);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C51', 10);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN12344A21', 120);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R50', 130);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R10', 130);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544A21', 120);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544C21', 150);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C54', 150);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN94561L67', 140);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R12', 130);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R45', 130);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C91', 110);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C51', 110);
 
 
 INSERT INTO Component (Part_ID) VALUES ('PN12344A21');
@@ -310,10 +310,27 @@ INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
 VALUES ('ORD003', TO_DATE('2023-12-01', 'YYYY-MM-DD'), TO_DATE('2023-12-10', 'YYYY-MM-DD'), 'PT501242417');
 INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
 VALUES ('ORD004', TO_DATE('2023-11-15', 'YYYY-MM-DD'), TO_DATE('2023-11-25', 'YYYY-MM-DD'), 'CZ6451237810');
+-- Additional Orders (avoiding duplicate Order_IDs)
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD009', TO_DATE('2023-12-05', 'YYYY-MM-DD'), TO_DATE('2023-12-15', 'YYYY-MM-DD'), 'PT501245987');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD010', TO_DATE('2023-12-10', 'YYYY-MM-DD'), TO_DATE('2024-01-10', 'YYYY-MM-DD'), 'CZ6451237810');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD011', TO_DATE('2023-12-15', 'YYYY-MM-DD'), TO_DATE('2023-12-30', 'YYYY-MM-DD'), 'PT501245488');
+INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
+VALUES ('ORD012', TO_DATE('2023-12-20', 'YYYY-MM-DD'), TO_DATE('2024-01-05', 'YYYY-MM-DD'), 'PT501242417');
 
 
 INSERT INTO Supplier (ID, Name, Email, Phone) VALUES (12345, 'Supplier 12345', NULL, NULL);
 INSERT INTO Supplier (ID, Name, Email, Phone) VALUES (12298, 'Supplier 12298', NULL, NULL);
+
+-- Additional Supplier inserts (avoiding duplicate IDs)
+INSERT INTO Supplier (ID, Name, Email, Phone)
+VALUES (12349, 'MetalPro Industries', 'orders@metalpro.com', '+351234567890');
+INSERT INTO Supplier (ID, Name, Email, Phone)
+VALUES (12350, 'KitchenSupplies Co.', 'sales@kitchensupplies.co.uk', '+441234567890');
+INSERT INTO Supplier (ID, Name, Email, Phone)
+VALUES (12351, 'Steel Masters GmbH', 'info@steelmasters.de', '+491234567890');
 
 
 INSERT INTO Procurement (SupplierID, External_PartPart_ID, Unit_Cost, Minimum_Quantity, Offer_Start, Offer_End)
@@ -347,32 +364,6 @@ INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S20', 'O
 INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12947S22', 'ORD003', 7);
 INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12947S20', 'ORD004', 10);
 INSERT INTO Order_Line (Product_ID, Order_ID, quantity) VALUES ('AS12945S48', 'ORD004', 5);
-
-
---reservation missing
-INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
-VALUES ('AS12945S22', 'ORD001', 'PN18544C21', 10);
-INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
-VALUES ('AS12946S20', 'ORD002', 'PN18324C54', 5);
-
--- Additional Supplier inserts (avoiding duplicate IDs)
-INSERT INTO Supplier (ID, Name, Email, Phone)
-VALUES (12349, 'MetalPro Industries', 'orders@metalpro.com', '+351234567890');
-INSERT INTO Supplier (ID, Name, Email, Phone)
-VALUES (12350, 'KitchenSupplies Co.', 'sales@kitchensupplies.co.uk', '+441234567890');
-INSERT INTO Supplier (ID, Name, Email, Phone)
-VALUES (12351, 'Steel Masters GmbH', 'info@steelmasters.de', '+491234567890');
-
--- Additional Orders (avoiding duplicate Order_IDs)
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
-VALUES ('ORD009', TO_DATE('2023-12-05', 'YYYY-MM-DD'), TO_DATE('2023-12-15', 'YYYY-MM-DD'), 'PT501245987');
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
-VALUES ('ORD010', TO_DATE('2023-12-10', 'YYYY-MM-DD'), TO_DATE('2024-01-10', 'YYYY-MM-DD'), 'CZ6451237810');
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
-VALUES ('ORD011', TO_DATE('2023-12-15', 'YYYY-MM-DD'), TO_DATE('2023-12-30', 'YYYY-MM-DD'), 'PT501245488');
-INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
-VALUES ('ORD012', TO_DATE('2023-12-20', 'YYYY-MM-DD'), TO_DATE('2024-01-05', 'YYYY-MM-DD'), 'PT501242417');
-
 -- Order Lines (usando os novos Order_IDs)
 INSERT INTO Order_Line (Product_ID, Order_ID, quantity)
 VALUES ('AS12945S22', 'ORD009', 50);
@@ -390,6 +381,12 @@ INSERT INTO Order_Line (Product_ID, Order_ID, quantity)
 VALUES ('AS12945S48', 'ORD012', 40);
 INSERT INTO Order_Line (Product_ID, Order_ID, quantity)
 VALUES ('AS12945G48', 'ORD012', 40);
+
+--reservation missing
+INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
+VALUES ('AS12945S22', 'ORD001', 'PN18544C21', 10);
+INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
+VALUES ('AS12946S20', 'ORD002', 'PN18324C54', 5);
 
 -- Reservations (usando os novos Order_IDs e garantindo combinações únicas)
 INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
