@@ -19,17 +19,11 @@ int initializeMachineBuffers(Machine *machine, int bufferLength, int medianWindo
         free(machine->humidityBuffer);
         return 0;
     }
-    
-    // Inicializar buffers com valores "inválidos" (-1, por exemplo)
-    for (int i = 0; i < bufferLength; i++) {
-        machine->tempBuffer[i] = -1; // Valor inicial para o buffer de temperatura
-        machine->humidityBuffer[i] = -1; // Valor inicial para o buffer de umidade
-    }
-    
-    machine->tempTail = bufferLength - 1;
-    machine->tempHead = 0;
-    machine->humidityTail = bufferLength - 1;
-    machine->humidityHead = 0;
+
+    machine->tempTail = 0;
+	machine->tempHead = 0;
+	machine->humidityTail = 0;
+	machine->humidityHead = 0;
     
     return 1;
 }
@@ -64,13 +58,13 @@ int calculateMachineBufferMedian(int *buffer, int bufferLength, int *tail, int *
     }
     
     // Mover elementos para array temporário usando função de assembly
-    if (move_n_to_array(buffer, bufferLength, tail, head, medianWindow, tempCopy) != medianWindow) {
+    if (move_n_to_array(buffer, bufferLength, tail, head, medianWindow, tempCopy) == 0) {
         free(tempCopy);
         return 0;
     }
     
     int medianResult;
-    if (median(tempCopy, medianWindow, &medianResult) == -1) {
+    if (median(tempCopy, medianWindow, &medianResult) == 0) {
         free(tempCopy);
         return 0;
     }

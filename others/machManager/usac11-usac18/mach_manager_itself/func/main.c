@@ -6,7 +6,7 @@
 #include "../include/func.h"
 
 Machine *machineList;
-
+/*
 void printMachineBuffers(Machine *machine) {
     // Imprimir os elementos do buffer de temperatura
     printf("[DEBUG] tempBuffer for Machine %d: ", machine->id);
@@ -24,6 +24,7 @@ void printMachineBuffers(Machine *machine) {
     printf("[DEBUG] temphum %d humhead %d", machine->humidityTail, machine->humidityHead);
     printf("\n");
 }
+*/
 
 int main() {
     machineList = loadMachinesFromFile("data/machines.txt");
@@ -48,31 +49,33 @@ int main() {
                 listMachines(machineList);
                 
                 int machineId;
-                printf("Enter Machine ID to send command: ");
+                printf("\nEnter Machine ID to send command: ");
                 scanf("%d", &machineId);
                 
                 Machine *selectedMachine = findMachineById(machineList, machineId);
                 
                 if (selectedMachine) {
                     char command[256];
-                    printf("Enter command (format: OP,0,0,0,0,1): ");
+                    printf("\nEnter command (format: OP,0,0,0,0,1): ");
                     scanf("%255s", command);
                     
                     char response[256];
                     if (send_and_read_from_machine(command, response, selectedMachine) == 0) {
-                        printf("Command executed successfully for Machine %d. Response: %s\n", 
+                        printf("\nCommand executed successfully for Machine %d. Response: %s\n", 
                                selectedMachine->id, response);
                     } else {
-                        fprintf(stderr, "Failed to execute command for Machine %d.\n", 
+                        fprintf(stderr, "\nFailed to execute command for Machine %d.\n", 
                                 selectedMachine->id);
                     }
                 } else {
-                    printf("Machine with ID %d not found.\n", machineId);
+                    printf("\nMachine with ID %d not found.\n", machineId);
                 }
+                /*
                 printf("\n[DEBUG] Printing buffers for all machines:\n");
                 for (Machine *machine = machineList; machine != NULL; machine = machine->next) {
                     printMachineBuffers(machine);
                 }
+                */
   				break;
         }
     } while (choice != 0);
