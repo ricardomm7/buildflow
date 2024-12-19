@@ -12,8 +12,8 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
-float temp;
-float hum;
+int temp;
+int hum;
 
 void setup() {
   Serial.begin(115200);
@@ -98,7 +98,7 @@ void turn_off_leds() {
   digitalWrite(LED_BUILTIN, LOW);
 }
 
-float read_temp_from_sensor() {
+int read_temp_from_sensor() {
   float temperature = dht.readTemperature();
   if (isnan(temperature)) {
     //Serial.println("Failed to read temperature!");
@@ -107,10 +107,10 @@ float read_temp_from_sensor() {
   //Serial.print("Temperature: ");
   //Serial.print(temperature);
   //Serial.println(" °C");
-  return temperature;
+  return (int) temperature;
 }
 
-float read_hum_from_sensor() {
+int read_hum_from_sensor() {
   float humidity = dht.readHumidity();
   if (isnan(humidity)) {
     //Serial.println("Failed to read humidity!");
@@ -119,7 +119,7 @@ float read_hum_from_sensor() {
   //Serial.print("Humidity: ");
   //Serial.print(humidity);
   //Serial.println(" %");
-  return humidity;
+  return (int) humidity;
 }
 
 void send_data(String data) {

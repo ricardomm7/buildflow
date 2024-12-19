@@ -14,13 +14,13 @@ void addMachine(Machine **head) {
     printf("Name: ");
     scanf("%49s", newMachine->name);
     printf("Min Temperature: ");
-    scanf("%lf", &newMachine->minTemp);
+    scanf("%d", &newMachine->minTemp);
     printf("Max Temperature: ");
-    scanf("%lf", &newMachine->maxTemp);
+    scanf("%d", &newMachine->maxTemp);
     printf("Min Humidity: ");
-    scanf("%lf", &newMachine->minHumidity);
+    scanf("%d", &newMachine->minHumidity);
     printf("Max Humidity: ");
-    scanf("%lf", &newMachine->maxHumidity);
+    scanf("%d", &newMachine->maxHumidity);
     printf("Buffer Length: ");
     scanf("%d", &newMachine->bufferLength);
     printf("Median Window:");

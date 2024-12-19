@@ -1,7 +1,8 @@
 #ifndef FUNC_H
 #define FUNC_H
+#include "../include/machine.h"
 
-int send_and_read_from_machine(const char *command, char *response);
+int send_and_read_from_machine(const char *command, char *response, Machine *machine);
 void check_for_alerts();
 
 // assembly functions

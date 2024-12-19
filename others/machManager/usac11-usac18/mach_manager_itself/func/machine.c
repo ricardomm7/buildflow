@@ -14,7 +14,7 @@ int saveMachinesToFile(const char *filename, Machine *head) {
     Machine *current = head;
     while (current) {
         // First, write machine details
-        fprintf(file, "MACHINE:%d,%s,%lf,%lf,%lf,%lf,%d,%d\n",
+        fprintf(file, "MACHINE:%d,%s,%d,%d,%d,%d,%d,%d\n",
                  current->id, current->name,
                  current->minTemp, current->maxTemp,
                  current->minHumidity, current->maxHumidity,
@@ -38,7 +38,6 @@ int saveMachinesToFile(const char *filename, Machine *head) {
     fclose(file);
     return 1;
 }
-
 Machine* loadMachinesFromFile(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -63,15 +62,25 @@ Machine* loadMachinesFromFile(const char *filename) {
             }
 
             // Parse machine details
-            sscanf(line + 8, "%d,%49[^,],%lf,%lf,%lf,%lf,%d,%d",
+            sscanf(line + 8, "%d,%49[^,],%d,%d,%d,%d,%d,%d",
                    &machine->id, machine->name,
                    &machine->minTemp, &machine->maxTemp,
                    &machine->minHumidity, &machine->maxHumidity,
                    &machine->bufferLength, &machine->medianWindow);
 
+            // Inicializar buffers dinâmicos
+            initializeMachineBuffers(machine, machine->bufferLength, machine->medianWindow);
+
             // Initialize operations
             machine->operations = NULL;
             machine->operationCount = 0;
+
+            // Chamada para inicializar os buffers da máquina
+            if (!initializeMachineBuffers(machine, machine->bufferLength, machine->medianWindow)) {
+                printf("[Error] Failed to initialize buffers for Machine %d\n", machine->id);
+                free(machine); // Libera a memória em caso de falha
+                continue;
+            }
 
             // Link to the machine list
             machine->next = head;
@@ -93,7 +102,7 @@ Machine* loadMachinesFromFile(const char *filename) {
 
             // Parse operation details
             int machineId;  // To verify machine ID matches
-            sscanf(line + 10, "%d,%49[^,],%9[^,],%19[^,],%lf,%lf,%d",
+            sscanf(line + 10, "%d,%49[^,],%9[^,],%19[^,],%le,%le,%d",
                    &machineId,
                    operation->operationName,
                    operation->state,
@@ -114,8 +123,8 @@ Machine* loadMachinesFromFile(const char *filename) {
 void printMachineDetails(Machine *machine) {
     printf("\nMachine ID: %d\n", machine->id);
     printf("Name: %s\n", machine->name);
-    printf("Temp Range: %.2lf - %.2lf\n", machine->minTemp, machine->maxTemp);
-    printf("Humidity Range: %.2lf - %.2lf\n", machine->minHumidity, machine->maxHumidity);
+    printf("Temp Range: %d - %d\n", machine->minTemp, machine->maxTemp);
+    printf("Humidity Range: %d - %d\n", machine->minHumidity, machine->maxHumidity);
     printf("Buffer Length: %d\n", machine->bufferLength);
     printf("Median Window: %d\n", machine->medianWindow);
     

@@ -14,7 +14,7 @@ $(shell mkdir -p $(OBJDIR)/func $(OBJDIR)/asseFunctions $(BINDIR))
 
 # Arquivos fonte
 SRC_C = func/communication.c func/alertAnalysis.c func/main.c \
-        func/machine.c func/operation.c func/plant_management.c
+        func/machine.c func/operation.c func/plant_management.c func/machine_buffer.c
 SRC_ASM = asseFunctions/usac8.s asseFunctions/usac9.s asseFunctions/usac10.s \
           asseFunctions/usac1.s asseFunctions/usac2.s asseFunctions/usac4.s \
           asseFunctions/usac6.s asseFunctions/usac5.s asseFunctions/usac3.s \
@@ -37,7 +37,7 @@ $(OBJDIR)/%.o: %.c
 
 # Compilação dos arquivos Assembly
 $(OBJDIR)/%.o: %.s
-	as -o $@ $
+	as -o $@ $<
 
 # Regra para executar o programa
 run: $(BINDIR)/$(TARGET)

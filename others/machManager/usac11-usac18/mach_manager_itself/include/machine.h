@@ -17,15 +17,24 @@ typedef struct Operation {
 typedef struct Machine {
     int id;
     char name[MAX_NAME_LENGTH];
-    double minTemp;
-    double maxTemp;
-    double minHumidity;
-    double maxHumidity;
+    int minTemp;
+    int maxTemp;
+    int minHumidity;
+    int maxHumidity;
     int bufferLength;
     int medianWindow;
     Operation *operations;
     int operationCount;
     struct Machine *next;
+    
+    
+    // Novos campos
+    int *tempBuffer;
+    int *humidityBuffer;
+    int tempTail;
+    int tempHead;
+    int humidityTail;
+    int humidityHead;
 } Machine;
 
 // Protótipos de funções para máquinas
@@ -35,4 +44,11 @@ void printMachineDetails(Machine *machine);
 Machine* findMachineById(Machine *head, int id);
 int validateMachineData(Machine *machine);
 
-#endif // MACHINE_H
+// Novas
+int initializeMachineBuffers(Machine *machine, int bufferLength, int medianWindow);
+void freeMachineBuffers(Machine *machine);
+int enqueueMachineTemperature(Machine *machine, int temperature);
+int enqueueMachineHumidity(Machine *machine, int humidity);
+int calculateMachineTemperatureMedian(Machine *machine, int *median);
+int calculateMachineHumidityMedian(Machine *machine, int *median);
+#endif

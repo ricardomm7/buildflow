@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "../include/func.h"
+#include "../include/machine.h"
 
 #define BUFFER_SIZE 256
 
@@ -80,24 +81,48 @@ void read_response(int fd, char *buffer, size_t buffer_size) {
         }
     }
 
-    buffer[total_bytes_read] = '\0'; // Garante a terminação da string
+    buffer[total_bytes_read] = '\0';
+
+    while (total_bytes_read > 0 && (buffer[total_bytes_read - 1] == ' ' || buffer[total_bytes_read - 1] == '\n')) {
+        buffer[total_bytes_read - 1] = '\0';
+        total_bytes_read--;
+    }
     //printf("Bytes read: %d\n", total_bytes_read); // Log de depuração
 }
 
-int send_and_read_from_machine(const char *command, char *response) {
+
+int send_and_read_from_machine(const char *command, char *response,  Machine *machine) {
     const char *portname = "/dev/ttyACM0";
     int baudrate = B115200;
+    int temperature, humidity;
 
     int fd = configure_serial(portname, baudrate);
     if (fd == -1) {
         fprintf(stderr, "Failed to configure serial port.\n");
-        return -1; // Retorna erro em caso de falha
+        return -1;
     }
 
     send_command(fd, command);
 
     read_response(fd, response, BUFFER_SIZE);
 
+	char hum[]="HUM";
+	char temp[]="TEMP";
+	char celc[20];
+	char perc[20];
+	
+	//printf("\n\n%s;\n\n", response);
+	
+	if (extract_data(response, temp, celc, &temperature) == 1 &&
+        extract_data(response, hum, perc, &humidity) == 1) {
+        
+        //printf("\n\n\n\nTemperature %d \n\n\n\n", temperature);
+        //printf("\n\n\n\nHumidity %d \n\n\n\n", humidity);
+        // Enfileirar dados na máquina específica
+        enqueueMachineTemperature(machine, (int)temperature);
+        enqueueMachineHumidity(machine, (int)humidity);        
+    }
+	
 	// FOR USAC18 N SEI SE É AQUI
     check_for_alerts();
 

@@ -5,9 +5,28 @@
 #include "../include/operation.h"
 #include "../include/func.h"
 
+Machine *machineList;
+
+void printMachineBuffers(Machine *machine) {
+    // Imprimir os elementos do buffer de temperatura
+    printf("[DEBUG] tempBuffer for Machine %d: ", machine->id);
+    for (int i = machine->tempTail; i != machine->tempHead; i = (i + 1) % machine->bufferLength) {
+        printf("%d ", machine->tempBuffer[i]);
+    }
+    printf("[DEBUG] temptail %d temphead %d", machine->tempTail, machine->tempHead);
+    printf("\n");
+
+    // Imprimir os elementos do buffer de umidade
+    printf("[DEBUG] humidityBuffer for Machine %d: ", machine->id);
+    for (int i = machine->humidityTail; i != machine->humidityHead; i = (i + 1) % machine->bufferLength) {
+        printf("%d ", machine->humidityBuffer[i]);
+    }
+    printf("[DEBUG] temphum %d humhead %d", machine->humidityTail, machine->humidityHead);
+    printf("\n");
+}
 
 int main() {
-    Machine *machines = loadMachinesFromFile("data/machines.txt");
+    machineList = loadMachinesFromFile("data/machines.txt");
     Operation *operations = NULL;
     int operationCount = 0;
     loadOperationsFromFile("data/operations.txt", &operations, &operationCount);
@@ -23,25 +42,45 @@ int main() {
         
         switch(choice) {
             case 1: 
-                machManager(&machines, &operations, &operationCount);
+                machManager(&machineList, &operations, &operationCount);
                 break;
             case 2:
-				const char *command = "OP,0,0,0,0,1\n";
-				char response[256];
-
-				if (send_and_read_from_machine(command, response) == 0) {
-					printf("Command executed successfully. Response: %s\n", response);
-				} else {
-					fprintf(stderr, "Failed to execute command.\n");
-				}
-				break;
+                listMachines(machineList);
+                
+                int machineId;
+                printf("Enter Machine ID to send command: ");
+                scanf("%d", &machineId);
+                
+                Machine *selectedMachine = findMachineById(machineList, machineId);
+                
+                if (selectedMachine) {
+                    char command[256];
+                    printf("Enter command (format: OP,0,0,0,0,1): ");
+                    scanf("%255s", command);
+                    
+                    char response[256];
+                    if (send_and_read_from_machine(command, response, selectedMachine) == 0) {
+                        printf("Command executed successfully for Machine %d. Response: %s\n", 
+                               selectedMachine->id, response);
+                    } else {
+                        fprintf(stderr, "Failed to execute command for Machine %d.\n", 
+                                selectedMachine->id);
+                    }
+                } else {
+                    printf("Machine with ID %d not found.\n", machineId);
+                }
+                printf("\n[DEBUG] Printing buffers for all machines:\n");
+                for (Machine *machine = machineList; machine != NULL; machine = machine->next) {
+                    printMachineBuffers(machine);
+                }
+  				break;
         }
     } while (choice != 0);
     
     // Liberar memória
-    while (machines) {
-        Machine *temp = machines;
-        machines = machines->next;
+    while (machineList) {
+        Machine *temp = machineList;
+        machineList = machineList->next;
         free(temp->operations);
         free(temp);
     }

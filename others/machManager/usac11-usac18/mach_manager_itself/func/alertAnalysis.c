@@ -1,84 +1,71 @@
 #include <stdio.h>
 #include "../include/func.h"
+#include "../include/machine.h"
 
-// Constantes e variáveis globais
-#define BUFFER_LENGTH 5
-#define MEDIAN_WINDOW 4
+extern Machine *machineList;
 
-int tempVec[BUFFER_LENGTH] = {0, 8, 9, 2, 5};
-int humVec[BUFFER_LENGTH] = {3, 6, 7, 2, 4};
-int tail = 0;
-int head = 4;
-
-float maxTemp = 25.0;
-float minTemp = 4;
-float maxHum = 60.0;
-float minHum = 0.4;
-
-void error(const char *context) {
-    printf("Error: %s\n", context);
+void error(const char *context, int machineId) {
+    printf("[Error] Machine %d: %s\n", machineId, context);
 }
 
-void exceedTemperature(float value) {
-    printf("Alert: Temperature out of range! Current value: %.2f\n", value);
+void exceedTemperature(float value, float minTemp, float maxTemp, int machineId) {
+    printf("[Alert] Machine %d: Temperature out of range! Current value: %.2f°C. Allowed range: %.2f°C - %.2f°C.\n", 
+           machineId, value, minTemp, maxTemp);
 }
 
-void exceedHumidity(float value) {
-    printf("Alert: Humidity out of range! Current value: %.2f\n", value);
+void exceedHumidity(float value, float minHum, float maxHum, int machineId) {
+    printf("[Alert] Machine %d: Humidity out of range! Current value: %.2f%%. Allowed range: %.2f%% - %.2f%%.\n", 
+           machineId, value, minHum, maxHum);
 }
 
-int is_sufficient_data(int vec[], int buffer_length, int *tail, int *head) {
-    int n_elements = get_n_element(vec, buffer_length, tail, head);
-    //printf("Debug: Number of elements in buffer: %d\n", n_elements);
-    return n_elements >= MEDIAN_WINDOW;
-}
+void check_for_alerts_for_machine(Machine *machine) {
+    int tempMedian, humMedian;
 
-int calculate_median(int vec[], int window, int *result) {
-    int validation = median(vec, window, result);
-    if (validation == -1) {
-        return 0;
-    }
-    return 1;
-}
+	if(get_n_element(machine->tempBuffer, machine->bufferLength, &machine->tempTail, &machine->tempHead) >= machine->medianWindow){
+		//int numTempElements = get_n_element(machine->tempBuffer, machine->bufferLength, &machine->tempTail, &machine->tempHead);
+		//printf("[DEBUG] Machine %d: tempBuffer elements = %d, required = %d\n", machine->id, numTempElements, machine->medianWindow);
+		
+		if (!calculateMachineTemperatureMedian(machine, &tempMedian)) {
+			error("Failed to calculate temperature median.", machine->id);
+			return;
+		}
 
-void check_temperature_alerts(int median_value) {
-    if (median_value > (int) maxTemp) {
-        exceedTemperature(median_value);
-    } else if (median_value < (int) minTemp) {
-        exceedTemperature(median_value);
-    }
-}
+		if (tempMedian > machine->maxTemp || tempMedian < machine->minTemp) {
+			exceedTemperature(tempMedian, machine->minTemp, machine->maxTemp, machine->id);
+		} else {
+			printf("[Info] Machine %d: Temperature within range. Current value: %d°C. Allowed range: %d°C - %d°C.\n",
+				   machine->id, tempMedian, machine->minTemp, machine->maxTemp);
+		}
+	} else {
+		printf("[DEBUG] No check for %d: %s\n", machine->id, machine->name);
+	}
+        
+	if(get_n_element(machine->humidityBuffer, machine->bufferLength, &machine->humidityTail, &machine->humidityHead) >= machine->medianWindow){
+		//int numTempElements = get_n_element(machine->tempBuffer, machine->bufferLength, &machine->tempTail, &machine->tempHead);
+		//printf("[DEBUG] Machine %d: tempBuffer elements = %d, required = %d\n", machine->id, numTempElements, machine->medianWindow);
+		
+		if (!calculateMachineHumidityMedian(machine, &humMedian)) {
+			error("Failed to calculate humidity median.", machine->id);
+			return;
+		}
 
-void check_humidity_alerts(int median_value) {
-    if (median_value > (int) maxHum) {
-        exceedHumidity(median_value);
-    } else if (median_value < (int) minHum) {
-        exceedHumidity(median_value);
-    }
+		if (humMedian > machine->maxHumidity || humMedian < machine->minHumidity) {
+			exceedHumidity(humMedian, machine->minHumidity, machine->maxHumidity, machine->id);
+		} else {
+			printf("[Info] Machine %d: Humidity within range. Current value: %d%%. Allowed range: %d%% - %d%%.\n",
+				   machine->id, humMedian, machine->minHumidity, machine->maxHumidity);
+		}
+	} else {
+		printf("[DEBUG] No check for %d: %s\n", machine->id, machine->name);
+	}
 }
 
 void check_for_alerts() {
-    int tempMedian, humMedian;
+    Machine *currentMachine = machineList;
 
-    if (!is_sufficient_data(tempVec, BUFFER_LENGTH, &tail, &head)) {
-        error("Insufficient data for temperature median calculation.");
-        return;
+    while (currentMachine != NULL) {
+		//printf("Checking alerts for machine %d: %s\n", currentMachine->id, currentMachine->name);
+		check_for_alerts_for_machine(currentMachine);
+		currentMachine = currentMachine->next;
     }
-
-    if (!calculate_median(tempVec, MEDIAN_WINDOW, &tempMedian)) {
-        error("Failed to calculate temperature median.");
-        return;
-    }
-    check_temperature_alerts(tempMedian);
-
-    if (!is_sufficient_data(humVec, BUFFER_LENGTH, &tail, &head)) {
-        error("Insufficient data for humidity median calculation.");
-        return;
-    }
-
-    if (!calculate_median(humVec, MEDIAN_WINDOW, &humMedian)) {
-        error("Failed to calculate humidity median.");
-        return;
-    }
-    check_humidity_alerts(humMedian);
 }
