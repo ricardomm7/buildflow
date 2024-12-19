@@ -73,7 +73,9 @@ INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544A21', 20);
 INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18544C21', 15);
 INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C54', 15);
 INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN94561L67', 40);
---added to work in the procurement
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R12', 30);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN52384R45', 30);
+INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C91', 10);
 INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('PN18324C51', 10);
 
 
@@ -83,7 +85,9 @@ INSERT INTO Component (Part_ID) VALUES ('PN52384R10');
 INSERT INTO Component (Part_ID) VALUES ('PN18544A21');
 INSERT INTO Component (Part_ID) VALUES ('PN18544C21');
 INSERT INTO Component (Part_ID) VALUES ('PN18324C54');
---added to work in the procurement
+INSERT INTO Component (Part_ID) VALUES ('PN52384R12');
+INSERT INTO Component (Part_ID) VALUES ('PN52384R45');
+INSERT INTO Component (Part_ID) VALUES ('PN18324C91');
 INSERT INTO Component (Part_ID) VALUES ('PN18324C51');
 
 
@@ -101,6 +105,9 @@ INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A04');
 INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12945A32');
 INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12945A33');
 INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12945A34');
+INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A32');
+INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A33');
+INSERT INTO Intermediate_Product (Part_ID) VALUES ('IP12947A34');
 
 
 -- Operation Type inserts
@@ -125,12 +132,25 @@ INSERT INTO Operation_Type (ID, Description, Expec_Time) VALUES (5688, 'Pan test
 
 
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (130, 5663, NULL, 'AS12945S22', 'AS12945S22');
+VALUES (154, 5659, NULL, 'AS12946S20', 'AS12946S20');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (115, 5659, NULL, 'AS12946S22', 'AS12946S22');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 VALUES (124, 5667, NULL, 'AS12947S22', 'AS12947S22');
---duplicate operation
---INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
---VALUES (124, 5667, NULL, 'AS12947S22', 'AS12947S22');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (130, 5663, NULL, 'AS12945S22', 'AS12945S22');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (164, 5667, NULL, 'AS12947S20', 'AS12947S20');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (170, 5663, NULL, 'AS12945S20', 'AS12945S20');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (114, 5653, 115, 'AS12946S22', 'IP12945A04');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (112, 5651, 114, 'AS12946S22', 'IP12945A03');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (103, 5649, 112, 'AS12946S22', 'IP12945A02');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (100, 5647, 103, 'AS12946S22', 'IP12945A01');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 VALUES (123, 5661, 124, 'AS12947S22', 'IP12947A04');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
@@ -140,15 +160,21 @@ VALUES (121, 5655, 122, 'AS12947S22', 'IP12947A02');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 VALUES (120, 5647, 121, 'AS12947S22', 'IP12947A01');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (115, 5659, NULL, 'AS12946S22', 'AS12946S22');
+VALUES (153, 5653, 154, 'AS12946S20', 'IP12945A34');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (114, 5653, 115, 'AS12946S22', 'IP12945A04');
+VALUES (152, 5651, 153, 'AS12946S20', 'IP12945A33');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (112, 5651, 114, 'AS12946S22', 'IP12945A03');
+VALUES (151, 5649, 152, 'AS12946S20', 'IP12945A32');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (103, 5649, 112, 'AS12946S22', 'IP12945A02');
+VALUES (150, 5647, 151, 'AS12946S20', 'IP12945A01');
 INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-VALUES (100, 5647, 103, 'AS12946S22', 'IP12945A01');
+VALUES (163, 5661, 164, 'AS12947S20', 'IP12947A34');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (162, 5657, 163, 'AS12947S20', 'IP12947A33');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (161, 5655, 162, 'AS12947S20', 'IP12947A32');
+INSERT INTO Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
+VALUES (160, 5647, 161, 'AS12947S20', 'IP12947A01');
 
 
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
@@ -179,6 +205,8 @@ INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
 VALUES ('IP12947A03', 123, 1);
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
 VALUES ('PN18324C54', 123, 1);
+INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
+VALUES ('PN12344A21', 123, 3);
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
 VALUES ('IP12947A04', 124, 1);
 INSERT INTO Operation_Input (Part_ID, Operation_ID, Quantity)
@@ -222,55 +250,55 @@ VALUES (5, 'Packaging Station 1', 'Handles final packaging tasks', 'K3675');
 
 
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5647, 'A4578', 2.0, 0.4);
+VALUES (5647, 'A4578', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5647, 'A4588', 2.0, 0.4);
+VALUES (5647, 'A4588', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5647, 'A4598', 2.0, 0.4);
+VALUES (5647, 'A4598', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5649, 'A4588', 1.5, 0.3);
+VALUES (5649, 'A4588', 120, 0.3);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5649, 'A4598', 1.5, 0.3);
+VALUES (5649, 'A4598', 120, 0.3);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5651, 'A4588', 2.0, 0.4);
+VALUES (5651, 'A4588', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5651, 'A4598', 2.0, 0.4);
+VALUES (5651, 'A4598', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5653, 'C5637', 5.0, 1.0);
+VALUES (5653, 'C5637', 350, 1.0);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5655, 'A4588', 1.0, 0.2);
+VALUES (5655, 'A4588', 120, 0.2);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5655, 'A4598', 1.0, 0.2);
+VALUES (5655, 'A4598', 120, 0.2);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5657, 'C5637', 4.0, 0.8);
+VALUES (5657, 'C5637', 250, 0.8);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5659, 'S3271', 10.0, 2.0);
+VALUES (5659, 'S3271', 900, 2.0);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5661, 'T3452', 2.0, 0.4);
+VALUES (5661, 'T3452', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5663, 'K3675', 4.0, 0.8);
+VALUES (5663, 'K3675', 250, 0.8);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5665, 'D9123', 7.0, 1.4);
+VALUES (5665, 'D9123', 500, 1.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5667, 'Q3547', 20.0, 4.0);
+VALUES (5667, 'Q3547', 1500, 4.0);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5669, 'Q3547', 30.0, 6.0);
+VALUES (5669, 'Q3547', 2000, 6.0);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5671, 'Q5478', 53.33, 10.67);
+VALUES (5671, 'Q5478', 4500, 10.67);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5681, 'A4588', 2.0, 0.4);
+VALUES (5681, 'A4588', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5681, 'A4598', 2.0, 0.4);
+VALUES (5681, 'A4598', 150, 0.4);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5682, 'A4588', 2.67, 0.53);
+VALUES (5682, 'A4588', 200, 0.53);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5682, 'A4598', 2.67, 0.53);
+VALUES (5682, 'A4598', 200, 0.53);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5683, 'C5637', 3.0, 0.6);
+VALUES (5683, 'C5637', 250, 0.6);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5685, 'D9123', 15.0, 3.0);
+VALUES (5685, 'D9123', 1200, 3.0);
 INSERT INTO Operation_Type_Workstation (Operation_TypeID, WorkstationType_ID, Max_Exec_Time, Setup_Time)
-VALUES (5688, 'K3675', 25.0, 5.0);
+VALUES (5688, 'K3675', 1800, 5.0);
 
 
 -- orders missing
