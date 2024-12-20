@@ -1,26 +1,3 @@
-CREATE OR REPLACE FUNCTION get_reservations(p_part_id IN CHAR)
-RETURN NUMBER IS
-    v_total_reserved NUMBER := 0;
-BEGIN
-    -- Calcula o total de reservas para o material
-    BEGIN
-        SELECT SUM(r.quantity)
-        INTO v_total_reserved
-        FROM Reservation r
-        WHERE r.Part_ID = TRIM(p_part_id);
-
-        IF v_total_reserved IS NULL THEN
-            v_total_reserved := 0;
-        END IF;
-    EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            v_total_reserved := 0;
-    END;
-
-    RETURN v_total_reserved;
-END;
-/
-
 CREATE OR REPLACE PROCEDURE consume_material(
     p_part_id IN CHAR,
     p_quantity IN NUMBER,
@@ -43,12 +20,24 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Obtém o stock atual e calcula o total reservado
-    SELECT Minimum_Stock INTO v_current_stock
-    FROM External_Part
-    WHERE Part_ID = TRIM(p_part_id);
+    -- Obtém o stock atual e total reservado em uma única consulta
+    BEGIN
+        SELECT ep.Minimum_Stock, SUM(r.quantity)
+        INTO v_current_stock, v_total_reserved
+        FROM External_Part ep
+        LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
+        WHERE ep.Part_ID = TRIM(p_part_id)
+        GROUP BY ep.Part_ID, ep.Minimum_Stock;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            p_message := 'Part not found: ' || TRIM(p_part_id);
+            RETURN;
+    END;
 
-    v_total_reserved := get_reservations(p_part_id);
+    -- Trata o caso de SUM retornando NULL (nenhuma reserva encontrada)
+    IF v_total_reserved IS NULL THEN
+        v_total_reserved := 0;
+    END IF;
 
     -- Verifica se o consumo é possível
     IF p_quantity > v_current_stock THEN
@@ -71,18 +60,16 @@ BEGIN
 
     COMMIT; -- Confirma a transação
 
-    p_success := TRUE; -- Atualiza o sucesso
+    p_success := TRUE;
     p_message := 'Material consumed successfully.';
 EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        p_message := 'Part not found: ' || TRIM(p_part_id);
     WHEN OTHERS THEN
         p_message := 'Error: ' || SQLERRM;
         ROLLBACK; -- Reverte a transação em caso de erro
 END;
 /
 
--- Válido, consome menos que o stock e reservado
+-- Teste 1: Válido, consome menos que o stock e reservado
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
@@ -96,7 +83,7 @@ BEGIN
 END;
 /
 
--- Inválido, consome maior que o reservado
+-- Teste 2: Inválido, consome maior que o reservado
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
@@ -110,7 +97,7 @@ BEGIN
 END;
 /
 
--- Inválido, consome maior que o stock
+-- Teste 3: Inválido, consome maior que o stock
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
