@@ -35,8 +35,9 @@ int main() {
     int choice;
     do {
         printf("\nBUILDFLOW MACHMANAGER MAIN MENU\n");
-        printf("1. Mach Manager Menu\n");
+        printf("1. Machine Options\n");
         printf("2. Send Command\n");
+        printf("3. See machine state\n");
         printf("0. Exit\n");
         printf("Choose an option: ");
         scanf("%d", &choice);
@@ -77,6 +78,21 @@ int main() {
                 }
                 */
   				break;
+  			case 3: 
+				listMachines(machineList);
+                
+                int machineId2;
+                printf("\nEnter Machine ID to see state: ");
+                scanf("%d", &machineId2);
+                
+                Machine *selectedMachine2 = findMachineById(machineList, machineId2);
+                
+                if (selectedMachine2) {
+                    executeMachineOP(*selectedMachine2);
+                } else {
+                    printf("\nMachine with ID %d not found.\n", machineId);
+                }               
+                break;
         }
     } while (choice != 0);
     

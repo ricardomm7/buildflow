@@ -14,8 +14,8 @@ $(shell mkdir -p $(OBJDIR)/func $(OBJDIR)/asseFunctions $(BINDIR))
 
 # Arquivos fonte
 SRC_C = func/communication.c func/alertAnalysis.c func/main.c \
-        func/machine.c func/operation.c func/plant_management.c func/machine_buffer.c
-        #func/read_instructions.c
+        func/machine.c func/operation.c func/plant_management.c func/machine_buffer.c \
+        func/read_instructions.c
 SRC_ASM = asseFunctions/usac8.s asseFunctions/usac9.s asseFunctions/usac10.s \
           asseFunctions/usac1.s asseFunctions/usac2.s asseFunctions/usac4.s \
           asseFunctions/usac6.s asseFunctions/usac5.s asseFunctions/usac3.s \

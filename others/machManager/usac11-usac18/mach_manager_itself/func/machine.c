@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/machine.h"
 #include "../include/operation.h"
+#include "../include/func.h"
 
 int saveMachinesToFile(const char *filename, Machine *head) {
     FILE *file = fopen(filename, "w");
@@ -152,4 +153,30 @@ int validateMachineData(Machine *machine) {
             machine->minHumidity < machine->maxHumidity &&
             machine->bufferLength > 0 &&
             machine->medianWindow > 0);
+}
+
+void executeMachineOP(Machine a) {
+    if (a.operationCount <= 0 || a.operations == NULL) {
+        fprintf(stderr, "Error: The machine has no valid operations.\n");
+        return;
+    }
+
+    char cmd[256];
+    char response[256];
+
+    for (int i = 0; i < a.operationCount; i++) {
+        Operation op = a.operations[i];
+        char *constant_name = op.state;
+        if (format_command(constant_name, op.operationNumber, cmd) == 1) {
+            printf("Formatted command: %s\n", cmd);
+
+            if (send_and_read_from_machine(cmd, response, &a) == 0) {
+                printf("Machine response: %s\n", response);
+            } else {
+                fprintf(stderr, "Error sending command for operation %d.\n", op.operationNumber);
+            }
+        } else {
+            fprintf(stderr, "Error formatting command for operation %d.\n", op.operationNumber);
+        }
+    }
 }
