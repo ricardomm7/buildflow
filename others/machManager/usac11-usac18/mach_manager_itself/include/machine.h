@@ -43,7 +43,7 @@ Machine* loadMachinesFromFile(const char *filename);
 void printMachineDetails(Machine *machine);
 Machine* findMachineById(Machine *head, int id);
 int validateMachineData(Machine *machine);
-
+void executeMachineOP(Machine *machine);
 // Novas
 int initializeMachineBuffers(Machine *machine, int bufferLength, int medianWindow);
 void freeMachineBuffers(Machine *machine);
@@ -51,4 +51,5 @@ int enqueueMachineTemperature(Machine *machine, int temperature);
 int enqueueMachineHumidity(Machine *machine, int humidity);
 int calculateMachineTemperatureMedian(Machine *machine, int *median);
 int calculateMachineHumidityMedian(Machine *machine, int *median);
+Machine* findMachineForOperation(Machine* machineList, int operationNumber);
 #endif

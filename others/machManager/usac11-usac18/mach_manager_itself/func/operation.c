@@ -6,7 +6,7 @@
 int loadOperationsFromFile(const char *filename, Operation **operations, int *operationCount) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Erro ao abrir arquivo de operações");
+        perror("Error opening operations file");
         return 0;
     }
 
@@ -14,27 +14,79 @@ int loadOperationsFromFile(const char *filename, Operation **operations, int *op
     *operationCount = 0;
     char line[200];
     
+    // Pular a primeira linha se for cabeçalho
+    fgets(line, sizeof(line), file);
+    
     while (fgets(line, sizeof(line), file)) {
+        // Ignorar linhas de comentário ou vazias
         if (line[0] == '#' || line[0] == '\n') continue;
-
+        
+        // Remover possível \n do final da linha
+        line[strcspn(line, "\n")] = 0;
+        
         Operation *op = realloc(*operations, (*operationCount + 1) * sizeof(Operation));
         if (!op) {
-            perror("Erro de alocação de memória");
+            perror("Memory reallocation error");
             break;
         }
         *operations = op;
-
-        sscanf(line, "%49[^,],%9[^,],%19[^,],%lf,%lf,%d", 
-               (*operations)[*operationCount].operationName,
-               (*operations)[*operationCount].state,
-               (*operations)[*operationCount].timestamp,
-               &(*operations)[*operationCount].temperature,
-               &(*operations)[*operationCount].humidity,
-               &(*operations)[*operationCount].operationNumber);
-
+        
+        // Criar variáveis temporárias para armazenar os valores
+        char tempName[50];
+        char tempState[10];
+        char tempTimestamp[20];
+        char tempTemperature[20];
+        char tempHumidity[20];
+        int tempOpNumber;
+        
+        // Dividir a linha em tokens
+        char *token = strtok(line, ",");
+        if (token) strncpy(tempName, token, sizeof(tempName)-1);
+        
+        token = strtok(NULL, ",");
+        if (token) strncpy(tempState, token, sizeof(tempState)-1);
+        
+        token = strtok(NULL, ",");
+        if (token) strncpy(tempTimestamp, token, sizeof(tempTimestamp)-1);
+        
+        token = strtok(NULL, ",");
+        if (token) strncpy(tempTemperature, token, sizeof(tempTemperature)-1);
+        
+        token = strtok(NULL, ",");
+        if (token) strncpy(tempHumidity, token, sizeof(tempHumidity)-1);
+        
+        token = strtok(NULL, ",");
+        if (token) tempOpNumber = atoi(token);
+        
+        // Limpar espaços em branco
+        for (int i = 0; tempName[i]; i++) {
+            if (tempName[i] == ' ') {
+                int j;
+                for (j = i; tempName[j]; j++) {
+                    tempName[j] = tempName[j+1];
+                }
+                i--;
+            }
+        }
+        
+        // Copiar valores para a estrutura
+        strncpy((*operations)[*operationCount].operationName, tempName, sizeof((*operations)[*operationCount].operationName)-1);
+        strncpy((*operations)[*operationCount].state, tempState, sizeof((*operations)[*operationCount].state)-1);
+        strncpy((*operations)[*operationCount].timestamp, tempTimestamp, sizeof((*operations)[*operationCount].timestamp)-1);
+        
+        // Converter temperatura e umidade de string para double
+        (*operations)[*operationCount].temperature = atof(tempTemperature);
+        (*operations)[*operationCount].humidity = atof(tempHumidity);
+        (*operations)[*operationCount].operationNumber = tempOpNumber;
+        
+        // Garantir terminação null para as strings
+        (*operations)[*operationCount].operationName[sizeof((*operations)[*operationCount].operationName)-1] = '\0';
+        (*operations)[*operationCount].state[sizeof((*operations)[*operationCount].state)-1] = '\0';
+        (*operations)[*operationCount].timestamp[sizeof((*operations)[*operationCount].timestamp)-1] = '\0';
+            
         (*operationCount)++;
     }
-
+    
     fclose(file);
     return 1;
 }
@@ -51,7 +103,7 @@ void printOperationDetails(Operation *operation) {
 Operation* createOperation() {
     Operation* newOperation = malloc(sizeof(Operation));
     if (!newOperation) {
-        perror("Erro de alocação de memória");
+        perror("Memory reallocation error");
         return NULL;
     }
 
@@ -103,7 +155,7 @@ int associateOperationToMachine(Machine *machine, Operation *operation) {
     Operation *newOps = realloc(machine->operations, 
                                 (machine->operationCount + 1) * sizeof(Operation));
     if (!newOps) {
-        perror("Erro de alocação de memória");
+        perror("Memory reallocation error");
         return 0;
     }
 
@@ -113,22 +165,25 @@ int associateOperationToMachine(Machine *machine, Operation *operation) {
     return 1;
 }
 
-int saveOperationsToFile(const char *filename, Machine *head) {
+int saveOperationsToFile(const char *filename, Operation *operations, int operationCount) {
     FILE *file = fopen(filename, "w");
     if (!file) {
-        perror("Erro ao abrir arquivo para salvar operações");
+        perror("Error opening file to save operations");
         return 0;
     }
 
-    Machine *machine = head;
-    while (machine) {
-        for (int i = 0; i < machine->operationCount; i++) {
-            Operation *op = &machine->operations[i];
-            fprintf(file, "%s,%s,%s,%.2f,%.2f,%d\n",
-                    op->operationName, op->state, op->timestamp,
-                    op->temperature, op->humidity, op->operationNumber);
-        }
-        machine = machine->next;
+    // Escrever cabeçalho
+    fprintf(file, "# operationName, state, timestamp, temperature, humidity, operationNumber\n");
+
+    // Salvar todas as operações do array global
+    for (int i = 0; i < operationCount; i++) {
+        fprintf(file, "%s,%s,%s,%.2f,%.2f,%d\n",
+                operations[i].operationName,
+                operations[i].state,
+                operations[i].timestamp,
+                operations[i].temperature,
+                operations[i].humidity,
+                operations[i].operationNumber);
     }
 
     fclose(file);

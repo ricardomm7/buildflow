@@ -94,7 +94,7 @@ void createAndStoreOperation(Operation **operations, int *operationCount) {
             free(newOperation);
             printf("Operation added successfully.\n");
         } else {
-            perror("Erro de alocação de memória");
+            perror("Memory reallocation error");
             free(newOperation);
         }
     }
@@ -135,7 +135,7 @@ void assignOperationToMachine(Machine *head, Operation *operations, int operatio
 void loadInstructionsFromFile(const char *filename, Machine *head) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Erro ao abrir arquivo de instruções");
+        perror("Error opening instruction file");
         return;
     }
 

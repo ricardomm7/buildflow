@@ -4,7 +4,10 @@
 
 int send_and_read_from_machine(const char *command, char *response, Machine *machine);
 void check_for_alerts();
-void executeMachineOP(Machine a);
+void processInstructions(Machine* machineList, const char* filename);
+// Declaração antecipada da função machManager
+int machManager(Machine **machines, Operation **operations, int *operationCount);
+
 
 // assembly functions
 int move_n_to_array(int* buffer, int length, int *tail, int *head, int n, int* array);

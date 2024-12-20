@@ -6,25 +6,8 @@
 #include "../include/func.h"
 
 Machine *machineList;
-/*
-void printMachineBuffers(Machine *machine) {
-    // Imprimir os elementos do buffer de temperatura
-    printf("[DEBUG] tempBuffer for Machine %d: ", machine->id);
-    for (int i = machine->tempTail; i != machine->tempHead; i = (i + 1) % machine->bufferLength) {
-        printf("%d ", machine->tempBuffer[i]);
-    }
-    printf("[DEBUG] temptail %d temphead %d", machine->tempTail, machine->tempHead);
-    printf("\n");
 
-    // Imprimir os elementos do buffer de umidade
-    printf("[DEBUG] humidityBuffer for Machine %d: ", machine->id);
-    for (int i = machine->humidityTail; i != machine->humidityHead; i = (i + 1) % machine->bufferLength) {
-        printf("%d ", machine->humidityBuffer[i]);
-    }
-    printf("[DEBUG] temphum %d humhead %d", machine->humidityTail, machine->humidityHead);
-    printf("\n");
-}
-*/
+
 
 int main() {
     machineList = loadMachinesFromFile("data/machines.txt");
@@ -35,9 +18,10 @@ int main() {
     int choice;
     do {
         printf("\nBUILDFLOW MACHMANAGER MAIN MENU\n");
-        printf("1. Machine Options\n");
-        printf("2. Send Command\n");
+        printf("1. Machine options\n");
+        printf("2. Send command\n");
         printf("3. See machine state\n");
+        printf("4. Read instructions and execute them in the machine\n");
         printf("0. Exit\n");
         printf("Choose an option: ");
         scanf("%d", &choice);
@@ -46,7 +30,7 @@ int main() {
             case 1: 
                 machManager(&machineList, &operations, &operationCount);
                 break;
-            case 2:
+            case 2: {
                 listMachines(machineList);
                 
                 int machineId;
@@ -71,27 +55,33 @@ int main() {
                 } else {
                     printf("\nMachine with ID %d not found.\n", machineId);
                 }
-                /*
-                printf("\n[DEBUG] Printing buffers for all machines:\n");
-                for (Machine *machine = machineList; machine != NULL; machine = machine->next) {
-                    printMachineBuffers(machine);
-                }
-                */
-  				break;
-  			case 3: 
+                break;
+            }
+            case 3: 
 				listMachines(machineList);
-                
-                int machineId2;
-                printf("\nEnter Machine ID to see state: ");
-                scanf("%d", &machineId2);
-                
-                Machine *selectedMachine2 = findMachineById(machineList, machineId2);
-                
-                if (selectedMachine2) {
-                    executeMachineOP(*selectedMachine2);
-                } else {
-                    printf("\nMachine with ID %d not found.\n", machineId);
-                }               
+    
+				int machineId2;
+				printf("\nEnter Machine ID to see state: ");
+				scanf("%d", &machineId2);
+    
+				Machine *selectedMachine2 = findMachineById(machineList, machineId2);
+    
+				if (selectedMachine2) {
+					// Passar o ponteiro diretamente, sem dereferenciação
+					executeMachineOP(selectedMachine2);
+				} else {
+					printf("\nMachine with ID %d not found.\n", machineId2);
+				}               
+				break;
+            case 4: {
+                printf("Processing instructions from file...\n");
+                processInstructions(machineList, "data/instructions.txt");
+                break;
+            }
+            case 0:
+                break;
+            default:
+                printf("Invalid option!\n");
                 break;
         }
     } while (choice != 0);
@@ -145,7 +135,7 @@ int machManager(Machine **machines, Operation **operations, int *operationCount)
                 saveMachinesToFile("data/machines.txt", *machines); 
                 break;
             case 6: 
-                saveOperationsToFile("data/operations.txt", *machines); 
+				saveOperationsToFile("data/operations.txt", *operations, *operationCount);
                 break;
             case 7: 
                 createAndStoreOperation(operations, operationCount); 
@@ -166,6 +156,11 @@ int machManager(Machine **machines, Operation **operations, int *operationCount)
                 }
                 break;
             }
+            case 0:
+                break;
+            default:
+                printf("Invalid option!\n");
+                break;
         }
     } while (choice != 0);
     

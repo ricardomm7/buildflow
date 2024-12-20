@@ -5,10 +5,11 @@
 #include "../include/operation.h"
 #include "../include/func.h"
 
+
 int saveMachinesToFile(const char *filename, Machine *head) {
     FILE *file = fopen(filename, "w");
     if (!file) {
-        perror("Erro ao abrir arquivo para salvar máquinas");
+        perror("Error opening file to save machines");
         return 0;
     }
 
@@ -42,7 +43,7 @@ int saveMachinesToFile(const char *filename, Machine *head) {
 Machine* loadMachinesFromFile(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
-        perror("Erro ao abrir arquivo de máquinas");
+        perror("Error opening machine file");
         return NULL;
     }
 
@@ -58,7 +59,7 @@ Machine* loadMachinesFromFile(const char *filename) {
             // Create a new machine
             Machine *machine = malloc(sizeof(Machine));
             if (!machine) {
-                perror("Erro de alocação de memória");
+                perror("Memory reallocation error");
                 break;
             }
 
@@ -94,7 +95,7 @@ Machine* loadMachinesFromFile(const char *filename) {
                 (currentMachine->operationCount + 1) * sizeof(Operation));
             
             if (!newOperations) {
-                perror("Erro de realocação de memória");
+                perror("Memory reallocation error");
                 break;
             }
 
@@ -120,23 +121,30 @@ Machine* loadMachinesFromFile(const char *filename) {
     fclose(file);
     return head;
 }
-
 void printMachineDetails(Machine *machine) {
-    printf("\nMachine ID: %d\n", machine->id);
-    printf("Name: %s\n", machine->name);
-    printf("Temp Range: %d - %d\n", machine->minTemp, machine->maxTemp);
-    printf("Humidity Range: %d - %d\n", machine->minHumidity, machine->maxHumidity);
-    printf("Buffer Length: %d\n", machine->bufferLength);
-    printf("Median Window: %d\n", machine->medianWindow);
+    printf("\n=== Machine Details ===\n");
+    printf("%-15s: %d\n", "Machine ID", machine->id);
+    printf("%-15s: %s\n", "Name", machine->name);
+    printf("%-15s: %d°C - %d°C\n", "Temperature", machine->minTemp, machine->maxTemp);
+    printf("%-15s: %d%% - %d%%\n", "Humidity", machine->minHumidity, machine->maxHumidity);
+    printf("%-15s: %d\n", "Buffer Length", machine->bufferLength);
+    printf("%-15s: %d\n", "Median Window", machine->medianWindow);
     
+    printf("\n--- Associated Operations ---\n");
     if (machine->operationCount > 0) {
-        printf("Associated Operations:\n");
+        printf("%-6s | %-20s | %-15s\n", "Number", "Name", "State");
+        printf("----------------------------------------\n");
         for (int i = 0; i < machine->operationCount; i++) {
-            printOperationDetails(&machine->operations[i]);
+            Operation *op = &machine->operations[i];
+            printf("%-6d | %-20s | %-15s\n", 
+                op->operationNumber,
+                op->operationName,
+                op->state);
         }
     } else {
-        printf("Associated Operations: None\n");
+        printf("No operations found\n");
     }
+    printf("\n");
 }
 
 Machine* findMachineById(Machine *head, int id) {
@@ -155,22 +163,41 @@ int validateMachineData(Machine *machine) {
             machine->medianWindow > 0);
 }
 
-void executeMachineOP(Machine a) {
-    if (a.operationCount <= 0 || a.operations == NULL) {
+Machine* findMachineForOperation(Machine* machineList, int operationNumber) {
+    Machine* current = machineList;
+    while (current != NULL) {
+        for (int i = 0; i < current->operationCount; i++) {
+            if (current->operations[i].operationNumber == operationNumber) {
+                return current;
+            }
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+void executeMachineOP(Machine *machine) {
+    if (machine == NULL) {
+        fprintf(stderr, "Error: Invalid machine pointer.\n");
+        return;
+    }
+
+    if (machine->operationCount <= 0 || machine->operations == NULL) {
         fprintf(stderr, "Error: The machine has no valid operations.\n");
         return;
     }
 
     char cmd[256];
     char response[256];
-
-    for (int i = 0; i < a.operationCount; i++) {
-        Operation op = a.operations[i];
+    
+    for (int i = 0; i < machine->operationCount; i++) {
+        Operation op = machine->operations[i];
         char *constant_name = op.state;
+        
         if (format_command(constant_name, op.operationNumber, cmd) == 1) {
             printf("Formatted command: %s\n", cmd);
-
-            if (send_and_read_from_machine(cmd, response, &a) == 0) {
+            // Passando machine em vez de &a já que agora machine já é um ponteiro
+            if (send_and_read_from_machine(cmd, response, machine) == 0) {
                 printf("Machine response: %s\n", response);
             } else {
                 fprintf(stderr, "Error sending command for operation %d.\n", op.operationNumber);

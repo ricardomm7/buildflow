@@ -129,3 +129,48 @@ int send_and_read_from_machine(const char *command, char *response,  Machine *ma
     close(fd);
     return 0;
 }
+
+void processInstructions(Machine* machineList, const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        printf("Error opening instructions file\n");
+        return;
+    }
+
+    int operationNumber;
+    char response[256];
+    
+    while (fscanf(file, "%d", &operationNumber) == 1) {
+        Machine* machine = findMachineForOperation(machineList, operationNumber);
+        
+        if (machine) {
+            // Encontra a operação na lista de operações da máquina
+            char operationState[3] = "OP";  // default
+            for (int i = 0; i < machine->operationCount; i++) {
+                if (machine->operations[i].operationNumber == operationNumber) {
+                    strncpy(operationState, machine->operations[i].state, 2);
+                    operationState[2] = '\0';
+                    break;
+                }
+            }
+            
+            char cmd[20];
+            if (format_command(operationState, operationNumber, cmd) == 1) {
+                printf("Sending command %s to machine %d for operation %d (State: %s)\n", 
+                       cmd, machine->id, operationNumber, operationState);
+                
+                if (send_and_read_from_machine(cmd, response, machine) == 0) {
+                    printf("Command executed successfully. Response: %s\n", response);
+                } else {
+                    printf("Failed to execute command for operation %d\n", operationNumber);
+                }
+            } else {
+                printf("Failed to format command for operation %d\n", operationNumber);
+            }
+        } else {
+            printf("No machine found for operation %d\n", operationNumber);
+        }
+    }
+    
+    fclose(file);
+}

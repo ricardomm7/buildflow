@@ -7,7 +7,7 @@
 int loadOperationsFromFile(const char *filename, Operation **operations, int *operationCount);
 void printOperationDetails(Operation *operation);
 int associateOperationToMachine(Machine *machine, Operation *operation);
-int saveOperationsToFile(const char *filename, Machine *head);
+int saveOperationsToFile(const char *filename, Operation *operations, int operationCount);
 Operation* createOperation();
 int saveOperationsToCsvByMachine(Machine *machine, const char *filename);
 
