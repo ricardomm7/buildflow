@@ -144,4 +144,74 @@ public class ActivitiesGraph {
         }
         return null;
     }
+
+    public void clearGraph() {
+        graph.clear();
+    }
+
+    /**
+     * Gets the incoming edges of a given activity.
+     * <p>
+     * This method collects all activities that have edges pointing to the given activity.
+     * Complexity: O(n), where n is the number of edges in the graph.
+     * </p>
+     *
+     * @param activity the activity whose incoming edges are to be found.
+     * @return a list of activities that have outgoing edges to the given activity.
+     */
+    public List<Activity> getIncomingEdges(Activity activity) {
+        List<Activity> incomingActivities = new ArrayList<>();
+
+        for (Edge<Activity> edge : graph.edges()) { // O(n)
+            if (edge.getVDest().equals(activity)) {
+                incomingActivities.add(edge.getVOrig()); // O(1)
+            }
+        }
+
+        return incomingActivities;
+    }
+
+    /**
+     * Gets the start vertices of the graph.
+     * <p>
+     * Start vertices are those with no incoming edges.
+     * Complexity: O(n), where v is the number of vertices or the number of edges.
+     * </p>
+     *
+     * @return a list of activities that are start vertices.
+     */
+    public List<Activity> getStartVertices() {
+        List<Activity> startVertices = new ArrayList<>();
+        Map<Activity, Integer> inDegrees = getInDegrees(); // O(n)
+
+        for (Map.Entry<Activity, Integer> entry : inDegrees.entrySet()) { // O(n)
+            if (entry.getValue() == 0) { // O(1)
+                startVertices.add(entry.getKey());
+            }
+        }
+
+        return startVertices;
+    }
+
+    /**
+     * Gets the end vertices of the graph.
+     * <p>
+     * End vertices are those with no outgoing edges.
+     * Complexity: O(n), where n is the number of vertices or Edges in the graph.
+     * </p>
+     *
+     * @return a list of activities that are end vertices.
+     */
+    public List<Activity> getEndVertices() {
+        List<Activity> endVertices = new ArrayList<>();
+
+        for (Activity activity : graph.vertices()) { // O(n)
+            if (graph.outgoingEdges(activity).isEmpty()) { // O(n)
+                endVertices.add(activity); // O(1)
+            }
+        }
+
+        return endVertices;
+    }
+
 }

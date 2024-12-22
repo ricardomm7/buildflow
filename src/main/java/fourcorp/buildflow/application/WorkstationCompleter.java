@@ -1,22 +1,33 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.repository.Repositories;
+
 import java.io.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WorkstationCompleter {
-
-    private final String JDBC_URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-    private final String USERNAME = "fourcorp";
-    private final String PASSWORD = "1234";
-
+    private Connection conn;
     private final String WORKSTATIONS_FILE = "textFiles/workstations.csv";
+
+
+    public WorkstationCompleter() {
+        connect();
+    }
+
+    private void connect() {
+        conn = Repositories.getInstance().getDatabase().getConnection();
+    }
+
 
     /**
      * Atualiza o arquivo de workstations garantindo que cada operação tenha pelo menos uma workstation.
      */
-    public void ensureCompleteWorkstationsFile() {
+    public void ensureCompleteWorkstationsFile() throws SQLException {
         Map<String, String> fileWorkstations = readWorkstationsFromFile();
         Map<Integer, String> operations = fetchOperationsFromDB();
 
@@ -40,15 +51,14 @@ public class WorkstationCompleter {
     /**
      * Busca todas as operações diretamente da tabela Operation_Type.
      *
-     * @return Um mapa onde a chave é o ID da operação e o valor é o nome e tempo da operação (formatados para CSV).
+     * @return Um mapa onde a chave é o ‘ID’ da operação e o valor é o nome e tempo da operação (formatados para CSV).
      */
-    private Map<Integer, String> fetchOperationsFromDB() {
+    private Map<Integer, String> fetchOperationsFromDB() throws SQLException {
         Map<Integer, String> operations = new HashMap<>();
         String query = "SELECT ID, Description, Expec_Time FROM Operation_Type";
 
-        try (Connection conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        PreparedStatement stmt = conn.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();{
 
             while (rs.next()) {
                 int id = rs.getInt("ID");
@@ -57,8 +67,6 @@ public class WorkstationCompleter {
                 String formattedEntry = operationName + ";" + time;
                 operations.put(id, formattedEntry);
             }
-        } catch (SQLException e) {
-            System.err.println("Error fetching operations from database: " + e.getMessage());
         }
 
         return operations;
@@ -67,7 +75,7 @@ public class WorkstationCompleter {
     /**
      * Lê as workstations existentes no arquivo CSV.
      *
-     * @return Um mapa com o ID da workstation como chave e a entrada completa como valor.
+     * @return Um mapa com o ‘ID’ da estação de trabalho como chave e a entrada completa como valor.
      */
     private Map<String, String> readWorkstationsFromFile() {
         Map<String, String> workstations = new HashMap<>();

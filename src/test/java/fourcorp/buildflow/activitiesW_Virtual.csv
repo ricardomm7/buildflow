@@ -1,0 +1,20 @@
+act_id,act_descr,duration,duration_unit,cost,prev_act_id1,...,prev_act_idN
+A1,Iniciação do Projeto,5,dias,2000
+A2,Planeamento Inicial,6,dias,3000,A1
+A3,Estudo de Viabilidade,4,dias,2500
+A4,Definição de Requisitos,7,dias,4000,"A2,A3"
+A5,Design Arquitetural,8,dias,5000,A4
+A6,Prototipagem,5,dias,2200,A4
+A7,Desenvolvimento Módulo A,10,dias,6000,A5
+A8,Desenvolvimento Módulo B,7,dias,4500,"A5,A6"
+A9,Desenvolvimento Módulo C,6,dias,4000,A6
+A10,Testes de Módulo A,5,dias,3000,A7
+A11,Testes de Módulo B,4,dias,2800,A8
+A12,Integração de Módulos,8,dias,5000,"A10,A11"
+A13,Testes de Sistema,9,dias,6000,"A12,A9"
+A14,Documentação Técnica,6,dias,2000,A13
+A15,Revisão Final,5,dias,3000
+A16,Entrega do Sistema,4,dias,4500,"A14,A15"
+A17,Tarefa Extra Inicial,3,dias,1500
+A18,Tarefa Extra Final,7,dias,3500,A13
+A19,Tarefa Final Isolada,6,dias,3000

@@ -260,4 +260,8 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
     public void addDependency(Activity virtualStart, Activity start) {
         addEdge(virtualStart, start);
     }
+
+    public void clear() {
+        adjacencyList.clear();
+    }
 }

@@ -2,6 +2,7 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.ProductionNode;
 import fourcorp.buildflow.repository.ProductionTree;
+import fourcorp.buildflow.repository.Repositories;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,9 +16,6 @@ public class OrderProductionManager {
     private final ProductionTree productionTree;
     private final OperationSequenceExporter sequenceExporter;
     private final Simulator simulator;
-    private final String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-    private final String USERNAME = "fourcorp";
-    private final String PASSWORD = "1234";
     private Connection connection;
     private final Map<String, Integer> orderPriorities;
 
@@ -43,14 +41,10 @@ public class OrderProductionManager {
         }
     }
 
-    private void connect() {
-        try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connected to database successfully.");
-        } catch (SQLException e) {
-            System.err.println("Database connection error: " + e.getMessage());
-        }
+        private void connect() {
+        connection = Repositories.getInstance().getDatabase().getConnection();
     }
+
 
     public void processOrdersFromFile(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -259,7 +253,7 @@ public class OrderProductionManager {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         WorkstationCompleter workstationCompleter = new WorkstationCompleter();
         workstationCompleter.ensureCompleteWorkstationsFile();
         OrderProductionManager manager = new OrderProductionManager();
