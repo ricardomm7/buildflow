@@ -79,7 +79,7 @@ public class ProductionOrchestrator {
                         Operation operation = new Operation(operationName);
 
                         // Cria um produto apenas para esta operação
-                        Product product = new Product(subNode.getId(), List.of(operation));
+                        Product product = new Product(node.getId(), List.of(operation));
                         products.add(product);
                     }
                 }
