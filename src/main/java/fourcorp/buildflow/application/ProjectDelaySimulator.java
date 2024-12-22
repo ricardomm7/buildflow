@@ -36,16 +36,17 @@ public class ProjectDelaySimulator {
 
     /**
      * Simulates delays for specified activities and analyzes project impact.
-     * Complexity: O(n^2), where n is the number of activities and e is the number of dependencies.
+     * Removed redundant critical path prints.
+     * Complexity: O(n^2), where n is the number of activities.
      *
      * @param delayMap Map of activity IDs to their delay durations.
      */
     public void simulateProjectDelays(Map<String, Integer> delayMap) {
-        saveOriginalDurations(); // O(n)
-        calculateOriginalMetrics(); // O(n^2)
-        applyDelays(delayMap); // O(n)
-        calculateNewMetrics(); // O(n^2)
-        displayImpactAnalysis(delayMap); // O(n)
+        saveOriginalDurations();
+        calculateOriginalMetrics();
+        applyDelays(delayMap);
+        calculateNewMetrics();
+        displayImpactAnalysis(delayMap);  // Only this method will print paths
     }
 
     /**
@@ -80,28 +81,73 @@ public class ProjectDelaySimulator {
     }
 
     /**
-     * Applies delays to specified activities in the graph.
+     * Applies delays (positive or negative) to specified activities in the graph.
      * Complexity: O(n), where n is the number of activities in the delay map.
+     * Now supports negative delays (advancements) while ensuring activity durations stay positive.
      *
-     * @param delayMap Map of activity IDs to their delay durations.
+     * @param delayMap Map of activity IDs to their delay durations (positive or negative)
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) { // O(n)
+        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
             String activityId = entry.getKey();
             int delayAmount = entry.getValue();
 
-            if (delayAmount < 0) { // O(1) * O(n) = O(n)
-                System.err.printf("Erro: A atividade %s possui um delay negativo (%d).%n", activityId, delayAmount); // O(1) * O(n) = O(n)
-                continue;
-            }
-
-            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId)); // O(1) * O(n) = O(n)
+            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
             if (activity != null) {
-                activity.setDuration(originalDurations.get(activityId) + delayAmount); // O(1) * O(n) = O(n)
+                int originalDuration = originalDurations.get(activityId);
+                int newDuration = originalDuration + delayAmount;
+
+                // Ensure activity duration doesn't become negative
+                if (newDuration < 1) {
+                    System.err.printf("Warning: Activity %s duration cannot be reduced below 1 unit. Setting to minimum duration (1).%n", activityId);
+                    newDuration = 1;
+                }
+
+                activity.setDuration(newDuration);
             } else {
-                System.err.printf("Erro: A atividade %s não foi encontrada no grafo.%n", activityId); // O(1) * O(n) = O(n)
+                System.err.printf("Error: Activity %s not found.%n", activityId);
             }
         }
+    }
+
+    /**
+     * Displays the delay impact analysis, including durations and critical paths.
+     * This is now the only method that prints critical path information.
+     * Complexity: O(n), where n is the number of activities.
+     *
+     * @param delayMap Map of delayed/advanced activities
+     */
+    private void displayImpactAnalysis(Map<String, Integer> delayMap) {
+        System.out.println("\nPROJECT SCHEDULE IMPACT ANALYSIS");
+        String changeFormat = "| %-12s | %-17s |%n";
+        String separator = "+--------------+-------------------+";
+
+        System.out.println(separator);
+        System.out.printf(changeFormat, "Activity ID", "Change (units)");
+        System.out.println(separator);
+
+        delayMap.forEach((id, change) -> {
+            String changeStr = (change >= 0) ? "+" + change : String.valueOf(change);
+            System.out.printf(changeFormat, id, changeStr);
+        });
+        System.out.println(separator);
+
+        System.out.println();
+        int totalChange = newProjectDuration - originalProjectDuration;
+        String changeType = totalChange >= 0 ? "Delay" : "Advancement";
+
+        System.out.printf("| %-25s | %-5d |%n", "Original Project Duration", originalProjectDuration);
+        System.out.printf("| %-25s | %-5d |%n", "New Project Duration", newProjectDuration);
+        System.out.printf("| %-25s | %-5d |%n", "Total " + changeType, Math.abs(totalChange));
+        System.out.println();
+
+        System.out.println("ORIGINAL CRITICAL PATH:");
+        printCriticalPath(originalCriticalPath);
+
+        System.out.println("NEW CRITICAL PATH:");
+        printCriticalPath(newCriticalPath);
+
+        System.out.println();
     }
 
     /**
@@ -123,46 +169,11 @@ public class ProjectDelaySimulator {
     List<Activity> findCriticalPath() {
         CriticalPathIdentifierGraph calculator = new CriticalPathIdentifierGraph();
         calculator.setGraph(graph);
-        calculator.identifyCriticalPath(); // O(n^2)
+        calculator.calculateCriticalPath(); // O(n^2)
 
         return calculator.getCriticalPath();
     }
 
-    /**
-     * Displays the delay impact analysis, including durations and critical paths.
-     * Complexity: O(n), where n is the number of activities.
-     *
-     * @param delayMap Map of delayed activities.
-     */
-    private void displayImpactAnalysis(Map<String, Integer> delayMap) {
-        System.out.println();
-        System.out.println("PROJECT DELAY IMPACT ANALYSIS");
-        String delayFormat = "| %-12s | %-17s |%n";
-        String separator = "+--------------+-------------------+";
-
-        System.out.println(separator);
-        System.out.printf(delayFormat, "Activity ID", "Delay (units)");
-        System.out.println(separator);
-
-        delayMap.forEach((id, delay) -> // O(n)
-                System.out.printf(delayFormat, id, "+" + delay)
-        );
-        System.out.println(separator);
-
-        System.out.println();
-        System.out.printf("| %-25s | %-5d |%n", "Original Project Duration", originalProjectDuration); // O(1)
-        System.out.printf("| %-25s | %-5d |%n", "New Project Duration", newProjectDuration); // O(1)
-        System.out.printf("| %-25s | %-5d |%n", "Total Delay", newProjectDuration - originalProjectDuration); // O(1)
-        System.out.println();
-
-        System.out.println("ORIGINAL CRITICAL PATH:");
-        printCriticalPath(originalCriticalPath); // O(n)
-
-        System.out.println("NEW CRITICAL PATH:");
-        printCriticalPath(newCriticalPath); // O(n)
-
-        System.out.println();
-    }
 
     /**
      * Prints the critical path in a structured format.

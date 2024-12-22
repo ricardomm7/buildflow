@@ -56,7 +56,11 @@ public class CriticalPathIdentifierGraph {
         System.out.println();
     }
 
-    private void calculateCriticalPath() {
+    /**
+     * Calculate critical path.
+     * Complexity: O(n^2)
+     */
+    public void calculateCriticalPath() {
         // Calculate earliest and latest start/finish times
         timeCalculator.calculateTimes(); // O(n^2)
 

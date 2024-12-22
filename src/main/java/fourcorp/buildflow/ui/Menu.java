@@ -241,7 +241,6 @@ public class Menu {
                 calculatorGraph.displayTimes();
                 break;
             case 29:
-
                 Map<String, Integer> delays = new HashMap<>();
 
                 while (true) {
@@ -253,10 +252,10 @@ public class Menu {
                                 activity.getId(), activity.getName(), activity.getDuration());
                     }
 
-                    System.out.println("\nEnter the ID of the activity to delay (or type '-1'/'exit' to finish): ");
+                    System.out.println("\nEnter the ID of the activity to modify (or 'exit' to finish): ");
                     String input = scanner.nextLine();
 
-                    if (input.equals("-1") || input.equalsIgnoreCase("exit")) {
+                    if (input.equalsIgnoreCase("exit")) {
                         break;
                     }
 
@@ -266,10 +265,11 @@ public class Menu {
                         continue;
                     }
 
-                    System.out.printf("Enter delay time (in time units) for activity %s: ", activity.getId());
-                    int delay = scanner.nextInt();
+                    System.out.printf("Enter time change for activity %s%n", activity.getId());
+                    System.out.println("(positive for delays, negative for advancements): ");
+                    int change = scanner.nextInt();
                     scanner.nextLine(); // Consume the newline character
-                    delays.put(activity.getId(), delay);
+                    delays.put(activity.getId(), change);
                 }
 
                 delaySimulator.simulateProjectDelays(delays);
