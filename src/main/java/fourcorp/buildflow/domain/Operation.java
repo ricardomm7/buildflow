@@ -23,6 +23,7 @@ public class Operation implements Identifiable<String> {
         this.children = new ArrayList<>(); // Inicializa a lista de filhos
     }
 
+
     /**
      * Constructs an Operation with the specified name.
      * The operation is initialized as not executed, with zero waiting tasks,
@@ -34,6 +35,12 @@ public class Operation implements Identifiable<String> {
         this.execute = false;
         this.name = operation;
         this.time = 0.0;
+    }
+
+    public Operation(String operationId, String description, double executionTime) {
+        this.id=operationId;
+        this.name = description;
+        this.time = executionTime;
     }
 
     /**

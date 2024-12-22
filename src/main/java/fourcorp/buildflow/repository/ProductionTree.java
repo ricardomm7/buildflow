@@ -2,10 +2,7 @@ package fourcorp.buildflow.repository;
 
 import fourcorp.buildflow.domain.ProductionNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The ProductionTree class represents a tree-like structure to manage production nodes and their dependencies.
@@ -349,5 +346,67 @@ public class ProductionTree {
         nodes.clear();
         connections.clear();
         nodesMap.clear();
+    }
+
+    public void addEdge(ProductionNode rootNode, ProductionNode opNode, double v) {
+        if (!connections.containsKey(rootNode)) {
+            connections.put(rootNode, new HashMap<>());
+        }
+        connections.get(rootNode).put(opNode, v);
+    }
+
+    /**
+     * Returns all root nodes in the production tree. Root nodes are nodes that have no parents
+     * (i.e., no other nodes depend on them).
+     * The complexity of this method is: O(n²) where n is the number of nodes.
+     *
+     * @return List of root nodes.
+     */
+    public List<ProductionNode> getRootNodes() {
+        List<ProductionNode> rootNodes = new ArrayList<>();
+        Set<ProductionNode> childNodes = new HashSet<>();
+
+        // First, collect all nodes that are children (have parents)
+        for (Map<ProductionNode, Double> children : connections.values()) {
+            childNodes.addAll(children.keySet());
+        }
+
+        // Then, find nodes that are not children of any other node
+        for (ProductionNode node : nodes) {
+            if (!childNodes.contains(node)) {
+                rootNodes.add(node);
+            }
+        }
+
+        return rootNodes;
+    }
+
+    /**
+     * Returns all child nodes of the specified node, along with their connection weights.
+     * The complexity of this method is: O(1) due to HashMap lookup.
+     *
+     * @param node The parent node whose children we want to retrieve.
+     * @return List of child nodes. Returns an empty list if the node has no children.
+     * @throws IllegalArgumentException If the specified node is null or not in the tree.
+     */
+    public List<ProductionNode> getChildren(ProductionNode node) {
+        if (node == null) {
+            throw new IllegalArgumentException("Node cannot be null");
+        }
+
+        if (!nodes.contains(node)) {
+            throw new IllegalArgumentException("Node not found in production tree");
+        }
+
+        // Get the map of children for this node
+        Map<ProductionNode, Double> childrenMap = connections.get(node);
+
+        // If there are no children, return empty list
+        if (childrenMap == null) {
+            return new ArrayList<>();
+        }
+
+        // Return the children as a list
+        return new ArrayList<>(childrenMap.keySet());
     }
 }

@@ -18,15 +18,43 @@ ws55;VARNISH;326
 ws56;VARNISH;177
 ws61;PACK;195
 ws62;PACK;162
-ws71;THREADED;56
-ws72;THREADED;45
-ws81;FIX;32
-ws82;FIX;39
-ws91;WOOD;21
-ws92;WOOD;35
-ws101;ASSEMBLE;174
-ws102;ASSEMBLE;182
-ws111;BOLT;21
-ws112;BOLT;15
-ws121;NUT;17
-ws122;NUT;23
+ws14;cut bench leg;23
+ws15;cut bench leg;29
+ws16;cut bench leg;20
+ws17;cut bench seat;24
+ws18;cut bench seat;25
+ws19;cut bench seat;22
+ws23;drill bench leg;30
+ws24;drill bench seat ;28
+ws25;drill bench leg;33
+ws26;drill bench leg;29
+ws27;drill bench seat ;18
+ws28;drill bench seat ;38
+ws33;fix bolt M16 22;65
+ws34;fix nut M16 21;63
+ws35;fix bolt M16 22;70
+ws37;fix nut M16 21;45
+ws41;polish bench leg;78
+ws42;polish bench seat ;80
+ws51;varnish bench ;120
+ws61;assemble bench ;180
+ws71;fix bolt M16 22;5
+ws72;fix nut M16 21;5
+ws5665;Handle welding;420
+ws5667;Lid polishing;1200
+ws5669;Pot base polishing;1800
+ws5671;Teflon painting;3200
+ws5647;Disc cutting;120
+ws5649;Initial pot base pressing;90
+ws5681;Initial pan base pressing;120
+ws5682;Final pan base pressing;160
+ws5651;Final pot base pressing;120
+ws5683;Pan base finishing;180
+ws5653;Pot base finishing;300
+ws5685;Handle gluing;900
+ws5655;Lid pressing;60
+ws5688;Pan test and packaging;1500
+ws5657;Lid finishing;240
+ws5659;Pot handles riveting;600
+ws5661;Lid handle screw;120
+ws5663;Pot test and packaging;240
