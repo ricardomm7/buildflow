@@ -165,8 +165,8 @@ public class BottleneckIdentifier {
     private void displayBottleneckAnalysis(List<Map<String, Object>> bottlenecks) {
         System.out.println();
         System.out.println("COMPREHENSIVE BOTTLENECK ACTIVITIES ANALYSIS");
-        String headerFormat = "| %-4s | %-30s | %-12s | %-15s | %-18s |%n";
-        String separator = "+------+--------------------------------+--------------+-----------------+--------------------+";
+        String headerFormat = "| %-5s | %-30s | %-12s | %-15s | %-18s |%n";
+        String separator = "+-------+--------------------------------+--------------+-----------------+--------------------+";
 
         System.out.println(separator);
         System.out.format(headerFormat, "ID", "Activity", "Dependencies", "Path Complexity", "Potential Impact");

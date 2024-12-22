@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE Reserve_Order_Components (
     v_can_fulfill BOOLEAN := TRUE;
 
 BEGIN
+    -- usar usbd26
     -- Verifica disponibilidade de cada componente
     FOR comp IN c_components LOOP
         SELECT ep.Minimum_Stock INTO v_available_qty
@@ -31,8 +32,10 @@ BEGIN
 
     -- Se não puder cumprir o pedido, encerra com uma exceção
     IF NOT v_can_fulfill THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Pedido não pode ser cumprido: estoque insuficiente.');
+        RAISE_APPLICATION_ERROR(-20001, 'Pedido não pode ser cumprido: stock insuficiente.');
     END IF;
+    --------------
+
 
     -- Realiza as reservas, uma vez que todos os componentes estão disponíveis
     FOR comp IN c_components LOOP

@@ -126,24 +126,22 @@ public class ActivityTimeCalculator {
      * Complexity: O(n).
      */
     public void displayTimes() {
-        System.out.println("\n╔══════════════════════════════════════════════════════");
-        System.out.println("║ PROJECT SCHEDULE ANALYSIS");
-        System.out.println("╠══════════════════════════════════════════════════════");
-        System.out.printf("║ Total Project Duration: %d time units%n%n", projectDuration); // O(1)
+        System.out.println();
+        System.out.println("PROJECT SCHEDULE ANALYSIS");
+        String headerFormat = "| %-6s | %-25s | %-4s | %-4s | %-4s | %-4s | %-6s | %-10s |%n";
+        String separator = "+--------+---------------------------+------+------+------+------+--------+------------+";
 
-        System.out.println("║ ACTIVITY SCHEDULE:");
-        System.out.println("╠══════════════════════════════════════════════════════");
-        System.out.printf("║ %-6s %-25s %-4s %-4s %-4s %-4s %-6s %-10s%n",
-                "ID", "Name", "ES", "EF", "LS", "LF", "Slack", "Critical?"); // O(1)
-        System.out.println("╟──────────────────────────────────────────────────────");
+        System.out.println(separator);
+        System.out.printf(headerFormat, "ID", "Name", "ES", "EF", "LS", "LF", "Slack", "Critical?");
+        System.out.println(separator);
 
         for (Activity activity : topologicalSort.performTopologicalSort()) { // O(n)
             int slack = activity.getLateStart() - activity.getEarlyStart(); // O(1) * O(n) = O(n)
             boolean isCritical = slack == 0;
 
-            System.out.printf("║ %-6s %-25s %-4d %-4d %-4d %-4d %-6d %-10s%n",
+            System.out.printf(headerFormat,
                     activity.getId(),
-                    activity.getName().length() > 25 ? activity.getName().substring(0, 22) + "..." : activity.getName(),
+                    truncate(activity.getName(), 25),
                     activity.getEarlyStart(),
                     activity.getEarlyFinish(),
                     activity.getLateStart(),
@@ -151,5 +149,21 @@ public class ActivityTimeCalculator {
                     slack,
                     isCritical ? "Yes" : "No"); // O(1) * O(n) = O(n)
         }
+
+        System.out.println(separator);
+        System.out.printf("Total Project Duration: %d time units%n", projectDuration); // O(1)
+        System.out.println();
     }
+
+    /**
+     * Truncates a given string to the specified maximum length and appends "..." if truncation occurs.
+     *
+     * @param name      The input string to truncate.
+     * @param maxLength The maximum allowed length of the string.
+     * @return The truncated string, if necessary; otherwise, the original string.
+     */
+    private String truncate(String name, int maxLength) {
+        return name.length() > maxLength ? name.substring(0, maxLength - 3) + "..." : name;
+    }
+
 }

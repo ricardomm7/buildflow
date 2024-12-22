@@ -135,32 +135,33 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of delayed activities.
      */
     private void displayImpactAnalysis(Map<String, Integer> delayMap) {
-        System.out.println("\n╔══════════════════════════════════════════════════════");
-        System.out.println("║ PROJECT DELAY IMPACT ANALYSIS");
-        System.out.println("╠══════════════════════════════════════════════════════");
+        System.out.println();
+        System.out.println("PROJECT DELAY IMPACT ANALYSIS");
+        String delayFormat = "| %-12s | %-17s |%n";
+        String separator = "+--------------+-------------------+";
 
-        // Delayed Activities
+        System.out.println(separator);
+        System.out.printf(delayFormat, "Activity ID", "Delay (units)");
+        System.out.println(separator);
+
         delayMap.forEach((id, delay) -> // O(n)
-                System.out.printf("║   • Activity %s: +%d time units%n", id, delay)
+                System.out.printf(delayFormat, id, "+" + delay)
         );
+        System.out.println(separator);
 
-        System.out.println("╠══════════════════════════════════════════════════════");
+        System.out.println();
+        System.out.printf("| %-25s | %-5d |%n", "Original Project Duration", originalProjectDuration); // O(1)
+        System.out.printf("| %-25s | %-5d |%n", "New Project Duration", newProjectDuration); // O(1)
+        System.out.printf("| %-25s | %-5d |%n", "Total Delay", newProjectDuration - originalProjectDuration); // O(1)
+        System.out.println();
 
-        // Display project duration impact
-        System.out.printf("║ Original Project Duration: %d time units%n", originalProjectDuration); // O(1)
-        System.out.printf("║ New Project Duration:      %d time units%n", newProjectDuration); // O(1)
-        System.out.printf("║ Total Delay:               %d time units%n", newProjectDuration - originalProjectDuration); // O(1)
-
-        System.out.println("╠══════════════════════════════════════════════════════");
-
-        // Display critical paths
-        System.out.println("║ ORIGINAL CRITICAL PATH:");
+        System.out.println("ORIGINAL CRITICAL PATH:");
         printCriticalPath(originalCriticalPath); // O(n)
 
-        System.out.println("║ NEW CRITICAL PATH:");
+        System.out.println("NEW CRITICAL PATH:");
         printCriticalPath(newCriticalPath); // O(n)
 
-        System.out.println("╚══════════════════════════════════════════════════════\n");
+        System.out.println();
     }
 
     /**
@@ -170,7 +171,13 @@ public class ProjectDelaySimulator {
      * @param criticalPath List of activities in the critical path.
      */
     private void printCriticalPath(List<Activity> criticalPath) {
-        String format = "║   • %-6s %-30s | Duration: %-4d | ES: %-3d | EF: %-3d | LS: %-3d | LF: %-3d | Slack: %-3d%n";
+        String format = "| %-6s | %-30s | %-8s | %-3s | %-3s | %-3s | %-3s | %-5s |%n";
+        String separator = "+--------+--------------------------------+----------+-----+-----+-----+-----+-------+";
+
+        System.out.println(separator);
+        System.out.printf(format, "ID", "Name", "Duration", "ES", "EF", "LS", "LF", "Slack");
+        System.out.println(separator);
+
         for (Activity activity : criticalPath) { // O(n)
             System.out.printf(format,
                     activity.getId(), // O(1) * O(n) = O(n)
@@ -182,6 +189,7 @@ public class ProjectDelaySimulator {
                     activity.getLateFinish(), // O(1) * O(n) = O(n)
                     activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n) = O(n)
         }
+        System.out.println(separator);
     }
 
     /**

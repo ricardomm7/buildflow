@@ -30,19 +30,19 @@ public class CriticalPathIdentifierGraph {
     public void identifyCriticalPath() {
         calculateCriticalPath(); // O(n^2)
 
-        // Professional and clear output
-        System.out.println("\n╔══════════════════════════════════════════════════════");
-        System.out.println("║ CRITICAL PATH ANALYSIS");
-        System.out.println("╠══════════════════════════════════════════════════════");
-        System.out.printf("║ Total Project Duration: %d time units%n", totalProjectDuration);
-        System.out.println("╠══════════════════════════════════════════════════════");
-        System.out.println("║ ID   | Activity                      | Duration | Timing");
-        System.out.println("╟──────┼───────────────────────────────┼──────────┼────────────────────");
+        System.out.println();
+        System.out.println("CRITICAL PATH ANALYSIS");
+        String headerFormat = "| %-5s | %-30s | %-8s | %-27s |%n";
+        String separator = "+-------+--------------------------------+----------+-----------------------------+";
+
+        System.out.println(separator);
+        System.out.printf(headerFormat, "ID", "Activity", "Duration", "Timing (ES, EF, LS, LF)");
+        System.out.println(separator);
 
         for (Activity activity : criticalPath) {
-            System.out.printf("║ %-4s | %-50s | %-8d | ES:%d, EF:%d, LS:%d, LF:%d%n",
+            System.out.printf("| %-5s | %-30s | %-8d | ES:%-3d EF:%-3d LS:%-3d LF:%-3d |%n",
                     activity.getId(),
-                    truncate(activity.getName(), 50),
+                    truncate(activity.getName(), 30),
                     activity.getDuration(),
                     activity.getEarlyStart(),
                     activity.getEarlyFinish(),
@@ -50,7 +50,10 @@ public class CriticalPathIdentifierGraph {
                     activity.getLateFinish()
             );
         }
-        System.out.println("╚══════════════════════════════════════════════════════\n");
+
+        System.out.println(separator);
+        System.out.printf("Total Project Duration: %d time units%n", totalProjectDuration);
+        System.out.println();
     }
 
     private void calculateCriticalPath() {
