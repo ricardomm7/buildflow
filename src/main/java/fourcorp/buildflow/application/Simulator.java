@@ -114,6 +114,17 @@ public class Simulator {
     }
 
     /**
+     * Run simple simulation.
+     *
+     * @param products the products
+     * @param boo      the boo
+     */
+    public void runSimplesimulation(List<Product> products, boolean boo) {
+        runSimulation(products, boo);
+        registerInDB();
+    }
+
+    /**
      * Executes the main simulation loop for the given list of products.
      * <p>The complexity is O(n^6).</p>
      *
@@ -400,11 +411,14 @@ public class Simulator {
         countWaiting.put(name, counter);
     }
 
+    /**
+     * Register in db.
+     */
     public void registerInDB() {
-        if (operationWaitingTimes.isEmpty() || countWaiting.isEmpty() || operationTimes.isEmpty() || operationCounts.isEmpty()) {
+        if (operationTimes.isEmpty() || operationCounts.isEmpty()) {
             System.out.println("--- Error defining in database.");
         } else {
-            for (String name : operationWaitingTimes.keySet()) {
+            for (String name : operationTimes.keySet()) {
                 double avgWaitingTime = operationWaitingTimes.getOrDefault(name, 0.0) / countWaiting.getOrDefault(name, 1);
                 avgWaitingTime = avgWaitingTime * 0.001;
 

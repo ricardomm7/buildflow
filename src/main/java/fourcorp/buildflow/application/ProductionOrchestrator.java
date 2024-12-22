@@ -8,15 +8,25 @@ import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 import fourcorp.buildflow.repository.WorkstationsPerOperation;
 
-import java.io.IOException;
 import java.util.*;
 
+/**
+ * The {@code ProductionOrchestrator} class manages the orchestration of the production process
+ * based on a given production tree. It calculates dependencies, determines the execution order
+ * of operations, and simulates the production workflow.
+ */
 public class ProductionOrchestrator {
     private final ProductionTree productionTree;
     private final Simulator simulator;
     private final Map<ProductionNode, Integer> nodeDependencyLevels;
     private final WorkstationsPerOperation workstationsPerOperation;
 
+    /**
+     * Constructs a new {@code ProductionOrchestrator} with the specified production tree and simulator.
+     *
+     * @param productionTree the production tree containing the operations and dependencies
+     * @param simulator      the simulator to execute the production simulation
+     */
     public ProductionOrchestrator(ProductionTree productionTree, Simulator simulator) {
         this.productionTree = productionTree;
         this.simulator = simulator;
@@ -24,6 +34,10 @@ public class ProductionOrchestrator {
         this.workstationsPerOperation = Repositories.getInstance().getWorkstationsPerOperation();
     }
 
+    /**
+     * Processes the production tree by analyzing dependencies, organizing the workflow,
+     * and executing the production simulation.
+     */
     public void processProductionTree() {
         try {
             System.out.println("\n========== Production Flow Analysis ==========");
@@ -43,7 +57,7 @@ public class ProductionOrchestrator {
             printProductionFlow(productsForSimulation);
 
             System.out.println("\n========== Starting Sequential Production Simulation ==========");
-            simulator.runSimulation(productsForSimulation, true);
+            simulator.runSimplesimulation(productsForSimulation, true);
 
         } catch (Exception e) {
             System.err.println("Error in production process: " + e.getMessage());
@@ -51,6 +65,10 @@ public class ProductionOrchestrator {
         }
     }
 
+    /**
+     * Calculates the dependency levels of all nodes in the production tree.
+     * Higher dependency levels indicate that a node depends on more operations being completed beforehand.
+     */
     private void calculateDependencyLevels() {
         ProductionTreeSearcher searcher = new ProductionTreeSearcher();
         for (ProductionNode node : productionTree.getAllNodes()) {
@@ -58,12 +76,24 @@ public class ProductionOrchestrator {
         }
     }
 
+    /**
+     * Retrieves all nodes in the production tree, ordered by their dependency levels.
+     *
+     * @return a list of production nodes ordered by dependency level
+     */
     private List<ProductionNode> getSequentialNodes() {
         return productionTree.getAllNodes().stream()
                 .sorted(Comparator.comparingInt(nodeDependencyLevels::get))
                 .toList();
     }
 
+    /**
+     * Converts the ordered nodes from the production tree into a list of {@code Product} objects
+     * for simulation.
+     *
+     * @param orderedNodes the ordered list of production nodes
+     * @return a list of {@code Product} objects representing the production workflow
+     */
     private List<Product> convertToProducts(List<ProductionNode> orderedNodes) {
         List<Product> products = new ArrayList<>();
 
@@ -88,7 +118,12 @@ public class ProductionOrchestrator {
         return products;
     }
 
-
+    /**
+     * Prints the detailed production flow analysis, including required operations and
+     * available workstations for each operation.
+     *
+     * @param products the list of products to analyze and display
+     */
     private void printProductionFlow(List<Product> products) {
         System.out.println("Detailed Production Flow Analysis:");
         System.out.println("----------------------------------------");
@@ -118,7 +153,7 @@ public class ProductionOrchestrator {
         }
     }
 
-
+/*
     public static void main(String[] args) throws IOException {
         System.out.println("Loading production system data...");
         Reader.loadOperations("textFiles/articles.csv");
@@ -133,4 +168,5 @@ public class ProductionOrchestrator {
         ProductionOrchestrator orchestrator = new ProductionOrchestrator(productionTree, simulator);
         orchestrator.processProductionTree();
     }
+ */
 }

@@ -6,6 +6,7 @@ import fourcorp.buildflow.repository.ProductionTree;
 import fourcorp.buildflow.repository.Repositories;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class DatabaseMenu {
@@ -62,6 +63,7 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[22]", "List all the reserved materials/components.");
             System.out.printf("%-5s%-75s%n", "[23]", "Workstation types not used.");
             System.out.printf("%-5s%-75s%n", "[24]", "Consume a material/component, and deduct from the stock.");
+            System.out.printf("%-5s%-75s%n", "[25]", "Simulate the production of the items required to accomplish the orders.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -85,7 +87,7 @@ public class DatabaseMenu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 24) {
+                if (choice >= 0 && choice <= 25) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -278,6 +280,16 @@ public class DatabaseMenu {
                     System.out.println("Error during consume material operation: " + e.getMessage());
                     scanner.nextLine();
                     e.printStackTrace();
+                }
+                break;
+            case 25:
+                try {
+                    WorkstationCompleter workstationCompleter = new WorkstationCompleter();
+                    workstationCompleter.ensureCompleteWorkstationsFile();
+                    OrderProductionManager manager = new OrderProductionManager();
+                    manager.processOrdersFromFile("textFiles/orders.csv");
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
                 break;
             case 0:

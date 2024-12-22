@@ -10,22 +10,35 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The {@code WorkstationCompleter} class ensures that every operation in the system
+ * is associated with at least one workstation in the workstations file.
+ * It reads existing workstations from a file, retrieves operations from the database,
+ * and updates the file as necessary.
+ */
 public class WorkstationCompleter {
     private Connection conn;
     private final String WORKSTATIONS_FILE = "textFiles/workstations.csv";
 
-
+    /**
+     * Constructs a new {@code WorkstationCompleter} and initializes the database connection.
+     */
     public WorkstationCompleter() {
         connect();
     }
 
+    /**
+     * Establishes a connection to the database using the {@link Repositories} class.
+     */
     private void connect() {
         conn = Repositories.getInstance().getDatabase().getConnection();
     }
 
-
     /**
-     * Atualiza o arquivo de workstations garantindo que cada operação tenha pelo menos uma workstation.
+     * Ensures the workstations file contains entries for all operations.
+     * If an operation is not associated with a workstation, a new workstation entry is added to the file.
+     *
+     * @throws SQLException if a database access error occurs
      */
     public void ensureCompleteWorkstationsFile() throws SQLException {
         Map<String, String> fileWorkstations = readWorkstationsFromFile();
@@ -33,10 +46,10 @@ public class WorkstationCompleter {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(WORKSTATIONS_FILE, true))) {
             for (Map.Entry<Integer, String> operation : operations.entrySet()) {
-                String workstationId = "ws" + operation.getKey(); // ID da Workstation
+                String workstationId = "ws" + operation.getKey(); // Workstation ID
                 String entry = workstationId + ";" + operation.getValue();
 
-                // Adicionar apenas se a Workstation ainda não existe no arquivo
+                // Add only if the workstation does not already exist in the file
                 if (!fileWorkstations.containsKey(workstationId)) {
                     writer.write(entry);
                     writer.newLine();
@@ -49,16 +62,19 @@ public class WorkstationCompleter {
     }
 
     /**
-     * Busca todas as operações diretamente da tabela Operation_Type.
+     * Fetches all operations from the database table `Operation_Type`.
      *
-     * @return Um mapa onde a chave é o ‘ID’ da operação e o valor é o nome e tempo da operação (formatados para CSV).
+     * @return A map where the key is the operation ID, and the value is the formatted operation details for the CSV file
+     * (operation name and time).
+     * @throws SQLException if a database access error occurs
      */
     private Map<Integer, String> fetchOperationsFromDB() throws SQLException {
         Map<Integer, String> operations = new HashMap<>();
         String query = "SELECT ID, Description, Expec_Time FROM Operation_Type";
 
         PreparedStatement stmt = conn.prepareStatement(query);
-        ResultSet rs = stmt.executeQuery();{
+        ResultSet rs = stmt.executeQuery();
+        {
 
             while (rs.next()) {
                 int id = rs.getInt("ID");
@@ -73,9 +89,9 @@ public class WorkstationCompleter {
     }
 
     /**
-     * Lê as workstations existentes no arquivo CSV.
+     * Reads the existing workstations from the CSV file.
      *
-     * @return Um mapa com o ‘ID’ da estação de trabalho como chave e a entrada completa como valor.
+     * @return A map where the key is the workstation ID, and the value is the full entry from the file.
      */
     private Map<String, String> readWorkstationsFromFile() {
         Map<String, String> workstations = new HashMap<>();
@@ -99,10 +115,10 @@ public class WorkstationCompleter {
     }
 
     /**
-     * Formata o nome da operação: Primeira letra maiúscula, restante minúscula.
+     * Formats the operation name by capitalizing the first letter and making the rest lowercase.
      *
-     * @param name O nome original da operação.
-     * @return O nome formatado.
+     * @param name the original operation name
+     * @return the formatted operation name
      */
     private String formatOperationName(String name) {
         if (name == null || name.isEmpty()) {

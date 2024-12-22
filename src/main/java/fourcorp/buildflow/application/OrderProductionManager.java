@@ -6,28 +6,66 @@ import fourcorp.buildflow.repository.Repositories;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manages the production of orders by interacting with a production tree,
+ * sequence exporter, and a simulation system. The class provides functionalities to:
+ * <ul>
+ *     <li>Read and process orders from a CSV file.</li>
+ *     <li>Build a production tree for each order, including necessary operations and components.</li>
+ *     <li>Simulate production processes using a {@link Simulator}.</li>
+ *     <li>Export operation sequences for further analysis or processing.</li>
+ * </ul>
+ */
 public class OrderProductionManager {
+
+    /**
+     * Represents the production tree structure for the current order.
+     */
     private final ProductionTree productionTree;
+
+    /**
+     * Handles the export of operation sequences extracted from production trees.
+     */
     private final OperationSequenceExporter sequenceExporter;
+
+    /**
+     * Simulates the production process for a given production tree.
+     */
     private final Simulator simulator;
+
+    /**
+     * Database connection for retrieving product and operation data.
+     */
     private Connection connection;
+
+    /**
+     * Maps order IDs to their assigned priorities.
+     */
     private final Map<String, Integer> orderPriorities;
 
+    /**
+     * Constructs a new {@code OrderProductionManager} with a new production tree, simulator,
+     * and operation sequence exporter. The database connection is initialized via a repository.
+     */
     public OrderProductionManager() {
-        connect();
+        connection = Repositories.getInstance().getDatabase().getConnection();
         this.productionTree = new ProductionTree(); // Create new tree for each instance
         this.simulator = new Simulator();
         this.orderPriorities = new HashMap<>();
         this.sequenceExporter = new OperationSequenceExporter();
-        initializeProductionSystem();
+        //initializeProductionSystem();
     }
 
+    /*
     private void initializeProductionSystem() {
         try {
             Reader.loadOperations("textFiles/articles.csv");
@@ -40,12 +78,21 @@ public class OrderProductionManager {
             System.err.println("Error initializing production system: " + e.getMessage());
         }
     }
+     */
 
-        private void connect() {
-        connection = Repositories.getInstance().getDatabase().getConnection();
-    }
-
-
+    /**
+     * Processes orders specified in a CSV file. For each order:
+     * <ul>
+     *     <li>Reads the order details (ID, product, priority, and quantity).</li>
+     *     <li>Builds a production tree for the product.</li>
+     *     <li>Simulates the production process.</li>
+     *     <li>Extracts the operation sequence and adds it to the exporter.</li>
+     *     <li>Clears the production tree for the next order.</li>
+     * </ul>
+     * Finally, exports all operation sequences to a file.
+     *
+     * @param filePath the path to the CSV file containing order data.
+     */
     public void processOrdersFromFile(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -79,16 +126,21 @@ public class OrderProductionManager {
 
                 // Exporta todas as sequências no final
                 sequenceExporter.exportAllSequences("textFiles/instructions.txt");
-
             }
-
         } catch (Exception e) {
             System.err.println("Error processing orders file: " + e.getMessage());
         }
-
-
     }
 
+    /**
+     * Processes a single order by building its production tree, simulating production,
+     * and logging order details.
+     *
+     * @param orderId   the unique identifier for the order.
+     * @param productId the product to be produced for this order.
+     * @param priority  the priority of the order.
+     * @param quantity  the quantity of the product required.
+     */
     private void processOrder(String orderId, String productId, int priority, int quantity) {
         try {
             System.out.println("\nOrder Details:");
@@ -116,6 +168,15 @@ public class OrderProductionManager {
         }
     }
 
+    /**
+     * Builds the production tree for a specified product and quantity.
+     * The tree includes all necessary operations and components required for production.
+     *
+     * @param productId the ID of the product.
+     * @param quantity  the required quantity of the product.
+     * @return the root node of the production tree, or {@code null} if the product does not exist.
+     * @throws SQLException if an error occurs while querying the database.
+     */
     private ProductionNode buildProductionTree(String productId, int quantity) throws SQLException {
         // Primeiro verifica se o produto existe
         if (!checkProductExists(productId)) {
@@ -133,6 +194,13 @@ public class OrderProductionManager {
         return rootNode;
     }
 
+    /**
+     * Checks if a product exists in the database.
+     *
+     * @param productId the ID of the product to check.
+     * @return {@code true} if the product exists, {@code false} otherwise.
+     * @throws SQLException if an error occurs while querying the database.
+     */
     private boolean checkProductExists(String productId) throws SQLException {
         String checkQuery = "SELECT Part_ID FROM Product WHERE Part_ID = ?";
         try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
@@ -142,6 +210,14 @@ public class OrderProductionManager {
         }
     }
 
+    /**
+     * Builds the production subtree for a specified node by recursively adding all required operations
+     * and components.
+     *
+     * @param node              the node for which the subtree is being built.
+     * @param processedProducts a set of already processed products to avoid cycles.
+     * @throws SQLException if an error occurs while querying the database.
+     */
     private void buildProductionSubtree(ProductionNode node, Set<String> processedProducts) throws SQLException {
         String productId = node.getId();
 
@@ -250,13 +326,5 @@ public class OrderProductionManager {
                 }
             }
         }
-    }
-
-
-    public static void main(String[] args) throws SQLException {
-        WorkstationCompleter workstationCompleter = new WorkstationCompleter();
-        workstationCompleter.ensureCompleteWorkstationsFile();
-        OrderProductionManager manager = new OrderProductionManager();
-        manager.processOrdersFromFile("textFiles/orders.csv");
     }
 }
