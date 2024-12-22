@@ -1,5 +1,8 @@
 package fourcorp.buildflow.application;
 
+import fourcorp.buildflow.repository.Repositories;
+import oracle.jdbc.internal.OracleTypes;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,9 +17,6 @@ import java.util.List;
  * and calling stored procedures to fetch or process data.
  */
 public class DatabaseFunctionsController {
-    private final String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-    private final String USERNAME = "fourcorp";
-    private final String PASSWORD = "1234";
     private Connection connection;
     private final String DATA_INSERTS_AND_CREATION = "textFiles/databaseSQL/tables-insert-and-drop.sql";
     private final String FUNCTIONS_AND_PROCEDURES = "textFiles/databaseSQL/functions-and-procedures.sql";
@@ -27,23 +27,9 @@ public class DatabaseFunctionsController {
      */
     public DatabaseFunctionsController() {
         System.out.println();
-        connect();
+        connection = Repositories.getInstance().getDatabase().getConnection();
         executeAllTasks();
     }
-
-    /**
-     * Establishes a connection to the database.
-     */
-    private void connect() {
-        try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connected to " + URL + " as " + USERNAME + ".");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 
     /**
      * Executes all database setup tasks, including running SQL scripts for creating tables,
@@ -576,7 +562,7 @@ public class DatabaseFunctionsController {
      * @param familyId The family ID of the product.
      * @return A string indicating the result of the operation, either success or error message.
      */
-    public String RegisterNewProduct(String partId, String name, String familyId) {
+    public String registerNewProduct(String partId, String name, String familyId) {
         String result = null;
         String query = "{? = call RegisterProduct(?, ?, ?)}";
 
@@ -727,6 +713,38 @@ public class DatabaseFunctionsController {
             printTable(rows);
         } catch (SQLException e) {
             System.out.println("Error fetching workstation types: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Consume material.
+     *
+     * @param partID   the part id
+     * @param quantity the quantity
+     */
+    public void consumeMaterial(String partID, double quantity) {
+        String callStatement = "{call consume_material(?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = connection.prepareCall(callStatement)) {
+            stmt.setString(1, partID);
+            stmt.setDouble(2, quantity);
+
+            stmt.registerOutParameter(3, OracleTypes.BOOLEAN);
+            stmt.registerOutParameter(4, OracleTypes.VARCHAR); // For message
+
+            stmt.execute();
+
+            int successFlag = stmt.getInt(3); // Assumes BOOLEAN is represented as INTEGER
+            String message = stmt.getString(4);
+
+            if (successFlag == 1) {
+                System.out.println("Success: " + message);
+            } else {
+                System.out.println("Failed: " + message);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
         }
     }
 

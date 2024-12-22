@@ -44,19 +44,19 @@ public class DisplayGraph {
 
             // Adicionar nó ao DOT
             dotContent.append(String.format(
-                "  \"%s\" [\n" +
-                    "    shape=%s,\n" +
-                    "    width=2.5,\n" +
-                    "    height=1.2,\n" +
-                    "    fillcolor=\"%s\",\n" +
-                    "    fontcolor=\"%s\",\n" +
-                    "    label=\"%s\"\n" +
-                    "  ];\n",
-                activity.getId(),
-                shape,
-                fillColor,
-                fontColor,
-                label
+                    "  \"%s\" [\n" +
+                            "    shape=%s,\n" +
+                            "    width=2.5,\n" +
+                            "    height=1.2,\n" +
+                            "    fillcolor=\"%s\",\n" +
+                            "    fontcolor=\"%s\",\n" +
+                            "    label=\"%s\"\n" +
+                            "  ];\n",
+                    activity.getId(),
+                    shape,
+                    fillColor,
+                    fontColor,
+                    label
             ));
         }
 
@@ -69,15 +69,15 @@ public class DisplayGraph {
 
                 // Adicionar a aresta com a duração como label
                 dotContent.append(String.format(
-                    "  \"%s\" -> \"%s\" [\n" +
-                        "    label=\"%d %s\",\n" +
-                        "    color=\"gray\",\n" +
-                        "    fontsize=12\n" +
-                        "  ];\n",
-                    fromActivity.getId(),
-                    toActivity.getId(),
-                    edgeWeight,
-                    fromActivity.getDurationUnit()
+                        "  \"%s\" -> \"%s\" [\n" +
+                                "    label=\"%d %s\",\n" +
+                                "    color=\"gray\",\n" +
+                                "    fontsize=12\n" +
+                                "  ];\n",
+                        fromActivity.getId(),
+                        toActivity.getId(),
+                        edgeWeight,
+                        fromActivity.getDurationUnit()
                 ));
             }
         }
@@ -97,9 +97,9 @@ public class DisplayGraph {
         try {
             // Gerar o SVG utilizando `dot`
             String command = String.format(
-                "dot -Tsvg %s -o %s",
-                dotFilePath,
-                svgFilePath
+                    "dot -Tsvg %s -o %s",
+                    dotFilePath,
+                    svgFilePath
             );
             Process process = Runtime.getRuntime().exec(command);
             int exitCode = process.waitFor();

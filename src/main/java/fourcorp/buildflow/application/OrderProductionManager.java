@@ -259,7 +259,6 @@ public class OrderProductionManager {
     }
 
 
-
     public static void main(String[] args) {
         WorkstationCompleter workstationCompleter = new WorkstationCompleter();
         workstationCompleter.ensureCompleteWorkstationsFile();

@@ -296,7 +296,6 @@ class USEI20 {
     }
 
 
-
     @Test
     void testCalculateTimesWithNoDependencies() throws IOException {
         // Carrega atividades do arquivo

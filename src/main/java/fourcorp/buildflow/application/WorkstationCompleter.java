@@ -2,7 +2,8 @@ package fourcorp.buildflow.application;
 
 import java.io.*;
 import java.sql.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WorkstationCompleter {
 

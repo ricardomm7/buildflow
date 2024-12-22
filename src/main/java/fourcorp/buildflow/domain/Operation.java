@@ -38,7 +38,7 @@ public class Operation implements Identifiable<String> {
     }
 
     public Operation(String operationId, String description, double executionTime) {
-        this.id=operationId;
+        this.id = operationId;
         this.name = description;
         this.time = executionTime;
     }

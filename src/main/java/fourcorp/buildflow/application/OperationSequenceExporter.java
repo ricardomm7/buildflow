@@ -5,7 +5,10 @@ import fourcorp.buildflow.repository.ProductionTree;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class OperationSequenceExporter {
     private final OperationIDMapper idMapper;
@@ -58,7 +61,7 @@ public class OperationSequenceExporter {
     }
 
     private void traverseOperations(ProductionNode node, Set<String> visited,
-                                  List<String> sequence, ProductionTree tree) {
+                                    List<String> sequence, ProductionTree tree) {
         if (visited.contains(node.getId())) {
             return;
         }
@@ -89,8 +92,8 @@ public class OperationSequenceExporter {
 
     private List<Integer> mapOperationsToRange(List<String> operationIds) {
         return operationIds.stream()
-            .filter(this::isOperationId)
-            .map(idMapper::mapOperationId)
-            .toList();
+                .filter(this::isOperationId)
+                .map(idMapper::mapOperationId)
+                .toList();
     }
 }

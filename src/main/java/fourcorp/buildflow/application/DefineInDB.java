@@ -1,11 +1,13 @@
 package fourcorp.buildflow.application;
 
-import java.sql.*;
+import fourcorp.buildflow.repository.Repositories;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class DefineInDB {
-    private final String URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1";
-    private final String USERNAME = "fourcorp";
-    private final String PASSWORD = "1234";
     private Connection conn;
 
     public DefineInDB() {
@@ -13,14 +15,15 @@ public class DefineInDB {
     }
 
     private void connect() {
-        try {
-            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            System.out.println("Connected to " + URL + " as " + USERNAME + ".");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        conn = Repositories.getInstance().getDatabase().getConnection();
     }
 
+    /**
+     * Defines average operation time.
+     *
+     * @param time          the time
+     * @param operationName the operation name
+     */
     public void defineAverageOperationTime(double time, String operationName) {
         try {
             String findOperationTypeIdQuery = "SELECT ID FROM Operation_Type WHERE Description = ?";

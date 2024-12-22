@@ -11,7 +11,7 @@ public class Repositories {
     private static ProductionTree productionTree;
     private static MaterialQuantityBST materialBST;
     private static ActivitiesGraph activitiesGraph;
-
+    private static Database database;
 
     /**
      * Private constructor to initialize the repositories.
@@ -23,6 +23,7 @@ public class Repositories {
         productionTree = new ProductionTree();
         materialBST = new MaterialQuantityBST();
         activitiesGraph = new ActivitiesGraph();
+        database = new Database();
     }
 
     /**
@@ -101,6 +102,10 @@ public class Repositories {
      */
     public ActivitiesGraph getActivitiesGraph() {
         return activitiesGraph;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     /**

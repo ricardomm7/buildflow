@@ -1,3 +1,51 @@
+create or replace trigger trg_check_execution_time
+before insert or update on Operation_Type_Workstation
+for each row
+declare
+    max_exec_time_exceeded exception;
+    v_expected_time number;
+begin
+    -- The complexity is O(1).
+    select Expec_Time
+    into v_expected_time
+    from Operation_Type
+    where ID = :new.Operation_TypeID;
+
+    if v_expected_time > :new.Max_Exec_Time then
+        raise max_exec_time_exceeded;
+    end if;
+
+exception
+    when max_exec_time_exceeded then
+        RAISE_APPLICATION_ERROR(-20001, 'Expected execution time ' || v_expected_time || ' exceeds maximum execution time ' || :new.Max_Exec_Time || ' for workstation type ' || :new.WorkstationType_ID);
+end;
+/
+
+
+create or replace trigger trg_prevent_circular_boo
+before insert or update on Operation_Input
+for each row
+declare
+    circular_reference exception;
+    parent_product_id char(10);
+begin
+    -- The complexity is O(1).
+    select Product_ID
+    into parent_product_id
+    from Operation
+    where Operation_ID = :new.Operation_ID;
+
+    if :new.Part_ID = parent_product_id then
+        raise circular_reference;
+    end if;
+
+exception
+    when circular_reference then
+        RAISE_APPLICATION_ERROR(-20002, 'Circular reference detected in ' || parent_product_id || ': A product cannot be used as an input in its own Bill of Operations (BOO).');
+end;
+/
+
+
 -- USBD13
 CREATE OR REPLACE FUNCTION GetProductOperationsAndWorkstations(
     p_Product_ID IN Product.Part_ID%TYPE
@@ -7,14 +55,17 @@ IS
     cur_results SYS_REFCURSOR;
 BEGIN
     OPEN cur_results FOR
+    -- Main product operations
     SELECT
         o.Operation_ID,
-        o.Designation AS Operation_Designation,
+        ot.Description AS Operation_Description,
         wt.WorkstationType_ID
     FROM
         Operation o
     JOIN
-        Operation_Type_Workstation otw ON o.Operation_ID = otw.OperationOperation_ID
+        Operation_Type ot ON o.Operation_TypeID = ot.ID
+    JOIN
+        Operation_Type_Workstation otw ON o.Operation_TypeID = otw.Operation_TypeID
     JOIN
         Type_Workstation wt ON otw.WorkstationType_ID = wt.WorkstationType_ID
     WHERE
@@ -22,15 +73,17 @@ BEGIN
 
     UNION ALL
 
-    -- Operações dos subprodutos encontrados nas Operation Inputs
+    -- Operations of subproducts found in Operation Inputs
     SELECT
         subo.Operation_ID,
-        subo.Designation AS Operation_Designation,
+        subot.Description AS Operation_Description,
         wt.WorkstationType_ID
     FROM
         Operation subo
     JOIN
-        Operation_Type_Workstation otw ON subo.Operation_ID = otw.OperationOperation_ID
+        Operation_Type subot ON subo.Operation_TypeID = subot.ID
+    JOIN
+        Operation_Type_Workstation otw ON subo.Operation_TypeID = otw.Operation_TypeID
     JOIN
         Type_Workstation wt ON otw.WorkstationType_ID = wt.WorkstationType_ID
     WHERE
@@ -39,32 +92,25 @@ BEGIN
                 oi.Part_ID
             FROM
                 Operation_Input oi
+            JOIN
+                Operation o ON oi.Operation_ID = o.Operation_ID
+            JOIN
+                Product p ON oi.Part_ID = p.Part_ID
             WHERE
-                EXISTS (
-                    SELECT 1
-                    FROM Product p
-                    WHERE p.Part_ID = oi.Part_ID
-                )
-                AND oi.Operation_ID IN (
-                    SELECT o.Operation_ID
-                    FROM Operation o
-                    WHERE o.Product_ID = p_Product_ID
-                )
-        );
+                o.Product_ID = p_Product_ID
+    );
 
     RETURN cur_results;
 END;
 /
 
-
--- USBD12
-CREATE OR REPLACE FUNCTION GetProductOperationParts(p_Product_ID IN Part.Part_ID%TYPE)
+--usbd12
+CREATE OR REPLACE FUNCTION GetProductOperationParts(p_Product_ID IN Product_Type.Part_ID%TYPE)
     RETURN SYS_REFCURSOR
 IS
     cur_results SYS_REFCURSOR;
 BEGIN
     OPEN cur_results FOR
-    -- Partes associadas ao produto principal, excluindo Intermediate Products
     SELECT
         oi.Part_ID,
         SUM(oi.Quantity) AS Quantity
@@ -76,48 +122,37 @@ BEGIN
         AND NOT EXISTS (
             SELECT 1
             FROM Intermediate_Product ip
-            WHERE ip.Part_ID = oi.Part_ID -- Exclui Intermediate Products
+            WHERE ip.Part_ID = oi.Part_ID
         )
         AND NOT EXISTS (
             SELECT 1
             FROM Product p
-            WHERE p.Part_ID = oi.Part_ID -- Exclui produtos com operações associadas
+            WHERE p.Part_ID = oi.Part_ID
         )
     GROUP BY
         oi.Part_ID
 
     UNION ALL
 
-    -- Partes de subprodutos encontrados nas partes do produto principal
     SELECT
         suboi.Part_ID,
-        SUM(suboi.Quantity) AS Quantity
+        SUM(suboi.Quantity * oi.Quantity) AS Quantity
     FROM
-        Operation_Input suboi
+        Operation_Input oi
+        JOIN Operation o ON oi.Operation_ID = o.Operation_ID
+        JOIN Operation_Input suboi ON oi.Part_ID = o.Product_ID
         JOIN Operation subo ON suboi.Operation_ID = subo.Operation_ID
     WHERE
-        subo.Product_ID IN (
-            SELECT DISTINCT oi.Part_ID
-            FROM
-                Operation_Input oi
-                JOIN Operation o ON oi.Operation_ID = o.Operation_ID
-            WHERE
-                o.Product_ID = p_Product_ID
-                AND EXISTS (
-                    SELECT 1
-                    FROM Product p
-                    WHERE p.Part_ID = oi.Part_ID -- Apenas subprodutos que são produtos
-                )
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM Intermediate_Product ip
-                    WHERE ip.Part_ID = oi.Part_ID -- Exclui Intermediate Products
-                )
+        o.Product_ID = p_Product_ID
+        AND EXISTS (
+            SELECT 1
+            FROM Product p
+            WHERE p.Part_ID = oi.Part_ID
         )
         AND NOT EXISTS (
             SELECT 1
             FROM Intermediate_Product ip
-            WHERE ip.Part_ID = suboi.Part_ID -- Exclui Intermediate Products
+            WHERE ip.Part_ID = suboi.Part_ID
         )
     GROUP BY
         suboi.Part_ID
@@ -126,29 +161,26 @@ BEGIN
 
     -- Produtos sem operações associadas, mas presentes como partes
     SELECT
-        p.Part_ID,
-        NULL AS Quantity
+        oi.Part_ID,
+        SUM(oi.Quantity) AS Quantity
     FROM
-        Product p
+        Operation_Input oi
+        JOIN Operation o ON oi.Operation_ID = o.Operation_ID
+        JOIN Product p ON oi.Part_ID = p.Part_ID
     WHERE
-        p.Part_ID IN (
-            SELECT oi.Part_ID
-            FROM
-                Operation_Input oi
-                JOIN Operation o ON oi.Operation_ID = o.Operation_ID
-            WHERE
-                o.Product_ID = p_Product_ID
-        )
+        o.Product_ID = p_Product_ID
         AND NOT EXISTS (
             SELECT 1
-            FROM Operation o
-            WHERE o.Product_ID = p.Part_ID -- Exclui produtos com operações associadas
+            FROM Operation op
+            WHERE op.Product_ID = p.Part_ID
         )
         AND NOT EXISTS (
             SELECT 1
             FROM Intermediate_Product ip
-            WHERE ip.Part_ID = p.Part_ID -- Exclui Intermediate Products
-        );
+            WHERE ip.Part_ID = p.Part_ID
+        )
+    GROUP BY
+        oi.Part_ID;
 
     RETURN cur_results;
 END;
@@ -159,11 +191,13 @@ CREATE OR REPLACE PROCEDURE PrintProductsUsingAllWorkstationTypes
 IS
     totalWorkstationTypes NUMBER;
     CURSOR productCursor IS
-        SELECT Part_ID, Name FROM Product;
+        SELECT Part_ID, Name
+        FROM Product;
     v_Product_ID Product.Part_ID%TYPE;
     v_Product_Name Product.Name%TYPE;
     v_UsedWorkstationTypes NUMBER;
 BEGIN
+    -- Get total number of workstation types
     SELECT COUNT(*)
     INTO totalWorkstationTypes
     FROM Type_Workstation;
@@ -174,40 +208,40 @@ BEGIN
         FETCH productCursor INTO v_Product_ID, v_Product_Name;
         EXIT WHEN productCursor%NOTFOUND;
 
+        -- Count distinct workstation types used by the product and its subproducts
         SELECT COUNT(DISTINCT otw.WorkstationType_ID)
         INTO v_UsedWorkstationTypes
         FROM (
-            SELECT o.Operation_ID
+            -- Main product operations
+            SELECT o.Operation_TypeID
             FROM Operation o
             WHERE o.Product_ID = v_Product_ID
 
             UNION ALL
 
-            SELECT subo.Operation_ID
+            -- Subproduct operations
+            SELECT subo.Operation_TypeID
             FROM Operation subo
-            WHERE subo.Product_ID IN (
-                SELECT DISTINCT oi.Part_ID
-                FROM Operation_Input oi
-                WHERE EXISTS (
-                    SELECT 1
-                    FROM Product p
-                    WHERE p.Part_ID = oi.Part_ID
-                )
-                AND oi.Operation_ID IN (
-                    SELECT o.Operation_ID
-                    FROM Operation o
-                    WHERE o.Product_ID = v_Product_ID
-                )
-            )
+            JOIN Operation o ON o.Product_ID = v_Product_ID
+            JOIN Operation_Input oi ON oi.Operation_ID = o.Operation_ID
+            JOIN Product p ON p.Part_ID = oi.Part_ID
+            WHERE subo.Product_ID = oi.Part_ID
         ) operations
-        JOIN Operation_Type_Workstation otw ON operations.Operation_ID = otw.OperationOperation_ID;
+        JOIN Operation_Type_Workstation otw ON operations.Operation_TypeID = otw.Operation_TypeID;
 
+        -- Print products that use all workstation types
         IF v_UsedWorkstationTypes = totalWorkstationTypes THEN
             DBMS_OUTPUT.PUT_LINE('Product ID: ' || v_Product_ID || ', Name: ' || v_Product_Name);
         END IF;
     END LOOP;
 
     CLOSE productCursor;
+EXCEPTION
+    WHEN OTHERS THEN
+        IF productCursor%ISOPEN THEN
+            CLOSE productCursor;
+        END IF;
+        RAISE;
 END;
 /
 
@@ -216,13 +250,19 @@ CREATE OR REPLACE FUNCTION REGISTER_ORDER (
     p_order_date    IN DATE,
     p_delivery_date IN DATE,
     p_customer_vat  IN VARCHAR2,
-    p_product_id    IN CHAR
+    p_product_id    IN CHAR,
+    p_quantity      IN NUMBER DEFAULT 1
 ) RETURN VARCHAR2 IS
     v_customer_exists NUMBER;
     v_product_exists NUMBER;
     v_line_exists    NUMBER;
-    v_new_order_id   NUMBER;
+    v_new_order_id   VARCHAR2(255);
 BEGIN
+    -- Validate quantity
+    IF p_quantity <= 0 THEN
+        RETURN 'Error: Quantity must be greater than 0.';
+    END IF;
+
     -- Validate Delivery Date
     IF p_delivery_date < p_order_date THEN
         RETURN 'Error: Delivery date cannot be before the order date.';
@@ -248,8 +288,8 @@ BEGIN
         RETURN 'Error: Product with Part_ID ' || p_product_id || ' does not exist in the current catalog.';
     END IF;
 
-    -- Generate new Order_ID
-    SELECT NVL(MAX(TO_NUMBER(Order_ID)), 0) + 1
+    -- Generate new Order_ID (using a different approach since Order_ID is VARCHAR2)
+    SELECT TO_CHAR(NVL(MAX(TO_NUMBER(REGEXP_REPLACE(Order_ID, '[^0-9]', ''))), 0) + 1)
     INTO v_new_order_id
     FROM "Order";
 
@@ -258,30 +298,46 @@ BEGIN
 
     -- Insert Order
     INSERT INTO "Order" (Order_ID, OrderDate, DeliveryDate, CostumerVAT)
-    VALUES (TO_CHAR(v_new_order_id), p_order_date, p_delivery_date, p_customer_vat);
+    VALUES (v_new_order_id, p_order_date, p_delivery_date, p_customer_vat);
 
-    -- Validate if Product is already in Production_Line for this Order
+    -- Validate if Product is already in Order_Line for this Order
     SELECT COUNT(*)
     INTO v_line_exists
-    FROM Production_Line
-    WHERE Product_ID = p_product_id AND Order_ID = TO_CHAR(v_new_order_id);
+    FROM Order_Line
+    WHERE Product_ID = p_product_id AND Order_ID = v_new_order_id;
 
     IF v_line_exists > 0 THEN
         -- Rollback to savepoint and return error
         ROLLBACK TO before_order_insert;
         RETURN 'Error: Product with Part_ID ' || p_product_id ||
-               ' is already associated with Order_ID ' || TO_CHAR(v_new_order_id) || '.';
+               ' is already associated with Order_ID ' || v_new_order_id || '.';
     ELSE
-        -- Insert Product into Production_Line
-        INSERT INTO Production_Line (Product_ID, Order_ID, quantity)
-        VALUES (p_product_id, TO_CHAR(v_new_order_id), 1);
+        -- Insert Product into Order_Line
+        INSERT INTO Order_Line (Product_ID, Order_ID, quantity)
+        VALUES (p_product_id, v_new_order_id, p_quantity);
+
+        -- Create initial reservations for the product
+        INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
+        SELECT
+            p_product_id,
+            v_new_order_id,
+            ep.Part_ID,
+            p_quantity
+        FROM External_Part ep
+        WHERE EXISTS (
+            SELECT 1
+            FROM Operation_Input oi
+            JOIN Operation o ON oi.Operation_ID = o.Operation_ID
+            WHERE o.Product_ID = p_product_id
+            AND oi.Part_ID = ep.Part_ID
+        );
     END IF;
 
     -- Commit transaction to persist changes
     COMMIT;
 
     -- Return Success Message
-    RETURN 'Order ' || TO_CHAR(v_new_order_id) || ' successfully registered.';
+    RETURN 'Order ' || v_new_order_id || ' successfully registered.';
 EXCEPTION
     WHEN OTHERS THEN
         -- Rollback the entire transaction if any error occurs
@@ -335,93 +391,97 @@ END;
 /
 
 --USBD16
-create or replace function RegisterProduct (
-    p_Part_ID   char,
-    p_Name      varchar2,
-    p_Family_ID varchar2
-) return varchar2
-as
-    v_message       varchar2(200);
-    v_part_exists   integer;
-    v_family_exists integer;
-    v_product_exists integer;
-begin
-    -- Verificar se a família existe
-    select count(*)
-    into v_family_exists
-    from Product_Family
-    where Family_ID = p_Family_ID;
+CREATE OR REPLACE FUNCTION RegisterProduct (
+    p_Part_ID   CHAR,
+    p_Name      VARCHAR2,
+    p_Family_ID VARCHAR2
+) RETURN VARCHAR2
+AS
+    v_message        VARCHAR2(200);
+    v_family_exists  INTEGER;
+    v_part_exists    INTEGER;
+    v_product_exists INTEGER;
+BEGIN
+    -- Check if the family exists
+    SELECT COUNT(*)
+    INTO v_family_exists
+    FROM Product_Family
+    WHERE Family_ID = p_Family_ID;
 
-    if v_family_exists = 0 then
-        return 'Error: Product_Family with ID ' || p_Family_ID || ' does not exist.';
-    end if;
+    IF v_family_exists = 0 THEN
+        RETURN 'Error: Product_Family with ID ' || p_Family_ID || ' does not exist.';
+    END IF;
 
-    -- Verificar se o Part já existe
-    select count(*)
-    into v_part_exists
-    from Part
-    where Part_ID = p_Part_ID;
+    -- Check if the Part_ID already exists in Product_Type
+    SELECT COUNT(*)
+    INTO v_part_exists
+    FROM Product_Type
+    WHERE Part_ID = p_Part_ID;
 
-    -- Criar Part se não existir
-    if v_part_exists = 0 then
-        insert into Part (Part_ID, Description)
-        values (p_Part_ID, p_Name);
-
-        v_message := 'New Part ' || p_Part_ID || ' created. ';
-    else
+    -- Create Product_Type if it doesn't exist
+    IF v_part_exists = 0 THEN
+        INSERT INTO Product_Type (Part_ID, Description)
+        VALUES (p_Part_ID, p_Name);
+        v_message := 'New Product_Type ' || p_Part_ID || ' created. ';
+    ELSE
         v_message := '';
-    end if;
+    END IF;
 
-    -- Verificar se o Produto já existe
-    select count(*)
-    into v_product_exists
-    from Product
-    where Part_ID = p_Part_ID;
+    -- Check if the Product already exists
+    SELECT COUNT(*)
+    INTO v_product_exists
+    FROM Product
+    WHERE Part_ID = p_Part_ID;
 
-    if v_product_exists > 0 then
-        return 'Error: Product with Part_ID ' || p_Part_ID || ' already exists.';
-    end if;
+    IF v_product_exists > 0 THEN
+        RETURN 'Error: Product with Part_ID ' || p_Part_ID || ' already exists.';
+    END IF;
 
-    -- Inserir o Produto
-    insert into Product (Part_ID, Name, Product_FamilyFamily_ID)
-    values (p_Part_ID, p_Name, p_Family_ID);
+    -- Insert the Product
+    INSERT INTO Product (Part_ID, Name, Product_FamilyFamily_ID)
+    VALUES (p_Part_ID, p_Name, p_Family_ID);
 
     v_message := v_message || 'Product ' || p_Part_ID || ' registered successfully.';
-    return v_message;
 
-exception
-    when others then
-        return 'Error: Failed to register the product: ' || sqlerrm;
-end RegisterProduct;
+    RETURN v_message;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Rollback if any error occurs
+        ROLLBACK;
+        RETURN 'Error: Failed to register the product: ' || SQLERRM;
+END RegisterProduct;
 /
 
 -- USBD19
 CREATE OR REPLACE FUNCTION ProductWithMostOperations
 RETURN VARCHAR2 IS
-  max_product_id VARCHAR2(100);
+    max_product_id Product.Part_ID%TYPE;
+    max_product_name Product.Name%TYPE;
+    operation_count NUMBER;
 BEGIN
-  SELECT Product_ID
-  INTO max_product_id
-  FROM (
-    SELECT Product_ID, MAX(sequencia) AS maior_sequencia
+    SELECT p.Part_ID, p.Name, operation_count
+    INTO max_product_id, max_product_name, operation_count
     FROM (
-      SELECT Product_ID,
-             Operation_ID AS StartOperation,
-             LEVEL AS sequencia
-      FROM Operation
-      CONNECT BY PRIOR NextOperation_ID = Operation_ID
-      START WITH NextOperation_ID IS NOT NULL
-    )
-    GROUP BY Product_ID
-    ORDER BY maior_sequencia DESC
-  )
-  WHERE ROWNUM = 1;
+        SELECT
+            o.Product_ID,
+            COUNT(DISTINCT Operation_ID) as operation_count
+        FROM Operation o
+        GROUP BY o.Product_ID
+        ORDER BY operation_count DESC
+    ) seq
+    JOIN Product p ON p.Part_ID = seq.Product_ID
+    WHERE ROWNUM = 1;
 
-  RETURN max_product_id;
+    RETURN 'Product ID: ' || max_product_id ||
+           ', Name: ' || max_product_name ||
+           ', Number of Operations: ' || operation_count;
+
 EXCEPTION
-  WHEN NO_DATA_FOUND THEN
-    DBMS_OUTPUT.PUT_LINE('Nenhuma sequência encontrada.');
-    RETURN NULL;
+    WHEN NO_DATA_FOUND THEN
+        RETURN 'No products with operations found.';
+    WHEN OTHERS THEN
+        RETURN 'Error: ' || SQLERRM;
 END;
 /
 
@@ -454,5 +514,77 @@ BEGIN
     END IF;
 
     RETURN result_message;
+END;
+/
+
+--usbd30
+CREATE OR REPLACE PROCEDURE consume_material(
+    p_part_id IN CHAR,
+    p_quantity IN NUMBER,
+    p_success OUT BOOLEAN,
+    p_message OUT VARCHAR2
+) IS
+    v_current_stock NUMBER := 0;
+    v_total_reserved NUMBER := 0;
+BEGIN
+    p_success := FALSE; -- Inicializa o sucesso como falso
+
+    -- Valida os parâmetros de entrada
+    IF p_quantity <= 0 THEN
+        p_message := 'Quantity to consume must be greater than 0.';
+        RETURN;
+    END IF;
+
+    IF p_part_id IS NULL OR TRIM(p_part_id) = '' THEN
+        p_message := 'Part ID cannot be null or empty.';
+        RETURN;
+    END IF;
+
+    -- Obtém o stock atual e total reservado em uma única consulta
+    BEGIN
+        SELECT ep.Minimum_Stock, SUM(r.quantity)
+        INTO v_current_stock, v_total_reserved
+        FROM External_Part ep
+        LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
+        WHERE ep.Part_ID = TRIM(p_part_id)
+        GROUP BY ep.Part_ID, ep.Minimum_Stock;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            p_message := 'Part not found: ' || TRIM(p_part_id);
+            RETURN;
+    END;
+
+    -- Trata o caso de SUM retornando NULL (nenhuma reserva encontrada)
+    IF v_total_reserved IS NULL THEN
+        v_total_reserved := 0;
+    END IF;
+
+    -- Verifica se o consumo é possível
+    IF p_quantity > v_current_stock THEN
+        p_message := 'Cannot consume material: requested quantity exceeds current stock. ' ||
+                     'Current stock: ' || v_current_stock ||
+                     ', Requested: ' || p_quantity;
+        RETURN;
+    ELSIF (v_current_stock - p_quantity) < v_total_reserved THEN
+        p_message := 'Cannot consume material: would fall below reserved quantity. ' ||
+                     'Current stock: ' || v_current_stock ||
+                     ', Reserved: ' || v_total_reserved ||
+                     ', Requested: ' || p_quantity;
+        RETURN;
+    END IF;
+
+    -- Atualiza o estoque
+    UPDATE External_Part
+    SET Minimum_Stock = Minimum_Stock - p_quantity
+    WHERE Part_ID = TRIM(p_part_id);
+
+    COMMIT; -- Confirma a transação
+
+    p_success := TRUE;
+    p_message := 'Material consumed successfully.';
+EXCEPTION
+    WHEN OTHERS THEN
+        p_message := 'Error: ' || SQLERRM;
+        ROLLBACK; -- Reverte a transação em caso de erro
 END;
 /

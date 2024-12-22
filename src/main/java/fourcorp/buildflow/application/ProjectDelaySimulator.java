@@ -4,8 +4,11 @@ import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
 import fourcorp.buildflow.repository.Repositories;
 
-import java.util.*;
- /**
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
  * Simulates project delays, calculates the impact on project metrics,
  * and identifies critical paths before and after delays.
  */
@@ -185,7 +188,7 @@ public class ProjectDelaySimulator {
      * Truncates text for better formatting in outputs.
      * Complexity: O(1).
      *
-     * @param text The text to truncate.
+     * @param text      The text to truncate.
      * @param maxLength The maximum length allowed.
      * @return The truncated text.
      */
@@ -193,65 +196,65 @@ public class ProjectDelaySimulator {
         return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text; // O(1)
     }
 
-     /**
-      * Gets new project duration.
-      *
-      * @return the new project duration
-      */
-     public int getNewProjectDuration() {
+    /**
+     * Gets new project duration.
+     *
+     * @return the new project duration
+     */
+    public int getNewProjectDuration() {
         return newProjectDuration;
-     }
+    }
 
-     /**
-      * Gets original critical path.
-      *
-      * @return the original critical path
-      */
-     public List<Activity> getOriginalCriticalPath() {
+    /**
+     * Gets original critical path.
+     *
+     * @return the original critical path
+     */
+    public List<Activity> getOriginalCriticalPath() {
         return originalCriticalPath;
-     }
+    }
 
-     /**
-      * Gets new critical path.
-      *
-      * @return the new critical path
-      */
-     public List<Activity> getNewCriticalPath() {
+    /**
+     * Gets new critical path.
+     *
+     * @return the new critical path
+     */
+    public List<Activity> getNewCriticalPath() {
         return newCriticalPath;
-     }
+    }
 
-     /**
-      * Gets original project duration.
-      *
-      * @return the original project duration
-      */
-     public int getOriginalProjectDuration() {
+    /**
+     * Gets original project duration.
+     *
+     * @return the original project duration
+     */
+    public int getOriginalProjectDuration() {
         return originalProjectDuration;
-     }
+    }
 
-     /**
-      * Sets graph.
-      *
-      * @param graph the graph
-      */
-     public void setGraph(ActivitiesGraph graph) {
+    /**
+     * Sets graph.
+     *
+     * @param graph the graph
+     */
+    public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
         this.timeCalculator.setGraph(graph);
-     }
+    }
 
-     /**
-      * Find activity by id activity.
-      *
-      * @param a1 the ID of the activity to find
-      * @return the activity
-      */
-     public Activity findActivityById(String a1) {
-        for (Activity activity: graph.getGraph().vertices()){
-            if (activity.getId().equals(a1)){
+    /**
+     * Find activity by id activity.
+     *
+     * @param a1 the ID of the activity to find
+     * @return the activity
+     */
+    public Activity findActivityById(String a1) {
+        for (Activity activity : graph.getGraph().vertices()) {
+            if (activity.getId().equals(a1)) {
                 return activity;
             }
         }
-         return null;
-     }
- }
+        return null;
+    }
+}
 

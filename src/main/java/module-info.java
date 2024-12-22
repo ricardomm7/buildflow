@@ -3,6 +3,7 @@ module fourcorp.buildflow {
     requires javafx.fxml;
     requires java.naming;
     requires java.sql;
+    requires com.oracle.database.jdbc;
 
     opens fourcorp.buildflow to javafx.fxml;
     exports fourcorp.buildflow;

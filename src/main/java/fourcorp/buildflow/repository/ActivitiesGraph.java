@@ -137,7 +137,7 @@ public class ActivitiesGraph {
     }
 
     public Activity findActivityById(String a) {
-        for (Activity activity: graph.vertices()){
+        for (Activity activity : graph.vertices()) {
             if (activity.getId().equals(a)) {
                 return activity;
             }

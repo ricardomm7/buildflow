@@ -56,6 +56,12 @@ public class DatabaseMenu {
             System.out.printf("%-5s%-75s%n", "[16]", "Prioritize critical path by number of dependencies.");
             System.out.printf("%-5s%-75s%n", "[17]", "Prioritize critical path by depth Level.");
             System.out.printf("%-5s%-75s%n", "[18]", "Put the components into production.");
+            System.out.printf("%-5s%-75s%n", "[19]", "Get a list of product operations.");
+            System.out.printf("%-5s%-75s%n", "[20]", "Necessary stock for a given order.");
+            System.out.printf("%-5s%-75s%n", "[21]", "Reserve materials/components to fulfill a given order.");
+            System.out.printf("%-5s%-75s%n", "[22]", "List all the reserved materials/components.");
+            System.out.printf("%-5s%-75s%n", "[23]", "Workstation types not used.");
+            System.out.printf("%-5s%-75s%n", "[24]", "Consume a material/component, and deduct from the stock.");
             System.out.printf("%-5s%-75s%n", "[0]", "Escape to main menu.");
             System.out.println("================================================================================");
 
@@ -79,7 +85,7 @@ public class DatabaseMenu {
             try {
                 String input = scanner.nextLine();
                 int choice = Integer.parseInt(input);
-                if (choice >= 0 && choice <= 18) {
+                if (choice >= 0 && choice <= 24) {
                     return choice;
                 } else {
                     System.out.print("Invalid option. Please try again: ");
@@ -161,7 +167,7 @@ public class DatabaseMenu {
                     System.out.print("Enter Family ID: ");
                     String fid = scanner.nextLine();
 
-                    result = db.RegisterNewProduct(pid2, pname, fid);
+                    result = db.registerNewProduct(pid2, pname, fid);
 
                     System.out.println(result);
                     if (result.contains("registered successfully")) {
@@ -235,8 +241,46 @@ public class DatabaseMenu {
             case 18:
                 ptService.simulateProductionExecution();
                 break;
-            case 0:
+            case 19:
 
+                break;
+            case 20:
+
+                break;
+            case 21:
+
+                break;
+            case 22:
+
+                break;
+            case 23:
+
+                break;
+            case 24:
+                System.out.println();
+                System.out.print("Enter the part ID: ");
+                String part = scanner.next();
+
+                System.out.print("Enter the quantity to consume: ");
+                double quantity;
+
+                try {
+                    quantity = Double.parseDouble(scanner.next());
+                    System.out.println("Part ID: " + part);
+                    System.out.println("Quantity: " + quantity);
+                    db.consumeMaterial(part, quantity);
+                    scanner.nextLine();
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Quantity must be a number.");
+                    scanner.nextLine();
+                    break;
+                } catch (Exception e) {
+                    System.out.println("Error during consume material operation: " + e.getMessage());
+                    scanner.nextLine();
+                    e.printStackTrace();
+                }
+                break;
+            case 0:
                 return;
             default:
                 System.out.println("Invalid option.");

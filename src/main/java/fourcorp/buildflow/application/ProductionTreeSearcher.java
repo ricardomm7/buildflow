@@ -208,22 +208,25 @@ public class ProductionTreeSearcher {
         List<ProductionTree> productionTreeList = new ArrayList<>();
         if (productionTree == null) {
             System.err.println("Production tree is not initialized.");
-            return;    }
+            return;
+        }
         productionTreeList.add(productionTree);
         for (ProductionTree tree : productionTreeList) {
             if (tree.getAllNodes().isEmpty()) {
                 System.err.println("No nodes found in the production tree.");
-                continue;        }
+                continue;
+            }
             List<Product> products = new ArrayList<>(); // Reinicia a lista para cada árvore
             for (ProductionNode node : tree.getAllNodes()) {
                 Map<ProductionNode, Double> dependencies = tree.getSubNodes(node);
                 if (dependencies.isEmpty()) {
                     System.out.println("No dependencies for node: " + node.getId());
-                }            List<Operation> operations = new ArrayList<>();
+                }
+                List<Operation> operations = new ArrayList<>();
                 for (Map.Entry<ProductionNode, Double> dependency : dependencies.entrySet()) {
                     ProductionNode depNode = dependency.getKey();
                     String name = depNode.getName();
-                    name =  name.toUpperCase();
+                    name = name.toUpperCase();
                     int firstSpaceIndex = name.indexOf(" ");
                     if (firstSpaceIndex != -1) {
                         name = name.substring(0, firstSpaceIndex);
