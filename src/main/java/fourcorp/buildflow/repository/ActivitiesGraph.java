@@ -9,22 +9,50 @@ import java.util.*;
 public class ActivitiesGraph {
     private PertCpmGraph graph;
 
+    /**
+     * Initializes an empty ActivitiesGraph.
+     */
     public ActivitiesGraph() {
         this.graph = new PertCpmGraph();
     }
 
+    /**
+     * Retrieves the underlying graph representation.
+     *
+     * @return the {@code PertCpmGraph} instance representing this graph.
+     */
     public PertCpmGraph getGraph() {
         return graph;
     }
 
+    /**
+     * Adds a new activity to the graph.
+     *
+     * @param activity the activity to be added.
+     * @throws IllegalArgumentException if the activity is null.
+     */
     public void addActivity(Activity activity) {
         graph.addVertex(activity);
     }
 
+    /**
+     * Adds a directed dependency (edge) between two activities.
+     *
+     * @param src the source activity.
+     * @param dst the destination activity.
+     * @throws IllegalArgumentException if either activity is null.
+     */
     public void addDependency(Activity src, Activity dst) {
         graph.addEdge(src, dst);
     }
 
+    /**
+     * Retrieves the neighboring activities (outgoing edges) of a given activity.
+     *
+     * @param activity the activity whose neighbors are to be retrieved.
+     * @return an array of neighboring activities.
+     * Complexity: O(n).
+     */
     public Activity[] getNeighbors(Activity activity) {
         Collection<Edge<Activity>> edges = graph.outgoingEdges(activity);
         List<Activity> neighbors = new ArrayList<>();
@@ -34,10 +62,21 @@ public class ActivitiesGraph {
         return neighbors.toArray(new Activity[0]);
     }
 
+    /**
+     * Returns the number of vertices in the graph.
+     *
+     * @return the number of vertices.
+     */
     public int numVertices() {
         return graph.numVertices();
     }
 
+    /**
+     * Computes the in-degree (number of incoming edges) for each activity in the graph.
+     *
+     * @return a map of activities to their in-degree counts.
+     * Complexity: O(n).
+     */
     public Map<Activity, Integer> getInDegrees() {
         Map<Activity, Integer> inDegrees = new HashMap<>();
 
