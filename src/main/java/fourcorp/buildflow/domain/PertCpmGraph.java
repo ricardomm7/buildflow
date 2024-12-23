@@ -427,7 +427,7 @@ public class PertCpmGraph implements Graph<Activity, Edge<Activity>> {
      *
      * @param virtualStart the source activity.
      * @param start        the destination activity.
-     * Complexity: O(n).
+     *                     Complexity: O(n).
      */
     public void addDependency(Activity virtualStart, Activity start) {
         addEdge(virtualStart, start);

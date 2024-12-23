@@ -16,13 +16,13 @@ public class Activity {
     /**
      * Constructs an Activity with the specified attributes.
      *
-     * @param id            the unique identifier for the activity.
-     * @param name          the name of the activity.
-     * @param duration      the duration of the activity.
-     * @param durationUnit  the unit of the activity's duration (e.g., days, hours).
-     * @param cost          the cost associated with the activity.
-     * @param costUnit      the unit of the cost (e.g., dollars, euros).
-     * @param dependencies  a list of activity IDs this activity depends on.
+     * @param id           the unique identifier for the activity.
+     * @param name         the name of the activity.
+     * @param duration     the duration of the activity.
+     * @param durationUnit the unit of the activity's duration (e.g., days, hours).
+     * @param cost         the cost associated with the activity.
+     * @param costUnit     the unit of the cost (e.g., dollars, euros).
+     * @param dependencies a list of activity IDs this activity depends on.
      */
     public Activity(String id, String name, int duration, String durationUnit, double cost, String costUnit, List<String> dependencies) {
         this.id = id;

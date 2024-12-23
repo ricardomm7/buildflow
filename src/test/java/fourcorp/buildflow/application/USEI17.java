@@ -261,7 +261,7 @@ class USEI17 {
 
         // Verificar ligações dos vértices finais
         List<Activity> incomingToEnd = graph.getIncomingEdges(virtualEnd);
-        List<String> expectedFinals = Arrays.asList("A16","A17", "A18", "A19");
+        List<String> expectedFinals = Arrays.asList("A16", "A17", "A18", "A19");
 
         assertEquals(expectedFinals.size(), incomingToEnd.size(),
                 "Virtual END deve ter ligações de todos os vértices finais");
@@ -330,7 +330,7 @@ class USEI17 {
         DisplayGraph dp = new DisplayGraph();
         dp.setGraph(graph);
         dp.generateDotFile("outFiles/GraphTest.dot");
-        dp.generateSVG("outFiles/GraphTest.dot","outFiles/GraphTest.svg");
+        dp.generateSVG("outFiles/GraphTest.dot", "outFiles/GraphTest.svg");
 
     }
 }
