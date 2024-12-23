@@ -23,6 +23,7 @@ public class Menu {
     private final CriticalPathPrioritizer prioritize;
     private final QualityCheckManager manager;
     private final CriticalPathCalculator calculator;
+    private final ProductionTree productionTree;
     private final MaterialQuantityUpdater materialUpdater;
     private final PertCpmVisualizer pert;
     private final ActivityTopologicalSort topologicalSort;
@@ -40,7 +41,7 @@ public class Menu {
         manager = new QualityCheckManager();
         bstVisualizer = new DisplayBST();
         calculator = new CriticalPathCalculator();
-        ProductionTree productionTree = Repositories.getInstance().getProductionTree();
+        productionTree = Repositories.getInstance().getProductionTree();
         MaterialQuantityBST materialQuantityBST = Repositories.getInstance().getMaterialBST();
         materialUpdater = new MaterialQuantityUpdater(productionTree, materialQuantityBST);
         pert = new PertCpmVisualizer();
@@ -218,7 +219,8 @@ public class Menu {
                 break;
             case 23:
                 System.out.println();
-                ptService.simulateProductionExecution();
+                ProductionOrchestrator productionOrchestrator = new ProductionOrchestrator(productionTree,new Simulator());
+                productionOrchestrator.processProductionTree();
                 break;
             case 24:
                 System.out.println();
