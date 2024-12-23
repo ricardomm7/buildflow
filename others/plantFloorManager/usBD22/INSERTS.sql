@@ -136,13 +136,13 @@ values (115, 5659, null, 'AS12946S22', 'AS12946S22');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (124, 5667, null, 'AS12947S22', 'AS12947S22');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-values (130, 5663, null, 'AS12945S22', 'AS12945S22'),
+values (130, 5663, null, 'AS12945S22', 'AS12945S22');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (164, 5667, null, 'AS12947S20', 'AS12947S20');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (170, 5663, null, 'AS12945S20', 'AS12945S20');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-values (154, 5659, null, 'AS12946S20', 'AS12946S20'),
+values (154, 5659, null, 'AS12946S20', 'AS12946S20');
 
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (114, 5653, 115, 'AS12946S22', 'IP12945A04');
@@ -162,12 +162,13 @@ values (121, 5655, 122, 'AS12947S22', 'IP12947A02');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (120, 5647, 121, 'AS12947S22', 'IP12947A01');
 
+
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-values (151, 5649, 152, 'AS12946S20', 'IP12945A32');
+values (153, 5653, 154, 'AS12946S20', 'IP12945A34');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (152, 5651, 153, 'AS12946S20', 'IP12945A33');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
-values (153, 5653, 154, 'AS12946S20', 'IP12945A34');
+values (151, 5649, 152, 'AS12946S20', 'IP12945A32');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (150, 5647, 151, 'AS12946S20', 'IP12945A01');
 
