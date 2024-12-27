@@ -1,66 +1,56 @@
-CREATE OR REPLACE PROCEDURE Reserve_Order_Components (
-    p_order_id IN "Order".Order_ID%TYPE,
-    p_product_id IN Product.Part_ID%TYPE
-) IS
-    CURSOR c_components IS
-        SELECT oi.Part_ID, oi.Quantity * ol.quantity AS Required_Quantity
-        FROM Operation_Input oi
-        JOIN Operation op ON oi.Operation_ID = op.Operation_ID
-        JOIN Order_Line ol ON ol.Product_ID = op.Product_ID
-        WHERE ol.Order_ID = p_order_id AND op.Product_ID = p_product_id;
+CREATE OR REPLACE PROCEDURE Reserve_Order_Components(p_order_id IN "Order".Order_ID%TYPE)
+IS
+    CURSOR c_order_products IS
+        SELECT ol.Product_ID, ol.Quantity AS Order_Quantity
+        FROM Order_Line ol
+        WHERE ol.Order_ID = p_order_id;
 
+    cur_components SYS_REFCURSOR;
     v_part_id External_Part.Part_ID%TYPE;
     v_required_qty NUMBER;
     v_available_qty NUMBER;
-    v_total_qty_needed NUMBER := 0;
     v_can_fulfill BOOLEAN := TRUE;
 
 BEGIN
-    -- usar usbd26
-    -- Verifica disponibilidade de cada componente
-    FOR comp IN c_components LOOP
-        SELECT ep.Minimum_Stock INTO v_available_qty
-        FROM External_Part ep
-        WHERE ep.Part_ID = comp.Part_ID;
+    -- Chamar a USBD26 para verificar se o pedido pode ser cumprido
+    --USBD26_CheckOrderFulfillment(p_order_id, v_can_fulfill);
 
-        -- Se faltar stock para qualquer componente, não pode cumprir o pedido
-        IF v_available_qty < comp.Required_Quantity THEN
-            v_can_fulfill := FALSE;
-            EXIT; -- Saia do loop, não é necessário verificar mais componentes
-        END IF;
-    END LOOP;
-
-    -- Se não puder cumprir o pedido, encerra com uma exceção
     IF NOT v_can_fulfill THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Pedido não pode ser cumprido: stock insuficiente.');
+        RAISE_APPLICATION_ERROR(-20001, 'Order cannot be fulfilled: insufficient stock.');
     END IF;
-    --------------
 
+    -- Iterar pelos produtos da ordem
+    FOR prod IN c_order_products LOOP
+        -- Obter componentes do produto usando GetProductOperationParts
+        cur_components := GetProductOperationParts(prod.Product_ID);
 
-    -- Realiza as reservas, uma vez que todos os componentes estão disponíveis
-    FOR comp IN c_components LOOP
-        INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity)
-        VALUES (p_product_id, p_order_id, comp.Part_ID, comp.Required_Quantity);
+        LOOP
+            FETCH cur_components INTO v_part_id, v_required_qty;
+            EXIT WHEN cur_components%NOTFOUND;
+
+            v_required_qty := v_required_qty * prod.Order_Quantity;
+
+            INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity) VALUES (prod.Product_ID, p_order_id, v_part_id, v_required_qty);
+        END LOOP;
+
+        CLOSE cur_components;
     END LOOP;
 
-    -- Confirma a transação
+    -- Confirmar transação
     COMMIT;
 
-    DBMS_OUTPUT.PUT_LINE('Reserva criada com sucesso para o pedido: ' || p_order_id);
+    DBMS_OUTPUT.PUT_LINE('Reservation successfully created for the order: ' || p_order_id);
 
 EXCEPTION
     WHEN OTHERS THEN
-        -- Em caso de erro, reverte as alterações
         ROLLBACK;
-        DBMS_OUTPUT.PUT_LINE('Erro ao processar reserva: ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('Error processing reservation: ' || SQLERRM);
         RAISE;
 END;
 /
 
 
 BEGIN
-    Reserve_Order_Components('ORD001', 'PROD01');
+    Reserve_Order_Components('ORD002');
 END;
 /
-
-select * from Reservation

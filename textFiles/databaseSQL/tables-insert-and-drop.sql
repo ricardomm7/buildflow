@@ -466,26 +466,4 @@ values ('AS12945S48', 'ORD012', 40);
 insert into Order_Line (Product_ID, Order_ID, quantity)
 values ('AS12945G48', 'ORD012', 40);
 
---reservation missing
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945S22', 'ORD001', 'PN18544C21', 10);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12946S20', 'ORD002', 'PN18324C54', 5);
-
--- Reservations (usando os novos Order_IDs e garantindo combinações únicas)
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945S22', 'ORD009', 'PN18544C21', 100);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945S22', 'ORD009', 'PN52384R50', 50);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12946S22', 'ORD010', 'PN18324C54', 30);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12947S22', 'ORD010', 'PN12344A21', 90);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945S17', 'ORD011', 'PN18544C21', 30);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945P17', 'ORD011', 'PN18324C51', 15);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945S48', 'ORD012', 'PN18324C54', 40);
-insert into Reservation (Product_ID, Order_ID, Part_ID, quantity)
-values ('AS12945G48', 'ORD012', 'PN18324C91', 40);
+--reservation missing but they need to be inserted manualy
