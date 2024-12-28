@@ -15,12 +15,12 @@ INSERT INTO Product_Type (Part_ID, Description) VALUES ('C003', 'comp3');
 INSERT INTO Product_Type (Part_ID, Description) VALUES ('P002', 'Descrição do Produto B');
 
 
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('RM001', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('RM002', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('RM003', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('C001', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('C002', 50);
-INSERT INTO External_Part (Part_ID, Minimum_Stock) VALUES ('C003', 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('RM001', 100, 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('RM002', 100, 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('RM003', 100, 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('C001', 100, 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('C002', 100, 50);
+INSERT INTO External_Part (Part_ID, Stock, Minimum_Stock) VALUES ('C003', 100, 50);
 
 -- Insert Raw Materials
 INSERT INTO Raw_Material (Part_ID) VALUES ('RM001');

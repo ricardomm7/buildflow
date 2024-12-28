@@ -110,10 +110,8 @@ create or replace function GetProductOperationParts(p_Product_ID in Product.Part
 is
     cur_results SYS_REFCURSOR;
 begin
-    -- Abre o cursor que acumula todos os resultados, incluindo chamadas recursivas
     open cur_results for
         with RecursiveParts(part_id, quantity) as (
-            -- Partes iniciais associadas ao produto com suas quantidades
             select oi.Part_ID, oi.Quantity
             from Operation_Input oi
             join Operation op on oi.Operation_ID = op.Operation_ID
@@ -121,14 +119,13 @@ begin
 
             union all
 
-            -- Chamada recursiva: verifica se part_id é um produto e busca as partes relacionadas
             select oi.Part_ID, oi.Quantity
             from RecursiveParts rp
             join Product p on rp.part_id = p.Part_ID
             join Operation op on p.Part_ID = op.Product_ID
             join Operation_Input oi on op.Operation_ID = oi.Operation_ID
         )
-        -- Seleciona todas as partes, somando quantidades e excluindo produtos/IntermediateProducts
+
         select rp.part_id, sum(rp.quantity) as total_quantity
         from RecursiveParts rp
         where not exists (
@@ -499,12 +496,12 @@ BEGIN
 
     -- Obtém o stock atual e total reservado em uma única consulta
     BEGIN
-        SELECT ep.Minimum_Stock, SUM(r.quantity)
+        SELECT ep.Stock, SUM(r.quantity)
         INTO v_current_stock, v_total_reserved
         FROM External_Part ep
         LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
         WHERE ep.Part_ID = TRIM(p_part_id)
-        GROUP BY ep.Part_ID, ep.Minimum_Stock;
+        GROUP BY ep.Part_ID, ep.Stock;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
             p_message := 'Part not found: ' || TRIM(p_part_id);
@@ -532,7 +529,7 @@ BEGIN
 
     -- Atualiza o estoque
     UPDATE External_Part
-    SET Minimum_Stock = Minimum_Stock - p_quantity
+    SET Stock = Stock - p_quantity
     WHERE Part_ID = TRIM(p_part_id);
 
     COMMIT; -- Confirma a transação

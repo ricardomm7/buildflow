@@ -1,18 +1,3 @@
-DROP TABLE Component CASCADE CONSTRAINTS;
-DROP TABLE Costumer CASCADE CONSTRAINTS;
-DROP TABLE Intermediate_Product CASCADE CONSTRAINTS;
-DROP TABLE Operation CASCADE CONSTRAINTS;
-DROP TABLE Operation_Input CASCADE CONSTRAINTS;
-DROP TABLE Operation_Output CASCADE CONSTRAINTS;
-DROP TABLE Operation_Type_Workstation CASCADE CONSTRAINTS;
-DROP TABLE "Order" CASCADE CONSTRAINTS;
-DROP TABLE Part CASCADE CONSTRAINTS;
-DROP TABLE Product CASCADE CONSTRAINTS;
-DROP TABLE Product_Family CASCADE CONSTRAINTS;
-DROP TABLE Production_Line CASCADE CONSTRAINTS;
-DROP TABLE Raw_Material CASCADE CONSTRAINTS;
-DROP TABLE Type_Workstation CASCADE CONSTRAINTS;
-DROP TABLE Workstation CASCADE CONSTRAINTS;
 DROP TABLE Average_Production_Operation CASCADE CONSTRAINTS;
 DROP TABLE Component CASCADE CONSTRAINTS;
 DROP TABLE Costumer CASCADE CONSTRAINTS;
@@ -35,11 +20,10 @@ DROP TABLE Type_Workstation CASCADE CONSTRAINTS;
 DROP TABLE Workstation CASCADE CONSTRAINTS;
 
 
-
 CREATE TABLE Average_Production_Operation (Operation_TypeID number(10) NOT NULL, time double precision NOT NULL, PRIMARY KEY (Operation_TypeID), CONSTRAINT timeGreaterThan0 CHECK (time >= 0));
 CREATE TABLE Component (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Costumer (VAT varchar2(20) NOT NULL, Name varchar2(255) NOT NULL, Address varchar2(60) NOT NULL, "Zip-Code" varchar2(10) NOT NULL, City varchar2(60) NOT NULL, Country varchar2(60) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (VAT));
-CREATE TABLE External_Part (Part_ID char(10) NOT NULL, Minimum_Stock number(10) NOT NULL, PRIMARY KEY (Part_ID), CONSTRAINT StockQuantity CHECK (Minimum_Stock >= 0));
+CREATE TABLE External_Part (Part_ID char(10) NOT NULL, Stock number(10) NOT NULL, Minimum_Stock number(10) NOT NULL, PRIMARY KEY (Part_ID), CONSTRAINT StockQuantity CHECK (Minimum_Stock >= 0));
 CREATE TABLE Intermediate_Product (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Operation_TypeID number(10) NOT NULL, NextOperation_ID number(10), Product_ID char(10) NOT NULL, Output_Part_ID char(10) NOT NULL, PRIMARY KEY (Operation_ID));
 CREATE TABLE Operation_Input (Part_ID char(10) NOT NULL, Operation_ID number(10) NOT NULL, Quantity double precision NOT NULL, PRIMARY KEY (Part_ID, Operation_ID), CONSTRAINT InputQuantity CHECK (Quantity > 0));
@@ -149,17 +133,17 @@ insert into Product (Part_ID, Name, Product_FamilyFamily_ID) values ('AS12945S48
 insert into Product (Part_ID, Name, Product_FamilyFamily_ID) values ('AS12945G48', 'Pro Clear 17 lid', '146');
 
 
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN12344A21', 120);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R50', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R10', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18544A21', 120);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18544C21', 150);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C54', 150);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN94561L67', 140);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R12', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R45', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C91', 110);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C51', 110);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN12344A21', 200, 120);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R50', 200 ,130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R10', 200 ,130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18544A21', 200 ,120);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18544C21', 200, 150);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C54', 200, 150);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN94561L67', 200, 140);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R12', 200, 130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R45', 200, 130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C91', 200, 110);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C51', 200, 110);
 
 
 insert into Component (Part_ID) values ('PN12344A21');
@@ -172,6 +156,8 @@ insert into Component (Part_ID) values ('PN52384R12');
 insert into Component (Part_ID) values ('PN52384R45');
 insert into Component (Part_ID) values ('PN18324C91');
 insert into Component (Part_ID) values ('PN18324C51');
+
+
 insert into Raw_Material (Part_ID) values ('PN94561L67');
 
 
@@ -224,6 +210,7 @@ insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product
 values (170, 5663, null, 'AS12945S20', 'AS12945S20');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (154, 5659, null, 'AS12946S20', 'AS12946S20');
+
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (114, 5653, 115, 'AS12946S22', 'IP12945A04');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
@@ -232,6 +219,7 @@ insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product
 values (103, 5649, 112, 'AS12946S22', 'IP12945A02');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (100, 5647, 103, 'AS12946S22', 'IP12945A01');
+
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (123, 5661, 124, 'AS12947S22', 'IP12947A04');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
@@ -240,6 +228,8 @@ insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product
 values (121, 5655, 122, 'AS12947S22', 'IP12947A02');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (120, 5647, 121, 'AS12947S22', 'IP12947A01');
+
+
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (153, 5653, 154, 'AS12946S20', 'IP12945A34');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
@@ -248,6 +238,7 @@ insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product
 values (151, 5649, 152, 'AS12946S20', 'IP12945A32');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (150, 5647, 151, 'AS12946S20', 'IP12945A01');
+
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
 values (163, 5661, 164, 'AS12947S20', 'IP12947A34');
 insert into Operation (Operation_ID, Operation_TypeID, NextOperation_ID, Product_ID, Output_Part_ID)
@@ -466,4 +457,3 @@ values ('AS12945S48', 'ORD012', 40);
 insert into Order_Line (Product_ID, Order_ID, quantity)
 values ('AS12945G48', 'ORD012', 40);
 
---reservation missing but they need to be inserted manualy

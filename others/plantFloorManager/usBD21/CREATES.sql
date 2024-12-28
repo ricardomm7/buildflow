@@ -1,7 +1,7 @@
 CREATE TABLE Average_Production_Operation (Operation_TypeID number(10) NOT NULL, time double precision NOT NULL, PRIMARY KEY (Operation_TypeID), CONSTRAINT timeGreaterThan0 CHECK (time >= 0));
 CREATE TABLE Component (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Costumer (VAT varchar2(20) NOT NULL, Name varchar2(255) NOT NULL, Address varchar2(60) NOT NULL, "Zip-Code" varchar2(10) NOT NULL, City varchar2(60) NOT NULL, Country varchar2(60) NOT NULL, Email varchar2(255) NOT NULL, Phone number(20) NOT NULL, PRIMARY KEY (VAT));
-CREATE TABLE External_Part (Part_ID char(10) NOT NULL, Minimum_Stock number(10) NOT NULL, PRIMARY KEY (Part_ID), CONSTRAINT StockQuantity CHECK (Minimum_Stock >= 0));
+CREATE TABLE External_Part (Part_ID char(10) NOT NULL, Stock number(10) NOT NULL, Minimum_Stock number(10) NOT NULL, PRIMARY KEY (Part_ID), CONSTRAINT StockQuantity CHECK (Minimum_Stock >= 0));
 CREATE TABLE Intermediate_Product (Part_ID char(10) NOT NULL, PRIMARY KEY (Part_ID));
 CREATE TABLE Operation (Operation_ID number(10) NOT NULL, Operation_TypeID number(10) NOT NULL, NextOperation_ID number(10), Product_ID char(10) NOT NULL, Output_Part_ID char(10) NOT NULL, PRIMARY KEY (Operation_ID));
 CREATE TABLE Operation_Input (Part_ID char(10) NOT NULL, Operation_ID number(10) NOT NULL, Quantity double precision NOT NULL, PRIMARY KEY (Part_ID, Operation_ID), CONSTRAINT InputQuantity CHECK (Quantity > 0));

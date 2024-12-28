@@ -22,12 +22,12 @@ BEGIN
 
     -- Obtém o stock atual e total reservado em uma única consulta
     BEGIN
-        SELECT ep.Minimum_Stock, SUM(r.quantity)
+        SELECT ep.Stock, SUM(r.quantity)
         INTO v_current_stock, v_total_reserved
         FROM External_Part ep
         LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
         WHERE ep.Part_ID = TRIM(p_part_id)
-        GROUP BY ep.Part_ID, ep.Minimum_Stock;
+        GROUP BY ep.Part_ID, ep.Stock;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
             p_message := 'Part not found: ' || TRIM(p_part_id);
@@ -55,7 +55,7 @@ BEGIN
 
     -- Atualiza o estoque
     UPDATE External_Part
-    SET Minimum_Stock = Minimum_Stock - p_quantity
+    SET Stock = Stock - p_quantity
     WHERE Part_ID = TRIM(p_part_id);
 
     COMMIT; -- Confirma a transação

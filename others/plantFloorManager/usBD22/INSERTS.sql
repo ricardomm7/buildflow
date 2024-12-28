@@ -66,17 +66,17 @@ insert into Product (Part_ID, Name, Product_FamilyFamily_ID) values ('AS12945S48
 insert into Product (Part_ID, Name, Product_FamilyFamily_ID) values ('AS12945G48', 'Pro Clear 17 lid', '146');
 
 
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN12344A21', 120);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R50', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R10', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18544A21', 120);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18544C21', 150);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C54', 150);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN94561L67', 140);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R12', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN52384R45', 130);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C91', 110);
-insert into External_Part (Part_ID, Minimum_Stock) values ('PN18324C51', 110);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN12344A21', 200, 120);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R50', 200 ,130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R10', 200 ,130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18544A21', 200 ,120);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18544C21', 200, 150);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C54', 200, 150);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN94561L67', 200, 140);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R12', 200, 130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN52384R45', 200, 130);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C91', 200, 110);
+insert into External_Part (Part_ID, Stock, Minimum_Stock) values ('PN18324C51', 200, 110);
 
 
 insert into Component (Part_ID) values ('PN12344A21');
