@@ -5,6 +5,7 @@ CREATE OR REPLACE PROCEDURE consume_material(
     p_message OUT VARCHAR2
 ) IS
     v_current_stock NUMBER := 0;
+    v_minimum_stock NUMBER := 0;
     v_total_reserved NUMBER := 0;
 BEGIN
     p_success := FALSE; -- Inicializa o sucesso como falso
@@ -20,14 +21,14 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Obtém o stock atual e total reservado em uma única consulta
+    -- Obtém o estoque atual, estoque mínimo e total reservado em uma única consulta
     BEGIN
-        SELECT ep.Stock, SUM(r.quantity)
-        INTO v_current_stock, v_total_reserved
+        SELECT ep.Stock, ep.Minimum_Stock, NVL(SUM(r.quantity), 0)
+        INTO v_current_stock, v_minimum_stock, v_total_reserved
         FROM External_Part ep
         LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
         WHERE ep.Part_ID = TRIM(p_part_id)
-        GROUP BY ep.Part_ID, ep.Stock;
+        GROUP BY ep.Stock, ep.Minimum_Stock;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
             p_message := 'Part not found: ' || TRIM(p_part_id);
@@ -40,9 +41,10 @@ BEGIN
     END IF;
 
     -- Verifica se o consumo é possível
-    IF p_quantity > v_current_stock THEN
-        p_message := 'Cannot consume material: requested quantity exceeds current stock. ' ||
+    IF (v_current_stock - p_quantity) < v_minimum_stock THEN
+        p_message := 'Cannot consume material: would fall below minimum stock. ' ||
                      'Current stock: ' || v_current_stock ||
+                     ', Minimum stock: ' || v_minimum_stock ||
                      ', Requested: ' || p_quantity;
         RETURN;
     ELSIF (v_current_stock - p_quantity) < v_total_reserved THEN
@@ -69,12 +71,13 @@ EXCEPTION
 END;
 /
 
--- Teste 1: Válido, consome menos que o stock e reservado
+
+-- Teste 1: Válido, consumo permitido
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
 BEGIN
-    consume_material('PN18544C21', 5, v_success, v_message);
+    consume_material('PN18544C21', 1, v_success, v_message);
     IF v_success THEN
         DBMS_OUTPUT.PUT_LINE('Success: ' || v_message);
     ELSE
@@ -83,12 +86,12 @@ BEGIN
 END;
 /
 
--- Teste 2: Inválido, consome maior que o reservado
+-- Teste 2: Inválido, consumo maior que stock mínimo
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
 BEGIN
-    consume_material('PN18544C21', 85, v_success, v_message);
+    consume_material('PN18544C21', 250, v_success, v_message);
     IF v_success THEN
         DBMS_OUTPUT.PUT_LINE('Success: ' || v_message);
     ELSE
@@ -97,12 +100,13 @@ BEGIN
 END;
 /
 
--- Teste 3: Inválido, consome maior que o stock
+-- Teste 3: Inválido, consumo maior que o reservado
 DECLARE
     v_success BOOLEAN;
     v_message VARCHAR2(200);
 BEGIN
-    consume_material('PN18324C54', 155, v_success, v_message);
+    -- Tentativa de consumir 35 do estoque, o que deixará o estoque abaixo de 165 (Reservados 170)
+    consume_material('PN18544C21', 35, v_success, v_message);
     IF v_success THEN
         DBMS_OUTPUT.PUT_LINE('Success: ' || v_message);
     ELSE
