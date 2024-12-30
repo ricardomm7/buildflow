@@ -244,7 +244,10 @@ public class DatabaseMenu {
                 ptService.simulateProductionExecution();
                 break;
             case 19:
-
+                System.out.println();
+                System.out.print("Enter Product ID: ");
+                productId = scanner.nextLine();
+                db.callGetProductOperations(productId);  // Call the method to get product operations
                 break;
             case 20:
 

@@ -598,3 +598,70 @@ EXCEPTION
         RAISE;
 END;
 /
+
+--USBD25
+CREATE OR REPLACE FUNCTION  GetProductOperations(p_Product_ID IN Product.Part_ID%TYPE)
+    RETURN SYS_REFCURSOR
+IS
+    cur_results SYS_REFCURSOR;
+BEGIN
+    OPEN cur_results FOR
+        WITH recursive_operations(
+            operation_id,
+            operation_typeid,
+            next_operation_id,
+            product_id,
+            output_part_id,
+            level_num,
+            root_product_id
+        ) AS (
+            -- Base case: get direct operations for the product
+            SELECT
+                o.Operation_ID,
+                o.Operation_TypeID,
+                o.NextOperation_ID,
+                o.Product_ID,
+                o.Output_Part_ID,
+                1 AS level_num,
+                o.Product_ID AS root_product_id
+            FROM Operation o
+            WHERE o.Product_ID = p_Product_ID
+
+            UNION ALL
+
+            -- Recursive case: get operations for subproducts
+            SELECT
+                o.Operation_ID,
+                o.Operation_TypeID,
+                o.NextOperation_ID,
+                o.Product_ID,
+                o.Output_Part_ID,
+                ro.level_num + 1,
+                ro.root_product_id
+            FROM recursive_operations ro
+            JOIN Operation_Input oi ON oi.Operation_ID = ro.operation_id
+            JOIN Product p ON p.Part_ID = oi.Part_ID
+            JOIN Operation o ON o.Product_ID = p.Part_ID
+        )
+        -- Main query combining all required information
+        SELECT
+            ro.operation_id,
+            ro.product_id,
+            ot.Description AS operation_type,
+            ot.Expec_Time AS expected_time,
+            ro.next_operation_id,
+            ro.output_part_id,
+            -- Subquery for input parts and quantities
+            CURSOR(
+                SELECT oi.Part_ID, pt.Description, oi.Quantity
+                FROM Operation_Input oi
+                JOIN Product_Type pt ON pt.Part_ID = oi.Part_ID
+                WHERE oi.Operation_ID = ro.operation_id
+            ) AS inputs
+        FROM recursive_operations ro
+        JOIN Operation_Type ot ON ot.ID = ro.operation_typeid
+        ORDER BY ro.operation_id;
+
+    RETURN cur_results;
+END GetProductOperations;
+/

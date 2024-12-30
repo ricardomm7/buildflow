@@ -814,4 +814,53 @@ public class DatabaseFunctionsController {
             System.err.println("Error during reservation: " + e.getMessage());
         }
     }
+
+    public void callGetProductOperations(String productId) {
+        try {
+            // Prepare the call to the stored function
+            CallableStatement stmt = connection.prepareCall("{ ? = call GetProductOperations(?) }");
+            stmt.registerOutParameter(1, OracleTypes.CURSOR); // Register output parameter (SYS_REFCURSOR)
+            stmt.setString(2, productId); // Set the product ID parameter
+
+            // Execute the function
+            stmt.execute();
+
+            // Retrieve the result
+            ResultSet resultSet = (ResultSet) stmt.getObject(1);
+
+            // Process the result set and print the operations
+            while (resultSet.next()) {
+                String operationId = resultSet.getString("operation_id");
+                String productIdDb = resultSet.getString("product_id");
+                String operationType = resultSet.getString("operation_type");
+                String expectedTime = resultSet.getString("expected_time");
+                String nextOperationId = resultSet.getString("next_operation_id");
+                String outputPartId = resultSet.getString("output_part_id");
+
+                // Print the operation details
+                System.out.println("---------------------------------------------------------------------------------");
+                System.out.println("Operation ID: " + operationId);
+                System.out.println("Product ID: " + productIdDb);
+                System.out.println("Operation Type: " + operationType);
+                System.out.println("Expected Time: " + expectedTime);
+                System.out.println("Next Operation ID: " + nextOperationId);
+                System.out.println("Output Part ID: " + outputPartId);
+                System.out.println("Inputs:");
+
+                // Retrieve and print the input parts (nested cursor)
+                ResultSet inputs = (ResultSet) resultSet.getObject("inputs");
+                while (inputs.next()) {
+                    String inputPartId = inputs.getString("Part_ID");
+                    String inputDescription = inputs.getString("Description");
+                    String inputQuantity = inputs.getString("Quantity");
+                    System.out.println("  - " + inputPartId + " (" + inputDescription + "): " + inputQuantity);
+                }
+            }
+
+            resultSet.close();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
