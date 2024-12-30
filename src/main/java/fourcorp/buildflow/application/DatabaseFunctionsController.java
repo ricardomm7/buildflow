@@ -9,7 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Controller for managing database-related tasks and procedures.
@@ -748,4 +750,68 @@ public class DatabaseFunctionsController {
         }
     }
 
+    public String displayOrders() {
+        try {
+            String query = "SELECT Order_ID, OrderDate, DeliveryDate, CostumerVAT FROM \"Order\"";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            HashSet<String> orderIds = new HashSet<>();
+
+            String lineFormat = "| %-15s | %-12s | %-13s | %-15s |%n";
+            String separator = "+-----------------+--------------+---------------+-----------------+";
+
+            System.out.println("Available Orders:");
+            System.out.println(separator);
+            System.out.printf(lineFormat, "Order ID", "Order Date", "Delivery Date", "Customer VAT");
+            System.out.println(separator);
+
+            while (rs.next()) {
+                String orderId = rs.getString("Order_ID");
+                String orderDate = rs.getDate("OrderDate").toString();
+                String deliveryDate = rs.getDate("DeliveryDate").toString();
+                String customerVat = rs.getString("CostumerVAT");
+
+                orderIds.add(orderId);
+                System.out.printf(lineFormat, orderId, orderDate, deliveryDate, customerVat);
+            }
+            System.out.println(separator);
+
+            if (orderIds.isEmpty()) {
+                System.out.println("No orders available.");
+                return null;
+            }
+
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("\nEnter the Order ID: ");
+            String inputOrderId = scanner.nextLine().trim();
+
+            if (orderIds.contains(inputOrderId)) {
+                return inputOrderId;
+            } else {
+                System.out.println("Invalid Order ID.");
+                return null;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error querying orders: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public void reserveOrderComponents(String orderId) {
+        String callStatement = "{call Reserve_Order_Components(?)}";
+
+        try (CallableStatement stmt = connection.prepareCall(callStatement)) {
+            // Configura o parâmetro de entrada
+            stmt.setString(1, orderId);
+
+            // Executa o procedimento
+            stmt.execute();
+
+            System.out.println("Reservation successfully processed for order: " + orderId);
+        } catch (SQLException e) {
+            System.err.println("Error during reservation: " + e.getMessage());
+        }
+    }
 }

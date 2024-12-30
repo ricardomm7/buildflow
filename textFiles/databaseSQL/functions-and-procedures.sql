@@ -479,6 +479,7 @@ CREATE OR REPLACE PROCEDURE consume_material(
     p_message OUT VARCHAR2
 ) IS
     v_current_stock NUMBER := 0;
+    v_minimum_stock NUMBER := 0;
     v_total_reserved NUMBER := 0;
 BEGIN
     p_success := FALSE; -- Inicializa o sucesso como falso
@@ -494,14 +495,14 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Obtém o stock atual e total reservado em uma única consulta
+    -- Obtém o estoque atual, estoque mínimo e total reservado em uma única consulta
     BEGIN
-        SELECT ep.Stock, SUM(r.quantity)
-        INTO v_current_stock, v_total_reserved
+        SELECT ep.Stock, ep.Minimum_Stock, NVL(SUM(r.quantity), 0)
+        INTO v_current_stock, v_minimum_stock, v_total_reserved
         FROM External_Part ep
         LEFT JOIN Reservation r ON r.Part_ID = ep.Part_ID
         WHERE ep.Part_ID = TRIM(p_part_id)
-        GROUP BY ep.Part_ID, ep.Stock;
+        GROUP BY ep.Stock, ep.Minimum_Stock;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
             p_message := 'Part not found: ' || TRIM(p_part_id);
@@ -514,9 +515,10 @@ BEGIN
     END IF;
 
     -- Verifica se o consumo é possível
-    IF p_quantity > v_current_stock THEN
-        p_message := 'Cannot consume material: requested quantity exceeds current stock. ' ||
+    IF (v_current_stock - p_quantity) < v_minimum_stock THEN
+        p_message := 'Cannot consume material: would fall below minimum stock. ' ||
                      'Current stock: ' || v_current_stock ||
+                     ', Minimum stock: ' || v_minimum_stock ||
                      ', Requested: ' || p_quantity;
         RETURN;
     ELSIF (v_current_stock - p_quantity) < v_total_reserved THEN
@@ -540,5 +542,59 @@ EXCEPTION
     WHEN OTHERS THEN
         p_message := 'Error: ' || SQLERRM;
         ROLLBACK; -- Reverte a transação em caso de erro
+END;
+/
+
+
+
+--usbd27
+CREATE OR REPLACE PROCEDURE Reserve_Order_Components(p_order_id IN "Order".Order_ID%TYPE)
+IS
+    CURSOR c_order_products IS
+        SELECT ol.Product_ID, ol.Quantity AS Order_Quantity
+        FROM Order_Line ol
+        WHERE ol.Order_ID = p_order_id;
+
+    cur_components SYS_REFCURSOR;
+    v_part_id External_Part.Part_ID%TYPE;
+    v_required_qty NUMBER;
+    v_available_qty NUMBER;
+    v_can_fulfill BOOLEAN := TRUE;
+
+BEGIN
+    -- Chamar a USBD26 para verificar se o pedido pode ser cumprido
+    --USBD26_CheckOrderFulfillment(p_order_id, v_can_fulfill);
+
+    IF NOT v_can_fulfill THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Order cannot be fulfilled: insufficient stock.');
+    END IF;
+
+    -- Iterar pelos produtos da ordem
+    FOR prod IN c_order_products LOOP
+        -- Obter componentes do produto usando GetProductOperationParts
+        cur_components := GetProductOperationParts(prod.Product_ID);
+
+        LOOP
+            FETCH cur_components INTO v_part_id, v_required_qty;
+            EXIT WHEN cur_components%NOTFOUND;
+
+            v_required_qty := v_required_qty * prod.Order_Quantity;
+
+            INSERT INTO Reservation (Product_ID, Order_ID, Part_ID, quantity) VALUES (prod.Product_ID, p_order_id, v_part_id, v_required_qty);
+        END LOOP;
+
+        CLOSE cur_components;
+    END LOOP;
+
+    -- Confirmar transação
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Reservation successfully created for the order: ' || p_order_id);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('Error processing reservation: ' || SQLERRM);
+        RAISE;
 END;
 /

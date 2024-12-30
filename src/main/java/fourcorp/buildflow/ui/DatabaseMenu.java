@@ -250,7 +250,11 @@ public class DatabaseMenu {
 
                 break;
             case 21:
-
+                System.out.println();
+                String orderID = db.displayOrders();
+                if (orderID != null) {
+                    db.reserveOrderComponents(orderID);
+                }
                 break;
             case 22:
 
