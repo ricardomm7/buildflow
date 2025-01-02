@@ -17,6 +17,12 @@ public class ExportSchedule {
         this.timeCalculator = new ActivityTimeCalculator();
     }
 
+    /**
+     * Export to csv.
+     *
+     * @param outputPath the output path
+     * @throws IOException the io exception
+     */
     public void exportToCsv(String outputPath) throws IOException {
         // First, calculate times
         timeCalculator.calculateTimes();
@@ -57,6 +63,11 @@ public class ExportSchedule {
         }
     }
 
+    /**
+     * Sets graph.
+     *
+     * @param graph the graph
+     */
     public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
     }

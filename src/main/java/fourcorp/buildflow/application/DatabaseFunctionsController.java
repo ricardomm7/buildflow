@@ -863,4 +863,24 @@ public class DatabaseFunctionsController {
             e.printStackTrace();
         }
     }
+
+    public void checkStock(String orderID) {
+        String functionCall = "{ ? = call CheckOrderStockAvailability(?) }";
+
+        try (CallableStatement callableStatement = connection.prepareCall(functionCall)) {
+            callableStatement.registerOutParameter(1, OracleTypes.BOOLEAN);
+            callableStatement.setString(2, orderID);
+            callableStatement.execute();
+            boolean stockAvailable = callableStatement.getBoolean(1);
+
+            if (stockAvailable) {
+                System.out.println("Stock is sufficient to fulfill the order: " + orderID);
+            } else {
+                System.out.println("Insufficient stock to fulfill the order: " + orderID);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error while checking stock: " + e.getMessage());
+        }
+    }
 }

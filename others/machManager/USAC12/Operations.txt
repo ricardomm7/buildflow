@@ -1,6 +1,0 @@
-# operationName, state, timestamp, temperature, humidity, operationNumber
-Cutting, ON, 2024-12-05T10:30:00, 22.5, 40.0, 1
-Drilling, ON, 2024-12-05T11:00:00, 23.0, 45.0, 2
-Painting, ON, 2024-12-09T11:00:00, 25.0, 55.0, 3
-Polishing, ON, 2024-12-10T14:00:00, 24.5, 50.0, 4
-Assembling, ON, 2024-12-11T09:30:00, 21.0, 35.0, 5

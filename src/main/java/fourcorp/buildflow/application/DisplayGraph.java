@@ -17,6 +17,11 @@ public class DisplayGraph {
         this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
+    /**
+     * Generate dot file.
+     *
+     * @param dotFilePath the dot file path
+     */
     public void generateDotFile(String dotFilePath) {
         StringBuilder dotContent = new StringBuilder();
         dotContent.append("digraph PERT_CPM {\n");
@@ -93,6 +98,12 @@ public class DisplayGraph {
         }
     }
 
+    /**
+     * Generate svg.
+     *
+     * @param dotFilePath the dot file path
+     * @param svgFilePath the svg file path
+     */
     public void generateSVG(String dotFilePath, String svgFilePath) {
         try {
             // Gerar o SVG utilizando `dot`
@@ -114,6 +125,11 @@ public class DisplayGraph {
         }
     }
 
+    /**
+     * Sets graph.
+     *
+     * @param graph the graph
+     */
     public void setGraph(ActivitiesGraph graph) {
         this.graph = graph;
     }

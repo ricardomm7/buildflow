@@ -250,7 +250,11 @@ public class DatabaseMenu {
                 db.callGetProductOperations(productId);  // Call the method to get product operations
                 break;
             case 20:
-
+                System.out.println();
+                String order = db.displayOrders();
+                if (order != null) {
+                    db.checkStock(order);
+                }
                 break;
             case 21:
                 System.out.println();

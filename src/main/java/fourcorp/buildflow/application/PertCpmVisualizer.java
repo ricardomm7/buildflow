@@ -13,6 +13,9 @@ public class PertCpmVisualizer {
         this.graph = Repositories.getInstance().getActivitiesGraph();
     }
 
+    /**
+     * Prints the PERT-CPM graph.
+     */
     public void printGraph() {
         System.out.println();
         System.out.println("PERT/CPM GRAPH STRUCTURE");

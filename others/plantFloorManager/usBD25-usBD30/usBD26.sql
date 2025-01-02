@@ -1,3 +1,4 @@
+--usbd26
 CREATE OR REPLACE FUNCTION CheckOrderStockAvailability(p_OrderID IN VARCHAR2) RETURN BOOLEAN IS
     v_ProductID Order_Line.Product_ID%TYPE;
     v_QuantityRequired NUMBER;
@@ -79,3 +80,4 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
 END;
 /
+

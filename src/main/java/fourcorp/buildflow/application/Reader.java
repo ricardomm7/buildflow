@@ -415,6 +415,17 @@ public abstract class Reader {
         }
     }
 
+    /**
+     * Validates and modifies the given PERT/CPM graph by ensuring it has a single start and end vertex.
+     * <p>
+     * If the graph contains multiple start vertices, a virtual start vertex is created and connected
+     * to all the original start vertices. Similarly, if the graph contains multiple end vertices,
+     * a virtual end vertex is created and connected from all the original end vertices.
+     * </p>
+     *
+     * @param graph the {@link PertCpmGraph} to validate and modify
+     * @throws NullPointerException if the provided graph is null
+     */
     private static void validateStartEndVertices(PertCpmGraph graph) {
         List<Activity> startVertices = new ArrayList<>();
         List<Activity> endVertices = new ArrayList<>();
@@ -447,6 +458,27 @@ public abstract class Reader {
         }
     }
 
+    /**
+     * Parses a line from a CSV file and converts it into an {@link Activity} object.
+     * <p>
+     * The expected format of the CSV line is:
+     * <code>id,name,duration,durationUnit,cost,"dependencies"</code>, where:
+     * <ul>
+     * <li><b>id</b>: a unique identifier for the activity</li>
+     * <li><b>name</b>: the name of the activity</li>
+     * <li><b>duration</b>: the duration of the activity as an integer</li>
+     * <li><b>durationUnit</b>: the unit of the duration (e.g., "days")</li>
+     * <li><b>cost</b>: the cost of the activity as a double</li>
+     * <li><b>dependencies</b>: a comma-separated list of dependencies, enclosed in quotes (optional)</li>
+     * </ul>
+     * </p>
+     *
+     * @param line a line from the CSV file representing an activity
+     * @return an {@link Activity} object created from the parsed CSV line
+     * @throws IllegalArgumentException if the line is not in the expected format
+     * @throws NumberFormatException    if duration or cost cannot be parsed as numbers
+     * @throws NullPointerException     if the input line is null
+     */
     private static Activity getActivity(String line) {
         String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // Split ignorando vírgulas dentro de aspas
         if (parts.length < 5) {

@@ -1,4 +1,0 @@
-State,Operation Name,Operation Number,Timestamp,Temperature,Humidity
-ON,Cutting,15,2024-12-05T14:23:47,22.50,45.30
-OP,Drilling,8,2024-12-05T10:15:12,25.60,50.00
-OFF,Polishing,20,2024-12-05T12:30:59,30.80,40.70

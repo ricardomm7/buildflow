@@ -563,7 +563,7 @@ IS
 
 BEGIN
     -- Chamar a USBD26 para verificar se o pedido pode ser cumprido
-    --USBD26_CheckOrderFulfillment(p_order_id, v_can_fulfill);
+    v_can_fulfill := CheckOrderStockAvailability(p_order_id);
 
     IF NOT v_can_fulfill THEN
         RAISE_APPLICATION_ERROR(-20001, 'Order cannot be fulfilled: insufficient stock.');
@@ -664,4 +664,49 @@ BEGIN
 
     RETURN cur_results;
 END GetProductOperations;
+/
+
+--usbd26
+CREATE OR REPLACE FUNCTION CheckOrderStockAvailability(p_OrderID IN VARCHAR2) RETURN BOOLEAN IS
+    v_ProductID Order_Line.Product_ID%TYPE;
+    v_QuantityRequired NUMBER;
+    v_PartID External_Part.Part_ID%TYPE;
+    v_QuantityAvailable NUMBER;
+    v_Parts SYS_REFCURSOR;
+
+    v_StockAvailable BOOLEAN := TRUE;
+BEGIN
+    FOR product IN (
+        SELECT Product_ID, Quantity
+        FROM Order_Line
+        WHERE Order_ID = p_OrderID
+    ) LOOP
+        v_ProductID := product.Product_ID;
+
+        v_Parts:=GetProductOperationParts(v_ProductID);
+
+        LOOP
+            FETCH v_Parts INTO v_PartID, v_QuantityRequired;
+            EXIT WHEN v_Parts%NOTFOUND;
+
+            SELECT Stock
+            INTO v_QuantityAvailable
+            FROM External_Part
+            WHERE Part_ID = v_PartID;
+
+            IF v_QuantityAvailable < (v_QuantityRequired * product.Quantity) THEN
+                v_StockAvailable := FALSE;
+                EXIT;
+            END IF;
+        END LOOP;
+
+        CLOSE v_Parts;
+
+        IF NOT v_StockAvailable THEN
+            EXIT;
+        END IF;
+    END LOOP;
+
+    RETURN v_StockAvailable;
+END CheckOrderStockAvailability;
 /

@@ -13,7 +13,7 @@ IS
 
 BEGIN
     -- Chamar a USBD26 para verificar se o pedido pode ser cumprido
-    --USBD26_CheckOrderFulfillment(p_order_id, v_can_fulfill);
+    v_can_fulfill := CheckOrderStockAvailability(p_order_id);
 
     IF NOT v_can_fulfill THEN
         RAISE_APPLICATION_ERROR(-20001, 'Order cannot be fulfilled: insufficient stock.');

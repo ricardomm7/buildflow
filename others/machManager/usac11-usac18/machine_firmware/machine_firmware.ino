@@ -2,8 +2,7 @@
 
 #define DHTPIN 16        // Pino de dados do sensor DHT11
 #define DHTTYPE DHT11    // Tipo do sensor DHT11
-#define LED_PIN_TEMP 17  // Pino do LED para temperatura
-#define LED_PIN_HUM 18   // Pino do LED para humidade
+
 #define LED_PIN_CMD1 17  // Pino para LED 1 (controlado por comando)
 #define LED_PIN_CMD2 18  // Pino para LED 2 (controlado por comando)
 #define LED_PIN_CMD3 21  // Pino para LED 3 (controlado por comando)
@@ -19,27 +18,29 @@ void setup() {
   Serial.begin(115200);
   dht.begin();
 
-  pinMode(LED_PIN_TEMP, OUTPUT);
-  pinMode(LED_PIN_HUM, OUTPUT);
   pinMode(LED_PIN_CMD1, OUTPUT);
   pinMode(LED_PIN_CMD2, OUTPUT);
   pinMode(LED_PIN_CMD3, OUTPUT);
   pinMode(LED_PIN_CMD4, OUTPUT);
   pinMode(LED_PIN_CMD5, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
+
   digitalWrite(LED_PIN_CMD1, HIGH);  // Liga o LED1
   digitalWrite(LED_PIN_CMD2, HIGH);  // Liga o LED2
   digitalWrite(LED_PIN_CMD3, HIGH);  // Liga o LED3
   digitalWrite(LED_PIN_CMD4, HIGH);  // Liga o LED4
   digitalWrite(LED_PIN_CMD5, HIGH);  // Liga o LED5
   digitalWrite(LED_BUILTIN, HIGH);
+
   delay(1000);
+
   digitalWrite(LED_PIN_CMD1, LOW);  // Desliga o LED1
   digitalWrite(LED_PIN_CMD2, LOW);  // Desliga o LED2
   digitalWrite(LED_PIN_CMD3, LOW);  // desLiga o LED3
   digitalWrite(LED_PIN_CMD4, LOW);  // desLiga o LED4
   digitalWrite(LED_PIN_CMD5, LOW);  // desLiga o LED5
   digitalWrite(LED_BUILTIN, LOW);
+
   delay(1000);
 
   Serial.println("Setup complete. Waiting for commands and sensor data...");
