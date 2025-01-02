@@ -264,10 +264,12 @@ public class DatabaseMenu {
                 }
                 break;
             case 22:
-
+                System.out.println();
+                db.showReservedParts();
                 break;
             case 23:
-
+                System.out.println();
+                db.showUnusedWorkstations();
                 break;
             case 24:
                 System.out.println();

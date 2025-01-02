@@ -883,4 +883,77 @@ public class DatabaseFunctionsController {
             System.err.println("Error while checking stock: " + e.getMessage());
         }
     }
+
+    public void showReservedParts() {
+        String procedureCall = "{ call Get_All_Reserved_Parts(?) }";
+
+        try (CallableStatement callableStatement = connection.prepareCall(procedureCall)) {
+            callableStatement.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+
+            callableStatement.execute();
+
+            ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
+
+            String lineFormat = "| %-15s | %-30s | %-18s | %-12s |%n";
+            String separator = "+-----------------+--------------------------------+--------------------+--------------+";
+
+            System.out.println("Reserved Parts:");
+            System.out.println(separator);
+            System.out.printf(lineFormat, "Part ID", "Description", "Reserved Quantity", "Supplier ID");
+            System.out.println(separator);
+
+            while (resultSet.next()) {
+                String partId = resultSet.getString("Reserved_Part_ID");
+                String description = resultSet.getString("Part_Description");
+
+                // Limitar a descrição a 30 caracteres
+                if (description != null && description.length() > 30) {
+                    description = description.substring(0, 30);
+                }
+
+                double reservedQuantity = resultSet.getDouble("Reserved_Quantity");
+                int supplierId = resultSet.getInt("Supplier_ID");
+
+                System.out.printf(lineFormat, partId, description, String.format("%.2f", reservedQuantity), supplierId == 0 ? "N/A" : supplierId);
+            }
+
+            System.out.println(separator);
+
+        } catch (SQLException e) {
+            System.err.println("Error while fetching reserved parts: " + e.getMessage());
+        }
+    }
+
+    public void showUnusedWorkstations() {
+        String functionCall = "{ ? = call WorkstationsNotUsed() }";
+
+        try (CallableStatement callableStatement = connection.prepareCall(functionCall)) {
+            callableStatement.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            callableStatement.execute();
+            ResultSet resultSet = (ResultSet) callableStatement.getObject(1);
+            String lineFormat = "| %-20s | %-40s |%n";
+            String separator = "+----------------------+------------------------------------------+";
+
+            System.out.println("Unused Workstations:");
+            System.out.println(separator);
+            System.out.printf(lineFormat, "Workstation Type ID", "Designation");
+            System.out.println(separator);
+
+            while (resultSet.next()) {
+                String workstationTypeId = resultSet.getString("WorkstationType_ID");
+                String designation = resultSet.getString("Designation");
+
+                if (designation != null && designation.length() > 40) {
+                    designation = designation.substring(0, 40);
+                }
+
+                System.out.printf(lineFormat, workstationTypeId, designation);
+            }
+
+            System.out.println(separator);
+
+        } catch (SQLException e) {
+            System.err.println("Error while fetching unused workstations: " + e.getMessage());
+        }
+    }
 }

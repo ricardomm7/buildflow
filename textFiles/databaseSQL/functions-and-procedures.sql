@@ -710,3 +710,78 @@ BEGIN
     RETURN v_StockAvailable;
 END CheckOrderStockAvailability;
 /
+
+
+--usbd28
+CREATE OR REPLACE PROCEDURE Get_All_Reserved_Parts (
+    Result_Cursor OUT SYS_REFCURSOR
+)
+IS
+    v_Count NUMBER;
+BEGIN
+    -- Verifica se há registros na tabela de reservas
+    SELECT COUNT(*)
+    INTO v_Count
+    FROM Reservation r
+         LEFT JOIN External_Part ep ON r.Part_ID = ep.Part_ID
+         LEFT JOIN Product_Type pt ON r.Part_ID = pt.Part_ID
+         LEFT JOIN Procurement p ON ep.Part_ID = p.External_PartPart_ID;
+
+
+    IF v_Count = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Nenhum material ou componente reservado foi encontrado.');
+    END IF;
+
+    -- Abre o cursor para os resultados
+    OPEN Result_Cursor FOR
+    SELECT
+        r.Part_ID AS Reserved_Part_ID,
+        pt.Description AS Part_Description,
+        r.quantity AS Reserved_Quantity,
+        p.SupplierID AS Supplier_ID
+    FROM
+        Reservation r
+        LEFT JOIN External_Part ep ON r.Part_ID = ep.Part_ID
+        LEFT JOIN Product_Type pt ON r.Part_ID = pt.Part_ID
+        LEFT JOIN Procurement p ON ep.Part_ID = p.External_PartPart_ID
+    ORDER BY r.Part_ID;
+EXCEPTION
+    -- Trata erros inesperados
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Ocorreu um erro inesperado: ' || SQLERRM);
+END;
+/
+
+
+--usbd29
+CREATE OR REPLACE FUNCTION WorkstationsNotUsed
+RETURN SYS_REFCURSOR IS
+  result_cursor SYS_REFCURSOR;
+BEGIN
+
+  OPEN result_cursor FOR
+    SELECT tw.WorkstationType_ID, tw.Designation
+    FROM Type_Workstation tw
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM Operation_Type_Workstation otw
+      WHERE otw.WorkstationType_ID = tw.WorkstationType_ID
+      AND otw.Operation_TypeID IN (
+
+        SELECT DISTINCT o.Operation_TypeID
+        FROM Operation o
+        CONNECT BY PRIOR o.NextOperation_ID = o.Operation_ID
+        START WITH o.NextOperation_ID IS NOT NULL
+      )
+    );
+
+
+  RETURN result_cursor;
+
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN
+    RETURN NULL;
+  WHEN OTHERS THEN
+    RETURN NULL;
+END;
+/
