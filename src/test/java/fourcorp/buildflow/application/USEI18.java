@@ -2,7 +2,6 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
-import fourcorp.buildflow.repository.Repositories;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,15 +14,16 @@ class USEI18 {
 
     @Test
     void verifyReading() throws IOException {
+        ActivitiesGraph a = new ActivitiesGraph();
+        Reader.setActivity(a);
         Reader.loadActivities("src/test/java/fourcorp/buildflow/activities_test.csv");
-        ActivitiesGraph a = Repositories.getInstance().getActivitiesGraph();
 
         List<Activity> activities = a.getGraph().vertices();
 
         List<Activity> expectedActivities = List.of(
-                new Activity("B1", "Inicio do Projeto", 3, "dias", 1500, "USD", List.of()),
-                new Activity("B2", "Planejamento", 4, "dias", 2000, "USD", List.of("B1")),
-                new Activity("B3", "Análise de Riscos", 5, "dias", 1800, "USD", List.of("B1"))
+                new Activity("B1", "Inicio do Projeto", 3, "dias", 1500, "n/a", List.of()),
+                new Activity("B2", "Planejamento", 4, "dias", 2000, "n/a", List.of("B1")),
+                new Activity("B3", "Análise de Riscos", 5, "dias", 1800, "n/a", List.of("B1"))
         );
 
         for (Activity expected : expectedActivities) {

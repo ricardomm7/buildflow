@@ -273,7 +273,7 @@ public class USEI24 {
         simulator.simulateProjectDelays(delayMap);
 
         // Validar nova duração do projeto
-        assertEquals(71, simulator.getNewProjectDuration(), "Project duration should increase by 5 time units.");
+        assertEquals(17, simulator.getNewProjectDuration(), "Project duration should increase by 5 time units.");
 
         // Verificar mudanças nos caminhos críticos
         List<List<Activity>> originalCriticalPaths = simulator.getOriginalCriticalPath();

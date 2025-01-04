@@ -67,6 +67,7 @@ public class Simulator {
         this.waitingTimes = new HashMap<>(); // Tempo total de espera de cada produto
         this.operationWaitingTimes = new HashMap<>();
         this.countWaiting = new HashMap<>();
+        this.db = new DefineInDB();
     }
 
     /**

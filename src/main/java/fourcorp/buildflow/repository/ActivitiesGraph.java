@@ -275,33 +275,33 @@ public class ActivitiesGraph {
     }
 
 
-public List<Activity> getStartActivities() {
-    List<Activity> startVertices = new ArrayList<>();
-    for (Activity activity : graph.vertices()) {
-        if (graph.incomingEdges(activity).isEmpty()) {
-            startVertices.add(activity);
+    public List<Activity> getStartActivities() {
+        List<Activity> startVertices = new ArrayList<>();
+        for (Activity activity : graph.vertices()) {
+            if (graph.incomingEdges(activity).isEmpty()) {
+                startVertices.add(activity);
+            }
         }
+        return startVertices;
     }
-    return startVertices;
-}
 
-public List<Activity> getEndActivities() {
-    List<Activity> endVertices = new ArrayList<>();
-    for (Activity activity : graph.vertices()) {
-        if (graph.outgoingEdges(activity).isEmpty()) {
-            endVertices.add(activity);
+    public List<Activity> getEndActivities() {
+        List<Activity> endVertices = new ArrayList<>();
+        for (Activity activity : graph.vertices()) {
+            if (graph.outgoingEdges(activity).isEmpty()) {
+                endVertices.add(activity);
+            }
         }
+        return endVertices;
     }
-    return endVertices;
-}
 
-public Activity[] getSuccessors(Activity activity) {
-    List<Activity> successors = new ArrayList<>();
-    for (Edge<Activity> edge : graph.outgoingEdges(activity)) {
-        successors.add(edge.getVDest());
+    public Activity[] getSuccessors(Activity activity) {
+        List<Activity> successors = new ArrayList<>();
+        for (Edge<Activity> edge : graph.outgoingEdges(activity)) {
+            successors.add(edge.getVDest());
+        }
+        return successors.toArray(new Activity[0]);
     }
-    return successors.toArray(new Activity[0]);
-}
 
 
 }

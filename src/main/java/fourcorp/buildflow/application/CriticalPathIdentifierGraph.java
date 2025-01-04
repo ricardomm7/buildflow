@@ -63,7 +63,7 @@ public class CriticalPathIdentifierGraph {
      */
     /**
      * Recursively finds all critical paths from a start vertex to an end vertex.
-     *
+     * <p>
      * The complexity of this method is O(n^2), where n is the number of activities in the graph.
      *
      * @param current     The current activity in the traversal.

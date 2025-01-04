@@ -67,7 +67,7 @@ public class ActivityTimeCalculator {
         Activity end = null;
 
         for (Activity activity : topOrder) { // O(n)
-            if (activity.getId().equals("END")){
+            if (activity.getId().equals("END")) {
                 end = activity;
             }
 
@@ -85,7 +85,7 @@ public class ActivityTimeCalculator {
                 .max()
                 .orElse(0);
 
-        if (end != null){
+        if (end != null) {
             end.setEarlyStart(projectDuration);
             end.setEarlyFinish(projectDuration);
         }

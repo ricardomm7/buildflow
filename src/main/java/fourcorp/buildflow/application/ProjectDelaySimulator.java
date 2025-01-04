@@ -88,30 +88,30 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of activity IDs to their delay durations (positive or negative)
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-    for (Map.Entry<String, Integer> entry : delayMap.entrySet()) { // O(n)
-        String activityId = entry.getKey();
-        int delayAmount = entry.getValue();
+        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) { // O(n)
+            String activityId = entry.getKey();
+            int delayAmount = entry.getValue();
 
-        Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId)); // O(n) * O(n) = O(n^2)
-        if (activity != null) {
-            int originalDuration = originalDurations.getOrDefault(activityId, activity.getDuration());
-            int newDuration = originalDuration + delayAmount;
+            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId)); // O(n) * O(n) = O(n^2)
+            if (activity != null) {
+                int originalDuration = originalDurations.getOrDefault(activityId, activity.getDuration());
+                int newDuration = originalDuration + delayAmount;
 
-            // Garantir que a duração não fique negativa
-            if (newDuration < 1) {
-                System.err.printf(
-                        "Warning: Activity %s duration cannot be less than 0 unit. Setting to 0.%n", activityId);
-                newDuration = 0;
+                // Garantir que a duração não fique negativa
+                if (newDuration < 1) {
+                    System.err.printf(
+                            "Warning: Activity %s duration cannot be less than 0 unit. Setting to 0.%n", activityId);
+                    newDuration = 0;
+                }
+
+                activity.setDuration(newDuration);
+                System.out.printf("Updated Activity %s: Original Duration=%d, New Duration=%d%n",
+                        activityId, originalDuration, newDuration);
+            } else {
+                System.err.printf("Error: Activity %s not found in the graph.%n", activityId);
             }
-
-            activity.setDuration(newDuration);
-            System.out.printf("Updated Activity %s: Original Duration=%d, New Duration=%d%n",
-                    activityId, originalDuration, newDuration);
-        } else {
-            System.err.printf("Error: Activity %s not found in the graph.%n", activityId);
         }
     }
-}
 
 
     /**

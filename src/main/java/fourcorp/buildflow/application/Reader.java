@@ -374,6 +374,11 @@ public abstract class Reader {
         bst = p;
     }
 
+    public static void setActivity(ActivitiesGraph p) {
+        graph = p;
+    }
+
+
     /**
      * Load activities.
      * The complexity of this method is: O(n).
