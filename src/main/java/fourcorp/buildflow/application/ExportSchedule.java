@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class ExportSchedule {
-    private final ActivityTimeCalculator timeCalculator;
+    ActivityTimeCalculator timeCalculator;
     private ActivitiesGraph graph;
 
     public ExportSchedule() {
