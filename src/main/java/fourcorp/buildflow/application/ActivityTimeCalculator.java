@@ -64,7 +64,13 @@ public class ActivityTimeCalculator {
      * Complexity: O(n^2), where n is the number of activities.
      */
     private void calculateEarliestTimes(List<Activity> topOrder) {
+        Activity end = null;
+
         for (Activity activity : topOrder) { // O(n)
+            if (activity.getId().equals("END")){
+                end = activity;
+            }
+
             int earlyStart = activity.getDependencies().stream() // O(n) * O(n) = O(n^2)
                     .mapToInt(depId -> findActivityById(depId).getEarlyFinish())
                     .max()
@@ -78,6 +84,11 @@ public class ActivityTimeCalculator {
                 .mapToInt(Activity::getEarlyFinish)
                 .max()
                 .orElse(0);
+
+        if (end != null){
+            end.setEarlyStart(projectDuration);
+            end.setEarlyFinish(projectDuration);
+        }
     }
 
     /**

@@ -19,8 +19,8 @@ public class ProjectDelaySimulator {
     // Project metrics
     private int originalProjectDuration;
     private int newProjectDuration;
-    private List<Activity> originalCriticalPath;
-    private List<Activity> newCriticalPath;
+    private List<List<Activity>> originalCriticalPath;
+    private List<List<Activity>> newCriticalPath;
 
     // Map to store original durations
     private final Map<String, Integer> originalDurations = new HashMap<>();
@@ -88,27 +88,31 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of activity IDs to their delay durations (positive or negative)
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-        for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
-            String activityId = entry.getKey();
-            int delayAmount = entry.getValue();
+    for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
+        String activityId = entry.getKey();
+        int delayAmount = entry.getValue();
 
-            Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
-            if (activity != null) {
-                int originalDuration = originalDurations.get(activityId);
-                int newDuration = originalDuration + delayAmount;
+        Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
+        if (activity != null) {
+            int originalDuration = originalDurations.getOrDefault(activityId, activity.getDuration());
+            int newDuration = originalDuration + delayAmount;
 
-                // Ensure activity duration doesn't become negative
-                if (newDuration < 1) {
-                    System.err.printf("Warning: Activity %s duration cannot be reduced below 1 unit. Setting to minimum duration (1).%n", activityId);
-                    newDuration = 1;
-                }
-
-                activity.setDuration(newDuration);
-            } else {
-                System.err.printf("Error: Activity %s not found.%n", activityId);
+            // Garantir que a duração não fique negativa
+            if (newDuration < 1) {
+                System.err.printf(
+                        "Warning: Activity %s duration cannot be less than 0 unit. Setting to 0.%n", activityId);
+                newDuration = 0;
             }
+
+            activity.setDuration(newDuration);
+            System.out.printf("Updated Activity %s: Original Duration=%d, New Duration=%d%n",
+                    activityId, originalDuration, newDuration);
+        } else {
+            System.err.printf("Error: Activity %s not found in the graph.%n", activityId);
         }
     }
+}
+
 
     /**
      * Displays the delay impact analysis, including durations and critical paths.
@@ -166,12 +170,20 @@ public class ProjectDelaySimulator {
      *
      * @return List of activities in the critical path.
      */
-    List<Activity> findCriticalPath() {
+    List<List<Activity>> findCriticalPath() {
         CriticalPathIdentifierGraph calculator = new CriticalPathIdentifierGraph();
         calculator.setGraph(graph);
-        calculator.calculateCriticalPath(); // O(n^2)
 
-        return calculator.getCriticalPath();
+        calculator.calculateCriticalPaths();
+
+        List<List<Activity>> criticalPaths = calculator.getCriticalPaths();
+        if (criticalPaths.isEmpty()) {
+            System.err.println("No critical paths found. Please verify the graph structure.");
+        } else {
+            System.out.printf("Found %d critical path(s).%n", criticalPaths.size());
+        }
+
+        return criticalPaths;
     }
 
 
@@ -181,26 +193,31 @@ public class ProjectDelaySimulator {
      *
      * @param criticalPath List of activities in the critical path.
      */
-    private void printCriticalPath(List<Activity> criticalPath) {
-        String format = "| %-6s | %-30s | %-8s | %-3s | %-3s | %-3s | %-3s | %-5s |%n";
-        String separator = "+--------+--------------------------------+----------+-----+-----+-----+-----+-------+";
+    private void printCriticalPath(List<List<Activity>> criticalPath) {
+        int num = 1;
+        for (List<Activity> path : criticalPath) { // O(n)
+            System.out.println("Critical Path: " + num);
+            String format = "| %-6s | %-30s | %-8s | %-3s | %-3s | %-3s | %-3s | %-5s |%n";
+            String separator = "+--------+--------------------------------+----------+-----+-----+-----+-----+-------+";
 
-        System.out.println(separator);
-        System.out.printf(format, "ID", "Name", "Duration", "ES", "EF", "LS", "LF", "Slack");
-        System.out.println(separator);
+            System.out.println(separator);
+            System.out.printf(format, "ID", "Name", "Duration", "ES", "EF", "LS", "LF", "Slack");
+            System.out.println(separator);
 
-        for (Activity activity : criticalPath) { // O(n)
-            System.out.printf(format,
-                    activity.getId(), // O(1) * O(n) = O(n)
-                    truncate(activity.getName(), 30), // O(1) * O(n) = O(n)
-                    activity.getDuration(), // O(1) * O(n) = O(n)
-                    activity.getEarlyStart(), // O(1) * O(n) = O(n)
-                    activity.getEarlyFinish(), // O(1) * O(n) = O(n)
-                    activity.getLateStart(), // O(1) * O(n) = O(n)
-                    activity.getLateFinish(), // O(1) * O(n) = O(n)
-                    activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n) = O(n)
+            for (Activity activity : path) { // O(n)
+                System.out.printf(format,
+                        activity.getId(), // O(1) * O(n) = O(n)
+                        truncate(activity.getName(), 30), // O(1) * O(n) = O(n)
+                        activity.getDuration(), // O(1) * O(n) = O(n)
+                        activity.getEarlyStart(), // O(1) * O(n) = O(n)
+                        activity.getEarlyFinish(), // O(1) * O(n) = O(n)
+                        activity.getLateStart(), // O(1) * O(n) = O(n)
+                        activity.getLateFinish(), // O(1) * O(n) = O(n)
+                        activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n) = O(n)
+            }
+            System.out.println(separator);
+            num++;
         }
-        System.out.println(separator);
     }
 
     /**
@@ -229,7 +246,7 @@ public class ProjectDelaySimulator {
      *
      * @return the original critical path
      */
-    public List<Activity> getOriginalCriticalPath() {
+    public List<List<Activity>> getOriginalCriticalPath() {
         return originalCriticalPath;
     }
 
@@ -238,7 +255,7 @@ public class ProjectDelaySimulator {
      *
      * @return the new critical path
      */
-    public List<Activity> getNewCriticalPath() {
+    public List<List<Activity>> getNewCriticalPath() {
         return newCriticalPath;
     }
 

@@ -279,7 +279,7 @@ public class Menu {
 
             case 30:
                 CriticalPathIdentifierGraph criticalPathIdentifier = new CriticalPathIdentifierGraph();
-                criticalPathIdentifier.identifyCriticalPath();
+                criticalPathIdentifier.identifyAndPrintCriticalPaths();
                 break;
             case 31:
                 ExportSchedule exporter = new ExportSchedule();

@@ -211,6 +211,27 @@ public class ActivitiesGraph {
     }
 
     /**
+     * Gets the outgoing edges of a given activity.
+     * <p>
+     * This method retrieves all edges originating from the given activity.
+     * Complexity: O(n), where n is the number of edges connected to the activity.
+     * </p>
+     *
+     * @param activity the activity whose outgoing edges are to be found.
+     * @return a list of edges originating from the given activity.
+     */
+    public List<Edge<Activity>> getOutgoingEdges(Activity activity) {
+        List<Edge<Activity>> outgoingEdges = new ArrayList<>();
+
+        for (Edge<Activity> edge : graph.outgoingEdges(activity)) { // O(n), where n is the number of outgoing edges
+            outgoingEdges.add(edge); // O(1)
+        }
+
+        return outgoingEdges;
+    }
+
+
+    /**
      * Gets the start vertices of the graph.
      * <p>
      * Start vertices are those with no incoming edges.
@@ -252,5 +273,35 @@ public class ActivitiesGraph {
 
         return endVertices;
     }
+
+
+public List<Activity> getStartActivities() {
+    List<Activity> startVertices = new ArrayList<>();
+    for (Activity activity : graph.vertices()) {
+        if (graph.incomingEdges(activity).isEmpty()) {
+            startVertices.add(activity);
+        }
+    }
+    return startVertices;
+}
+
+public List<Activity> getEndActivities() {
+    List<Activity> endVertices = new ArrayList<>();
+    for (Activity activity : graph.vertices()) {
+        if (graph.outgoingEdges(activity).isEmpty()) {
+            endVertices.add(activity);
+        }
+    }
+    return endVertices;
+}
+
+public Activity[] getSuccessors(Activity activity) {
+    List<Activity> successors = new ArrayList<>();
+    for (Edge<Activity> edge : graph.outgoingEdges(activity)) {
+        successors.add(edge.getVDest());
+    }
+    return successors.toArray(new Activity[0]);
+}
+
 
 }
