@@ -235,7 +235,7 @@ public class ActivitiesGraph {
      * Gets the start vertices of the graph.
      * <p>
      * Start vertices are those with no incoming edges.
-     * Complexity: O(n), where v is the number of vertices or the number of edges.
+     * Complexity: O(n), where n is the number of vertices or the number of edges.
      * </p>
      *
      * @return a list of activities that are start vertices.

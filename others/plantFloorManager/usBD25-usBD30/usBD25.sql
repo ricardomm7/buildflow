@@ -10,7 +10,6 @@ BEGIN
             next_operation_id,
             product_id,
             output_part_id,
-            level_num,
             root_product_id
         ) AS (
             -- Base case: get direct operations for the product
@@ -20,7 +19,6 @@ BEGIN
                 o.NextOperation_ID,
                 o.Product_ID,
                 o.Output_Part_ID,
-                1 AS level_num,
                 o.Product_ID AS root_product_id
             FROM Operation o
             WHERE o.Product_ID = p_Product_ID
@@ -34,7 +32,6 @@ BEGIN
                 o.NextOperation_ID,
                 o.Product_ID,
                 o.Output_Part_ID,
-                ro.level_num + 1,
                 ro.root_product_id
             FROM recursive_operations ro
             JOIN Operation_Input oi ON oi.Operation_ID = ro.operation_id

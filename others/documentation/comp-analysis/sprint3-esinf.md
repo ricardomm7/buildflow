@@ -7,12 +7,40 @@
 
 ### Methods Used
 
-- `` - 
-- `` - 
+- `vertices()` - O(n)
+- `key(Activity vert)` - O(n)
+- `vertex(int key)` - O(n)
+- `vertex(Predicate<Activity> p)` - O(n)
+- `adjVertices(Activity vert)` - O(n)
+- `edges()` - O(n)
+- `edge(Activity vOrig, Activity vDest)` - O(n)
+- `edge(int vOrigKey, int vDestKey)` - O(n)
+- `inDegree(Activity vert)` - O(n)
+- `outgoingEdges(Activity vert)` - O(n)
+- `incomingEdges(Activity vert)` - O(n)
+- `addEdge(Activity vOrig, Activity vDest)` - O(n)
+- `removeVertex(Activity vert)` - O(n)
+- `removeEdge(Activity vOrig, Activity vDest)` - O(n)
+- `clone()` - O(n)
+- `getIncomingEdges(Activity activity)` - O(n)
+- `getOutgoingEdges(Activity activity)` - O(n)
+- `addDependency(Activity virtualStart, Activity start)` - O(n)
+- `addDependency(Activity src, Activity dst)` - O(n)
+- `getNeighbors(Activity activity)` - O(n)
+- `getInDegrees()` - O(n)
+- `detectCircularDependencies()` - O(n)
+- `colorDFS(Activity activity, Map<Activity, Integer> color)` - O(n)
+- `findActivityById(String a)` - O(n)
+- `getIncomingEdges(Activity activity)` - O(n)
+- `getOutgoingEdges(Activity activity)` - O(n)
+- `getStartVertices()` - O(n)
+- `getEndVertices()` - O(n)
+- `getStartActivities()` - O(n)
+- `getEndActivities()` - O(n)
 
 ### Total Complexity
 
-- **Overall Complexity:** 
+- **Overall Complexity:** O(n)
 ---------------------------
 
 ## USEI18 - Detect Cycles
@@ -81,4 +109,4 @@
 
 ### Total Complexity
 
-- **Overall Complexity:** O(n^2)
+- **Overall Complexity:** O(n²)
