@@ -68,6 +68,8 @@
 
 - **Overall Complexity:** O(n²)
 
+---------------------------
+
 ## USEI20 - Calculate Earliest and Latest Start and Finish Times
 
 ### Methods Used
@@ -80,7 +82,43 @@
 - **Overall Complexity:** O(n²)
 
 ---------------------------
-## USEI23 - Identify Bottleneck Activities
+## USEI21 - Export Project Schedule to CSV
+
+### Methods Used
+
+
+-`exportToCsv(String outputPath)`- O(n²)
+-`setGraph(ActivitiesGraph graph)` - O(1)
+
+### Total Complexity
+
+-**Overall Complexity:** 0(n²)
+
+---------------------------
+
+## USEI22 - Identify and Display Critical Paths
+
+### Methods Used
+
+
+- `identifyAndPrintCriticalPaths()` - O(n²)
+- `calculateCriticalPaths()` - O(n²)
+- `findCriticalPaths(Activity current, Activity end, List<Activity> currentPath)` - O(n²)
+- `isCriticalPath(List<Activity> path)` - O(n)
+- `isCriticalActivity(Activity activity)` - O(1)
+- `calculateActivityTimes()` - O(n²)
+- `displayCriticalPaths()` - O(n²)
+- `findStartVertex()` - O(n)
+- `findEndVertex()` - O(n)
+- `truncate(String text, int maxLength)` - O(n)
+
+### Total Complexity
+
+- **Overall Complexity:** O(n²)
+
+
+---------------------------
+## USEI23 - Identify Bottleneck Activitie
 
 ### Methods Used
 
