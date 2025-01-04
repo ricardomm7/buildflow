@@ -74,9 +74,9 @@
 - `simulateProjectDelays(Map<String, Integer> delayMap)` - O(n²)
 - `calculateOriginalMetrics()` - O(n²)
 - `saveOriginalDurations()` - O(n)
-- `applyDelays(delayMap)` - O(n)
+- `applyDelays(delayMap)` - O(n²)
 - `calculateNewMetrics()` - O(n²)
-- `displayImpactAnalysis(delayMap)` - O(n)
+- `displayImpactAnalysis(delayMap)` - O(n²)
 - `findCriticalPath()` - O(n²)
 
 ### Total Complexity

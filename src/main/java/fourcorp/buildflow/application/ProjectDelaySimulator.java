@@ -42,11 +42,11 @@ public class ProjectDelaySimulator {
      * @param delayMap Map of activity IDs to their delay durations.
      */
     public void simulateProjectDelays(Map<String, Integer> delayMap) {
-        saveOriginalDurations();
-        calculateOriginalMetrics();
-        applyDelays(delayMap);
-        calculateNewMetrics();
-        displayImpactAnalysis(delayMap);  // Only this method will print paths
+        saveOriginalDurations(); // O(n)
+        calculateOriginalMetrics(); // O(n^2)
+        applyDelays(delayMap); // O(n^2)
+        calculateNewMetrics(); //O(n^2)
+        displayImpactAnalysis(delayMap);  // O(n^2)
     }
 
     /**
@@ -82,17 +82,17 @@ public class ProjectDelaySimulator {
 
     /**
      * Applies delays (positive or negative) to specified activities in the graph.
-     * Complexity: O(n), where n is the number of activities in the delay map.
+     * Complexity: O(n^2), where n is the number of activities in the delay map.
      * Now supports negative delays (advancements) while ensuring activity durations stay positive.
      *
      * @param delayMap Map of activity IDs to their delay durations (positive or negative)
      */
     private void applyDelays(Map<String, Integer> delayMap) {
-    for (Map.Entry<String, Integer> entry : delayMap.entrySet()) {
+    for (Map.Entry<String, Integer> entry : delayMap.entrySet()) { // O(n)
         String activityId = entry.getKey();
         int delayAmount = entry.getValue();
 
-        Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId));
+        Activity activity = graph.getGraph().vertex(a -> a.getId().equals(activityId)); // O(n) * O(n) = O(n^2)
         if (activity != null) {
             int originalDuration = originalDurations.getOrDefault(activityId, activity.getDuration());
             int newDuration = originalDuration + delayAmount;
@@ -117,7 +117,7 @@ public class ProjectDelaySimulator {
     /**
      * Displays the delay impact analysis, including durations and critical paths.
      * This is now the only method that prints critical path information.
-     * Complexity: O(n), where n is the number of activities.
+     * Complexity: O(n^2), where n is the number of activities.
      *
      * @param delayMap Map of delayed/advanced activities
      */
@@ -146,10 +146,10 @@ public class ProjectDelaySimulator {
         System.out.println();
 
         System.out.println("ORIGINAL CRITICAL PATH:");
-        printCriticalPath(originalCriticalPath);
+        printCriticalPath(originalCriticalPath); // O(n^2)
 
         System.out.println("NEW CRITICAL PATH:");
-        printCriticalPath(newCriticalPath);
+        printCriticalPath(newCriticalPath); // O(n^2)
 
         System.out.println();
     }
@@ -174,7 +174,7 @@ public class ProjectDelaySimulator {
         CriticalPathIdentifierGraph calculator = new CriticalPathIdentifierGraph();
         calculator.setGraph(graph);
 
-        calculator.calculateCriticalPaths();
+        calculator.calculateCriticalPaths(); // O(n^2)
 
         List<List<Activity>> criticalPaths = calculator.getCriticalPaths();
         if (criticalPaths.isEmpty()) {
@@ -189,7 +189,7 @@ public class ProjectDelaySimulator {
 
     /**
      * Prints the critical path in a structured format.
-     * Complexity: O(n), where n is the number of activities in the critical path.
+     * Complexity: O(n^2), where n is the number of activities in the critical path.
      *
      * @param criticalPath List of activities in the critical path.
      */
@@ -204,16 +204,16 @@ public class ProjectDelaySimulator {
             System.out.printf(format, "ID", "Name", "Duration", "ES", "EF", "LS", "LF", "Slack");
             System.out.println(separator);
 
-            for (Activity activity : path) { // O(n)
+            for (Activity activity : path) { // O(n) * O(n) = O(n^2)
                 System.out.printf(format,
-                        activity.getId(), // O(1) * O(n) = O(n)
-                        truncate(activity.getName(), 30), // O(1) * O(n) = O(n)
-                        activity.getDuration(), // O(1) * O(n) = O(n)
-                        activity.getEarlyStart(), // O(1) * O(n) = O(n)
-                        activity.getEarlyFinish(), // O(1) * O(n) = O(n)
-                        activity.getLateStart(), // O(1) * O(n) = O(n)
-                        activity.getLateFinish(), // O(1) * O(n) = O(n)
-                        activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n) = O(n)
+                        activity.getId(), // O(1) * O(n^2) = O(n^2)
+                        truncate(activity.getName(), 30), // O(1) * O(n^2) = O(n^2)
+                        activity.getDuration(), // O(1) * O(n^2) = O(n^2)
+                        activity.getEarlyStart(), // O(1) * O(n^2) = O(n^2)
+                        activity.getEarlyFinish(), // O(1) * O(n^2) = O(n^2)
+                        activity.getLateStart(), // O(1) * O(n^2) = O(n^2)
+                        activity.getLateFinish(), // O(1) * O(n^2) = O(n^2)
+                        activity.getLateStart() - activity.getEarlyStart()); // O(1) * O(n^2) = O(n^2)
             }
             System.out.println(separator);
             num++;
