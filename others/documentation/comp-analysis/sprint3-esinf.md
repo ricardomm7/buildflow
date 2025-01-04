@@ -87,8 +87,8 @@
 ### Methods Used
 
 
--`exportToCsv(String outputPath)`- O(n²)
--`setGraph(ActivitiesGraph graph)` - O(1)
+- `exportToCsv(String outputPath)`- O(n²)
+- `setGraph(ActivitiesGraph graph)` - O(1)
 
 ### Total Complexity
 
