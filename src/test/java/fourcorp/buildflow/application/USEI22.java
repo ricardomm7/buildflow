@@ -2,14 +2,14 @@ package fourcorp.buildflow.application;
 
 import fourcorp.buildflow.domain.Activity;
 import fourcorp.buildflow.repository.ActivitiesGraph;
-import fourcorp.buildflow.application.ActivityTimeCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class USEI22 {
 
@@ -23,8 +23,6 @@ class USEI22 {
         graph = new ActivitiesGraph();
         pathIdentifier = new CriticalPathIdentifierGraph();
     }
-
-
 
 
     @Test

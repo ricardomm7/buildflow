@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * The CSV export includes details such as activity ID, cost, duration, early and late timings, and dependencies.
  */
 public class ExportSchedule {
-    private ActivityTimeCalculator timeCalculator;
+    protected ActivityTimeCalculator timeCalculator;
     private ActivitiesGraph graph;
 
     /**
