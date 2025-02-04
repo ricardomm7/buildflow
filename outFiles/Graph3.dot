@@ -6,13 +6,37 @@ digraph PERT_CPM {
   ranksep=1.5;
   node [fontname="Arial" fontsize=14 style="rounded,filled"];
   edge [fontname="Arial" fontsize=12 color=gray50 penwidth=2.0];
-  "I" [
-    shape=ellipse,
+  "F" [
+    shape=hexagon,
     width=2.5,
     height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="I"
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="F"
+  ];
+  "B" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="B"
+  ];
+  "K" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="K"
+  ];
+  "START" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="START"
   ];
   "D" [
     shape=ellipse,
@@ -22,54 +46,6 @@ digraph PERT_CPM {
     fontcolor="darkblue",
     label="D"
   ];
-  "L" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="L"
-  ];
-  "B" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="B"
-  ];
-  "START" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="START"
-  ];
-  "G" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="G"
-  ];
-  "J" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="J"
-  ];
-  "K" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="K"
-  ];
   "A" [
     shape=ellipse,
     width=2.5,
@@ -77,38 +53,6 @@ digraph PERT_CPM {
     fillcolor="lightblue",
     fontcolor="darkblue",
     label="A"
-  ];
-  "END" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="END"
-  ];
-  "E" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="E"
-  ];
-  "F" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="F"
-  ];
-  "C" [
-    shape=ellipse,
-    width=2.5,
-    height=1.2,
-    fillcolor="lightblue",
-    fontcolor="darkblue",
-    label="C"
   ];
   "H" [
     shape=ellipse,
@@ -118,8 +62,89 @@ digraph PERT_CPM {
     fontcolor="darkblue",
     label="H"
   ];
-  "I" -> "L" [
+  "G" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="G"
+  ];
+  "L" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="L"
+  ];
+  "C" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="C"
+  ];
+  "E" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="E"
+  ];
+  "I" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="I"
+  ];
+  "J" [
+    shape=ellipse,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightblue",
+    fontcolor="darkblue",
+    label="J"
+  ];
+  "END" [
+    shape=hexagon,
+    width=2.5,
+    height=1.2,
+    fillcolor="lightcoral",
+    fontcolor="black",
+    label="END"
+  ];
+  "F" -> "G" [
+    label="4 week",
+    color="gray",
+    fontsize=12
+  ];
+  "F" -> "H" [
+    label="4 week",
+    color="gray",
+    fontsize=12
+  ];
+  "B" -> "C" [
+    label="4 week",
+    color="gray",
+    fontsize=12
+  ];
+  "K" -> "L" [
     label="1 week",
+    color="gray",
+    fontsize=12
+  ];
+  "START" -> "B" [
+    label="0 days",
+    color="gray",
+    fontsize=12
+  ];
+  "START" -> "A" [
+    label="0 days",
     color="gray",
     fontsize=12
   ];
@@ -133,23 +158,13 @@ digraph PERT_CPM {
     color="gray",
     fontsize=12
   ];
-  "L" -> "END" [
+  "A" -> "D" [
+    label="1 week",
+    color="gray",
+    fontsize=12
+  ];
+  "H" -> "L" [
     label="2 week",
-    color="gray",
-    fontsize=12
-  ];
-  "B" -> "C" [
-    label="4 week",
-    color="gray",
-    fontsize=12
-  ];
-  "START" -> "A" [
-    label="0 days",
-    color="gray",
-    fontsize=12
-  ];
-  "START" -> "B" [
-    label="0 days",
     color="gray",
     fontsize=12
   ];
@@ -168,33 +183,8 @@ digraph PERT_CPM {
     color="gray",
     fontsize=12
   ];
-  "J" -> "END" [
-    label="1 week",
-    color="gray",
-    fontsize=12
-  ];
-  "K" -> "L" [
-    label="1 week",
-    color="gray",
-    fontsize=12
-  ];
-  "A" -> "D" [
-    label="1 week",
-    color="gray",
-    fontsize=12
-  ];
-  "E" -> "G" [
+  "L" -> "END" [
     label="2 week",
-    color="gray",
-    fontsize=12
-  ];
-  "F" -> "G" [
-    label="4 week",
-    color="gray",
-    fontsize=12
-  ];
-  "F" -> "H" [
-    label="4 week",
     color="gray",
     fontsize=12
   ];
@@ -203,8 +193,18 @@ digraph PERT_CPM {
     color="gray",
     fontsize=12
   ];
-  "H" -> "L" [
+  "E" -> "G" [
     label="2 week",
+    color="gray",
+    fontsize=12
+  ];
+  "I" -> "L" [
+    label="1 week",
+    color="gray",
+    fontsize=12
+  ];
+  "J" -> "END" [
+    label="1 week",
     color="gray",
     fontsize=12
   ];

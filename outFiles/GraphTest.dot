@@ -1,9 +1,0 @@
-digraph PERT_CPM {
-  rankdir=LR;
-  compound=true;
-  splines=true;
-  nodesep=1.5;
-  ranksep=1.5;
-  node [fontname="Arial" fontsize=14 style="rounded,filled"];
-  edge [fontname="Arial" fontsize=12 color=gray50 penwidth=2.0];
-}

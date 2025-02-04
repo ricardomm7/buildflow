@@ -23,4 +23,4 @@ In this document, the files required for delivery together with Sprint 3 are gat
 ### Deliverables:
 
 - **[Sprint 3 Report](https://myisepipp.sharepoint.com/:p:/r/teams/LAPR3-2DG-DH_20242025-ISEP365Group-081_/Shared%20Documents/G081_FOURCORP/Em%20progresso/G081_Sprint_3_Rep.pptx?d=wde747add534a47139b1e10194ed05993&csf=1&web=1&e=GaR8fH)**
-- **[Sprint 2 Self Assessment Excel File](sem3_PI_2024-2025_TeamSelf-Assessment-sprint3.xlsx)**
+- **[Sprint 3 Self Assessment Excel File](sem3_PI_2024-2025_TeamSelf-Assessment-sprint3.xlsx)**

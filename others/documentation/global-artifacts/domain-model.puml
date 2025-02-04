@@ -102,15 +102,6 @@ class Supplier{
     mail
 }
 
-class Activities {
-    id
-    description
-    duration
-    durationUnit
-    cost
-    costUnit
-}
-
 Supplier "1..*" -- "1..*" RawMaterial : provides >
 Supplier "1..*" -- "1..*" Component : provides >
 
